@@ -1,0 +1,20 @@
+{
+  "itemGroup.lzxnoneterraria.weapon": "Terraria Weapon",
+  "itemGroup.lzxnoneterraria.block": "Terraria Block",
+
+  "item.lzxnoneterraria.bee_keeper": "Bee Keeper",
+  "item.lzxnoneterraria.copper_shortsword": "Copper Shortsword",
+  "item.lzxnoneterraria.enchanted_sword": "Enchanted Sword",
+  "item.lzxnoneterraria.influx_waver": "Influx Waver",
+  "item.lzxnoneterraria.meowmere": "Meowmere",
+  "item.lzxnoneterraria.seedler": "Seedler",
+  "item.lzxnoneterraria.star_wrath": "Star Wrath",
+  "item.lzxnoneterraria.starfury": "Starfury",
+  "item.lzxnoneterraria.terra_blade": "Terra Blade",
+  "item.lzxnoneterraria.the_horsemans_blade": "The Horseman's Blade",
+  "item.lzxnoneterraria.zenith": "Zenith",
+
+  "entity.lzxnoneterraria.bee_summon": "Bee",
+
+  "effect.lzxnoneterraria.confused": "Confused"
+}

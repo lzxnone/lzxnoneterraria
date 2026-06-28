@@ -1,0 +1,20 @@
+{
+  "itemGroup.lzxnoneterraria.weapon": "泰拉瑞亚 武器",
+  "itemGroup.lzxnoneterraria.block": "泰拉瑞亚 方块",
+
+  "item.lzxnoneterraria.bee_keeper": "养蜂人",
+  "item.lzxnoneterraria.copper_shortsword": "铜短剑",
+  "item.lzxnoneterraria.enchanted_sword": "附魔剑",
+  "item.lzxnoneterraria.influx_waver": "波涌之刃",
+  "item.lzxnoneterraria.meowmere": "彩虹喵之刃",
+  "item.lzxnoneterraria.seedler": "种子弯刀",
+  "item.lzxnoneterraria.star_wrath": "狂星之怒",
+  "item.lzxnoneterraria.starfury": "星怒",
+  "item.lzxnoneterraria.terra_blade": "泰拉刃",
+  "item.lzxnoneterraria.the_horsemans_blade": "无头骑士剑",
+  "item.lzxnoneterraria.zenith": "天顶剑",
+
+  "entity.lzxnoneterraria.bee_summon": "蜜蜂",
+
+  "effect.lzxnoneterraria.confused": "困惑"
+}

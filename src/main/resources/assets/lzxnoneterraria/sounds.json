@@ -1,0 +1,20 @@
+{
+  "wave": {
+    "sounds": ["lzxnoneterraria:wave"]
+  },
+  "max_mana": {
+    "sounds": ["lzxnoneterraria:max_mana"]
+  },
+  "beam": {
+    "sounds": ["lzxnoneterraria:beam"]
+  },
+  "star_fall": {
+    "sounds": ["lzxnoneterraria:star_fall"]
+  },
+  "star_collide": {
+    "sounds": ["lzxnoneterraria:star_collide"]
+  },
+  "boom": {
+    "sounds": ["lzxnoneterraria:boom"]
+  }
+}

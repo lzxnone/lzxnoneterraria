@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/weapon",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/meowmere"
+  }
+}
