@@ -24,6 +24,8 @@ public class DustParticle extends TextureSheetParticle {
                            double xSpeed, double ySpeed, double zSpeed,
                            DustParticleOptions options, SpriteSet spriteSet) {
         super(level, x, y, z, xSpeed, ySpeed, zSpeed);
+        this.hasPhysics = false;
+
         this.sprites = spriteSet;
 
         this.friction = 0.9F;

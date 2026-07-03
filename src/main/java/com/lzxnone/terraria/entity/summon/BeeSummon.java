@@ -1,6 +1,8 @@
 package com.lzxnone.terraria.entity.summon;
 
+import com.lzxnone.terraria.utils.MathUtil;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -17,22 +19,25 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 public class BeeSummon extends Bee {
-
     public static final int LIFETIME = 1200;
     public static final int MAX_ATTACK_COUNT = 2;
+
+    public static final double RANGE = 32.0;
+    public static final double SPEED = 1;
+    public static final double FRICTION = 0.25;
+
     public int customAge = 0;
     public int customAttackCount = 0;
 
-    public UUID owner = null;
+    public LivingEntity owner = null;
 
     public BeeSummon(EntityType<? extends Bee> entityType, Level level) {
         super(entityType, level);
-        this.moveControl = new FlyingMoveControl(this, 45, true);
-        this.lookControl = new LookControl(this);
-        this.navigation = createNavigation(level);
+        this.setNoGravity(true);
+        //this.moveControl = new FlyingMoveControl(this, 45, true);
+        //this.lookControl = new LookControl(this);
+        //this.navigation = createNavigation(level);
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
@@ -47,26 +52,26 @@ public class BeeSummon extends Bee {
     public void tick() {
         super.tick();
         if(!this.level().isClientSide()) {
-            if(owner == null || this.level().getPlayerByUUID(owner) == null) {
+            if(owner == null) {
                 discard();
+                return;
             }
             this.customAge++;
             if(this.customAge >= LIFETIME) {
                 this.discard();
             }
 
-            Player player = this.level().getPlayerByUUID(owner);
             LivingEntity target = null;
 
-            if(player != null) {
-                LivingEntity playerAttackTarget = player.getLastHurtMob();
-                if(playerAttackTarget != null && playerAttackTarget.isAlive() && this.distanceToSqr(playerAttackTarget) <= 1024) {
+            if(owner != null) {
+                LivingEntity playerAttackTarget = owner.getLastHurtMob();
+                if(playerAttackTarget != null && playerAttackTarget.isAlive() && this.distanceToSqr(playerAttackTarget) <= RANGE * RANGE) {
                     target = playerAttackTarget;
                 }
 
                 if(target == null) {
-                    LivingEntity playerAttacker = player.getLastHurtByMob();
-                    if(playerAttacker != null && playerAttacker.isAlive() && this.distanceToSqr(playerAttacker) <= 1024) {
+                    LivingEntity playerAttacker = owner.getLastHurtByMob();
+                    if(playerAttacker != null && playerAttacker.isAlive() && this.distanceToSqr(playerAttacker) <= RANGE * RANGE) {
                         target = playerAttacker;
                     }
                 }
@@ -79,37 +84,25 @@ public class BeeSummon extends Bee {
             target = this.getTarget();
             if(target != null && target.isAlive()) {
                 double dist = this.distanceToSqr(target);
-                if(dist > 256) {
-                    flyTowards(target.getBoundingBox().getCenter(), 1, 0.5);
-                }else if(dist > 64) {
-                    flyTowards(target.getBoundingBox().getCenter(), 0.75, 0.5);
-                }else if(dist > 4) {
-                    flyTowards(target.getBoundingBox().getCenter(), 0.5, 0.5);
+                if(dist > 4) {
+                    Vec3 targetPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ());
+                    this.setDeltaMovement(targetPos.subtract(this.position()).normalize().scale(SPEED));
                 }else {
+                    this.setDeltaMovement(this.getDeltaMovement().normalize().scale(FRICTION));
                     this.doHurtTarget(target);
                 }
-            }else if(player != null) {
-                Vec3 hoverPos = player.position().add(0, 1.5, 0);
-                if(this.distanceToSqr(player) > 64) {
-                    flyTowards(hoverPos, 0.75, 0.5);
-                }else {
-                    this.setDeltaMovement(this.getDeltaMovement().scale(0.8));
+                float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(this.getDeltaMovement()));
+                this.setXRot(xyRot[0]);
+                this.setYRot(xyRot[1]);
+            }else {
+                if(this.tickCount % 40 == 0) {
+                    Vec3 targetPos = MathUtil.getRandomPosInRadius(this.position(), 16);
+                    this.setDeltaMovement(targetPos.subtract(this.position()).normalize().scale(SPEED / 4));
+                    float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(this.getDeltaMovement()));
+                    this.setXRot(xyRot[0]);
+                    this.setYRot(xyRot[1]);
                 }
             }
-        }
-    }
-
-    private void flyTowards(Vec3 destination, double acceleration, double friction) {
-        Vec3 myPos = this.getBoundingBox().getCenter();
-        Vec3 dir = destination.subtract(myPos);
-
-        if(dir.lengthSqr() > 0.05) {
-            dir = dir.normalize().scale(acceleration);
-            Vec3 newMovement = this.getDeltaMovement().add(dir).scale(friction);
-            this.setDeltaMovement(newMovement);
-
-            this.getLookControl().setLookAt(destination.x, destination.y, destination.z, 30.0F, 30.0F);
-            this.setYRot((float)(Math.atan2(newMovement.z, newMovement.x) * (180F / Math.PI)) - 90.0F);
         }
     }
 
@@ -124,9 +117,7 @@ public class BeeSummon extends Bee {
     @Override
     public boolean doHurtTarget(Entity target) {
         if(owner == null) return false;
-        Player player = this.level().getPlayerByUUID(owner);
-        if(player == null) return false;
-        DamageSource damageSource = this.damageSources().mobAttack(player);
+        DamageSource damageSource = this.damageSources().mobAttack(owner);
         boolean isHurt = target.hurt(damageSource, (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
 
         if(isHurt) {
@@ -162,7 +153,7 @@ public class BeeSummon extends Bee {
 
     @Override
     public boolean isPushable() {
-        return false;
+        return true;
     }
 
     @Override
@@ -170,7 +161,7 @@ public class BeeSummon extends Bee {
         super.addAdditionalSaveData(tag);
         tag.putInt("customAttackCount", this.customAttackCount);
         tag.putInt("customAge", this.customAge);
-        if(this.owner != null) tag.putUUID("owner", this.owner);
+        if(this.owner != null) tag.putUUID("owner", this.owner.getUUID());
     }
 
     @Override
@@ -178,7 +169,10 @@ public class BeeSummon extends Bee {
         super.readAdditionalSaveData(tag);
         if(tag.contains("customAttackCount")) this.customAttackCount = tag.getInt("customAttackCount");
         if(tag.contains("customAge")) this.customAge = tag.getInt("customAge");
-        if(tag.contains("owner")) this.owner = tag.getUUID("owner");
+        if(tag.contains("owner") && this.level() instanceof ServerLevel level) {
+            Entity entity = level.getEntity(tag.getUUID("owner"));
+            if(entity instanceof LivingEntity livingEntity) this.owner = livingEntity;
+        }
     }
 
 }

@@ -2,6 +2,9 @@
   "wave": {
     "sounds": ["lzxnoneterraria:wave"]
   },
+  "wave2": {
+    "sounds": ["lzxnoneterraria:wave2"]
+  },
   "max_mana": {
     "sounds": ["lzxnoneterraria:max_mana"]
   },
@@ -16,5 +19,11 @@
   },
   "boom": {
     "sounds": ["lzxnoneterraria:boom"]
+  },
+  "cat": {
+    "sounds": ["lzxnoneterraria:cat"]
+  },
+  "cat2": {
+    "sounds": ["lzxnoneterraria:cat2"]
   }
 }

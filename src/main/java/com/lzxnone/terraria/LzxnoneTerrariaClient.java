@@ -1,7 +1,9 @@
 package com.lzxnone.terraria;
 
 import com.lzxnone.terraria.entity.ModEntities;
-import com.lzxnone.terraria.entity.projectile.TextureProjectileRenderer;
+import com.lzxnone.terraria.entity.beam.SwordBeamRenderer;
+import com.lzxnone.terraria.entity.projectile.StaticProjectileRenderer;
+import com.lzxnone.terraria.entity.summon.StaticSummonRenderer;
 import com.lzxnone.terraria.particle.*;
 import net.minecraft.client.renderer.entity.BeeRenderer;
 import net.neoforged.api.distmarker.Dist;
@@ -20,7 +22,13 @@ public class LzxnoneTerrariaClient {
 
         //Entity渲染
         modEventBus.addListener(EntityRenderersEvent.RegisterRenderers.class, event -> {
-            event.registerEntityRenderer(ModEntities.TEXTURE_PROJECTILE.get(), TextureProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.STATIC_PROJECTILE.get(), StaticProjectileRenderer::new);
+        });
+        modEventBus.addListener(EntityRenderersEvent.RegisterRenderers.class, event -> {
+            event.registerEntityRenderer(ModEntities.STATIC_SUMMON.get(), StaticSummonRenderer::new);
+        });
+        modEventBus.addListener(EntityRenderersEvent.RegisterRenderers.class, event -> {
+            event.registerEntityRenderer(ModEntities.SWORD_BEAM.get(), SwordBeamRenderer::new);
         });
         modEventBus.addListener(EntityRenderersEvent.RegisterRenderers.class, event -> {
             event.registerEntityRenderer(ModEntities.BEE_SUMMON.get(), BeeRenderer::new);
@@ -38,6 +46,9 @@ public class LzxnoneTerrariaClient {
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
             event.registerSpriteSet(ModParticles.SEEDLER_THORN_PARTICLE.get(), SeedlerThornParticle.Provider::new);
+        });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.INFLUX_WAVER_DROP_PARTICLE.get(), InfluxWaverDropParticle.Provider::new);
         });
     }
 }

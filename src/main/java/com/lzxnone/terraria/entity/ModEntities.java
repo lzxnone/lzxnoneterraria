@@ -1,9 +1,13 @@
 package com.lzxnone.terraria.entity;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
-import com.lzxnone.terraria.entity.projectile.TextureProjectile;
+import com.lzxnone.terraria.entity.beam.SwordBeam;
+import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.BeeSummon;
+import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.entity.summon.StaticSummonRenderer;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -14,13 +18,30 @@ public class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(Registries.ENTITY_TYPE, LzxnoneTerraria.MODID);
 
-    public static final Supplier<EntityType<TextureProjectile>> TEXTURE_PROJECTILE =
-        ENTITY_TYPES.register("texture_projectile", () -> EntityType.Builder.of(
-            TextureProjectile::new, MobCategory.MISC)
+    public static final Supplier<EntityType<StaticProjectile>> STATIC_PROJECTILE =
+        ENTITY_TYPES.register("static_projectile", () -> EntityType.Builder.of(
+            StaticProjectile::new, MobCategory.MISC)
+                .sized(1.0f, 1.0f)
+                .clientTrackingRange(1024)
+                .updateInterval(1)
+                .build("static_projectile")
+        );
+    public static final Supplier<EntityType<StaticSummon>> STATIC_SUMMON =
+        ENTITY_TYPES.register("static_summon", () -> EntityType.Builder.of(
+            StaticSummon::new, MobCategory.MISC)
+                .sized(1.0f, 1.0f)
+                .clientTrackingRange(1024)
+                .updateInterval(1)
+                .build("static_summon")
+        );
+
+    public static final Supplier<EntityType<Entity>> SWORD_BEAM =
+        ENTITY_TYPES.register("sword_beam", () -> EntityType.Builder.of(
+            SwordBeam::new, MobCategory.MISC)
                 .sized(0.5f, 0.5f)
                 .clientTrackingRange(1024)
                 .updateInterval(1)
-                .build("texture_projectile")
+                .build("sword_beam")
         );
 
     public static final Supplier<EntityType<BeeSummon>> BEE_SUMMON =

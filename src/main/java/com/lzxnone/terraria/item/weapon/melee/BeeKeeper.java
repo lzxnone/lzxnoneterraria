@@ -5,6 +5,8 @@ import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.summon.BeeSummon;
 import com.lzxnone.terraria.item.IItemWaveBehavior;
+import com.lzxnone.terraria.utils.FilterUtil;
+import com.lzxnone.terraria.utils.MathUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -18,6 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 
 public class BeeKeeper extends SwordItem {
@@ -43,7 +46,7 @@ public class BeeKeeper extends SwordItem {
                 Item item = itemStack.getItem();
                 if(item instanceof BeeKeeper && !player.getCooldowns().isOnCooldown(item)) {
                     Entity target = event.getTarget();
-                    if(target instanceof LivingEntity livingTarget) {
+                    if(target instanceof LivingEntity livingTarget && FilterUtil.createLivingTargetFilter(player).test(livingTarget)) {
                         livingTarget.addEffect(new MobEffectInstance(
                             ModEffects.CONFUSED,
                             40,
@@ -54,8 +57,8 @@ public class BeeKeeper extends SwordItem {
                     while(count-- > 0) {
                         BeeSummon bee = ModEntities.BEE_SUMMON.get().create(player.level());
                         if(bee != null) {
-                            bee.owner = player.getUUID();
-                            bee.setPos(target.position());
+                            bee.owner = player;
+                            bee.setPos(new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ()));
                             player.level().addFreshEntity(bee);
                         }
                     }

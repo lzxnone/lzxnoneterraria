@@ -14,6 +14,8 @@
   "item.lzxnoneterraria.the_horsemans_blade": "无头骑士剑",
   "item.lzxnoneterraria.zenith": "天顶剑",
 
+  "entity.lzxnoneterraria.static_projectile": "弹射物",
+  "entity.lzxnoneterraria.static_summon": "召唤物",
   "entity.lzxnoneterraria.bee_summon": "蜜蜂",
 
   "effect.lzxnoneterraria.confused": "困惑"

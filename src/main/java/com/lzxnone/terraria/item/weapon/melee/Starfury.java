@@ -3,19 +3,21 @@ package com.lzxnone.terraria.item.weapon.melee;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
-import com.lzxnone.terraria.entity.projectile.IProjectileBehavior;
-import com.lzxnone.terraria.entity.projectile.ProjectileBehaviors;
-import com.lzxnone.terraria.entity.projectile.TextureProjectile;
+import com.lzxnone.terraria.entity.projectile.IStaticProjectileBehavior;
+import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
+import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.particle.ModParticles;
-import com.lzxnone.terraria.utils.MathUtil;
+import com.lzxnone.terraria.utils.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -46,179 +48,144 @@ public class Starfury extends SwordItem {
         ));
     }
 
-    public static final IProjectileBehavior PROJECTILE_BEHAVIOR = new IProjectileBehavior() {
+    public static final IStaticProjectileBehavior PROJECTILE_BEHAVIOR = new IStaticProjectileBehavior() {
         @Override
-        public void onMoving(TextureProjectile projectile) {
-            projectile.level().addParticle(
-                ModParticles.STAR_PARTICLE.get(),
-                projectile.getX(), projectile.getY(), projectile.getZ(),
-                (Math.random() * 2 - 1) * 0.1, (Math.random() * 2 - 1) * 0.1, (Math.random() * 2 - 1) * 0.1
+        public void onMoving(StaticProjectile projectile) {
+            ParticleUtil.addParticle(
+                projectile.level(), ModParticles.STAR_PARTICLE.get(),
+                projectile.position(), 1.0,
+                new Vec3(0, 0, 0), 0.1
             );
         }
         @Override
-        public void onHitEntity(TextureProjectile projectile, EntityHitResult result) {
+        public void onHitEntity(StaticProjectile projectile, EntityHitResult result) {
             if(!projectile.level().isClientSide()) {
                 if(result.getEntity() instanceof LivingEntity target) {
-                    target.hurt(projectile.damageSources().thrown(projectile, projectile.getOwner()), 8f);
+                    Entity owner = projectile.getOwner();
+                    if(owner == null) return;
+                    if(!FilterUtil.createLivingTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
+                    target.hurt(projectile.damageSources().playerAttack(player), 8f);
                 }
             }
         }
         @Override
-        public void onHitBlock(TextureProjectile projectile, BlockHitResult result) {
-            if(projectile.level().isClientSide()) return;
-
-            CompoundTag customData = projectile.getEntityData().get(TextureProjectile.CUSTOM_DATA);
+        public void onHitBlock(StaticProjectile projectile, BlockHitResult result) {
+            CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
             if(!customData.contains("targetLifetime")) return;
 
             int targetLifetime = customData.getInt("targetLifetime");
-            int age = projectile.getEntityData().get(TextureProjectile.AGE);
-            if(age < targetLifetime + 1) {
-                EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(
-                    projectile.level(),
-                    projectile,
-                    projectile.position(),
-                    projectile.position().add(projectile.getDeltaMovement()),
-                    projectile.getBoundingBox()
-                        .expandTowards(projectile.getDeltaMovement())
-                        .inflate(1.0),
-                    entity -> !entity.isSpectator() && entity.isPickable() && entity != projectile.getOwner()
-                );
-                if(entityHit != null) {
-                    this.onHitEntity(projectile, entityHit);
-                }
-                return;
-            }
+            int age = projectile.getEntityData().get(StaticProjectile.AGE);
 
-            if(!projectile.level().getBlockState(result.getBlockPos()).getCollisionShape(projectile.level(), result.getBlockPos()).isEmpty()) {
-                ((ServerLevel) projectile.level()).sendParticles(
-                    ModParticles.STAR_PARTICLE.get(),
-                    projectile.getX(), projectile.getY(), projectile.getZ(),
-                    25,
-                    0.2, 0.2, 0.2,
-                    0.2
-                );
-                projectile.level().playSound(null, projectile, ModSounds.STAR_COLLIDE.get(), SoundSource.PLAYERS, 4.0F, 1.0F);
-                projectile.discard();
+            if(!projectile.level().isClientSide()) {
+                if(age < targetLifetime + 1) {
+                    EntityHitResult entityHit = CollisionUtil.checkEntityHit(projectile);
+                    if(entityHit != null) {
+                        this.onHitEntity(projectile, entityHit);
+                    }
+                }else {
+                    if(!projectile.level().getBlockState(result.getBlockPos()).getCollisionShape(projectile.level(), result.getBlockPos()).isEmpty()) {
+                        onDied(projectile);
+                    }
+                }
             }
         }
         @Override
-        public void onDied(TextureProjectile projectile) {
+        public void onDied(StaticProjectile projectile) {
             if(!projectile.level().isClientSide()) {
-                projectile.level().playSound(null, projectile, ModSounds.STAR_COLLIDE.get(), SoundSource.PLAYERS, 4.0F, 1.0F);
+                ParticleUtil.addParticles(
+                    (ServerLevel) projectile.level(), ModParticles.STAR_PARTICLE.get(),
+                    projectile.position(), new Vec3(0.5, 0.5, 0.5),
+                    0.2, 25
+                );
+                SoundUtil.playServerSound(projectile.level(), ModSounds.STAR_COLLIDE.get(), projectile.position());
                 projectile.discard();
             }
         }
     };
 
+    public static final double MAX_RANGE = 24.0;
+    public static final double HEIGHT = 20.0;
+    public static final double SPAWN_OFFSET = 5.0;
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
-        if(!level.isClientSide() && level instanceof ServerLevel serverLevel) {
-            Vec3 targetPos = getTargetPosition(player, serverLevel, 24.0D);
-            double spawnHeight = 20.0D;
-            double slantOffset = 2.0D;
+        if(!level.isClientSide()) {
+            Vec3 targetPos = MathUtil.getCrosshairPos(player, level, MAX_RANGE);
 
             Vec3 spawnPos = new Vec3(
-                targetPos.x + slantOffset * (Math.random() * 2 - 1),
-                targetPos.y + spawnHeight,
-                targetPos.z + slantOffset * (Math.random() * 2 - 1)
+                targetPos.x + SPAWN_OFFSET * (Math.random() * 2 - 1),
+                targetPos.y + HEIGHT,
+                targetPos.z + SPAWN_OFFSET * (Math.random() * 2 - 1)
             );
-            Vector3f[] dirs = MathUtil.computeProjectileDir(
+
+            Vector3f[] dirs = MathUtil.computeDir(
                 MathUtil.toVector3f(new Vec3(targetPos.x - spawnPos.x, targetPos.y - spawnPos.y, targetPos.z - spawnPos.z))
             );
 
-            TextureProjectile projectile = new TextureProjectile(ModEntities.TEXTURE_PROJECTILE.get(), level);
+            StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), level);
             projectile.setOwner(player);
             projectile.setPos(spawnPos);
-            projectile.getEntityData().set(TextureProjectile.BEHAVIOR, ProjectileBehaviors.STARFURY_STAR);
-            projectile.getEntityData().set(TextureProjectile.ORIGIN, MathUtil.toVector3f(spawnPos));
-            projectile.getEntityData().set(TextureProjectile.ITEM, new ItemStack(ModItems.STARFURY_STAR.get()));
-            projectile.getEntityData().set(TextureProjectile.LIFETIME, 300);
-            projectile.getEntityData().set(TextureProjectile.DIRECTION, dirs[0]);
-            projectile.getEntityData().set(TextureProjectile.UP, dirs[1]);
-            projectile.getEntityData().set(TextureProjectile.RIGHT, dirs[2]);
-            projectile.getEntityData().set(TextureProjectile.SCALE_X, 1f);
-            projectile.getEntityData().set(TextureProjectile.SCALE_Y, 2f);
-            projectile.getEntityData().set(TextureProjectile.GLOW, true);
-            projectile.getEntityData().set(TextureProjectile.RXP, 90);
-            projectile.getEntityData().set(TextureProjectile.RZP, 90);
-            projectile.getEntityData().set(TextureProjectile.EXPRESSION_Z, "t*2");
+            projectile.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.STARFURY_STAR);
+            projectile.getEntityData().set(StaticProjectile.RENDER_MODE, "item");
+            projectile.getEntityData().set(StaticProjectile.ORIGIN, MathUtil.toVector3f(spawnPos));
+            projectile.getEntityData().set(StaticProjectile.ITEM, new ItemStack(ModItems.STARFURY_STAR.get()));
+            projectile.getEntityData().set(StaticProjectile.LIFETIME, 300);
+            projectile.getEntityData().set(StaticProjectile.DIRECTION, dirs[0]);
+            projectile.getEntityData().set(StaticProjectile.UP, dirs[1]);
+            projectile.getEntityData().set(StaticProjectile.RIGHT, dirs[2]);
+            projectile.getEntityData().set(StaticProjectile.SCALE_X, 2f);
+            projectile.getEntityData().set(StaticProjectile.SCALE_Y, 1f);
+            projectile.getEntityData().set(StaticProjectile.GLOW, true);
+            projectile.getEntityData().set(StaticProjectile.RXP, 90);
+            projectile.getEntityData().set(StaticProjectile.RZP, 90);
+            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, "t*2");
 
             CompoundTag customData = new CompoundTag();
-            customData.putInt("targetLifetime", (int) Math.floor(targetPos.distanceTo(spawnPos) / 2.0D));
-            projectile.getEntityData().set(TextureProjectile.CUSTOM_DATA, customData);
+            customData.putInt("targetLifetime", (int) Math.round(targetPos.distanceTo(spawnPos) / 2.0D));
+            projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
 
             projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
             level.addFreshEntity(projectile);
-
-            ((ServerLevel) player.level()).sendParticles(
-                ModParticles.STAR_PARTICLE.get(),
-                player.getX(), player.getY() + 0.5, player.getZ(),
-                25,
-                0.2, 0.2, 0.2,
-                0.2
+        }else {
+            ParticleUtil.addParticles(
+                player.level(), ModParticles.STAR_PARTICLE.get(),
+                new Vec3(player.getX(), player.getY() + 0.5, player.getZ()), 0.2,
+                new Vec3(0, 0, 0), 0.2,
+                25
             );
-            player.level().playSound(null, player, ModSounds.STAR_FALL.get(), SoundSource.PLAYERS, 4.0F, 1.0F);
+            SoundUtil.playClientSound(player, ModSounds.STAR_FALL.get());
         }
 
         player.getCooldowns().addCooldown(this, 13);
         return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide());
     }
 
-    private Vec3 getTargetPosition(Player player, Level level, double maxRange) {
-        Vec3 eyePos = player.getEyePosition(1.0F);
-        Vec3 lookVec = player.getLookAngle();
-        Vec3 maxRangeEnd = eyePos.add(lookVec.scale(maxRange));
-
-        BlockHitResult blockHit = level.clip(new ClipContext(
-            eyePos, maxRangeEnd,
-            ClipContext.Block.COLLIDER,
-            ClipContext.Fluid.NONE,
-            player
-        ));
-
-        Vec3 finalTarget = maxRangeEnd;
-        if(blockHit.getType() != HitResult.Type.MISS) {
-            finalTarget = blockHit.getLocation();
-        }
-
-        AABB searchBox = player.getBoundingBox().expandTowards(lookVec.scale(maxRange)).inflate(1.0D);
-        EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(
-            level, player, eyePos, finalTarget, searchBox,
-            entity -> !entity.isSpectator() && entity.isPickable() && entity != player
-        );
-
-        if(entityHit != null) {
-            finalTarget = entityHit.getLocation();
-        }
-
-        return finalTarget;
-    }
-
     @Override
     public void inventoryTick(ItemStack stack, Level level, net.minecraft.world.entity.Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
-        if(isSelected && entity instanceof Player player) {
-            boolean currentlyOnCooldown = player.getCooldowns().isOnCooldown(this);
-            boolean wasOnCooldown = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                    .copyTag().getBoolean("WasOnCooldown");
-
-            if(wasOnCooldown && !currentlyOnCooldown) {
-                if(level.isClientSide()) {
-                    player.playSound(ModSounds.MAX_MANA.get(), 4.0F, 1.0F);
-                }else {
-                    ((ServerLevel) player.level()).sendParticles(
-                        ModParticles.MAX_MANA_PARTICLE,
-                        player.getX(), player.getY() + 0.5, player.getZ(),
-                        5,
-                        0.2, 0.2, 0.2,
-                        0.2
-                    );
+        if(entity instanceof Player player) {
+            if(isSelected) {
+                boolean current = player.getCooldowns().isOnCooldown(this);
+                boolean prev = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                    .copyTag().getBoolean("onCooldown");
+                if(prev && !current) {
+                    if(level.isClientSide()) {
+                        SoundUtil.playClientSound(player, ModSounds.MAX_MANA.get());
+                        ParticleUtil.addParticles(
+                            player.level(), ModParticles.MAX_MANA_PARTICLE,
+                            new Vec3(player.getX(), player.getY() + 1.0, player.getZ()), 0.05,
+                            new Vec3(0, 0, 0), 0.05,
+                            5
+                        );
+                    }
                 }
+                CustomData.update(DataComponents.CUSTOM_DATA, stack,
+                    tag -> tag.putBoolean("onCooldown", current));
+            }else {
+                CustomData.update(DataComponents.CUSTOM_DATA, stack,
+                    tag -> tag.putBoolean("onCooldown", false));
             }
-
-            CustomData.update(DataComponents.CUSTOM_DATA, stack,
-                tag -> tag.putBoolean("WasOnCooldown", currentlyOnCooldown));
         }
     }
 }

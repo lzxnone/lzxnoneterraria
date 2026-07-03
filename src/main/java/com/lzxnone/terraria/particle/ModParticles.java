@@ -69,4 +69,6 @@ public class ModParticles {
             PARTICLE_TYPES.register("explode_particle", () -> new SimpleParticleType(true));
     public static final Supplier<SimpleParticleType> SEEDLER_THORN_PARTICLE =
             PARTICLE_TYPES.register("seedler_thorn_particle", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> INFLUX_WAVER_DROP_PARTICLE =
+            PARTICLE_TYPES.register("influx_waver_drop_particle", () -> new SimpleParticleType(true));
 }

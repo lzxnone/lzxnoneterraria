@@ -2,7 +2,6 @@ package com.lzxnone.terraria.particle;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.particles.SimpleParticleType;
 
 public class ExplodeParticle extends TextureSheetParticle {
@@ -12,6 +11,7 @@ public class ExplodeParticle extends TextureSheetParticle {
     protected ExplodeParticle(ClientLevel level, double x, double y, double z,
                               double xSpeed, double ySpeed, double zSpeed, SpriteSet spriteSet) {
         super(level, x, y, z, xSpeed, ySpeed, zSpeed);
+        this.hasPhysics = false;
 
         this.friction = 0.9F;
         this.gravity = 0.0F;

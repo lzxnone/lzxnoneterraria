@@ -3,16 +3,18 @@ package com.lzxnone.terraria.item.weapon.melee;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
-import com.lzxnone.terraria.entity.projectile.IProjectileBehavior;
-import com.lzxnone.terraria.entity.projectile.ProjectileBehaviors;
-import com.lzxnone.terraria.entity.projectile.TextureProjectile;
+import com.lzxnone.terraria.entity.projectile.IStaticProjectileBehavior;
+import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
+import com.lzxnone.terraria.entity.projectile.StaticProjectile;
+import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
+import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.particle.ModParticles;
-import com.lzxnone.terraria.utils.MathUtil;
-import net.minecraft.nbt.CompoundTag;
+import com.lzxnone.terraria.utils.*;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -20,6 +22,7 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -27,16 +30,11 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
-import net.objecthunter.exp4j.ExpressionBuilder;
+import net.minecraft.world.phys.*;
 import org.joml.Vector3f;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 public class Seedler extends SwordItem {
     public Seedler() {
@@ -51,200 +49,142 @@ public class Seedler extends SwordItem {
         ));
     }
 
-    public static final double GRAVITY = 0.1; //重力
-    public static final double NORMAL_DAMPING = 0.6;
-    public static final double TANGENT_DAMPING = 0.9;
+    public static final double GRAVITY = 0.075; //重力
+    public static final double BOUNCINESS = 0.5;
+    public static final double VZ = 0.75;
 
-    public static final IProjectileBehavior NUT_PROJECTILE_BEHAVIOR = new IProjectileBehavior() {
+    public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
-        public void onHitBlock(TextureProjectile projectile, BlockHitResult result) {
-            if(projectile.level().isClientSide()) return;
+        public void tick(StaticSummon summon) {
+            this.checkBeforeTick(summon);
+            Vec3 motion = summon.getDeltaMovement();
+            motion = motion.add(0, -GRAVITY, 0);
 
-            int age = projectile.getEntityData().get(TextureProjectile.AGE);
-            int currentLifetime = projectile.getEntityData().get(TextureProjectile.LIFETIME);
-            int remainingLifetime = currentLifetime - age;
-            if(remainingLifetime <= 0) {
-                this.onDied(projectile);
+            EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(motion));
+            if(entityHitResult != null) {
+                Entity target = entityHitResult.getEntity();
+                if(summon.getOwner() instanceof Player player && target instanceof LivingEntity livingEntity) livingEntity.hurt(summon.damageSources().playerAttack(player), 7.0f);
+                onDied(summon);
                 return;
             }
 
-            CompoundTag customData = projectile.getEntityData().get(TextureProjectile.CUSTOM_DATA);
-            double oldVy = customData.getDouble("vy");
-            double vz = customData.getDouble("vz");
-            double vy = oldVy - GRAVITY * age;
+            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, summon.position().add(motion));
+            if(blockHitResult.getType() != HitResult.Type.MISS) {
+                Direction face = blockHitResult.getDirection();
 
-            Vector3f dir = projectile.getEntityData().get(TextureProjectile.DIRECTION);
-            Vector3f up = projectile.getEntityData().get(TextureProjectile.UP);
+                double mx = motion.x;
+                double my = motion.y;
+                double mz = motion.z;
 
-            Vec3 velocity = new Vec3(
-                vy * up.x() + vz * dir.x(),
-                vy * up.y() + vz * dir.y(),
-                vy * up.z() + vz * dir.z()
-            );
+                switch(face.getAxis()) {
+                    case X -> mx = -mx * BOUNCINESS;
+                    case Y -> my = -my * BOUNCINESS;
+                    case Z -> mz = -mz * BOUNCINESS;
+                }
 
-            Vec3 normal = Vec3.atLowerCornerOf(result.getDirection().getNormal());
-            Vec3 reflected = velocity.subtract(normal.scale(2 * velocity.dot(normal)));
-            double normalMag = reflected.dot(normal);
-            Vec3 tangentDir = reflected.subtract(normal.scale(normalMag));
-            double tangentMag = tangentDir.length();
-            Vec3 finalVelocity = normal.scale(normalMag * NORMAL_DAMPING);
-            if(tangentMag > 0.0001) {
-                finalVelocity = finalVelocity.add(tangentDir.normalize().scale(tangentMag * TANGENT_DAMPING));
+                if(face == Direction.UP && Math.abs(my) < 0.1) {
+                    my = 0;
+                    mx *= BOUNCINESS;
+                    mz *= BOUNCINESS;
+                }
+
+                motion = new Vec3(mx, my, mz);
+
+                Vec3 hitVec = blockHitResult.getLocation();
+                summon.setPos(
+                    hitVec.x + face.getStepX() * 0.05,
+                    hitVec.y + face.getStepY() * 0.05,
+                    hitVec.z + face.getStepZ() * 0.05
+                );
             }
 
-            double newVz = Math.sqrt(finalVelocity.x * finalVelocity.x + finalVelocity.z * finalVelocity.z);
-            double newVy = finalVelocity.y;
-
-            boolean isBounced = false;
-
-            //竖直弹射时
-            if(newVy < 0.1 && newVy > 0.0001) {
-                newVy = 0;
-                String newExprY = String.format(Locale.US, "-%.4f*t*t", GRAVITY * 0.5);
-                projectile.getEntityData().set(TextureProjectile.EXPRESSION_Y, newExprY);
-                projectile.exprY = new ExpressionBuilder(newExprY).variables("t").build();
-            }else if(newVy >= 0.1) {
-                String newExprY = String.format(Locale.US, "%.3f*t - %.4f*t*t", newVy, GRAVITY * 0.5);
-                projectile.getEntityData().set(TextureProjectile.EXPRESSION_Y, newExprY);
-                projectile.exprY = new ExpressionBuilder(newExprY).variables("t").build();
-            }
-            if(Math.abs(normal.y) >= 0.999 && newVy >= 0.1) isBounced = true;
-
-
-            //水平弹射时
-            if(newVz < 0.1 && newVz > 0.0001) {
-                newVz = 0;
-                projectile.getEntityData().set(TextureProjectile.EXPRESSION_Z, "0");
-                projectile.exprZ = new ExpressionBuilder("0").variables("t").build();
-                Vec3 reflectedH = new Vec3(reflected.x, 0, reflected.z).normalize();
-                Vector3f[] newDirs = MathUtil.computeProjectileDir(MathUtil.toVector3f(reflectedH));
-                projectile.getEntityData().set(TextureProjectile.DIRECTION, newDirs[0]);
-                projectile.getEntityData().set(TextureProjectile.RIGHT, newDirs[2]);
-            }else if(newVz >= 0.1) {
-                String newExprZ = String.format(Locale.US, "%.3f*t", newVz);
-                projectile.getEntityData().set(TextureProjectile.EXPRESSION_Z, newExprZ);
-                projectile.exprZ = new ExpressionBuilder(newExprZ).variables("t").build();
-                Vec3 reflectedH = new Vec3(reflected.x, 0, reflected.z).normalize();
-                Vector3f[] newDirs = MathUtil.computeProjectileDir(MathUtil.toVector3f(reflectedH));
-                projectile.getEntityData().set(TextureProjectile.DIRECTION, newDirs[0]);
-                projectile.getEntityData().set(TextureProjectile.RIGHT, newDirs[2]);
-            }
-            if((Math.abs(normal.x) >= 0.999 || Math.abs(normal.z) >= 0.999) && newVz >= 0.1) isBounced = true;
-
-            Vec3 hitPos = result.getLocation();
-            Vec3 offsetPos = hitPos.add(normal.scale(isBounced ? 0.1 : 0));
-
-            projectile.getEntityData().set(TextureProjectile.ORIGIN, MathUtil.toVector3f(offsetPos));
-            projectile.getEntityData().set(TextureProjectile.AGE, 0);
-            projectile.getEntityData().set(TextureProjectile.LIFETIME, remainingLifetime);
-
-            customData.putDouble("vz", newVz);
-            customData.putDouble("vy", newVy);
-            projectile.getEntityData().set(TextureProjectile.CUSTOM_DATA, customData);
-
-            projectile.setPos(offsetPos);
-            projectile.positionOverridden = true;
+            summon.setDeltaMovement(motion);
         }
 
         @Override
-        public void onDied(TextureProjectile projectile) {
-            if(!projectile.level().isClientSide()) {
-                Vec3 pos = projectile.position();
-                Level level = projectile.level();
-
-                ((ServerLevel) level).sendParticles(
-                    ModParticles.EXPLODE_PARTICLE.get(),
-                    pos.x, pos.y, pos.z, 1, 0.2, 0.2, 0.2, 0.2
+        public void onDied(StaticSummon summon) {
+            if(!summon.level().isClientSide()) {
+                List<Monster> targets = summon.level().getEntitiesOfClass(
+                    Monster.class,
+                    AABB.ofSize(summon.position(), 64, 64, 64),
+                    FilterUtil.createMonsterFilter(summon.getOwner())
                 );
-                ((ServerLevel) level).sendParticles(
-                    ModParticles.EXPLODE_FLAME_PARTICLE,
-                    pos.x, pos.y, pos.z, 10, 0.2, 0.2, 0.2, 0.2
-                );
-                ((ServerLevel) level).sendParticles(
-                    ModParticles.SMOKE_PARTICLE,
-                    pos.x, pos.y, pos.z, 10, 0.2, 0.2, 0.2, 0.2
-                );
+                targets.sort(Comparator.comparingDouble(e -> e.distanceToSqr(summon.position())));
 
-                level.playSound(null, pos.x, pos.y, pos.z,
-                    ModSounds.BOOM.get(), SoundSource.PLAYERS, 4.0F, 1.0F);
-
-                Entity owner = projectile.getOwner();
-                List<LivingEntity> targets = level.getEntitiesOfClass(
-                    LivingEntity.class,
-                    AABB.ofSize(pos, 64, 64, 64),
-                    e -> e.isAlive() && e != owner && !e.isSpectator()
-                );
-                targets.sort(Comparator.comparingDouble(e -> e.distanceToSqr(pos)));
-
-                int count = projectile.getRandom().nextInt(4) + 4;
+                int count = summon.getRandom().nextInt(4) + 4;
                 for(int i = 0; i < count; i++) {
-                    Vec3 dir;
-                    if(i < targets.size()) {
-                        Vec3 tPos = targets.get(i).getEyePosition();
-                        dir = new Vec3(tPos.x - pos.x, tPos.y - pos.y, tPos.z - pos.z).normalize();
-                    }else {
-                        float yaw = projectile.getRandom().nextFloat() * (float)Math.PI * 2;
-                        float pitch = (projectile.getRandom().nextFloat() - 0.5f) * 0.5f;
-                        dir = new Vec3(-Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch),
-                                       Math.cos(yaw) * Math.cos(pitch));
-                    }
+                    Vec3 tPos = i < targets.size() ? new Vec3(targets.get(i).getX(), targets.get(i).getEyeY(), targets.get(i).getZ()) : MathUtil.getRandomPosInRadius(summon.position(), 4);
+                    Vec3 dir = new Vec3(tPos.x - summon.getX(), tPos.y - summon.getY(), tPos.z - summon.getZ()).normalize();
 
-                    Vector3f[] dirs = MathUtil.computeProjectileDir(MathUtil.toVector3f(dir));
+                    Vector3f[] dirs = MathUtil.computeDir(MathUtil.toVector3f(dir));
 
-                    TextureProjectile proj = new TextureProjectile(ModEntities.TEXTURE_PROJECTILE.get(), level);
-                    proj.setOwner(owner);
-                    proj.setPos(pos);
-                    proj.getEntityData().set(TextureProjectile.BEHAVIOR, ProjectileBehaviors.SEEDLER_THORN);
-                    proj.getEntityData().set(TextureProjectile.ORIGIN, MathUtil.toVector3f(pos));
-                    proj.getEntityData().set(TextureProjectile.DIRECTION, dirs[0]);
-                    proj.getEntityData().set(TextureProjectile.UP, dirs[1]);
-                    proj.getEntityData().set(TextureProjectile.RIGHT, dirs[2]);
-                    proj.getEntityData().set(TextureProjectile.ITEM, new ItemStack(ModItems.SEEDLER_THORN.get()));
-                    proj.getEntityData().set(TextureProjectile.SCALE_X, 0.5f);
-                    proj.getEntityData().set(TextureProjectile.SCALE_Y, 0.5f);
-                    proj.getEntityData().set(TextureProjectile.RXP, 90);
-                    proj.getEntityData().set(TextureProjectile.LIFETIME, 30);
-                    proj.getEntityData().set(TextureProjectile.EXPRESSION_Z, "t*2");
+                    StaticProjectile proj = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), summon.level());
+                    proj.setOwner(summon.getOwner());
+                    proj.setPos(summon.position());
+                    proj.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.SEEDLER_THORN);
+                    proj.getEntityData().set(StaticProjectile.RENDER_MODE, "item");
+                    proj.getEntityData().set(StaticProjectile.ORIGIN, MathUtil.toVector3f(summon.position()));
+                    proj.getEntityData().set(StaticProjectile.DIRECTION, dirs[0]);
+                    proj.getEntityData().set(StaticProjectile.UP, dirs[1]);
+                    proj.getEntityData().set(StaticProjectile.RIGHT, dirs[2]);
+                    proj.getEntityData().set(StaticProjectile.ITEM, new ItemStack(ModItems.SEEDLER_THORN.get()));
+                    proj.getEntityData().set(StaticProjectile.SCALE_X, 0.5f);
+                    proj.getEntityData().set(StaticProjectile.SCALE_Y, 0.5f);
+                    proj.getEntityData().set(StaticProjectile.RXP, 90);
+                    proj.getEntityData().set(StaticProjectile.LIFETIME, 30);
+                    proj.getEntityData().set(StaticProjectile.EXPRESSION_Z, "t*2");
 
                     proj.setDeltaMovement(MathUtil.toVec3(dirs[0]));
-                    level.addFreshEntity(proj);
+                    summon.level().addFreshEntity(proj);
                 }
-                projectile.discard();
-            }
-        }
 
-        @Override
-        public void onHitEntity(TextureProjectile projectile, EntityHitResult result) {
-            if(!projectile.level().isClientSide()) {
-                if(result.getEntity() instanceof LivingEntity target) {
-                    this.onDied(projectile);
-                }
+                ParticleUtil.addParticles(
+                    (ServerLevel) summon.level(), ModParticles.EXPLODE_PARTICLE.get(),
+                    summon.position(), new Vec3(0.2, 0.2, 0.2),
+                    0.05, 1
+                );
+                ParticleUtil.addParticles(
+                    (ServerLevel) summon.level(), ModParticles.EXPLODE_FLAME_PARTICLE,
+                    summon.position(), new Vec3(0.2, 0.2, 0.2),
+                    0.2, 25
+                );
+                ParticleUtil.addParticles(
+                    (ServerLevel) summon.level(), ModParticles.SMOKE_PARTICLE,
+                    summon.position(), new Vec3(0.2, 0.2, 0.2),
+                    0.2, 25
+                );
+                SoundUtil.playServerSound(summon.level(), ModSounds.BOOM.get(), summon.position());
+
+                summon.discard();
             }
         }
     };
 
-    public static final IProjectileBehavior THORN_PROJECTILE_BEHAVIOR = new IProjectileBehavior() {
+    public static final IStaticProjectileBehavior PROJECTILE_BEHAVIOR = new IStaticProjectileBehavior() {
         @Override
-        public void onMoving(TextureProjectile projectile) {
-            projectile.level().addParticle(
-                ModParticles.SEEDLER_THORN_PARTICLE.get(),
-                projectile.getX(), projectile.getY(), projectile.getZ(),
-                0, 0, 0
+        public void onMoving(StaticProjectile projectile) {
+            ParticleUtil.addParticle(
+                projectile.level(), ModParticles.SEEDLER_THORN_PARTICLE.get(),
+                projectile.position(), 0,
+                new Vec3(0, 0, 0), 0
             );
         }
         @Override
-        public void onHitEntity(TextureProjectile projectile, EntityHitResult result) {
+        public void onHitEntity(StaticProjectile projectile, EntityHitResult result) {
             if(!projectile.level().isClientSide()) {
                 if(result.getEntity() instanceof LivingEntity target) {
-                    if(target.hurt(projectile.damageSources().thrown(projectile, projectile.getOwner()), 7f)) projectile.discard();
+                    Entity owner = projectile.getOwner();
+                    if(owner == null) return;
+                    if(!FilterUtil.createLivingTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
+                    if(target.hurt(projectile.damageSources().playerAttack(player), 7f)) onDied(projectile);
                 }
             }
         }
         @Override
-        public void onHitBlock(TextureProjectile projectile, BlockHitResult result) {
+        public void onHitBlock(StaticProjectile projectile, BlockHitResult result) {
             if(projectile.level().isClientSide()) return;
             if(!projectile.level().getBlockState(result.getBlockPos()).getCollisionShape(projectile.level(), result.getBlockPos()).isEmpty()) {
-                projectile.discard();
+                onDied(projectile);
             }
         }
     };
@@ -254,47 +194,26 @@ public class Seedler extends SwordItem {
         ItemStack stack = player.getItemInHand(hand);
 
         if(!level.isClientSide()) {
-            Vec3 lookVec = player.getLookAngle();
-
-            float yaw = player.getYRot();
-            Vec3 horizontalDir = new Vec3(
-                -Math.sin(yaw * Math.PI / 180),
-                0,
-                Math.cos(yaw * Math.PI / 180)
-            );
-            Vector3f[] dirs = MathUtil.computeProjectileDir(
-                MathUtil.toVector3f(horizontalDir)
-            );
-
-            double vz = Math.sqrt(lookVec.x * lookVec.x + lookVec.z * lookVec.z) * 1.5;
-            double vy = lookVec.y * 1.5;
-            String exprZ = String.format(Locale.US, "%.3f*t", vz);
-            String exprY = String.format(Locale.US, "%.3f*t - %.4f*t*t", vy, GRAVITY * 0.5);
-
-            CompoundTag customData = new CompoundTag();
-            customData.putDouble("vz", vz);
-            customData.putDouble("vy", vy);
-
-            TextureProjectile projectile = new TextureProjectile(ModEntities.TEXTURE_PROJECTILE.get(), level);
-            projectile.setOwner(player);
+            StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), level);
+            summon.setOwner(player);
             Vec3 pos = new Vec3(player.getX(), player.getEyeY() - 0.1, player.getZ());
-            projectile.setPos(pos);
-            projectile.getEntityData().set(TextureProjectile.BEHAVIOR, ProjectileBehaviors.SEEDLER_NUT);
-            projectile.getEntityData().set(TextureProjectile.ORIGIN, MathUtil.toVector3f(pos));
-            projectile.getEntityData().set(TextureProjectile.DIRECTION, dirs[0]);
-            projectile.getEntityData().set(TextureProjectile.UP, dirs[1]);
-            projectile.getEntityData().set(TextureProjectile.RIGHT, dirs[2]);
-            projectile.getEntityData().set(TextureProjectile.ITEM, new ItemStack(ModItems.SEEDLER_NUT.get()));
-            projectile.getEntityData().set(TextureProjectile.SCALE_X, 0.5f);
-            projectile.getEntityData().set(TextureProjectile.SCALE_Y, 0.5f);
-            projectile.getEntityData().set(TextureProjectile.RXPS, 10);
-            projectile.getEntityData().set(TextureProjectile.LIFETIME, (int) (7 + Math.random() * 36));
-            projectile.getEntityData().set(TextureProjectile.EXPRESSION_Z, exprZ);
-            projectile.getEntityData().set(TextureProjectile.EXPRESSION_Y, exprY);
-            projectile.getEntityData().set(TextureProjectile.CUSTOM_DATA, customData);
+            summon.setPos(pos);
+            summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.SEEDLER_NUT);
+            summon.getEntityData().set(StaticSummon.RENDER_MODE, "item");
+            summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.SEEDLER_NUT.get()));
+            summon.getEntityData().set(StaticSummon.SCALE_X, 0.5f);
+            summon.getEntityData().set(StaticSummon.SCALE_Y, 0.5f);
+            summon.getEntityData().set(StaticSummon.RXPS, 10);
+            summon.getEntityData().set(StaticSummon.LIFETIME, (int) (7 + Math.random() * 36));
 
-            projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
-            level.addFreshEntity(projectile);
+            summon.setNoGravity(true);
+            summon.noPhysics = true;
+
+            float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(player.getLookAngle()));
+            summon.setXRot(xyRot[0]);
+            summon.setYRot(xyRot[1]);
+            summon.setDeltaMovement(player.getLookAngle().normalize().scale(VZ));
+            level.addFreshEntity(summon);
         }
 
         player.getCooldowns().addCooldown(stack.getItem(), 10);

@@ -10,6 +10,7 @@ public class SeedlerThornParticle extends TextureSheetParticle {
     protected SeedlerThornParticle(ClientLevel level, double x, double y, double z,
                               double xSpeed, double ySpeed, double zSpeed, SpriteSet spriteSet) {
         super(level, x, y, z, xSpeed, ySpeed, zSpeed);
+        this.hasPhysics = false;
 
         this.friction = 0.9F;
         this.gravity = 0.0F;

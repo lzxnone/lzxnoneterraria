@@ -23,6 +23,10 @@ public class ModSounds {
             SOUND_EVENTS.register("wave",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "wave")));
+    public static final Supplier<SoundEvent> WAVE2 =
+            SOUND_EVENTS.register("wave2",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "wave2")));
     public static final Supplier<SoundEvent> STAR_FALL =
             SOUND_EVENTS.register("star_fall",
                     () -> SoundEvent.createVariableRangeEvent(
@@ -35,4 +39,12 @@ public class ModSounds {
             SOUND_EVENTS.register("boom",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "boom")));
+    public static final Supplier<SoundEvent> CAT =
+            SOUND_EVENTS.register("cat",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "cat")));
+    public static final Supplier<SoundEvent> CAT2 =
+            SOUND_EVENTS.register("cat2",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "cat2")));
 }
