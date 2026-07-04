@@ -27,6 +27,10 @@ public class ModSounds {
             SOUND_EVENTS.register("wave2",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "wave2")));
+    public static final Supplier<SoundEvent> WAVE3 =
+            SOUND_EVENTS.register("wave3",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "wave3")));
     public static final Supplier<SoundEvent> STAR_FALL =
             SOUND_EVENTS.register("star_fall",
                     () -> SoundEvent.createVariableRangeEvent(

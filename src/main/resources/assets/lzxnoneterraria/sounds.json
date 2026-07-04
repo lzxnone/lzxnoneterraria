@@ -5,6 +5,9 @@
   "wave2": {
     "sounds": ["lzxnoneterraria:wave2"]
   },
+  "wave3": {
+    "sounds": ["lzxnoneterraria:wave3"]
+  },
   "max_mana": {
     "sounds": ["lzxnoneterraria:max_mana"]
   },

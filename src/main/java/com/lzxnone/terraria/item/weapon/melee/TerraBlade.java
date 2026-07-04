@@ -539,6 +539,7 @@ public class TerraBlade extends SwordItem {
             if(item instanceof TerraBlade && !player.getCooldowns().isOnCooldown(item)) {
                 PacketDistributor.sendToServer(new SwordBeamPayload("terra_blade", BEAM_DATA));
                 SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+                SoundUtil.playClientSound(player, ModSounds.WAVE3.get());
             }
         }
         public void onAttackEntity(AttackEntityEvent event) {
@@ -551,6 +552,7 @@ public class TerraBlade extends SwordItem {
                     SwordBeamBehaviors.getBehavior("terra_blade").generate(player, BEAM_DATA);
                 }else {
                     SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+                    SoundUtil.playClientSound(player, ModSounds.WAVE3.get());
                 }
             }
             event.setCanceled(true);
