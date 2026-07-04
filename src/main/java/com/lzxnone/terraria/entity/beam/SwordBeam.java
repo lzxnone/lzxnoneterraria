@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.entity.beam;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
 import net.minecraft.nbt.CompoundTag;
@@ -10,6 +11,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
@@ -107,12 +109,11 @@ public class SwordBeam extends Entity {
     }
 
     public void checkCollision() {
-        if(owner == null) return;
+        Entity owner = getOwner();
         float progress = (float) this.entityData.get(AGE) / (float) this.entityData.get(LIFETIME);
         if(progress > 1.0f) progress = 1.0f;
 
-        Vec3 look = owner.getLookAngle().normalize();
-        this.dirs = MathUtil.computeDir(MathUtil.toVector3f(look));
+        this.dirs = MathUtil.computeCoordinateSystem(owner);
         Vector3f dir = dirs[0];
         Vector3f up = dirs[1];
         Vector3f right = dirs[2];

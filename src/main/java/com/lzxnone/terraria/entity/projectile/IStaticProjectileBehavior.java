@@ -46,7 +46,7 @@ public interface IStaticProjectileBehavior {
             velForRot = new Vector3f(proj.getEntityData().get(StaticProjectile.DIRECTION));
         }
 
-        Vector3f[] dirs = MathUtil.computeDir(velForRot);
+        Vector3f[] dirs = MathUtil.computeCoordinateSystem(velForRot, 0);
 
         Matrix3f rotMatrix = new Matrix3f().set(dirs[2], dirs[1], dirs[0]);
         poseStack.mulPose(new Quaternionf().setFromNormalized(rotMatrix));
@@ -105,7 +105,7 @@ public interface IStaticProjectileBehavior {
             velForRot = new Vector3f(proj.getEntityData().get(StaticProjectile.DIRECTION));
         }
 
-        Vector3f[] dirs = MathUtil.computeDir(velForRot);
+        Vector3f[] dirs = MathUtil.computeCoordinateSystem(velForRot, 0);
 
         Matrix3f rotMatrix = new Matrix3f().set(dirs[2], dirs[1], dirs[0]);
         poseStack.mulPose(new Quaternionf().setFromNormalized(rotMatrix));

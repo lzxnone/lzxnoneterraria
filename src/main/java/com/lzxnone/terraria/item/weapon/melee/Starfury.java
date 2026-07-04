@@ -64,7 +64,9 @@ public class Starfury extends SwordItem {
                     Entity owner = projectile.getOwner();
                     if(owner == null) return;
                     if(!FilterUtil.createLivingTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                    target.hurt(projectile.damageSources().playerAttack(player), 8f);
+                    if(target.hurt(projectile.damageSources().playerAttack(player), 8f)) {
+                        target.invulnerableTime = 5;
+                    }
                 }
             }
         }
@@ -77,8 +79,8 @@ public class Starfury extends SwordItem {
             int age = projectile.getEntityData().get(StaticProjectile.AGE);
 
             if(!projectile.level().isClientSide()) {
-                if(age < targetLifetime + 1) {
-                    EntityHitResult entityHit = CollisionUtil.checkEntityHit(projectile);
+                if(age < targetLifetime) {
+                    EntityHitResult entityHit = CollisionUtil.checkEntityHit(projectile, 3.0);
                     if(entityHit != null) {
                         this.onHitEntity(projectile, entityHit);
                     }
@@ -119,9 +121,7 @@ public class Starfury extends SwordItem {
                 targetPos.z + SPAWN_OFFSET * (Math.random() * 2 - 1)
             );
 
-            Vector3f[] dirs = MathUtil.computeDir(
-                MathUtil.toVector3f(new Vec3(targetPos.x - spawnPos.x, targetPos.y - spawnPos.y, targetPos.z - spawnPos.z))
-            );
+            Vector3f[] dirs = MathUtil.computeCoordinateSystem(new Vec3(targetPos.x - spawnPos.x, targetPos.y - spawnPos.y, targetPos.z - spawnPos.z).toVector3f(), 0);
 
             StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), level);
             projectile.setOwner(player);
@@ -142,7 +142,7 @@ public class Starfury extends SwordItem {
             projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, "t*2");
 
             CompoundTag customData = new CompoundTag();
-            customData.putInt("targetLifetime", (int) Math.round(targetPos.distanceTo(spawnPos) / 2.0D));
+            customData.putInt("targetLifetime", (int) Math.floor(targetPos.distanceTo(spawnPos) / 2.0D));
             projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
 
             projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));

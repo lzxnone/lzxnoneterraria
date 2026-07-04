@@ -18,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 
 public class BeeSummon extends Bee {
     public static final int LIFETIME = 1200;
@@ -91,14 +92,16 @@ public class BeeSummon extends Bee {
                     this.setDeltaMovement(this.getDeltaMovement().normalize().scale(FRICTION));
                     this.doHurtTarget(target);
                 }
-                float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(this.getDeltaMovement()));
+                Vector3f[] dirs = MathUtil.computeCoordinateSystem(this.getDeltaMovement().toVector3f(), this.getYRot());
+                float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
                 this.setXRot(xyRot[0]);
                 this.setYRot(xyRot[1]);
             }else {
                 if(this.tickCount % 40 == 0) {
                     Vec3 targetPos = MathUtil.getRandomPosInRadius(this.position(), 16);
                     this.setDeltaMovement(targetPos.subtract(this.position()).normalize().scale(SPEED / 4));
-                    float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(this.getDeltaMovement()));
+                    Vector3f[] dirs = MathUtil.computeCoordinateSystem(this.getDeltaMovement().toVector3f(), this.getYRot());
+                    float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
                     this.setXRot(xyRot[0]);
                     this.setYRot(xyRot[1]);
                 }

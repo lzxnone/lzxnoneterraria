@@ -12,6 +12,7 @@ import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.IItemWaveBehavior;
 import com.lzxnone.terraria.network.payload.SwordBeamPayload;
 import com.lzxnone.terraria.particle.DustParticleOptions;
+import com.lzxnone.terraria.particle.ModParticles;
 import com.lzxnone.terraria.utils.*;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -23,6 +24,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
@@ -61,7 +63,8 @@ public class TerraBlade extends SwordItem {
 
     public static final CompoundTag BEAM_DATA = Util.make(new CompoundTag(), tag -> {
         tag.putString("behavior", "terra_blade");
-        tag.putInt("cooldown", 8);
+        tag.putInt("lifetime", 5);
+        tag.putInt("cooldown", 5);
         tag.putFloat("color0R", 0.173f);
         tag.putFloat("color0G", 0.482f);
         tag.putFloat("color0B", 0.796f);
@@ -107,6 +110,7 @@ public class TerraBlade extends SwordItem {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < MAX_HIT_ENTITY_COUNT) {
                             if(target.hurt(beam.level().damageSources().playerAttack(player), 11.0f)) {
+                                target.invulnerableTime = 20;
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
                                 beam.getEntityData().set(SwordBeam.CUSTOM_DATA, custom_data);
@@ -136,7 +140,7 @@ public class TerraBlade extends SwordItem {
     public static final float FADE_IN = 0.33f;
     public static final float FADE_OUT = 0.67f;
 
-    public static final double SPEED = 1.5;
+    public static final double SPEED = 2;
     public static final float DAMAGE = 11;
     public static final float DAMAGE_PUNISHMENT = 0.75f;
 
@@ -168,11 +172,22 @@ public class TerraBlade extends SwordItem {
 
             if(alpha < 0.01f) return;
 
-            Quaternionf rotationX = new Quaternionf().fromAxisAngleRad(MathUtil.toVector3f(summon.getLookAngle()), (float) Math.toRadians(summon.getEntityData().get(StaticSummon.RZP)));
-            Vector3f[] dirs = MathUtil.computeDir(
-                MathUtil.toVector3f(summon.getLookAngle()),
-                MathUtil.computeDir(MathUtil.toVector3f(summon.getLookAngle()))[2].rotate(rotationX)
-            );
+            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+
+            Vector3f dir = new Vector3f();
+            if(customData.contains("dirX")) dir.x = customData.getFloat("dirX");
+            if(customData.contains("dirY")) dir.y = customData.getFloat("dirY");
+            if(customData.contains("dirZ")) dir.z = customData.getFloat("dirZ");
+            Vector3f up = new Vector3f();
+            if(customData.contains("upX")) up.x = customData.getFloat("upX");
+            if(customData.contains("upY")) up.y = customData.getFloat("upY");
+            if(customData.contains("upZ")) up.z = customData.getFloat("upZ");
+            Vector3f right = new Vector3f();
+            if(customData.contains("rightX")) right.x = customData.getFloat("rightX");
+            if(customData.contains("rightY")) right.y = customData.getFloat("rightY");
+            if(customData.contains("rightZ")) right.z = customData.getFloat("rightZ");
+
+            Vector3f[] dirs = new Vector3f[]{dir, up, right};
 
             poseStack.pushPose();
 
@@ -187,6 +202,7 @@ public class TerraBlade extends SwordItem {
                     COLOR0.x(), COLOR0.y(), COLOR0.z(), alpha, halfWidth, halfHeight, 0f, 0, -0.01f);
             poseStack.popPose();
 
+
             //中间
             poseStack.pushPose();
             this.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST);
@@ -196,6 +212,7 @@ public class TerraBlade extends SwordItem {
             poseStack.popPose();
 
             //右边
+
             poseStack.pushPose();
             this.applyTranslate(poseStack, dirs[0], dirs[2], 108, SwordBeam.DIST);
             this.applyRotate(summon, poseStack, dirs[0], dirs[1], -9 * (1.0f - progress));
@@ -238,6 +255,7 @@ public class TerraBlade extends SwordItem {
                         COLOR2.x(), COLOR2.y(), COLOR2.z(), alpha, halfWidth, halfHeight, 0f, 0f, 0.03f);
             }
             poseStack.popPose();
+
 
             float sparkleAlpha;
             if(progress < FADE_IN) {
@@ -322,14 +340,15 @@ public class TerraBlade extends SwordItem {
         }
 
         public void applyRotate(StaticSummon summon, PoseStack poseStack, Vector3f dir, Vector3f up, double angle) {
-            Quaternionf rotation = new Quaternionf().fromAxisAngleRad(up, (float) Math.toRadians(angle));
+            Quaternionf rotation = new Quaternionf()
+                .fromAxisAngleRad(up, (float) Math.toRadians(angle))
+                .fromAxisAngleRad(dir, (float) Math.toRadians(Math.abs(dir.y) > 0.999 ? 0 : summon.getEntityData().get(StaticSummon.RZP)));
             poseStack.mulPose(rotation);
 
-            float[] xyRot = MathUtil.computeXYRot(dir);
+            float[] xyRot = MathUtil.computeXYRot(dir, up);
             poseStack.mulPose(Axis.YP.rotationDegrees(-xyRot[1]));
             poseStack.mulPose(Axis.XP.rotationDegrees(xyRot[0]));
 
-            poseStack.mulPose(Axis.ZP.rotationDegrees(summon.getEntityData().get(StaticSummon.RZP)));
             poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
             poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
         }
@@ -341,7 +360,7 @@ public class TerraBlade extends SwordItem {
                 cos * right.x  + sin * dir.x,
                 cos * right.y  + sin * dir.y,
                 cos * right.z  + sin * dir.z
-            );
+            ).normalize();
             poseStack.translate(current.x * dist, current.y * dist, current.z * dist);
         }
 
@@ -380,7 +399,7 @@ public class TerraBlade extends SwordItem {
                     summon.setDeltaMovement(summon.getLookAngle().normalize().scale(SPEED));
                 }
             }else {
-                summon.setDeltaMovement(summon.getLookAngle().normalize().scale(0.5));
+                summon.setDeltaMovement(summon.getLookAngle().normalize().scale(0.1));
                 return;
             }
 
@@ -396,12 +415,16 @@ public class TerraBlade extends SwordItem {
             //碰撞计算
             if(!summon.level().isClientSide() && customData.contains("hitCount") && summon.getOwner() instanceof Player player) {
                 int count = customData.getInt("hitCount");
-                LzxnoneTerraria.LOGGER.info("11w111");
                 List<LivingEntity> targets = summon.level().getEntitiesOfClass(LivingEntity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                 for(LivingEntity target : targets) {
                     if(target.hurt(summon.damageSources().playerAttack(player), DAMAGE * (float) Math.pow(DAMAGE_PUNISHMENT, count))) {
                         count++;
-                        //粒子效果
+                        ParticleUtil.addParticles(
+                            (ServerLevel) summon.level(), ModParticles.TERRA_BEAM_HIT_PARTICLE.get(),
+                            new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2.0, target.getZ()), new Vec3(0, 0, 0),
+                            0, 1
+                        );
+                        target.invulnerableTime = 12;
                     }
                 }
                 if(!targets.isEmpty()) customData.putInt("hitCount", count);
@@ -421,15 +444,20 @@ public class TerraBlade extends SwordItem {
 
             //粒子
             if(summon.level().isClientSide() && summon.tickCount % 4 == 0) {
-                Quaternionf rotationX = new Quaternionf().fromAxisAngleRad(MathUtil.toVector3f(summon.getLookAngle()), (float) Math.toRadians(summon.getEntityData().get(StaticSummon.RZP)));
-                Vector3f[] dirs = MathUtil.computeDir(
-                    MathUtil.toVector3f(summon.getLookAngle()),
-                    MathUtil.computeDir(MathUtil.toVector3f(summon.getLookAngle()))[2].rotate(rotationX)
+                Vec3 dir = new Vec3(
+                    customData.contains("dirX") ? customData.getFloat("dirX") : 0,
+                    customData.contains("dirY") ? customData.getFloat("dirY") : 0,
+                    customData.contains("dirZ") ? customData.getFloat("dirZ") : 0
                 );
-                Vec3 right = MathUtil.toVec3(dirs[2]).normalize();
-                Vec3 speed = MathUtil.toVec3(dirs[0]).normalize().scale(summon.getDeltaMovement().length() / 2);
+                Vec3 right = new Vec3(
+                    customData.contains("rightX") ? customData.getFloat("rightX") : 0,
+                    customData.contains("rightY") ? customData.getFloat("rightY") : 0,
+                    customData.contains("rightZ") ? customData.getFloat("rightZ") : 0
+                );
+
+                Vec3 speed = dir.scale(summon.getDeltaMovement().length() / 4);
                 for(int i = 0;i < 5;i++) {
-                    Vec3 delta = right.scale((Math.random() - 0.5) * 4);
+                    Vec3 delta = right.scale((Math.random() - 0.5) * 6);
                     ParticleUtil.addParticle(
                         summon.level(), PARTICLE,
                         summon.position().add(delta), 0.0,
@@ -439,7 +467,6 @@ public class TerraBlade extends SwordItem {
             }
 
             summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
-
         }
     };
 
@@ -449,13 +476,14 @@ public class TerraBlade extends SwordItem {
         Vec3 pos = new Vec3(player.getX(), player.getEyeY() - 0.1, player.getZ());
         summon.setPos(pos);
 
-        float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(player.getLookAngle()));
+        int randomAngle = (int) ((Math.random() * 2 - 1) * 60);
+        Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
+        dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], randomAngle);
+        float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
         summon.setXRot(xyRot[0]);
         summon.xRotO = xyRot[0];
         summon.setYRot(xyRot[1]);
         summon.yRotO = xyRot[1];
-
-        int randomAngle = (int) ((Math.random() * 2 - 1) * 60);
 
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.TERRA_BLADE_BEAM);
         summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
@@ -468,9 +496,9 @@ public class TerraBlade extends SwordItem {
         CompoundTag customData = new CompoundTag();
 
         Quaternionf rotation = new Quaternionf()
+            .fromAxisAngleRad(dirs[0], (float) Math.toRadians(Math.abs(dirs[0].y) > 0.999 ? 0 : randomAngle))
             .rotateY((float) Math.toRadians(-xyRot[1]))
             .rotateX((float) Math.toRadians(xyRot[0]))
-            .rotateZ((float) Math.toRadians(randomAngle))
             .rotateX((float) Math.toRadians(-90.0))
             .rotateZ((float) Math.toRadians(-90.0));
 
@@ -486,6 +514,15 @@ public class TerraBlade extends SwordItem {
         customData.putFloat("extX", extX);
         customData.putFloat("extY", extY);
         customData.putFloat("extZ", extZ);
+        customData.putFloat("dirX", dirs[0].x);
+        customData.putFloat("dirY", dirs[0].y);
+        customData.putFloat("dirZ", dirs[0].z);
+        customData.putFloat("upX", dirs[1].x);
+        customData.putFloat("upY", dirs[1].y);
+        customData.putFloat("upZ", dirs[1].z);
+        customData.putFloat("rightX", dirs[2].x);
+        customData.putFloat("rightY", dirs[2].y);
+        customData.putFloat("rightZ", dirs[2].z);
         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
 
         summon.setDeltaMovement(player.getLookAngle().normalize().scale(SPEED));
@@ -502,7 +539,6 @@ public class TerraBlade extends SwordItem {
             if(item instanceof TerraBlade && !player.getCooldowns().isOnCooldown(item)) {
                 PacketDistributor.sendToServer(new SwordBeamPayload("terra_blade", BEAM_DATA));
                 SoundUtil.playClientSound(player, ModSounds.WAVE.get());
-                summon(player);
             }
         }
         public void onAttackEntity(AttackEntityEvent event) {
@@ -513,7 +549,6 @@ public class TerraBlade extends SwordItem {
             if(item instanceof TerraBlade && !player.getCooldowns().isOnCooldown(item)) {
                 if(!player.level().isClientSide()) {
                     SwordBeamBehaviors.getBehavior("terra_blade").generate(player, BEAM_DATA);
-                    summon(player);
                 }else {
                     SoundUtil.playClientSound(player, ModSounds.WAVE.get());
                 }

@@ -5,6 +5,7 @@ import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
 
 public class SeedlerThornParticle extends TextureSheetParticle {
+    private final SpriteSet spriteSet;
     private final float baseSize;
 
     protected SeedlerThornParticle(ClientLevel level, double x, double y, double z,
@@ -23,7 +24,8 @@ public class SeedlerThornParticle extends TextureSheetParticle {
 
         this.lifetime = 25;
 
-        this.pickSprite(spriteSet);
+        this.spriteSet = spriteSet;
+        this.setSpriteFromAge(this.spriteSet);
     }
 
     @Override
@@ -34,6 +36,8 @@ public class SeedlerThornParticle extends TextureSheetParticle {
 
         this.quadSize = this.baseSize * (1.0F - lifeRatio);
         this.alpha = 1.0F - lifeRatio;
+
+        this.setSpriteFromAge(spriteSet);
     }
 
     @Override

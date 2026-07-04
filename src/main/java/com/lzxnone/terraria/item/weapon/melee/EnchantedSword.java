@@ -70,6 +70,7 @@ public class EnchantedSword extends SwordItem {
                     if(owner == null) return;
                     if(!FilterUtil.createLivingTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
                     if(target.hurt(projectile.damageSources().playerAttack(player), 5.5f)) {
+                        target.invulnerableTime = 5;
                         ParticleUtil.addParticles(
                             (ServerLevel) projectile.level(), ModParticles.COLORFUL_PARTICLE,
                             projectile.position(), new Vec3(0.2, 0.2, 0.2),
@@ -94,11 +95,7 @@ public class EnchantedSword extends SwordItem {
         ItemStack stack = player.getItemInHand(hand);
 
         if(!level.isClientSide()) {
-            Vec3 lookVec = player.getLookAngle();
-
-            Vector3f[] dirs = MathUtil.computeDir(
-                MathUtil.toVector3f(lookVec)
-            );
+            Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
             StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), level);
             projectile.setOwner(player);
             Vec3 pos = new Vec3(player.getX(), player.getEyeY() - 0.1, player.getZ());

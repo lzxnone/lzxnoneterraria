@@ -63,7 +63,11 @@ public class Seedler extends SwordItem {
             EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(motion));
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
-                if(summon.getOwner() instanceof Player player && target instanceof LivingEntity livingEntity) livingEntity.hurt(summon.damageSources().playerAttack(player), 7.0f);
+                if(summon.getOwner() instanceof Player player && target instanceof LivingEntity livingEntity) {
+                    if(livingEntity.hurt(summon.damageSources().playerAttack(player), 7.0f)) {
+                        livingEntity.invulnerableTime = 2;
+                    }
+                }
                 onDied(summon);
                 return;
             }
@@ -116,14 +120,14 @@ public class Seedler extends SwordItem {
                     Vec3 tPos = i < targets.size() ? new Vec3(targets.get(i).getX(), targets.get(i).getEyeY(), targets.get(i).getZ()) : MathUtil.getRandomPosInRadius(summon.position(), 4);
                     Vec3 dir = new Vec3(tPos.x - summon.getX(), tPos.y - summon.getY(), tPos.z - summon.getZ()).normalize();
 
-                    Vector3f[] dirs = MathUtil.computeDir(MathUtil.toVector3f(dir));
+                    Vector3f[] dirs = MathUtil.computeCoordinateSystem(dir.toVector3f(), 0);
 
                     StaticProjectile proj = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), summon.level());
                     proj.setOwner(summon.getOwner());
                     proj.setPos(summon.position());
                     proj.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.SEEDLER_THORN);
                     proj.getEntityData().set(StaticProjectile.RENDER_MODE, "item");
-                    proj.getEntityData().set(StaticProjectile.ORIGIN, MathUtil.toVector3f(summon.position()));
+                    proj.getEntityData().set(StaticProjectile.ORIGIN, summon.position().toVector3f());
                     proj.getEntityData().set(StaticProjectile.DIRECTION, dirs[0]);
                     proj.getEntityData().set(StaticProjectile.UP, dirs[1]);
                     proj.getEntityData().set(StaticProjectile.RIGHT, dirs[2]);
@@ -176,7 +180,10 @@ public class Seedler extends SwordItem {
                     Entity owner = projectile.getOwner();
                     if(owner == null) return;
                     if(!FilterUtil.createLivingTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                    if(target.hurt(projectile.damageSources().playerAttack(player), 7f)) onDied(projectile);
+                    if(target.hurt(projectile.damageSources().playerAttack(player), 7f)) {
+                        target.invulnerableTime = 2;
+                        onDied(projectile);
+                    }
                 }
             }
         }
@@ -209,7 +216,8 @@ public class Seedler extends SwordItem {
             summon.setNoGravity(true);
             summon.noPhysics = true;
 
-            float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(player.getLookAngle()));
+            Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
+            float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
             summon.setXRot(xyRot[0]);
             summon.setYRot(xyRot[1]);
             summon.setDeltaMovement(player.getLookAngle().normalize().scale(VZ));

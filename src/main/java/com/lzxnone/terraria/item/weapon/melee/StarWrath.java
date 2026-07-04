@@ -54,7 +54,7 @@ public class StarWrath extends SwordItem {
     );
 
     public static final DustParticleOptions PARTICLE2 = new DustParticleOptions(
-        0.2f, 0.5f, 40, true, new Vector3f[]{
+        0.1f, 0.5f, 40, true, new Vector3f[]{
             new Vector3f(1.0F, 0.0F, 1.0F),
             new Vector3f(1.0F, 0.6F, 0.8F),
             new Vector3f(0.7F, 0.7F, 0.7F)
@@ -84,7 +84,9 @@ public class StarWrath extends SwordItem {
                 if(result.getEntity() instanceof LivingEntity target) {
                     Entity owner = projectile.getOwner();
                     if(!FilterUtil.createLivingTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                    target.hurt(projectile.damageSources().playerAttack(player), 16f);
+                    if(target.hurt(projectile.damageSources().playerAttack(player), 16f)) {
+                        target.invulnerableTime = 2;
+                    }
                 }
             }
         }
@@ -97,8 +99,8 @@ public class StarWrath extends SwordItem {
             int age = projectile.getEntityData().get(StaticProjectile.AGE);
 
             if(!projectile.level().isClientSide()) {
-                if(age < targetLifetime + 1) {
-                    EntityHitResult entityHit = CollisionUtil.checkEntityHit(projectile);
+                if(age < targetLifetime) {
+                    EntityHitResult entityHit = CollisionUtil.checkEntityHit(projectile, 3.0);
                     if(entityHit != null) {
                         this.onHitEntity(projectile, entityHit);
                     }
@@ -160,9 +162,7 @@ public class StarWrath extends SwordItem {
                     targetPos.z + HIT_OFFSET * (Math.random() * 2 - 1)
                 );
 
-                Vector3f[] dirs = MathUtil.computeDir(
-                        MathUtil.toVector3f(new Vec3(hitPos.x - spawnPos.x, hitPos.y - spawnPos.y, hitPos.z - spawnPos.z))
-                );
+                Vector3f[] dirs = MathUtil.computeCoordinateSystem(new Vec3(hitPos.x - spawnPos.x, hitPos.y - spawnPos.y, hitPos.z - spawnPos.z).toVector3f(), 0);
 
                 StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), level);
                 projectile.setOwner(player);

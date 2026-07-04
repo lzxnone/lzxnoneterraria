@@ -20,9 +20,7 @@ public class ModItems {
     public static final DeferredItem<Item> STAR_WRATH = ITEMS.register("star_wrath", StarWrath::new);
     public static final DeferredItem<Item> MEOWMERE = ITEMS.register("meowmere", Meowmere::new);
     public static final DeferredItem<Item> TERRA_BLADE = ITEMS.register("terra_blade", TerraBlade::new);
-
-    public static final DeferredItem<Item> ZENITH = ITEMS.register("zenith",
-            () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> ZENITH = ITEMS.register("zenith", Zenith::new);
 
     //弹射物
     public static final DeferredItem<Item> ENCHANTED_SWORD_BEAM = ITEMS.register("enchanted_sword_beam", EnchantedSwordBeam::new);

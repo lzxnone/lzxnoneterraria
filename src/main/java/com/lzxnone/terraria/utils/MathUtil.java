@@ -1,38 +1,67 @@
 package com.lzxnone.terraria.utils;
 
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class MathUtil {
-    public static Vector3f[] computeDir(Vector3f tempDir) {
-        Vector3f dir = new Vector3f(tempDir.x, tempDir.y, tempDir.z).normalize();
 
-        // 方向接近垂直时用 X 轴，否则用 Y 轴做参考向量
-        Vector3f ref = Math.abs(dir.y) > 0.999f ? new Vector3f(1, 0, 0) : new Vector3f(0, 1, 0);
 
-        Vector3f right = new Vector3f();
-        ref.cross(dir, right).normalize();
-
+    public static Vector3f[] computeCoordinateSystem(Vector3f lookAngle, double yRot) {
+        Vector3f dir = lookAngle.normalize();
         Vector3f up = new Vector3f();
-        dir.cross(right, up).normalize();
+        Vector3f right = new Vector3f();
+
+        if(Math.abs(dir.y) > 0.999f) {
+            float yawRad = (float) Math.toRadians(yRot);
+            Vector3f facing = new Vector3f(-Mth.sin(yawRad), 0, Mth.cos(yawRad));
+
+            up.set(dir.y > 0 ? facing.negate() : facing);
+            up.cross(dir, right).normalize();
+            dir.cross(right, up).normalize();
+
+        }else {
+            Vector3f ref = new Vector3f(0, 1, 0);
+            ref.cross(dir, right).normalize();
+            dir.cross(right, up).normalize();
+        }
 
         return new Vector3f[]{dir, up, right};
     }
 
-    public static Vector3f[] computeDir(Vector3f tempDir, Vector3f tempRight) {
-        Vector3f dir = new Vector3f(tempDir.x, tempDir.y, tempDir.z).normalize();
-        Vector3f right = new Vector3f(tempRight.x, tempRight.y, tempRight.z).normalize();
+    //计算实体的局部坐标系(z轴为视线前方)，当抬头时会出错
+    public static Vector3f[] computeCoordinateSystem(Entity entity) {
+        return computeCoordinateSystem(entity.getLookAngle().toVector3f(), entity.getYRot());
+    }
 
+    //让右轴绕方向轴旋转
+    public static Vector3f[] rotateCoordinateSystem(Vector3f dir, Vector3f right, float angle) {
+        Quaternionf rotation = new Quaternionf().fromAxisAngleRad(dir, (float) Math.toRadians(angle));
+        right = right.rotate(rotation);
         Vector3f up = new Vector3f();
         dir.cross(right, up).normalize();
+        return new Vector3f[]{dir.normalize(), up, right.normalize()};
+    }
 
-        up.cross(dir, right).normalize();
-
-        return new Vector3f[]{dir, up, right};
+    public static float[] computeXYRot(Vector3f dir, Vector3f up) {
+        if(Math.abs(dir.y) > 0.999) {
+            if(dir.y > 0) {
+                return new float[]{-90, (float) (Math.atan2(up.x(), -up.z()) * (180.0 / Math.PI))};
+            }else {
+                return new float[]{90, (float) (Math.atan2(-up.x(), up.z()) * (180.0 / Math.PI))};
+            }
+        }
+        float xzLen = (float) Math.sqrt(dir.x() * dir.x() + dir.z() * dir.z());
+        return new float[]{
+            (float) (Math.atan2(-dir.y(), xzLen) * (180.0 / Math.PI)),
+            (float) (Math.atan2(-dir.x(), dir.z()) * (180.0 / Math.PI))
+        };
     }
 
     public static float[] computeXYRot(Vector3f dir) {

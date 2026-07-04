@@ -71,4 +71,6 @@ public class ModParticles {
             PARTICLE_TYPES.register("seedler_thorn_particle", () -> new SimpleParticleType(true));
     public static final Supplier<SimpleParticleType> INFLUX_WAVER_DROP_PARTICLE =
             PARTICLE_TYPES.register("influx_waver_drop_particle", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> TERRA_BEAM_HIT_PARTICLE =
+            PARTICLE_TYPES.register("terra_beam_hit_particle", () -> new SimpleParticleType(true));
 }

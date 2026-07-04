@@ -129,11 +129,13 @@ public class InfluxWaver extends SwordItem {
                 }
             }
 
-            float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(summon.getDeltaMovement()));
-            summon.setXRot(xyRot[0]);
-            summon.xRotO = xyRot[0];
-            summon.setYRot(xyRot[1]);
-            summon.yRotO = xyRot[1];
+            if(idx > 0) {
+                float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(summon.getDeltaMovement()));
+                summon.setXRot(xyRot[0]);
+                summon.xRotO = xyRot[0];
+                summon.setYRot(xyRot[1]);
+                summon.yRotO = xyRot[1];
+            }
 
             //碰撞逻辑
             if(!summon.level().isClientSide()) {
@@ -154,10 +156,11 @@ public class InfluxWaver extends SwordItem {
                         if(target != null && !hitTarget.getUUID().equals(target.getUUID())) return;
                         if(hitTarget instanceof LivingEntity livingEntity && summon.getOwner() instanceof Player player && FilterUtil.createLivingTargetFilter(player).test(livingEntity)) {
                             if(livingEntity.hurt(summon.damageSources().playerAttack(player), 12.0f)) {
-                                customData.putBoolean("dead", false);
-                                summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
-                                return;
+                                livingEntity.invulnerableTime = 2;
                             }
+                            customData.putBoolean("dead", false);
+                            summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+                            return;
                         }
                     }
                 }
@@ -188,7 +191,9 @@ public class InfluxWaver extends SwordItem {
         StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), player.level());
         summon.setOwner(player);
         summon.setPos(pos);
-        float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(dir));
+
+        Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
+        float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
         summon.setXRot(xyRot[0]);
         summon.xRotO = xyRot[0];
         summon.setYRot(xyRot[1]);

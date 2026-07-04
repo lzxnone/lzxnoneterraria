@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.entity.beam;
 
+import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.utils.MathUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -13,6 +14,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -46,8 +48,7 @@ public interface ISwordBeamBehavior {
         float progress = (age + partialTick) / (float) lifetime;
         if(progress > 1.0f) progress = 1.0f;
 
-        Vec3 look = owner.getLookAngle().normalize();
-        Vector3f[] dirs = MathUtil.computeDir(MathUtil.toVector3f(look));
+        Vector3f[] dirs = MathUtil.computeCoordinateSystem(beam.getOwner());
 
         VertexConsumer vertexConsumer0 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES0));
         VertexConsumer vertexConsumer1 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES0));
@@ -154,11 +155,9 @@ public interface ISwordBeamBehavior {
         Quaternionf rotation = new Quaternionf().fromAxisAngleRad(up, angle);
         poseStack.mulPose(rotation);
 
-        float xzLen0 = (float) Math.sqrt(dir.x * dir.x + dir.z * dir.z);
-        float pitch0 = (float) (Math.atan2(-dir.y, xzLen0) * (180.0 / Math.PI));
-        float yaw0 = (float) (Math.atan2(-dir.x, dir.z) * (180.0 / Math.PI));
-        poseStack.mulPose(Axis.YP.rotationDegrees(-yaw0));
-        poseStack.mulPose(Axis.XP.rotationDegrees(pitch0));
+        float[] xyRot = MathUtil.computeXYRot(dir, up);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-xyRot[1]));
+        poseStack.mulPose(Axis.XP.rotationDegrees(xyRot[0]));
 
         poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
         poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
@@ -205,6 +204,7 @@ public interface ISwordBeamBehavior {
         Vec3 pos = new Vec3(entity.getX(), entity.getY() + entity.getBbHeight() / 2, entity.getZ());
         beam.setPos(pos);
         if(beamData.contains("behavior")) beam.getEntityData().set(SwordBeam.BEHAVIOR, beamData.getString("behavior"));
+
         if(beamData.contains("color0R") && beamData.contains("color0G") && beamData.contains("color0B")) {
             beam.getEntityData().set(SwordBeam.COLOR0, new Vector3f(beamData.getFloat("color0R"), beamData.getFloat("color0G"), beamData.getFloat("color0B")));
         }

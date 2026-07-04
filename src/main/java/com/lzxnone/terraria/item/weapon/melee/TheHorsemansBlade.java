@@ -110,6 +110,7 @@ public class TheHorsemansBlade extends SwordItem {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < MAX_HIT_ENTITY_COUNT) {
                             if(target.hurt(beam.level().damageSources().playerAttack(player), 15.0f)) {
+                                target.invulnerableTime = 20;
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
                                 beam.getEntityData().set(SwordBeam.CUSTOM_DATA, custom_data);
@@ -249,7 +250,11 @@ public class TheHorsemansBlade extends SwordItem {
                 if(!hitEntities.isEmpty()) {
                     for(Entity hitEntity : hitEntities) {
                         if(target != null && hitEntity.getUUID() == target.getUUID()) continue;
-                        if(summon.getOwner() instanceof Player player) hitEntity.hurt(summon.damageSources().playerAttack(player), DAMAGE);
+                        if(summon.getOwner() instanceof Player player) {
+                            if(hitEntity.hurt(summon.damageSources().playerAttack(player), DAMAGE)) {
+                                hitEntity.invulnerableTime = 2;
+                            }
+                        }
                     }
                 }
             }else {

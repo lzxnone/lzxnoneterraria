@@ -50,5 +50,8 @@ public class LzxnoneTerrariaClient {
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
             event.registerSpriteSet(ModParticles.INFLUX_WAVER_DROP_PARTICLE.get(), InfluxWaverDropParticle.Provider::new);
         });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.TERRA_BEAM_HIT_PARTICLE.get(), TerraBeamHitParticle.Provider::new);
+        });
     }
 }

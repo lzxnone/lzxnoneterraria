@@ -137,7 +137,7 @@ public class Meowmere extends SwordItem {
             this.checkBeforeTick(summon);
             Vec3 motion = summon.getDeltaMovement();
             motion = motion.add(0, -GRAVITY, 0);
-            Vec3 up = MathUtil.toVec3(MathUtil.computeDir(MathUtil.toVector3f(motion))[1]).normalize();
+            Vec3 up = MathUtil.toVec3(MathUtil.computeCoordinateSystem(motion.toVector3f(), 0)[1]).normalize();
 
             summon.trailPositions.addFirst(summon.position().add(up.scale(0.5)));
             summon.trailPositions.addFirst(summon.position().add(up.scale(-0.5)));
@@ -157,6 +157,7 @@ public class Meowmere extends SwordItem {
                             onDied(summon);
                             return;
                         }
+                        livingEntity.invulnerableTime = 2;
                     }
                 }
                 return;
@@ -173,7 +174,7 @@ public class Meowmere extends SwordItem {
 
                     if(summon.level().isClientSide()) {
                         Vec3 dir = summon.getDeltaMovement();
-                        Vector3f[] dirs = MathUtil.computeDir(MathUtil.toVector3f(dir));
+                        Vector3f[] dirs = MathUtil.computeCoordinateSystem(dir.toVector3f(), 0);
                         int count = (hitBlock + 1) * 15;
                         double deltaAngle = 360.0 / count;
                         for(int i = 0;i < count;i++) {
@@ -291,7 +292,8 @@ public class Meowmere extends SwordItem {
             summon.setNoGravity(true);
             summon.noPhysics = true;
 
-            float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(player.getLookAngle()));
+            Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
+            float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
             summon.setXRot(xyRot[0]);
             summon.setYRot(xyRot[1]);
             summon.setDeltaMovement(player.getLookAngle().normalize().scale(VZ));
