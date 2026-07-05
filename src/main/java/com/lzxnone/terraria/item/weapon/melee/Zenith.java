@@ -313,7 +313,6 @@ public class Zenith extends SwordItem {
             Vector3f dir = projectile.getEntityData().get(StaticProjectile.DIRECTION).normalize();
             Vec3 currentPos = (projectile.getOwner().getBoundingBox().getCenter()).add(MathUtil.toVec3(dir).scale(-2));
             projectile.getEntityData().set(StaticProjectile.ORIGIN, currentPos.toVector3f());
-            //
         }
 
         @Override
