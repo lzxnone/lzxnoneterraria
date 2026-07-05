@@ -39,6 +39,9 @@ public class LzxnoneTerrariaClient {
             event.registerSpriteSet(ModParticles.DUST_PARTICLE.get(), DustParticle.Provider::new);
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.ZENITH_TRAIL_PARTICLE.get(), ZenithTrailParticle.Provider::new);
+        });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
             event.registerSpriteSet(ModParticles.STAR_PARTICLE.get(), StarParticle.Provider::new);
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {

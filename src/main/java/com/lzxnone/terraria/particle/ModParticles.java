@@ -63,6 +63,17 @@ public class ModParticles {
                     return DustParticleOptions.STREAM_CODEC;
                 }
             });
+    public static final Supplier<ParticleType<ZenithTrailParticleOptions>> ZENITH_TRAIL_PARTICLE =
+            PARTICLE_TYPES.register("zenith_trail_particle", () -> new ParticleType<>(false) {
+                @Override
+                public MapCodec<ZenithTrailParticleOptions> codec() {
+                    return ZenithTrailParticleOptions.CODEC;
+                }
+                @Override
+                public StreamCodec<? super RegistryFriendlyByteBuf, ZenithTrailParticleOptions> streamCodec() {
+                    return ZenithTrailParticleOptions.STREAM_CODEC;
+                }
+            });
     public static final Supplier<SimpleParticleType> STAR_PARTICLE =
             PARTICLE_TYPES.register("star_particle", () -> new SimpleParticleType(true));
     public static final Supplier<SimpleParticleType> EXPLODE_PARTICLE =

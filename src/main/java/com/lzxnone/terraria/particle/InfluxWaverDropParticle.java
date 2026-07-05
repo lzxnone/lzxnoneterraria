@@ -64,7 +64,7 @@ public class InfluxWaverDropParticle extends TextureSheetParticle {
 
     @Override
     public void render(VertexConsumer buffer, Camera camera, float partialTick) {
-        if (this.alpha <= 0.01F) return;
+        if(this.alpha <= 0.01F) return;
 
         float lifeRatio = (this.age + partialTick) / (float) this.lifetime;
         double progress = (lifeRatio - DROP_RADIO) / (1.0 - DROP_RADIO);

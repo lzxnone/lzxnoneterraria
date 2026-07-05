@@ -4,12 +4,11 @@ import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.TintedVertexConsumer;
-import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.projectile.IStaticProjectileBehavior;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
 import com.lzxnone.terraria.item.ModItems;
-import com.lzxnone.terraria.particle.ModParticles;
+import com.lzxnone.terraria.particle.ZenithTrailParticleOptions;
 import com.lzxnone.terraria.utils.*;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -22,7 +21,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -30,17 +28,14 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -198,7 +193,7 @@ public class Zenith extends SwordItem {
             //尾迹
             int quadCount = proj.trailPositions.size() / 2 - 1;
             for(int j = 0;j < 2;j++) {
-                for(int i = 0; i < quadCount; i++) {
+                for(int i = 1; i < quadCount; i++) {
                     Vec3 currentPoint1 = proj.trailPositions.get(i * 2);
                     Vec3 currentPoint2 = proj.trailPositions.get(i * 2 + 1);
                     Vec3 nextPoint1 = proj.trailPositions.get(i * 2 + 3);
@@ -292,26 +287,60 @@ public class Zenith extends SwordItem {
         @Override
         public void onMoving(StaticProjectile projectile) {
             if(projectile.getOwner() == null) return;
-            addTrailPoints(projectile);
 
-            LzxnoneTerraria.LOGGER.info("{}", projectile.tickCount);
+            CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
+            if(!customData.contains("w") || !customData.contains("angle")) return;
+
+            float lifeRadio = (float) projectile.getEntityData().get(StaticProjectile.AGE) / (float) projectile.getEntityData().get(StaticProjectile.LIFETIME);
+
+            Vector3f originalRight = projectile.getEntityData().get(StaticProjectile.RIGHT).normalize();
+            Vector3f tempRight = new Vector3f(originalRight);
+            Vector3f originalDir = projectile.getEntityData().get(StaticProjectile.DIRECTION).normalize();
+            Vector3f tempDir = new Vector3f(originalDir);
+            Vector3f up = projectile.getEntityData().get(StaticProjectile.UP).normalize();
+            double rad = customData.getDouble("w") * projectile.getEntityData().get(StaticProjectile.AGE);
+            Quaternionf rotation = new Quaternionf()
+                .fromAxisAngleRad(up, (float) (Math.PI / 2 - rad));
+
+            Vec3 right = MathUtil.toVec3(tempRight.rotate(rotation)); //剑尖方向
+            Vec3 dir = MathUtil.toVec3(tempDir.rotate(rotation)); //剑飞行方向
+            if(customData.getDouble("w") < 0) dir = dir.scale(-1);
+
+            projectile.trailPositions.addFirst(projectile.position().add(right.scale(-1.2)));
+            projectile.trailPositions.addFirst(projectile.position().add(right.scale(1.5)));
+            while(projectile.trailPositions.size() > MAX_LENGTH) projectile.trailPositions.removeLast();
 
             projectile.setBoundingBox(new AABB(
                 projectile.getX() - BOUNDING_BOX, projectile.getY() - BOUNDING_BOX, projectile.getZ() - BOUNDING_BOX,
                 projectile.getX() + BOUNDING_BOX, projectile.getY() + BOUNDING_BOX, projectile.getZ() + BOUNDING_BOX
             ));
+
             if(!projectile.level().isClientSide()) {
                 List<LivingEntity> targets = projectile.level().getEntitiesOfClass(
                     LivingEntity.class,
                     projectile.getBoundingBox(),
                     FilterUtil.createLivingTargetFilter(projectile, projectile.getOwner())
                 );
-
                 for(LivingEntity target : targets) this.onHitEntity(projectile, new EntityHitResult(target, target.position()));
+            }else {
+                if(lifeRadio > 0.1f && lifeRadio < 0.9f && projectile.getRandom().nextInt(2) == 0) {
+                    Vector3f color = new Vector3f(
+                        projectile.getEntityData().get(StaticProjectile.COLOR_R),
+                        projectile.getEntityData().get(StaticProjectile.COLOR_G),
+                        projectile.getEntityData().get(StaticProjectile.COLOR_B)
+                    );
+                    ZenithTrailParticleOptions options = new ZenithTrailParticleOptions(0.05f, 40, true, color, up, right.toVector3f(), customData.getInt("angle"));
+                    Vec3 pos = right.scale(Math.random()).add(projectile.position());
+                    Vec3 speed = dir.scale(Math.max(0.05, Math.random() * 0.2));
+                    ParticleUtil.addParticle(
+                        projectile.level(), options,
+                        pos, 0,
+                        speed, 0
+                    );
+                }
             }
 
-            Vector3f dir = projectile.getEntityData().get(StaticProjectile.DIRECTION).normalize();
-            Vec3 currentPos = (projectile.getOwner().getBoundingBox().getCenter()).add(MathUtil.toVec3(dir).scale(-2));
+            Vec3 currentPos = (projectile.getOwner().getBoundingBox().getCenter()).add(MathUtil.toVec3(originalDir).scale(-2));
             projectile.getEntityData().set(StaticProjectile.ORIGIN, currentPos.toVector3f());
         }
 
@@ -327,24 +356,6 @@ public class Zenith extends SwordItem {
             }
         }
     };
-
-    public static void addTrailPoints(StaticProjectile projectile) {
-        CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
-        if(!customData.contains("w")) return;
-
-        Vector3f originalRight = projectile.getEntityData().get(StaticProjectile.RIGHT).normalize();
-        Vector3f tempRight = new Vector3f(originalRight);
-        Vector3f up = projectile.getEntityData().get(StaticProjectile.UP).normalize();
-        double rad = customData.getDouble("w") * projectile.getEntityData().get(StaticProjectile.AGE);
-        Quaternionf rotation = new Quaternionf()
-            .fromAxisAngleRad(up, (float) (Math.PI / 2 - rad - 0.3));
-
-        Vec3 right = MathUtil.toVec3(tempRight.rotate(rotation));
-
-        projectile.trailPositions.addFirst(projectile.position().add(right.scale(-1.2)));
-        projectile.trailPositions.addFirst(projectile.position().add(right.scale(1.5)));
-        while(projectile.trailPositions.size() > MAX_LENGTH) projectile.trailPositions.removeLast();
-    }
 
     public static void summon(Player player, boolean isFirst) {
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
