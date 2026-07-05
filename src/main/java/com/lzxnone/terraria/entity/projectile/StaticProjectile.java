@@ -20,6 +20,8 @@ import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.joml.Vector3f;
 
+import java.util.LinkedList;
+
 
 public class StaticProjectile extends Projectile {
     public static final EntityDataAccessor<String> BEHAVIOR =
@@ -92,8 +94,11 @@ public class StaticProjectile extends Projectile {
 
     public boolean positionOverridden = false;
 
+    public LinkedList<Vec3> trailPositions = new LinkedList<>();
+
     public StaticProjectile(EntityType<StaticProjectile> type, Level level) {
         super(type, level);
+        this.noPhysics = true;
         this.setNoGravity(true);
     }
 

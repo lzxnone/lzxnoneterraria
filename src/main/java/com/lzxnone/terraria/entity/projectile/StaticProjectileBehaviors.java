@@ -13,10 +13,9 @@ public class StaticProjectileBehaviors {
     public static final String DEFAULT = "default";
     public static final String ENCHANTED_SWORD_BEAM = "enchanted_sword_beam";
     public static final String STARFURY_STAR = "starfury_star";
-    public static final String SEEDLER_NUT = "seedler_nut";
     public static final String SEEDLER_THORN = "seedler_thorn";
-    public static final String INFLUX_WAVER_BEAM = "influx_waver";
     public static final String STAR_WRATH_STAR = "star_wrath_star";
+    public static final String ZENITH_PROJECTILE = "zenith_projectile";
 
     static {
         BEHAVIORS.put(DEFAULT, new IStaticProjectileBehavior() {
@@ -37,6 +36,7 @@ public class StaticProjectileBehaviors {
         BEHAVIORS.put(STARFURY_STAR, Starfury.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(SEEDLER_THORN, Seedler.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(STAR_WRATH_STAR, StarWrath.PROJECTILE_BEHAVIOR);
+        BEHAVIORS.put(ZENITH_PROJECTILE, Zenith.PROJECTILE_BEHAVIOR);
     }
 
     public static IStaticProjectileBehavior getBehavior(String id) {
