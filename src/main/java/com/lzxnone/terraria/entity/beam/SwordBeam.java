@@ -1,7 +1,5 @@
 package com.lzxnone.terraria.entity.beam;
 
-import com.lzxnone.terraria.LzxnoneTerraria;
-import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
 import net.minecraft.nbt.CompoundTag;
@@ -11,7 +9,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
@@ -31,6 +28,8 @@ public class SwordBeam extends Entity {
 
     public static final EntityDataAccessor<String> BEHAVIOR =
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<Integer> ROTATE =
+            SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Vector3f> COLOR0 =
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.VECTOR3);
     public static final EntityDataAccessor<Vector3f> COLOR1 =
@@ -39,6 +38,8 @@ public class SwordBeam extends Entity {
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.VECTOR3);
     public static final EntityDataAccessor<Vector3f> COLOR3 =
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.VECTOR3);
+    public static final EntityDataAccessor<Boolean> RIGHT =
+            SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Integer> AGE =
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> LIFETIME =
@@ -111,9 +112,11 @@ public class SwordBeam extends Entity {
     public void checkCollision() {
         Entity owner = getOwner();
         float progress = (float) this.entityData.get(AGE) / (float) this.entityData.get(LIFETIME);
-        if(progress > 1.0f) progress = 1.0f;
+        if(progress > 1.0f) return;
+        if(this.entityData.get(RIGHT)) progress = 1.0f - progress;
 
         this.dirs = MathUtil.computeCoordinateSystem(owner);
+        this.dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], this.entityData.get(ROTATE));
         Vector3f dir = dirs[0];
         Vector3f up = dirs[1];
         Vector3f right = dirs[2];
@@ -132,8 +135,20 @@ public class SwordBeam extends Entity {
 
         this.currentPosition = new Vec3(centerX, centerY, centerZ);
 
+        float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
+
         float angle = (float) ((0.5 - progress) * Math.PI);
-        float xzLen = (float) Math.sqrt(current.x() * current.x() + current.z() * current.z());
+        Quaternionf rotation = new Quaternionf()
+            .fromAxisAngleRad(dir, (float) Math.toRadians(Math.abs(dirs[0].y) > 0.999 ? 0 : this.entityData.get(ROTATE)))
+            .rotateY((float) Math.toRadians(-xyRot[1]))
+            .rotateX((float) Math.toRadians(xyRot[0]))
+            .rotateX((float) Math.toRadians(-90.0))
+            .rotateZ((float) Math.toRadians(-90.0));
+        Quaternionf rotation2 = new Quaternionf()
+            .fromAxisAngleRad(up, angle);
+
+
+        /*float xzLen = (float) Math.sqrt(current.x() * current.x() + current.z() * current.z());
         float pitch = (float) (Math.atan2(-current.y(), xzLen) * (180.0 / Math.PI));
         float yaw = (float) (Math.atan2(-current.x(), current.z()) * (180.0 / Math.PI));
 
@@ -142,11 +157,11 @@ public class SwordBeam extends Entity {
             .rotateY((float) Math.toRadians(-yaw))
             .rotateX((float) Math.toRadians(pitch))
             .rotateX((float) Math.toRadians(-90.0))
-            .rotateZ((float) Math.toRadians(-90.0));
+            .rotateZ((float) Math.toRadians(-90.0));*/
 
-        Vector3f axisX = new Vector3f(1, 0, 0).rotate(rotation);
-        Vector3f axisY = new Vector3f(0, 1, 0).rotate(rotation);
-        Vector3f axisZ = new Vector3f(0, 0, 1).rotate(rotation);
+        Vector3f axisX = new Vector3f(1, 0, 0).rotate(rotation).rotate(rotation2);
+        Vector3f axisY = new Vector3f(0, 1, 0).rotate(rotation).rotate(rotation2);
+        Vector3f axisZ = new Vector3f(0, 0, 1).rotate(rotation).rotate(rotation2);
 
         float extX = HALF_WIDTH * SCALE * Math.abs(axisX.x()) + HALF_HEIGHT * SCALE * Math.abs(axisY.x()) + HALF_THICKNESS * SCALE * Math.abs(axisZ.x());
         float extY = HALF_WIDTH * SCALE * Math.abs(axisX.y()) + HALF_HEIGHT * SCALE * Math.abs(axisY.y()) + HALF_THICKNESS * SCALE * Math.abs(axisZ.y());
@@ -184,6 +199,8 @@ public class SwordBeam extends Entity {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(BEHAVIOR, "default");
+        builder.define(ROTATE, 0);
+        builder.define(RIGHT, false);
         builder.define(COLOR0, new Vector3f(1.0f, 1.0f, 1.0f));
         builder.define(COLOR1, new Vector3f(1.0f, 1.0f, 1.0f));
         builder.define(COLOR2, new Vector3f(1.0f, 1.0f, 1.0f));
@@ -197,6 +214,8 @@ public class SwordBeam extends Entity {
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
         tag.putString("behavior", this.entityData.get(BEHAVIOR));
+        tag.putInt("rotate", this.entityData.get(ROTATE));
+        tag.putBoolean("right", this.entityData.get(RIGHT));
         Vector3f c0 = this.entityData.get(COLOR0);
         tag.putFloat("color0R", c0.x);
         tag.putFloat("color0G", c0.y);
@@ -222,6 +241,8 @@ public class SwordBeam extends Entity {
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
         if(tag.contains("behavior")) this.entityData.set(BEHAVIOR, tag.getString("behavior"));
+        if(tag.contains("rotate")) this.entityData.set(ROTATE, tag.getInt("rotate"));
+        if(tag.contains("right")) this.entityData.set(RIGHT, tag.getBoolean("right"));
         if(tag.contains("color0R")) {
             this.entityData.set(COLOR0, new Vector3f(
                 tag.getFloat("color0R"), tag.getFloat("color0G"), tag.getFloat("color0B")

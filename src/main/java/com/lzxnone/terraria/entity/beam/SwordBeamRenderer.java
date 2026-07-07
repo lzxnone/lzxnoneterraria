@@ -15,11 +15,12 @@ public class SwordBeamRenderer extends EntityRenderer<Entity> {
     @Override
     public void render(Entity entity, float entityYaw, float partialTick,
                        PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+        if(!(entity instanceof SwordBeam)) return;
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 
     @Override
     public ResourceLocation getTextureLocation(Entity entity) {
-        return ResourceLocation.parse("lzxnoneterraria:textures/item/terra_beam.png");
+        return ResourceLocation.parse("lzxnoneterraria:textures/vfx/terra_beam0.png");
     }
 }

@@ -2,6 +2,7 @@ package com.lzxnone.terraria.entity.beam;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.ModEntities;
+import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.utils.MathUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -46,16 +47,11 @@ public interface ISwordBeamBehavior {
         int lifetime = Math.max(1, beam.getEntityData().get(SwordBeam.LIFETIME));
 
         float progress = (age + partialTick) / (float) lifetime;
-        if(progress > 1.0f) progress = 1.0f;
+        if(progress > 1.0f) return;
 
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(beam.getOwner());
-
-        VertexConsumer vertexConsumer0 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES0));
-        VertexConsumer vertexConsumer1 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES0));
-        VertexConsumer vertexConsumer2 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES0));
-        VertexConsumer vertexConsumer3 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES3));
-        VertexConsumer vertexConsumer4 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES4));
-        VertexConsumer vertexConsumer5 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES5));
+        dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], beam.getEntityData().get(SwordBeam.ROTATE));
+        float rotate = beam.getEntityData().get(SwordBeam.ROTATE);
 
         Vector3f color0 = entity.getEntityData().get(SwordBeam.COLOR0);
         Vector3f color1 = entity.getEntityData().get(SwordBeam.COLOR1);
@@ -70,90 +66,100 @@ public interface ISwordBeamBehavior {
         }else {
             alpha = 1.0f;
         }
+        if(beam.getEntityData().get(SwordBeam.RIGHT)) progress = 1.0f - progress;
 
         float halfWidth = SwordBeam.HALF_WIDTH * SwordBeam.SCALE;
         float halfHeight = SwordBeam.HALF_HEIGHT * SwordBeam.SCALE;
 
+        VertexConsumer vertexConsumer0 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES0));
+
         //左边
         poseStack.pushPose();
-        this.applyTranslate(poseStack, dirs, progress - 0.1f * (1.0f - progress), SwordBeam.DIST);
-        this.applyRotate(poseStack, dirs, progress - 0.1f * (1.0f - progress));
+        this.applyTranslate(poseStack, dirs[0], dirs[2], progress - 0.1f * (1.0f - progress), SwordBeam.DIST);
+        this.applyRotate(poseStack, dirs[0], dirs[1], progress - 0.1f * (1.0f - progress), rotate);
         renderQuad(poseStack.last().pose(), vertexConsumer0,
                 color0.x(), color0.y(), color0.z(), alpha, halfWidth, halfHeight, 0f, 0, -0.01f);
         poseStack.popPose();
 
         //右边
         poseStack.pushPose();
-        this.applyTranslate(poseStack, dirs, progress + 0.1f, SwordBeam.DIST);
-        this.applyRotate(poseStack, dirs, progress + 0.05f);
-        renderQuad(poseStack.last().pose(), vertexConsumer2,
+        this.applyTranslate(poseStack, dirs[0], dirs[2], progress + 0.1f, SwordBeam.DIST);
+        this.applyRotate(poseStack, dirs[0], dirs[1], progress + 0.05f, rotate);
+        renderQuad(poseStack.last().pose(), vertexConsumer0,
                 color2.x(), color2.y(), color2.z(), alpha, halfWidth, halfHeight, 0f, 0, -0.02f);
         poseStack.popPose();
 
         //中间
         poseStack.pushPose();
-        this.applyTranslate(poseStack, dirs, progress, SwordBeam.DIST);
-        this.applyRotate(poseStack, dirs, progress);
-        renderQuad(poseStack.last().pose(), vertexConsumer1,
+        this.applyTranslate(poseStack, dirs[0], dirs[2], progress, SwordBeam.DIST);
+        this.applyRotate(poseStack, dirs[0], dirs[1], progress, rotate);
+        renderQuad(poseStack.last().pose(), vertexConsumer0,
                 color1.x(), color1.y(), color1.z(), alpha, halfWidth, halfHeight, 0f, 0f, 0f);
         poseStack.popPose();
 
+        VertexConsumer vertexConsumer1 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES3));
+
         //三线
         poseStack.pushPose();
-        this.applyTranslate(poseStack, dirs, progress, SwordBeam.DIST / 1.5f);
-        this.applyRotate(poseStack, dirs, progress);
+        this.applyTranslate(poseStack, dirs[0], dirs[2], progress + 0.05f, SwordBeam.DIST / 1.5f);
+        this.applyRotate(poseStack, dirs[0], dirs[1], progress, rotate);
         poseStack.scale(0.5f, 0.5f, 0.5f);
-        renderQuad(poseStack.last().pose(), vertexConsumer3,
+        renderQuad(poseStack.last().pose(), vertexConsumer1,
                 color3.x(), color3.y(), color3.z(), alpha, halfWidth, halfHeight, 0f, 0f, 0.02f);
         poseStack.popPose();
 
         poseStack.pushPose();
-        this.applyTranslate(poseStack, dirs, progress, SwordBeam.DIST / 1.25f);
-        this.applyRotate(poseStack, dirs, progress);
+        this.applyTranslate(poseStack, dirs[0], dirs[2], progress + 0.05f, SwordBeam.DIST / 1.25f);
+        this.applyRotate(poseStack, dirs[0], dirs[1], progress, rotate);
         poseStack.scale(0.75f, 0.75f, 0.75f);
-        renderQuad(poseStack.last().pose(), vertexConsumer3,
+        renderQuad(poseStack.last().pose(), vertexConsumer1,
                 color3.x(), color3.y(), color3.z(), alpha, halfWidth, halfHeight, 0f, 0f, 0.02f);
         poseStack.popPose();
 
         poseStack.pushPose();
-        this.applyTranslate(poseStack, dirs, progress, SwordBeam.DIST * 1.15f);
-        this.applyRotate(poseStack, dirs, progress);
+        this.applyTranslate(poseStack, dirs[0], dirs[2], progress, SwordBeam.DIST * 1.15f);
+        this.applyRotate(poseStack, dirs[0], dirs[1], progress, rotate);
         poseStack.scale(0.95f, 0.95f, 0.95f);
-        renderQuad(poseStack.last().pose(), vertexConsumer3,
+        renderQuad(poseStack.last().pose(), vertexConsumer1,
                 color3.x(), color3.y(), color3.z(), alpha, halfWidth, halfHeight, 0f, 0f, 0.02f);
         poseStack.popPose();
+
+        VertexConsumer vertexConsumer2 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES4));
 
         //边缘高光
         poseStack.pushPose();
-        this.applyTranslate(poseStack, dirs, progress + 0.05f, SwordBeam.DIST * 1.15f);
-        this.applyRotate(poseStack, dirs, progress + 0.05f);
+        this.applyTranslate(poseStack, dirs[0], dirs[2], progress + 0.05f, SwordBeam.DIST * 1.15f);
+        this.applyRotate(poseStack, dirs[0], dirs[1], progress + 0.05f, rotate);
         poseStack.scale(1.0f, 1.0f, 1.0f);
         for(int i = 0;i < 20;i++) {
-            renderQuad(poseStack.last().pose(), vertexConsumer4,
+            renderQuad(poseStack.last().pose(), vertexConsumer2,
                     color1.x(), color1.y(), color1.z(), alpha, halfWidth, halfHeight, 0f, 0f, 0.03f);
         }
         poseStack.popPose();
 
+        VertexConsumer vertexConsumer3 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES5));
+
         //闪烁
         poseStack.pushPose();
-        this.applyTranslate(poseStack, dirs, progress + 0.25f, SwordBeam.DIST * 2.25f);
-        this.applyRotate(poseStack, dirs, progress + 0.25f);
+        this.applyTranslate(poseStack, dirs[0], dirs[2], progress + 0.25f, SwordBeam.DIST * 2.25f);
+        this.applyRotate(poseStack, dirs[0], dirs[1], progress + 0.25f, rotate);
         poseStack.mulPose(Axis.ZP.rotationDegrees(45.0F));
         poseStack.scale(1.0f, 1.0f, 1.0f);
         for(int i = 0;i < 20;i++) {
-            renderQuad(poseStack.last().pose(), vertexConsumer5,
+            renderQuad(poseStack.last().pose(), vertexConsumer3,
                     color1.x(), color1.y(), color1.z(), alpha, 32 * SwordBeam.SCALE, 32 * SwordBeam.SCALE, 0f, 0f, 0.03f);
         }
         poseStack.popPose();
     }
 
-    default void applyRotate(PoseStack poseStack, Vector3f[] dirs, float progress) {
-        Vector3f dir = dirs[0];
-        Vector3f up = dirs[1];
-
+    default void applyRotate(PoseStack poseStack, Vector3f dir, Vector3f up, double progress, double rotate) {
         float angle = (float) ((0.5 - progress) * Math.PI);
-        Quaternionf rotation = new Quaternionf().fromAxisAngleRad(up, angle);
+        Quaternionf rotation = new Quaternionf()
+            .fromAxisAngleRad(up, angle);
+        Quaternionf rotation2 = new Quaternionf()
+            .fromAxisAngleRad(dir, (float) Math.toRadians(Math.abs(dir.y) > 0.999 ? 0 : rotate));
         poseStack.mulPose(rotation);
+        poseStack.mulPose(rotation2);
 
         float[] xyRot = MathUtil.computeXYRot(dir, up);
         poseStack.mulPose(Axis.YP.rotationDegrees(-xyRot[1]));
@@ -163,10 +169,7 @@ public interface ISwordBeamBehavior {
         poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
     }
 
-    default void applyTranslate(PoseStack poseStack, Vector3f[] dirs, float progress, float dist) {
-        Vector3f dir = dirs[0];
-        Vector3f right = dirs[2];
-
+    default void applyTranslate(PoseStack poseStack, Vector3f dir, Vector3f right, float progress, float dist) {
         float cos = (float) Math.cos(progress * Math.PI);
         float sin = (float) Math.sin(progress * Math.PI);
         Vector3f current = new Vector3f(
@@ -204,7 +207,8 @@ public interface ISwordBeamBehavior {
         Vec3 pos = new Vec3(entity.getX(), entity.getY() + entity.getBbHeight() / 2, entity.getZ());
         beam.setPos(pos);
         if(beamData.contains("behavior")) beam.getEntityData().set(SwordBeam.BEHAVIOR, beamData.getString("behavior"));
-
+        if(beamData.contains("rotate"))  beam.getEntityData().set(SwordBeam.ROTATE, beamData.getInt("rotate"));
+        if(beamData.contains("right"))  beam.getEntityData().set(SwordBeam.RIGHT, beamData.getBoolean("right"));
         if(beamData.contains("color0R") && beamData.contains("color0G") && beamData.contains("color0B")) {
             beam.getEntityData().set(SwordBeam.COLOR0, new Vector3f(beamData.getFloat("color0R"), beamData.getFloat("color0G"), beamData.getFloat("color0B")));
         }

@@ -27,7 +27,10 @@ sourceSets.main.resources {
 }
 
 repositories {
-    // Add here additional repositories if required by some of the dependencies below.
+    maven {
+        name = "Gegy"
+        url = "https://maven.gegy.dev"
+    }
 }
 
 base {
@@ -117,10 +120,25 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
+def mappingsAttribute = Attribute.of("net.minecraft.mappings", String.class)
+
 dependencies {
     implementation 'net.objecthunter:exp4j:0.4.8'
     jarJar('net.objecthunter:exp4j:0.4.8')
     additionalRuntimeClasspath 'net.objecthunter:exp4j:0.4.8'
+    attributesSchema {
+        attribute(mappingsAttribute)
+    }
+    compileOnly("dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:4.8.10+1.21.1") {
+        attributes {
+            attribute(mappingsAttribute, "mojmap")
+        }
+    }
+    localRuntime("dev.lambdaurora.lambdynamiclights:lambdynamiclights-runtime:4.8.10+1.21.1") {
+        attributes {
+            attribute(mappingsAttribute, "mojmap")
+        }
+    }
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"

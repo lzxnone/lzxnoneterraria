@@ -25,6 +25,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
@@ -37,6 +39,7 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.*;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
@@ -55,7 +58,7 @@ public class TerraBlade extends SwordItem {
                 new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_damage"), 10, AttributeModifier.Operation.ADD_VALUE),
                 EquipmentSlotGroup.MAINHAND)
             .add(Attributes.ATTACK_SPEED,
-                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_speed"), -2.4, AttributeModifier.Operation.ADD_VALUE),
+                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_speed"), -1.0, AttributeModifier.Operation.ADD_VALUE),
                 EquipmentSlotGroup.MAINHAND)
             .build()
         ));
@@ -123,6 +126,7 @@ public class TerraBlade extends SwordItem {
 
         @Override
         public void generate(Entity entity, CompoundTag beamData) {
+            //beamData.putBoolean("right", entity.getRandom().nextInt(2) == 0);
             ISwordBeamBehavior.super.generate(entity, beamData);
             if(entity instanceof Player player) summon(player);
         }
@@ -150,11 +154,6 @@ public class TerraBlade extends SwordItem {
         public void render(Entity entity, float entityYaw, float partialTick,
                        PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
             if(!(entity instanceof StaticSummon summon)) return;
-
-            VertexConsumer vertexConsumer0 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES0));
-            VertexConsumer vertexConsumer1 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES1));
-            VertexConsumer vertexConsumer2 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES2));
-            VertexConsumer vertexConsumer3 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES3));
 
             float halfWidth = SwordBeam.HALF_WIDTH * SwordBeam.SCALE;
             float halfHeight = SwordBeam.HALF_HEIGHT * SwordBeam.SCALE;
@@ -188,16 +187,19 @@ public class TerraBlade extends SwordItem {
             if(customData.contains("rightZ")) right.z = customData.getFloat("rightZ");
 
             Vector3f[] dirs = new Vector3f[]{dir, up, right};
+            double rotate = summon.getEntityData().get(StaticSummon.RZP);
 
             poseStack.pushPose();
 
             float size = 1.0f -  0.25f * progress;
             poseStack.scale(size, size, size);
 
+            VertexConsumer vertexConsumer0 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES0));
+
             //左边
             poseStack.pushPose();
             this.applyTranslate(poseStack, dirs[0], dirs[2], 90 - 18 * (1.0f - progress), SwordBeam.DIST);
-            this.applyRotate(summon, poseStack, dirs[0], dirs[1], 18 * (1.0f - progress));
+            this.applyRotate(poseStack, dirs[0], dirs[1], 18 * (1.0f - progress), rotate);
             renderQuad(poseStack.last().pose(), vertexConsumer0,
                     COLOR0.x(), COLOR0.y(), COLOR0.z(), alpha, halfWidth, halfHeight, 0f, 0, -0.01f);
             poseStack.popPose();
@@ -206,24 +208,25 @@ public class TerraBlade extends SwordItem {
             //中间
             poseStack.pushPose();
             this.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST);
-            this.applyRotate(summon, poseStack, dirs[0], dirs[1], 0);
+            this.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
             renderQuad(poseStack.last().pose(), vertexConsumer0,
                     COLOR1.x(), COLOR1.y(), COLOR1.z(), alpha, halfWidth, halfHeight, 0f, 0f, 0f);
             poseStack.popPose();
 
             //右边
-
             poseStack.pushPose();
             this.applyTranslate(poseStack, dirs[0], dirs[2], 108, SwordBeam.DIST);
-            this.applyRotate(summon, poseStack, dirs[0], dirs[1], -9 * (1.0f - progress));
+            this.applyRotate(poseStack, dirs[0], dirs[1], -9 * (1.0f - progress), rotate);
             renderQuad(poseStack.last().pose(), vertexConsumer0,
                     COLOR2.x(), COLOR2.y(), COLOR2.z(), alpha, halfWidth, halfHeight, 0f, 0, 0.01f);
             poseStack.popPose();
 
+            VertexConsumer vertexConsumer1 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES1));
+
             //三线
             poseStack.pushPose();
             this.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST / 1.5f);
-            this.applyRotate(summon, poseStack, dirs[0], dirs[1], 0);
+            this.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
             poseStack.scale(0.5f, 0.5f, 0.5f);
             renderQuad(poseStack.last().pose(), vertexConsumer1,
                     1.0f, 1.0f, 1.0f, alpha, halfWidth, halfHeight, 0f, 0f, 0.02f);
@@ -231,7 +234,7 @@ public class TerraBlade extends SwordItem {
 
             poseStack.pushPose();
             this.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST / 1.25f);
-            this.applyRotate(summon, poseStack, dirs[0], dirs[1], 0);
+            this.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
             poseStack.scale(0.75f, 0.75f, 0.75f);
             renderQuad(poseStack.last().pose(), vertexConsumer1,
                     1.0f, 1.0f, 1.0f, alpha, halfWidth, halfHeight, 0f, 0f, 0.02f);
@@ -239,16 +242,18 @@ public class TerraBlade extends SwordItem {
 
             poseStack.pushPose();
             this.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST * 1.15f);
-            this.applyRotate(summon, poseStack, dirs[0], dirs[1], 0);
+            this.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
             poseStack.scale(0.95f, 0.95f, 0.95f);
             renderQuad(poseStack.last().pose(), vertexConsumer1,
                     1.0f, 1.0f, 1.0f, alpha, halfWidth, halfHeight, 0f, 0f, 0.02f);
             poseStack.popPose();
 
+            VertexConsumer vertexConsumer2 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES2));
+
             //边缘高光
             poseStack.pushPose();
             this.applyTranslate(poseStack, dirs[0], dirs[2], 100, SwordBeam.DIST * 1.15f);
-            this.applyRotate(summon, poseStack, dirs[0], dirs[1], 0);
+            this.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
             poseStack.scale(1.0f, 1.0f, 1.0f);
             for(int i = 0;i < 5;i++) {
                 renderQuad(poseStack.last().pose(), vertexConsumer2,
@@ -266,16 +271,18 @@ public class TerraBlade extends SwordItem {
                 sparkleAlpha = (progress - FADE_IN) / (FADE_OUT - FADE_IN);
             }
 
+            VertexConsumer vertexConsumer3 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES3));
+
             //闪烁(外层)
             poseStack.pushPose();
             for(int k = 0;k < 2;k++) {
                 poseStack.pushPose();
                 if(k == 0) {
                     this.applyTranslate(poseStack, dirs[0], dirs[2], 90 - 60.0 * progress, SwordBeam.DIST * 2f);
-                    this.applyRotate(summon, poseStack, dirs[0], dirs[1], 60 * progress);
+                    this.applyRotate(poseStack, dirs[0], dirs[1], 60 * progress, rotate);
                 }else {
                     this.applyTranslate(poseStack, dirs[0], dirs[2], 90 + 60.0 * progress, SwordBeam.DIST * 2f + 0.5f * progress);
-                    this.applyRotate(summon, poseStack, dirs[0], dirs[1], -60 * progress);
+                    this.applyRotate(poseStack, dirs[0], dirs[1], -60 * progress, rotate);
                 }
                 for(int j = 0; j < 2; j++) {
                     poseStack.pushPose();
@@ -298,10 +305,10 @@ public class TerraBlade extends SwordItem {
                 poseStack.pushPose();
                 if(k == 0) {
                     this.applyTranslate(poseStack, dirs[0], dirs[2], 90 - 30.0 * progress, SwordBeam.DIST * 2f);
-                    this.applyRotate(summon, poseStack, dirs[0], dirs[1], 30 * progress);
+                    this.applyRotate(poseStack, dirs[0], dirs[1], 30 * progress, rotate);
                 }else {
                     this.applyTranslate(poseStack, dirs[0], dirs[2], 90 + 30.0 * progress, SwordBeam.DIST * 2.1f);
-                    this.applyRotate(summon, poseStack, dirs[0], dirs[1], -30 * progress);
+                    this.applyRotate(poseStack, dirs[0], dirs[1], -30 * progress, rotate);
                 }
                 for(int j = 0; j < 2; j++) {
                     poseStack.pushPose();
@@ -321,7 +328,7 @@ public class TerraBlade extends SwordItem {
             //闪烁(内层)
             poseStack.pushPose();
             this.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST * 2f);
-            this.applyRotate(summon, poseStack, dirs[0], dirs[1], 0);
+            this.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
             for(int j = 0; j < 2; j++) {
                 poseStack.pushPose();
                 if(j == 0) poseStack.mulPose(Axis.ZP.rotationDegrees(0.0F));
@@ -335,15 +342,16 @@ public class TerraBlade extends SwordItem {
             }
             poseStack.popPose();
 
-
             poseStack.popPose();
         }
 
-        public void applyRotate(StaticSummon summon, PoseStack poseStack, Vector3f dir, Vector3f up, double angle) {
+        public void applyRotate(PoseStack poseStack, Vector3f dir, Vector3f up, double angle, double rotate) {
             Quaternionf rotation = new Quaternionf()
-                .fromAxisAngleRad(up, (float) Math.toRadians(angle))
-                .fromAxisAngleRad(dir, (float) Math.toRadians(Math.abs(dir.y) > 0.999 ? 0 : summon.getEntityData().get(StaticSummon.RZP)));
+                .fromAxisAngleRad(up, (float) Math.toRadians(angle));
+            Quaternionf rotation2 = new Quaternionf()
+                .fromAxisAngleRad(dir, (float) Math.toRadians(Math.abs(dir.y) > 0.999 ? 0 : rotate));
             poseStack.mulPose(rotation);
+            poseStack.mulPose(rotation2);
 
             float[] xyRot = MathUtil.computeXYRot(dir, up);
             poseStack.mulPose(Axis.YP.rotationDegrees(-xyRot[1]));
@@ -558,4 +566,16 @@ public class TerraBlade extends SwordItem {
             event.setCanceled(true);
         }
     };
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if(!level.isClientSide()) {
+            SwordBeamBehaviors.getBehavior("terra_blade").generate(player, BEAM_DATA);
+        }else {
+            SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+            SoundUtil.playClientSound(player, ModSounds.WAVE3.get());
+        }
+        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+    }
 }

@@ -22,6 +22,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -36,6 +38,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
@@ -151,6 +154,13 @@ public class TheHorsemansBlade extends SwordItem {
                 }
             }
         }
+
+        @Override
+        public void generate(Entity entity, CompoundTag beamData) {
+            beamData.putInt("rotate", (int) (45 * (Math.random() * 2 - 1)));
+            //beamData.putBoolean("right", entity.getRandom().nextInt(2) == 0);
+            ISwordBeamBehavior.super.generate(entity, beamData);
+        }
     };
 
     public static final IItemWaveBehavior ITEM_WAVE_BEHAVIOR = new IItemWaveBehavior() {
@@ -179,6 +189,17 @@ public class TheHorsemansBlade extends SwordItem {
             event.setCanceled(true);
         }
     };
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if(!level.isClientSide()) {
+            SwordBeamBehaviors.getBehavior("the_horsemans_blade").generate(player, BEAM_DATA);
+        }else {
+            SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+        }
+        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+    }
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         public static final double SPEED = 0.5;

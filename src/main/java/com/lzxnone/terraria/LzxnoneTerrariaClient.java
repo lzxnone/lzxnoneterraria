@@ -1,8 +1,11 @@
 package com.lzxnone.terraria;
 
 import com.lzxnone.terraria.entity.ModEntities;
+import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.beam.SwordBeamRenderer;
+import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.projectile.StaticProjectileRenderer;
+import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonRenderer;
 import com.lzxnone.terraria.particle.*;
 import net.minecraft.client.renderer.entity.BeeRenderer;
@@ -56,5 +59,6 @@ public class LzxnoneTerrariaClient {
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
             event.registerSpriteSet(ModParticles.TERRA_BEAM_HIT_PARTICLE.get(), TerraBeamHitParticle.Provider::new);
         });
+
     }
 }

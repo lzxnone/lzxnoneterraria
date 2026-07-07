@@ -23,10 +23,29 @@
   "item.lzxnoneterraria.true_nights_edge": "真永夜刃",
   "item.lzxnoneterraria.excalibur": "断钢剑",
   "item.lzxnoneterraria.true_excalibur": "真断钢剑",
+  "item.lzxnoneterraria.true_copper_shortsword": "真铜短剑",
 
   "entity.lzxnoneterraria.static_projectile": "弹射物",
   "entity.lzxnoneterraria.static_summon": "召唤物",
   "entity.lzxnoneterraria.bee_summon": "蜜蜂",
 
-  "effect.lzxnoneterraria.confused": "困惑"
+  "effect.lzxnoneterraria.confused": "困惑",
+
+  "lzxnoneterraria.configuration.zenith_settings": "天顶剑 设置",
+  "lzxnoneterraria.configuration.zenith_damage": "弹射伤害",
+  "lzxnoneterraria.configuration.zenith_damage.tooltip": "每次命中伤害（实际为 x~2x 此值）",
+  "lzxnoneterraria.configuration.zenith_max_range": "最大范围",
+  "lzxnoneterraria.configuration.zenith_max_range.tooltip": "弹射物最大飞行距离",
+  "lzxnoneterraria.configuration.zenith_trail_b": "轨道半短轴 (b)",
+  "lzxnoneterraria.configuration.zenith_trail_b.tooltip": "椭圆轨道半短轴",
+  "lzxnoneterraria.configuration.zenith_bounding_box_size": "碰撞箱大小",
+  "lzxnoneterraria.configuration.zenith_bounding_box_size.tooltip": "弹射物的碰撞检测体积",
+  "lzxnoneterraria.configuration.zenith_cycle": "运动周期",
+  "lzxnoneterraria.configuration.zenith_cycle.tooltip": "弹射物运动周期",
+  "lzxnoneterraria.configuration.zenith_scale": "弹射大小倍数",
+  "lzxnoneterraria.configuration.zenith_scale.tooltip": "弹射物尺寸缩放倍数",
+  "lzxnoneterraria.configuration.zenith_trail_alpha": "尾迹透明度",
+  "lzxnoneterraria.configuration.zenith_trail_alpha.tooltip": "尾迹渲染透明度",
+  "lzxnoneterraria.configuration.zenith_trail_max_length": "尾迹长度",
+  "lzxnoneterraria.configuration.zenith_trail_max_length.tooltip": "尾迹最大段数"
 }

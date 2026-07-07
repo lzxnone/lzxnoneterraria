@@ -70,7 +70,7 @@ public class ZenithTrailParticle extends TextureSheetParticle {
         float lifeRatio = (float) this.age / (float) this.lifetime;
 
         this.quadSize = this.baseSize * (1.0F - lifeRatio);
-        this.alpha = 1.0F - lifeRatio;
+        this.alpha = (1.0F - lifeRatio) * 0.5f;
     }
 
     @Override

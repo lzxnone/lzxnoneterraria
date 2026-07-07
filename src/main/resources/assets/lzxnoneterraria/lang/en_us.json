@@ -23,10 +23,29 @@
   "item.lzxnoneterraria.true_nights_edge": "True Night's Edge",
   "item.lzxnoneterraria.excalibur": "Excalibur",
   "item.lzxnoneterraria.true_excalibur": "True Excalibur",
+  "item.lzxnoneterraria.true_copper_shortsword": "True Copper Shortsword",
 
   "entity.lzxnoneterraria.static_projectile": "Projectile",
   "entity.lzxnoneterraria.static_summon": "Summon",
   "entity.lzxnoneterraria.bee_summon": "Bee",
 
-  "effect.lzxnoneterraria.confused": "Confused"
+  "effect.lzxnoneterraria.confused": "Confused",
+
+  "lzxnoneterraria.configuration.zenith_settings": "Zenith Settings",
+  "lzxnoneterraria.configuration.zenith_damage": "Projectile Damage",
+  "lzxnoneterraria.configuration.zenith_damage.tooltip": "Damage per hit (applied as x~2x this value)",
+  "lzxnoneterraria.configuration.zenith_max_range": "Max Range",
+  "lzxnoneterraria.configuration.zenith_max_range.tooltip": "Maximum projectile travel range",
+  "lzxnoneterraria.configuration.zenith_trail_b": "Orbit Semi-Axis (b)",
+  "lzxnoneterraria.configuration.zenith_trail_b.tooltip": "Elliptical orbit semi-minor axis (b)",
+  "lzxnoneterraria.configuration.zenith_bounding_box_size": "Hitbox Size",
+  "lzxnoneterraria.configuration.zenith_bounding_box_size.tooltip": "Projectile collision hitbox size",
+  "lzxnoneterraria.configuration.zenith_cycle": "Cycle Duration",
+  "lzxnoneterraria.configuration.zenith_cycle.tooltip": "Projectile movement cycle duration",
+  "lzxnoneterraria.configuration.zenith_scale": "Projectile Scale",
+  "lzxnoneterraria.configuration.zenith_scale.tooltip": "Projectile size multiplier",
+  "lzxnoneterraria.configuration.zenith_trail_alpha": "Trail Opacity",
+  "lzxnoneterraria.configuration.zenith_trail_alpha.tooltip": "Trail rendering opacity",
+  "lzxnoneterraria.configuration.zenith_trail_max_length": "Trail Length",
+  "lzxnoneterraria.configuration.zenith_trail_max_length.tooltip": "Maximum number of trail segments"
 }

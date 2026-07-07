@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -112,10 +113,6 @@ public class Zenith extends SwordItem {
 
     public static final ResourceLocation RES0 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/sword_trail.png");
     public static final ResourceLocation RES1 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/beam_sparkle.png");
-    public static final double RANGE = 64;
-    public static final int CYCLE = 30;
-    public static final double BOUNDING_BOX = 1.5;
-    public static final int MAX_LENGTH = 10;
 
     public static final IStaticProjectileBehavior PROJECTILE_BEHAVIOR = new IStaticProjectileBehavior() {
         @Override
@@ -125,7 +122,10 @@ public class Zenith extends SwordItem {
             if(stack.isEmpty()) return;
 
             CompoundTag customData = proj.getEntityData().get(StaticProjectile.CUSTOM_DATA);
-            if(!customData.contains("a") || !customData.contains("w") || !customData.contains("angle")) return;
+            if(!customData.contains("a") || !customData.contains("w") || !customData.contains("angle") || !customData.contains("start") || !customData.contains("idx")) return;
+            int start = customData.getInt("start");
+            if(proj.getEntityData().get(StaticProjectile.AGE) <= start) return;
+            int idx = customData.getInt("idx");
 
             Vec3 dir = MathUtil.toVec3(proj.getEntityData().get(StaticProjectile.DIRECTION)).normalize();
             Vec3 up = MathUtil.toVec3(proj.getEntityData().get(StaticProjectile.UP)).normalize();
@@ -134,7 +134,7 @@ public class Zenith extends SwordItem {
             Quaternionf rotationDir = new Quaternionf()
                 .fromAxisAngleRad(dir.toVector3f(), (float) Math.toRadians(customData.getInt("angle")));
             Quaternionf rotationUp1 = new Quaternionf()
-                .fromAxisAngleRad(up.toVector3f(), (float) -(customData.getDouble("w") * (proj.getEntityData().get(StaticProjectile.AGE) + partialTick)));
+                .fromAxisAngleRad(up.toVector3f(), (float) -(customData.getDouble("w") * (proj.getEntityData().get(StaticProjectile.AGE) - start + partialTick)));
             Quaternionf rotationUp2 = new Quaternionf()
                 .fromAxisAngleRad(up.toVector3f(), (float) Math.PI);
 
@@ -148,9 +148,9 @@ public class Zenith extends SwordItem {
             poseStack.mulPose(rotationDir);
             poseStack.mulPose(Axis.YP.rotationDegrees(-xyRot[1]));
             poseStack.mulPose(Axis.XP.rotationDegrees(xyRot[0]));
-            poseStack.mulPose(Axis.XP.rotationDegrees(proj.getEntityData().get(StaticProjectile.RXP) + proj.getEntityData().get(StaticProjectile.RXPS) * (proj.getEntityData().get(StaticProjectile.AGE) + partialTick)));
-            poseStack.mulPose(Axis.YP.rotationDegrees(proj.getEntityData().get(StaticProjectile.RYP) + proj.getEntityData().get(StaticProjectile.RYPS) * (proj.getEntityData().get(StaticProjectile.AGE) + partialTick)));
-            poseStack.mulPose(Axis.ZP.rotationDegrees(proj.getEntityData().get(StaticProjectile.RZP) + proj.getEntityData().get(StaticProjectile.RZPS) * (proj.getEntityData().get(StaticProjectile.AGE) + partialTick)));
+            poseStack.mulPose(Axis.XP.rotationDegrees(proj.getEntityData().get(StaticProjectile.RXP)));
+            poseStack.mulPose(Axis.YP.rotationDegrees(proj.getEntityData().get(StaticProjectile.RYP)));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(proj.getEntityData().get(StaticProjectile.RZP)));
 
             //缩放
             poseStack.scale(
@@ -168,9 +168,9 @@ public class Zenith extends SwordItem {
                     renderType -> {
                         VertexConsumer vertexConsumer = bufferSource.getBuffer(renderType);
                         return new TintedVertexConsumer(vertexConsumer,
-                            proj.getEntityData().get(StaticProjectile.COLOR_R),
-                            proj.getEntityData().get(StaticProjectile.COLOR_G),
-                            proj.getEntityData().get(StaticProjectile.COLOR_B),
+                            1.0f,
+                            1.0f,
+                            1.0f,
                             proj.getEntityData().get(StaticProjectile.COLOR_A));
                     },
                     entity.level(),
@@ -189,6 +189,9 @@ public class Zenith extends SwordItem {
                 proj.getEntityData().get(StaticProjectile.COLOR_G),
                 proj.getEntityData().get(StaticProjectile.COLOR_B)
             );
+            float mainAlpha = (float) Config.zenithTrailAlpha;
+            if(idx == 1) mainAlpha = mainAlpha * 0.5f;
+            if(idx == 2) mainAlpha = mainAlpha * 0.25f;
 
             //尾迹
             int quadCount = proj.trailPositions.size() / 2 - 1;
@@ -219,7 +222,7 @@ public class Zenith extends SwordItem {
                     float radio2 = (float) (i + 1) / quadCount;
 
                     vertexConsumer0.addVertex(matrix, (float) x1, (float) y1, (float) z1)
-                            .setColor(color.x, color.y, color.z, 1).setUv(radio1, 0.0f)
+                            .setColor(color.x, color.y, color.z, mainAlpha).setUv(radio1, 0.0f)
                             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
                     vertexConsumer0.addVertex(matrix, (float) x2, (float) y2, (float) z2)
                             .setColor(color.x, color.y, color.z, 0).setUv(radio1, 1.0f)
@@ -228,22 +231,23 @@ public class Zenith extends SwordItem {
                             .setColor(color.x, color.y, color.z, 0).setUv(radio2, 1.0f)
                             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
                     vertexConsumer0.addVertex(matrix, (float) x4, (float) y4, (float) z4)
-                            .setColor(color.x, color.y, color.z, 1).setUv(radio2, 0.0f)
+                            .setColor(color.x, color.y, color.z, mainAlpha).setUv(radio2, 0.0f)
                             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
                 }
             }
 
             //闪烁
+            if(idx != 0) return;
             float halfWidth = 32 * 0.05f;
             float halfHeight = 32 * 0.05f;
 
-            float radio = (float) proj.getEntityData().get(StaticProjectile.AGE) / (float) proj.getEntityData().get(StaticProjectile.LIFETIME);
+            float radio = (float) (proj.getEntityData().get(StaticProjectile.AGE) - start) / (float) proj.getEntityData().get(StaticProjectile.LIFETIME);
             float alpha;
             if(radio > 0.25f && radio < 0.4f) {
                 alpha = (radio - 0.25f) / 0.15f;
-            }else if(radio > 0.4f && radio < 0.6f) {
+            }else if(radio >= 0.4f && radio < 0.6f) {
                 alpha = 1.0f;
-            }else if(radio > 0.6f && radio < 0.75f) {
+            }else if(radio >= 0.6f && radio < 0.75f) {
                 alpha = 1.0f - (radio - 0.6f) / 0.15f;
             }else {
                 alpha = 0;
@@ -254,7 +258,7 @@ public class Zenith extends SwordItem {
             poseStack.pushPose();
 
             Vector3f tempRight = right.toVector3f();
-            double rad = customData.getDouble("w") * (proj.getEntityData().get(StaticProjectile.AGE) + partialTick);
+            double rad = customData.getDouble("w") * (proj.getEntityData().get(StaticProjectile.AGE) - start + partialTick);
             Vector3f swordTipDir = tempRight.rotate(new Quaternionf().fromAxisAngleRad(up.toVector3f(), (float) (Math.PI / 2 - rad))).normalize();
             Vec3 trans = MathUtil.toVec3(swordTipDir).scale(1.25);
 
@@ -289,16 +293,23 @@ public class Zenith extends SwordItem {
             if(projectile.getOwner() == null) return;
 
             CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
-            if(!customData.contains("w") || !customData.contains("angle")) return;
+            if(!customData.contains("w") || !customData.contains("angle") || !customData.contains("start")) return;
 
-            float lifeRadio = (float) projectile.getEntityData().get(StaticProjectile.AGE) / (float) projectile.getEntityData().get(StaticProjectile.LIFETIME);
+            int start = customData.getInt("start");
+            if(projectile.getEntityData().get(StaticProjectile.AGE) < start) {
+                Vec3 currentPos = (projectile.getOwner().getBoundingBox().getCenter()).add(MathUtil.toVec3(projectile.getEntityData().get(StaticProjectile.DIRECTION).normalize()).scale(-2));
+                projectile.getEntityData().set(StaticProjectile.ORIGIN, currentPos.toVector3f());
+                return;
+            }
+
+            float lifeRadio = (float) (projectile.getEntityData().get(StaticProjectile.AGE) - start) / (float) projectile.getEntityData().get(StaticProjectile.LIFETIME);
 
             Vector3f originalRight = projectile.getEntityData().get(StaticProjectile.RIGHT).normalize();
             Vector3f tempRight = new Vector3f(originalRight);
             Vector3f originalDir = projectile.getEntityData().get(StaticProjectile.DIRECTION).normalize();
             Vector3f tempDir = new Vector3f(originalDir);
             Vector3f up = projectile.getEntityData().get(StaticProjectile.UP).normalize();
-            double rad = customData.getDouble("w") * projectile.getEntityData().get(StaticProjectile.AGE);
+            double rad = customData.getDouble("w") * (projectile.getEntityData().get(StaticProjectile.AGE) - start);
             Quaternionf rotation = new Quaternionf()
                 .fromAxisAngleRad(up, (float) (Math.PI / 2 - rad));
 
@@ -308,11 +319,11 @@ public class Zenith extends SwordItem {
 
             projectile.trailPositions.addFirst(projectile.position().add(right.scale(-1.2)));
             projectile.trailPositions.addFirst(projectile.position().add(right.scale(1.5)));
-            while(projectile.trailPositions.size() > MAX_LENGTH) projectile.trailPositions.removeLast();
+            while(projectile.trailPositions.size() > Config.zenithTrailMaxLength) projectile.trailPositions.removeLast();
 
             projectile.setBoundingBox(new AABB(
-                projectile.getX() - BOUNDING_BOX, projectile.getY() - BOUNDING_BOX, projectile.getZ() - BOUNDING_BOX,
-                projectile.getX() + BOUNDING_BOX, projectile.getY() + BOUNDING_BOX, projectile.getZ() + BOUNDING_BOX
+                projectile.getX() - Config.zenithBoundingBoxSize, projectile.getY() - Config.zenithBoundingBoxSize, projectile.getZ() - Config.zenithBoundingBoxSize,
+                projectile.getX() + Config.zenithBoundingBoxSize, projectile.getY() + Config.zenithBoundingBoxSize, projectile.getZ() + Config.zenithBoundingBoxSize
             ));
 
             if(!projectile.level().isClientSide()) {
@@ -323,7 +334,7 @@ public class Zenith extends SwordItem {
                 );
                 for(LivingEntity target : targets) this.onHitEntity(projectile, new EntityHitResult(target, target.position()));
             }else {
-                if(lifeRadio > 0.1f && lifeRadio < 0.9f && projectile.getRandom().nextInt(2) == 0) {
+                if(lifeRadio > 0.1f && lifeRadio < 0.9f && projectile.getRandom().nextInt(5) == 0) {
                     Vector3f color = new Vector3f(
                         projectile.getEntityData().get(StaticProjectile.COLOR_R),
                         projectile.getEntityData().get(StaticProjectile.COLOR_G),
@@ -349,7 +360,7 @@ public class Zenith extends SwordItem {
             if(!projectile.level().isClientSide()) {
                 Entity target = result.getEntity();
                 if(projectile.getOwner() instanceof Player player && target instanceof LivingEntity livingEntity && FilterUtil.createLivingTargetFilter(projectile, projectile.getOwner()).test(livingEntity)) {
-                    if(target.hurt(projectile.damageSources().playerAttack(player), 20.f)) {
+                    if(target.hurt(projectile.damageSources().playerAttack(player), (float) (Config.zenithDamage + Math.random() * Config.zenithDamage))) {
                         target.invulnerableTime = 2;
                     }
                 }
@@ -359,54 +370,87 @@ public class Zenith extends SwordItem {
 
     public static void summon(Player player, boolean isFirst) {
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
-        int randomAngle = (int) ((Math.random() * 2 - 1) * 80);
+        int randomAngle = (int) ((Math.random() * 2 - 1) * 30);
         dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], randomAngle);
 
         Vec3 pos = (player.getBoundingBox().getCenter()).add(MathUtil.toVec3(dirs[0]).scale(-2));
-        Vec3 targetPos = MathUtil.getCrosshairPos(player, player.level(), RANGE);
+        Vec3 targetPos = MathUtil.getCrosshairPos(player, player.level(), Config.zenithMaxRange);
         double dist = targetPos.subtract(pos).length();
-        int cycle = (int) Math.max(10, dist / RANGE * CYCLE);
-        double a = Math.max(dist / 2 + 1, 2);
-        double b = Math.min(Math.random() * 2 + 2, a / 2);
+        int cycle = (int) Math.max(10, dist / Config.zenithMaxRange * Config.zenithCycle);
+        double a = Math.max(dist / 2, 2);
+        double b = Math.min(Math.random() * Config.zenithTrailB + Config.zenithTrailB, a / 2);
         double w = Math.PI * 2 / (double) cycle;
         if(player.getRandom().nextInt(2) == 0) w = -w;
 
         int randomIndex = isFirst ? getWeapons().length - 1 : player.getRandom().nextInt(getWeapons().length);
 
-        StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), player.level());
-        projectile.setOwner(player);
+        for(int i = 0;i < 3;i++) {
+            StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), player.level());
+            projectile.setOwner(player);
 
-        projectile.setPos(pos);
-        projectile.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.ZENITH_PROJECTILE);
-        projectile.getEntityData().set(StaticProjectile.RENDER_MODE, "custom");
-        projectile.getEntityData().set(StaticProjectile.ITEM, getWeapons()[randomIndex]);
-        projectile.getEntityData().set(StaticProjectile.ORIGIN, pos.toVector3f());
-        projectile.getEntityData().set(StaticProjectile.DIRECTION, dirs[0]);
-        projectile.getEntityData().set(StaticProjectile.UP, dirs[1]);
-        projectile.getEntityData().set(StaticProjectile.RIGHT, dirs[2]);
-        projectile.getEntityData().set(StaticProjectile.COLOR_R, COLORS[randomIndex].x);
-        projectile.getEntityData().set(StaticProjectile.COLOR_G, COLORS[randomIndex].y);
-        projectile.getEntityData().set(StaticProjectile.COLOR_B, COLORS[randomIndex].z);
-        projectile.getEntityData().set(StaticProjectile.SCALE_X, 2.0f);
-        projectile.getEntityData().set(StaticProjectile.SCALE_Y, 2.0f);
-        projectile.getEntityData().set(StaticProjectile.RXP, -90);
-        projectile.getEntityData().set(StaticProjectile.RZP, -135);
-        projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3ft-1.571)", b, w));
-        projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*sin(%.3ft-1.571)+%.3f", a, w, a));
-        projectile.getEntityData().set(StaticProjectile.LIFETIME, cycle);
-        projectile.getEntityData().set(StaticProjectile.GLOW, true);
+            projectile.setPos(pos);
+            projectile.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.ZENITH_PROJECTILE);
+            projectile.getEntityData().set(StaticProjectile.RENDER_MODE, "custom");
+            projectile.getEntityData().set(StaticProjectile.ITEM, getWeapons()[randomIndex]);
+            projectile.getEntityData().set(StaticProjectile.ORIGIN, pos.toVector3f());
+            projectile.getEntityData().set(StaticProjectile.DIRECTION, dirs[0]);
+            projectile.getEntityData().set(StaticProjectile.UP, dirs[1]);
+            projectile.getEntityData().set(StaticProjectile.RIGHT, dirs[2]);
+            projectile.getEntityData().set(StaticProjectile.COLOR_R, COLORS[randomIndex].x);
+            projectile.getEntityData().set(StaticProjectile.COLOR_G, COLORS[randomIndex].y);
+            projectile.getEntityData().set(StaticProjectile.COLOR_B, COLORS[randomIndex].z);
+            projectile.getEntityData().set(StaticProjectile.RXP, -90);
+            projectile.getEntityData().set(StaticProjectile.RZP, -135);
+            projectile.getEntityData().set(StaticProjectile.GLOW, true);
 
-        CompoundTag customData = new CompoundTag();
-        customData.putDouble("a", a);
-        customData.putDouble("b", b);
-        customData.putDouble("w", w);
-        customData.putInt("angle", randomAngle);
-        projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
+            CompoundTag customData = new CompoundTag();
+            customData.putDouble("a", a);
+            customData.putDouble("b", b);
+            customData.putDouble("w", w);
+            customData.putInt("angle", randomAngle);
+            if(i == 0) {
+                projectile.getEntityData().set(StaticProjectile.COLOR_A, 1.0f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_X, (float) Config.zenithScale);
+                projectile.getEntityData().set(StaticProjectile.SCALE_Y, (float) Config.zenithScale);
+                projectile.getEntityData().set(StaticProjectile.LIFETIME, cycle);
+                projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3ft-1.571)", b, w));
+                projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*sin(%.3ft-1.571)+%.3f", a, w, a));
+                customData.putInt("start", 0);
+            }else if(i == 1) {
+                projectile.getEntityData().set(StaticProjectile.COLOR_A, 0.75f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_X, (float) Config.zenithScale * 0.75f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_Y, (float) Config.zenithScale * 0.75f);
+                projectile.getEntityData().set(StaticProjectile.LIFETIME, (int) (cycle * 1.25));
+                if(w > 0) {
+                    projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3ft-3.142)", b, w));
+                    projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*sin(%.3ft-3.142)+%.3f", a, w, a));
+                }else {
+                    projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3ft)", b, w));
+                    projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*sin(%.3ft)+%.3f", a, w, a));
+                }
+                customData.putInt("start", (int) (cycle * 0.25));
+            }else if(i == 2) {
+                projectile.getEntityData().set(StaticProjectile.COLOR_A, 0.5f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_X, (float) Config.zenithScale * 0.5f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_Y, (float) Config.zenithScale * 0.5f);
+                projectile.getEntityData().set(StaticProjectile.LIFETIME, (int) (cycle * 1.5));
+                if(w > 0) {
+                    projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3ft-4.713)", b, w));
+                    projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*sin(%.3ft-4.713)+%.3f", a, w, a));
+                }else {
+                    projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3ft+1.571)", b, w));
+                    projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*sin(%.3ft+1.571)+%.3f", a, w, a));
+                }
+                customData.putInt("start", (int) (cycle * 0.5));
+            }
+            customData.putInt("idx", i);
+            projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
 
-        float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
-        projectile.setXRot(xyRot[0]);
-        projectile.setYRot(xyRot[1]);
-        player.level().addFreshEntity(projectile);
+            float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
+            projectile.setXRot(xyRot[0]);
+            projectile.setYRot(xyRot[1]);
+            player.level().addFreshEntity(projectile);
+        }
     }
 
     @Override

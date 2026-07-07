@@ -28,5 +28,6 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.MEOWMERE.get());
                 output.accept(ModItems.TERRA_BLADE.get());
                 output.accept(ModItems.ZENITH.get());
+                output.accept(ModItems.TRUE_COPPER_SHORTSWORD.get());
             }).build());
 }
