@@ -12,6 +12,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
+import java.util.Objects;
+
 @EventBusSubscriber(modid = LzxnoneTerraria.MODID)
 public class EffectLogicHandler {
 
@@ -31,8 +33,10 @@ public class EffectLogicHandler {
         LivingEntity entity = event.getEntity();
         if(!entity.level().isClientSide() && !(entity instanceof Player)) {
             if(entity.level() instanceof ServerLevel serverLevel) {
-                serverLevel.getChunkSource().broadcast(entity,
-                        new ClientboundRemoveMobEffectPacket(entity.getId(), event.getEffectInstance().getEffect()));
+                if(event.getEffectInstance() != null) {
+                    serverLevel.getChunkSource().broadcast(entity,
+                            new ClientboundRemoveMobEffectPacket(entity.getId(), event.getEffectInstance().getEffect()));
+                }
             }
         }
     }
@@ -42,8 +46,10 @@ public class EffectLogicHandler {
         LivingEntity entity = event.getEntity();
         if (!entity.level().isClientSide() && !(entity instanceof Player)) {
             if (entity.level() instanceof ServerLevel serverLevel) {
-                serverLevel.getChunkSource().broadcast(entity,
-                        new ClientboundRemoveMobEffectPacket(entity.getId(), event.getEffectInstance().getEffect()));
+                if(event.getEffectInstance() != null) {
+                    serverLevel.getChunkSource().broadcast(entity,
+                            new ClientboundRemoveMobEffectPacket(entity.getId(), event.getEffectInstance().getEffect()));
+                }
             }
         }
     }
