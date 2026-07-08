@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -91,9 +92,6 @@ public class TheHorsemansBlade extends SwordItem {
     );
 
     public static final ISwordBeamBehavior SWORD_BEAM_BEHAVIOR = new ISwordBeamBehavior() {
-        public static final int MAX_HIT_ENTITY_COUNT = 3;
-        public static final float RANGE = 16.0f;
-
         @Override
         public void onMoving(SwordBeam beam) {
             if(beam.currentPosition == null) return;
@@ -111,8 +109,8 @@ public class TheHorsemansBlade extends SwordItem {
                     CompoundTag custom_data = beam.getEntityData().get(SwordBeam.CUSTOM_DATA);
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
-                        if(count < MAX_HIT_ENTITY_COUNT) {
-                            if(target.hurt(beam.level().damageSources().playerAttack(player), 15.0f)) {
+                        if(count < Config.horsemansBladeMaxHitCount) {
+                            if(target.hurt(beam.level().damageSources().playerAttack(player), (float) Config.horsemansBladeDamage)) {
                                 target.invulnerableTime = 20;
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
@@ -122,7 +120,7 @@ public class TheHorsemansBlade extends SwordItem {
                                 Entity entity = beam.getOwner();
                                 if(entity == null) return;
                                 summon.setOwner(entity);
-                                Vec3 pos = MathUtil.getRandomPosInRadius(entity.position(), RANGE);
+                                Vec3 pos = MathUtil.getRandomPosInRadius(entity.position(), Config.horsemansPumpkinSpawnRange);
                                 summon.setPos(pos);
 
                                 float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(target.position().subtract(pos)));
@@ -157,7 +155,7 @@ public class TheHorsemansBlade extends SwordItem {
 
         @Override
         public void generate(Entity entity, CompoundTag beamData) {
-            beamData.putInt("rotate", (int) (45 * (Math.random() * 2 - 1)));
+            beamData.putInt("rotate", (int) (Config.horsemansBladeRotateRange * (Math.random() * 2 - 1)));
             //beamData.putBoolean("right", entity.getRandom().nextInt(2) == 0);
             ISwordBeamBehavior.super.generate(entity, beamData);
         }
@@ -202,9 +200,6 @@ public class TheHorsemansBlade extends SwordItem {
     }
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
-        public static final double SPEED = 0.5;
-        public static final float DAMAGE = 15.0f;
-        public static final float RANGE = 32.0f;
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
@@ -223,7 +218,7 @@ public class TheHorsemansBlade extends SwordItem {
                 if(target == null) {
                     List<Monster> targets = summon.level().getEntitiesOfClass(
                         Monster.class,
-                        AABB.ofSize(summon.position(), RANGE * 2, RANGE * 2, RANGE * 2),
+                        AABB.ofSize(summon.position(), Config.horsemansPumpkinMaxTargetRange * 2, Config.horsemansPumpkinMaxTargetRange * 2, Config.horsemansPumpkinMaxTargetRange * 2),
                         FilterUtil.createMonsterFilter(summon.getOwner())
                     );
                     targets.sort(Comparator.comparingDouble(e -> e.distanceToSqr(summon.position())));
@@ -240,18 +235,18 @@ public class TheHorsemansBlade extends SwordItem {
                 Vec3 selfPos = summon.position();
                 Vec3 dir = targetPos.subtract(selfPos).normalize();
 
-                summon.setDeltaMovement(dir.scale(SPEED));
+                summon.setDeltaMovement(dir.scale(Config.horsemansPumpkinSpeed));
 
                 float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(dir));
                 summon.setXRot(xyRot[0]);
                 summon.setYRot(xyRot[1]);
 
                 if(selfPos.distanceToSqr(targetPos) < 2.0D) {
-                    if(summon.getOwner() instanceof Player player && FilterUtil.createLivingTargetFilter(player).test(target) && target.hurt(summon.damageSources().playerAttack(player), DAMAGE)) onDied(summon);
+                    if(summon.getOwner() instanceof Player player && FilterUtil.createLivingTargetFilter(player).test(target) && target.hurt(summon.damageSources().playerAttack(player), (float) Config.horsemansPumpkinDamage)) onDied(summon);
                 }
             }else {
                 Vec3 dir = summon.getLookAngle().normalize();
-                summon.setDeltaMovement(dir.scale(SPEED));
+                summon.setDeltaMovement(dir.scale(Config.horsemansPumpkinSpeed));
             }
 
             if(!summon.level().isClientSide()) {
@@ -272,7 +267,7 @@ public class TheHorsemansBlade extends SwordItem {
                     for(Entity hitEntity : hitEntities) {
                         if(target != null && hitEntity.getUUID() == target.getUUID()) continue;
                         if(summon.getOwner() instanceof Player player) {
-                            if(hitEntity.hurt(summon.damageSources().playerAttack(player), DAMAGE)) {
+                            if(hitEntity.hurt(summon.damageSources().playerAttack(player), (float) Config.horsemansPumpkinDamage)) {
                                 hitEntity.invulnerableTime = 2;
                             }
                         }

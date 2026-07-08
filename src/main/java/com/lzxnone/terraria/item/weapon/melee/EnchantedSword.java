@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -69,7 +70,7 @@ public class EnchantedSword extends SwordItem {
                     Entity owner = projectile.getOwner();
                     if(owner == null) return;
                     if(!FilterUtil.createLivingTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                    if(target.hurt(projectile.damageSources().playerAttack(player), 5.5f)) {
+                    if(target.hurt(projectile.damageSources().playerAttack(player), (float) Config.enchantedSwordDamage)) {
                         target.invulnerableTime = 5;
                         ParticleUtil.addParticles(
                             (ServerLevel) projectile.level(), ModParticles.COLORFUL_PARTICLE,
@@ -113,7 +114,8 @@ public class EnchantedSword extends SwordItem {
             projectile.getEntityData().set(StaticProjectile.RZP, 45);
             projectile.getEntityData().set(StaticProjectile.RYPS, 10);
             projectile.getEntityData().set(StaticProjectile.GLOW, true);
-            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, "t");
+            projectile.getEntityData().set(StaticProjectile.LIFETIME, Config.enchantedSwordLifetime);
+            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", Config.enchantedSwordSpeed));
 
             projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
             level.addFreshEntity(projectile);

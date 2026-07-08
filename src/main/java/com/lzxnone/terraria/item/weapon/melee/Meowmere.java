@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -73,9 +74,6 @@ public class Meowmere extends SwordItem {
         }
     );
 
-    public static final double GRAVITY = 0.025; //重力
-    public static final double VZ = 1.5;
-
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         public static final ResourceLocation RES = ResourceLocation.parse("lzxnoneterraria:textures/vfx/rainbow.png");
         public static final int MAX_LENGTH = 100;
@@ -136,7 +134,7 @@ public class Meowmere extends SwordItem {
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
             Vec3 motion = summon.getDeltaMovement();
-            motion = motion.add(0, -GRAVITY, 0);
+            motion = motion.add(0, -Config.meowmereGravity, 0);
             Vec3 up = MathUtil.toVec3(MathUtil.computeCoordinateSystem(motion.toVector3f(), 0)[1]).normalize();
 
             summon.trailPositions.addFirst(summon.position().add(up.scale(0.5)));
@@ -149,7 +147,7 @@ public class Meowmere extends SwordItem {
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
                 if(summon.getOwner() instanceof Player player && target instanceof LivingEntity livingEntity) {
-                    if(livingEntity.hurt(summon.damageSources().playerAttack(player), 20.0f)) {
+                    if(livingEntity.hurt(summon.damageSources().playerAttack(player), (float) Config.meowmereDamage)) {
                         if(customData.contains("hitEntity") && customData.getInt("hitEntity") < 4) {
                             customData.putInt("hitEntity", customData.getInt("hitEntity") + 1);
                             summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
@@ -202,7 +200,7 @@ public class Meowmere extends SwordItem {
                                 ),
                                 FilterUtil.createLivingTargetFilter(summon.getOwner())
                             );
-                            for(LivingEntity livingEntity : hitEntities) livingEntity.hurt(summon.damageSources().playerAttack(player), 20.0f);
+                            for(LivingEntity livingEntity : hitEntities) livingEntity.hurt(summon.damageSources().playerAttack(player), (float) Config.meowmereDamage);
                         }
                     }
 
@@ -296,7 +294,7 @@ public class Meowmere extends SwordItem {
             float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
             summon.setXRot(xyRot[0]);
             summon.setYRot(xyRot[1]);
-            summon.setDeltaMovement(player.getLookAngle().normalize().scale(VZ));
+            summon.setDeltaMovement(player.getLookAngle().normalize().scale(Config.meowmereInitialSpeed));
             level.addFreshEntity(summon);
         }else {
             ParticleUtil.addParticles(

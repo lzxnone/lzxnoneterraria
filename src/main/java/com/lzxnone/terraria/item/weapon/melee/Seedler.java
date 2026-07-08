@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -49,22 +50,18 @@ public class Seedler extends SwordItem {
         ));
     }
 
-    public static final double GRAVITY = 0.075; //重力
-    public static final double BOUNCINESS = 0.5;
-    public static final double VZ = 0.75;
-
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
             Vec3 motion = summon.getDeltaMovement();
-            motion = motion.add(0, -GRAVITY, 0);
+            motion = motion.add(0, -Config.seedlerNutGravity, 0);
 
             EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(motion));
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
                 if(summon.getOwner() instanceof Player player && target instanceof LivingEntity livingEntity) {
-                    if(livingEntity.hurt(summon.damageSources().playerAttack(player), 7.0f)) {
+                    if(livingEntity.hurt(summon.damageSources().playerAttack(player), (float) Config.seedlerThornDamage)) {
                         livingEntity.invulnerableTime = 2;
                     }
                 }
@@ -81,15 +78,15 @@ public class Seedler extends SwordItem {
                 double mz = motion.z;
 
                 switch(face.getAxis()) {
-                    case X -> mx = -mx * BOUNCINESS;
-                    case Y -> my = -my * BOUNCINESS;
-                    case Z -> mz = -mz * BOUNCINESS;
+                    case X -> mx = -mx * Config.seedlerNutBounce;
+                    case Y -> my = -my * Config.seedlerNutBounce;
+                    case Z -> mz = -mz * Config.seedlerNutBounce;
                 }
 
                 if(face == Direction.UP && Math.abs(my) < 0.1) {
                     my = 0;
-                    mx *= BOUNCINESS;
-                    mz *= BOUNCINESS;
+                    mx *= Config.seedlerNutBounce;
+                    mz *= Config.seedlerNutBounce;
                 }
 
                 motion = new Vec3(mx, my, mz);
@@ -135,8 +132,8 @@ public class Seedler extends SwordItem {
                     proj.getEntityData().set(StaticProjectile.SCALE_X, 0.5f);
                     proj.getEntityData().set(StaticProjectile.SCALE_Y, 0.5f);
                     proj.getEntityData().set(StaticProjectile.RXP, 90);
-                    proj.getEntityData().set(StaticProjectile.LIFETIME, 30);
-                    proj.getEntityData().set(StaticProjectile.EXPRESSION_Z, "t*2");
+                    proj.getEntityData().set(StaticProjectile.LIFETIME, Config.seedlerThornLifetime);
+                    proj.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", Config.seedlerThornSpeed));
 
                     proj.setDeltaMovement(MathUtil.toVec3(dirs[0]));
                     summon.level().addFreshEntity(proj);
@@ -180,7 +177,7 @@ public class Seedler extends SwordItem {
                     Entity owner = projectile.getOwner();
                     if(owner == null) return;
                     if(!FilterUtil.createLivingTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                    if(target.hurt(projectile.damageSources().playerAttack(player), 7f)) {
+                    if(target.hurt(projectile.damageSources().playerAttack(player), (float) Config.seedlerThornDamage)) {
                         target.invulnerableTime = 2;
                         onDied(projectile);
                     }
@@ -220,7 +217,7 @@ public class Seedler extends SwordItem {
             float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
             summon.setXRot(xyRot[0]);
             summon.setYRot(xyRot[1]);
-            summon.setDeltaMovement(player.getLookAngle().normalize().scale(VZ));
+            summon.setDeltaMovement(player.getLookAngle().normalize().scale(Config.seedlerNutInitialSpeed));
             level.addFreshEntity(summon);
         }
 

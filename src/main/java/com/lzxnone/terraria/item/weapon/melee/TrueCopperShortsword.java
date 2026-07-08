@@ -40,7 +40,7 @@ public class TrueCopperShortsword extends SwordItem {
 
     public static void summon(Player player) {
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
-        int randomAngle = (int) ((Math.random() * 2 - 1) * 30);
+        int randomAngle = (int) ((Math.random() * 2 - 1) * Config.zenithTrailOffset);
         dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], randomAngle);
 
         Vec3 pos = (player.getBoundingBox().getCenter()).add(MathUtil.toVec3(dirs[0]).scale(-2));
@@ -52,7 +52,7 @@ public class TrueCopperShortsword extends SwordItem {
         double w = Math.PI * 2 / (double) cycle;
         if(player.getRandom().nextInt(2) == 0) w = -w;
 
-        for(int i = 0;i < 3;i++) {
+        for(int i = 0;i < Config.zenithWeaponCount;i++) {
             StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), player.level());
             projectile.setOwner(player);
 

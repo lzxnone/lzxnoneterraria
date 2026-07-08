@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -49,11 +50,12 @@ public class BeeKeeper extends SwordItem {
                     if(target instanceof LivingEntity livingTarget && FilterUtil.createLivingTargetFilter(player).test(livingTarget)) {
                         livingTarget.addEffect(new MobEffectInstance(
                             ModEffects.CONFUSED,
-                            40,
+                            Config.beeKeeperConfusionDuration,
                             0
                         ));
                     }
-                    int count = player.level().random.nextInt(3) + 1;
+
+                    int count = Config.beeKeeperMaxBees > 0 ? player.level().random.nextInt(Config.beeKeeperMaxBees) + 1 : 0;
                     while(count-- > 0) {
                         BeeSummon bee = ModEntities.BEE_SUMMON.get().create(player.level());
                         if(bee != null) {

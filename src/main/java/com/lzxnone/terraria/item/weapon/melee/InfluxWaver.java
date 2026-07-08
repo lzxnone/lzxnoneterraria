@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -59,12 +60,8 @@ public class InfluxWaver extends SwordItem {
         ));
     }
 
-    public static final int MAX_SUMMON_COUNT = 2;
-    public static final double SPEED = 1.0;
     public static final float FADE_OUT = 0.1f;
     public static final float FRICTION = 0.1f;
-    public static final float SUMMON_RADIUS = 8.0f;
-    public static final float SEARCH_RADIUS = 24.0f;
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
@@ -110,20 +107,20 @@ public class InfluxWaver extends SwordItem {
                 checkEntity = false;
             }else {
                 if(idx == 0) {
-                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(SPEED));
+                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(Config.influxWaverSpeed));
                 }else {
                     checkBlock = false;
                     if(customData.contains("target")) {
                         Entity target = summon.level().getEntity(customData.getInt("target"));
                         if(target == null || !target.isAlive()) {
-                            summon.setDeltaMovement(summon.getLookAngle().normalize().scale(SPEED));
+                            summon.setDeltaMovement(summon.getLookAngle().normalize().scale(Config.influxWaverSpeed));
                             checkEntity = false;
                         }else {
                             Vec3 targetPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ());
-                            summon.setDeltaMovement(targetPos.subtract(summon.position()).normalize().scale(SPEED));
+                            summon.setDeltaMovement(targetPos.subtract(summon.position()).normalize().scale(Config.influxWaverSpeed));
                         }
                     }else {
-                        summon.setDeltaMovement(summon.getLookAngle().normalize().scale(SPEED));
+                        summon.setDeltaMovement(summon.getLookAngle().normalize().scale(Config.influxWaverSpeed));
                         checkEntity = false;
                     }
                 }
@@ -155,7 +152,7 @@ public class InfluxWaver extends SwordItem {
                         Entity target = customData.contains("target") ? summon.level().getEntity(customData.getInt("target")) : null;
                         if(target != null && !hitTarget.getUUID().equals(target.getUUID())) return;
                         if(hitTarget instanceof LivingEntity livingEntity && summon.getOwner() instanceof Player player && FilterUtil.createLivingTargetFilter(player).test(livingEntity)) {
-                            if(livingEntity.hurt(summon.damageSources().playerAttack(player), 12.0f)) {
+                            if(livingEntity.hurt(summon.damageSources().playerAttack(player), (float) Config.influxWaverDamage)) {
                                 livingEntity.invulnerableTime = 2;
                             }
                             customData.putBoolean("dead", false);
@@ -171,12 +168,12 @@ public class InfluxWaver extends SwordItem {
         public void onDied(StaticSummon summon) {
             if(!summon.level().isClientSide()) {
                 CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-                if(customData.contains("dead") && !customData.getBoolean("dead") && customData.contains("idx") && customData.getInt("idx") < MAX_SUMMON_COUNT) {
+                if(customData.contains("dead") && !customData.getBoolean("dead") && customData.contains("idx") && customData.getInt("idx") < Config.influxWaverMaxCount) {
                     if(summon.getOwner() instanceof Player player) {
                         Entity target = InfluxWaver.search(player, summon.position());
                         if(target != null) {
                             Vec3 targetPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ());
-                            Vec3 summonPos = MathUtil.getRandomPosOnRadius(targetPos, SUMMON_RADIUS);
+                            Vec3 summonPos = MathUtil.getRandomPosOnRadius(targetPos, Config.influxWaverSpawnRange);
                             InfluxWaver.summon(player, summonPos, targetPos.subtract(summonPos).normalize(), target, customData.getInt("idx") + 1);
                         }
                     }
@@ -207,6 +204,7 @@ public class InfluxWaver extends SwordItem {
         summon.getEntityData().set(StaticSummon.RXP, -90);
         summon.getEntityData().set(StaticSummon.RZP, -135);
         summon.getEntityData().set(StaticSummon.GLOW, true);
+        summon.getEntityData().set(StaticSummon.LIFETIME, 300);
         summon.setNoGravity(true);
         summon.noPhysics = true;
 
@@ -220,8 +218,8 @@ public class InfluxWaver extends SwordItem {
 
     public static Entity search(Player player, Vec3 pos) {
         AABB searchBox = new AABB(
-            pos.x - SEARCH_RADIUS, pos.y - SEARCH_RADIUS, pos.z - SEARCH_RADIUS,
-            pos.x + SEARCH_RADIUS, pos.y + SEARCH_RADIUS, pos.z + SEARCH_RADIUS
+            pos.x - Config.influxWaverTargetRange, pos.y - Config.influxWaverTargetRange, pos.z - Config.influxWaverTargetRange,
+            pos.x + Config.influxWaverTargetRange, pos.y + Config.influxWaverTargetRange, pos.z + Config.influxWaverTargetRange
         );
         List<Monster> entities = player.level().getEntitiesOfClass(
             Monster.class,

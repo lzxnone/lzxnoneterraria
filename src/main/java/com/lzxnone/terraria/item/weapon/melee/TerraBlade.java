@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -92,8 +93,6 @@ public class TerraBlade extends SwordItem {
     );
 
     public static final ISwordBeamBehavior SWORD_BEAM_BEHAVIOR = new ISwordBeamBehavior() {
-        public static final int MAX_HIT_ENTITY_COUNT = 3;
-
         @Override
         public void onMoving(SwordBeam beam) {
             if(beam.currentPosition == null) return;
@@ -111,8 +110,8 @@ public class TerraBlade extends SwordItem {
                     CompoundTag custom_data = beam.getEntityData().get(SwordBeam.CUSTOM_DATA);
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
-                        if(count < MAX_HIT_ENTITY_COUNT) {
-                            if(target.hurt(beam.level().damageSources().playerAttack(player), 11.0f)) {
+                        if(count < Config.terraBladeMaxHitCount) {
+                            if(target.hurt(beam.level().damageSources().playerAttack(player), (float) Config.terraBladeDamage)) {
                                 target.invulnerableTime = 20;
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
@@ -127,8 +126,10 @@ public class TerraBlade extends SwordItem {
         @Override
         public void generate(Entity entity, CompoundTag beamData) {
             //beamData.putBoolean("right", entity.getRandom().nextInt(2) == 0);
+            int randomAngle = (int) (Config.terraBladeRotateRange * (Math.random() * 2 - 1));
+            beamData.putInt("rotate", randomAngle);
             ISwordBeamBehavior.super.generate(entity, beamData);
-            if(entity instanceof Player player) summon(player);
+            if(entity instanceof Player player) summon(player, randomAngle);
         }
     };
 
@@ -143,11 +144,6 @@ public class TerraBlade extends SwordItem {
 
     public static final float FADE_IN = 0.33f;
     public static final float FADE_OUT = 0.67f;
-
-    public static final double SPEED = 2;
-    public static final float DAMAGE = 11;
-    public static final float DAMAGE_PUNISHMENT = 0.75f;
-
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
@@ -402,9 +398,9 @@ public class TerraBlade extends SwordItem {
             if(!customData.contains("dead")) {
                 float progress = summon.getEntityData().get(StaticSummon.AGE) / (float) summon.getEntityData().get(StaticSummon.LIFETIME);
                 if(progress > FADE_IN) {
-                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(SPEED - SPEED * (progress - FADE_IN) / (1.0f - FADE_IN)));
+                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(Config.terraProjectileSpeed - Config.terraProjectileSpeed * (progress - FADE_IN) / (1.0f - FADE_IN)));
                 }else {
-                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(SPEED));
+                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(Config.terraProjectileSpeed));
                 }
             }else {
                 summon.setDeltaMovement(summon.getLookAngle().normalize().scale(0.1));
@@ -425,7 +421,7 @@ public class TerraBlade extends SwordItem {
                 int count = customData.getInt("hitCount");
                 List<LivingEntity> targets = summon.level().getEntitiesOfClass(LivingEntity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                 for(LivingEntity target : targets) {
-                    if(target.hurt(summon.damageSources().playerAttack(player), DAMAGE * (float) Math.pow(DAMAGE_PUNISHMENT, count))) {
+                    if(target.hurt(summon.damageSources().playerAttack(player), (float) Config.terraProjectileDamage * (float) Math.pow(Config.terraProjectileDamageDecay, count))) {
                         count++;
                         ParticleUtil.addParticles(
                             (ServerLevel) summon.level(), ModParticles.TERRA_BEAM_HIT_PARTICLE.get(),
@@ -473,18 +469,18 @@ public class TerraBlade extends SwordItem {
                     );
                 }
             }
-
             summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
         }
     };
 
-    public static void summon(Player player) {
+    public static void summon(Player player, int randomAngle) {
         StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), player.level());
         summon.setOwner(player);
         Vec3 pos = new Vec3(player.getX(), player.getEyeY() - 0.1, player.getZ());
         summon.setPos(pos);
 
-        int randomAngle = (int) ((Math.random() * 2 - 1) * 60);
+        if(!Config.terraProjectileAlignToBlade) randomAngle = (int) (Config.terraProjectileRotateRange * (Math.random() * 2 - 1));
+
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
         dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], randomAngle);
         float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
@@ -495,7 +491,7 @@ public class TerraBlade extends SwordItem {
 
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.TERRA_BLADE_BEAM);
         summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-        summon.getEntityData().set(StaticSummon.LIFETIME, 40);
+        summon.getEntityData().set(StaticSummon.LIFETIME, Config.terraProjectileLifetime);
         summon.getEntityData().set(StaticSummon.RZP, randomAngle);
         summon.getEntityData().set(StaticSummon.GLOW, true);
         summon.setNoGravity(true);
@@ -533,7 +529,7 @@ public class TerraBlade extends SwordItem {
         customData.putFloat("rightZ", dirs[2].z);
         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
 
-        summon.setDeltaMovement(player.getLookAngle().normalize().scale(SPEED));
+        summon.setDeltaMovement(player.getLookAngle().normalize().scale(Config.terraProjectileSpeed));
 
         player.level().addFreshEntity(summon);
     }

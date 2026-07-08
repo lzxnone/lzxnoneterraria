@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -84,7 +85,7 @@ public class StarWrath extends SwordItem {
                 if(result.getEntity() instanceof LivingEntity target) {
                     Entity owner = projectile.getOwner();
                     if(!FilterUtil.createLivingTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                    if(target.hurt(projectile.damageSources().playerAttack(player), 16f)) {
+                    if(target.hurt(projectile.damageSources().playerAttack(player), (float) Config.starWrathDamage)) {
                         target.invulnerableTime = 2;
                     }
                 }
@@ -136,7 +137,6 @@ public class StarWrath extends SwordItem {
         }
     };
 
-    public static final double MAX_RANGE = 48.0;
     public static final double HEIGHT = 20.0;
     public static final double DELTA_HEIGHT = 10.0;
     public static final double SPAWN_OFFSET = 10.0;
@@ -148,7 +148,7 @@ public class StarWrath extends SwordItem {
         ItemStack itemstack = player.getItemInHand(hand);
         if(!level.isClientSide()) {
             for(int i = 0;i < SPAWN_COUNT;i++) {
-                Vec3 targetPos = MathUtil.getCrosshairPos(player, level, MAX_RANGE);
+                Vec3 targetPos = MathUtil.getCrosshairPos(player, level, Config.starWrathMaxRange);
 
                 Vec3 spawnPos = new Vec3(
                     targetPos.x + SPAWN_OFFSET * (Math.random() * 2 - 1),
@@ -180,10 +180,10 @@ public class StarWrath extends SwordItem {
                 projectile.getEntityData().set(StaticProjectile.GLOW, true);
                 projectile.getEntityData().set(StaticProjectile.RXP, 90);
                 projectile.getEntityData().set(StaticProjectile.RZP, 90);
-                projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, "t*2");
+                projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", Config.starWrathSpeed));
 
                 CompoundTag customData = new CompoundTag();
-                customData.putInt("targetLifetime", (int) Math.round(targetPos.distanceTo(spawnPos) / 2.0D));
+                customData.putInt("targetLifetime", (int) Math.round(targetPos.distanceTo(spawnPos) / Config.starWrathSpeed));
                 projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
 
                 projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
