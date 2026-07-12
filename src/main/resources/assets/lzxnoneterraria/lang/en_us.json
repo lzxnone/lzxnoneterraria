@@ -165,6 +165,8 @@
   "lzxnoneterraria.configuration.terragrim_hit_range.tooltip": "AABB collision box range",
   "lzxnoneterraria.configuration.terragrim_damage": "Damage",
   "lzxnoneterraria.configuration.terragrim_damage.tooltip": "Damage per tick",
+  "lzxnoneterraria.configuration.terragrim_rotate_range": "Blade Rotate Range",
+  "lzxnoneterraria.configuration.terragrim_rotate_range.tooltip": "Blade rotation angle range",
 
   "lzxnoneterraria.configuration.excalibur_settings": "Excalibur Settings",
   "lzxnoneterraria.configuration.excalibur_rotate_range": "Blade Rotate Range",

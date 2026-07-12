@@ -76,6 +76,7 @@ public class Config {
 
     public static final ModConfigSpec.DoubleValue TERRAGRIM_HIT_RANGE;
     public static final ModConfigSpec.DoubleValue TERRAGRIM_DAMAGE;
+    public static final ModConfigSpec.IntValue TERRAGRIM_ROTATE_RANGE;
 
     public static final ModConfigSpec.IntValue EXCALIBUR_ROTATE_RANGE;
     public static final ModConfigSpec.IntValue EXCALIBUR_MAX_HIT_COUNT;
@@ -197,6 +198,7 @@ public class Config {
 
     public static double terragrimHitRange;
     public static double terragrimDamage;
+    public static int terragrimRotateRange;
 
     public static int excaliburRotateRange;
     public static int excaliburMaxHitCount;
@@ -530,6 +532,10 @@ public class Config {
             .comment("伤害")
             .defineInRange("terragrim_damage", 0.25, 0, 2147483647.0);
 
+        TERRAGRIM_ROTATE_RANGE = builder
+            .comment("刀光偏转角范围")
+            .defineInRange("terragrim_rotate_range", 45, 0, 90);
+
         builder.pop();
 
 
@@ -811,6 +817,7 @@ public class Config {
             muramasaBeamDamage = MURAMASA_BEAM_DAMAGE.get();
             terragrimHitRange = TERRAGRIM_HIT_RANGE.get();
             terragrimDamage = TERRAGRIM_DAMAGE.get();
+            terragrimRotateRange = TERRAGRIM_ROTATE_RANGE.get();
             excaliburRotateRange = EXCALIBUR_ROTATE_RANGE.get();
             excaliburMaxHitCount = EXCALIBUR_MAX_HIT_COUNT.get();
             excaliburDamage = EXCALIBUR_DAMAGE.get();

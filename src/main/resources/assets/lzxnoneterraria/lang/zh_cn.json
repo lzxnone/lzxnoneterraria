@@ -165,6 +165,8 @@
   "lzxnoneterraria.configuration.terragrim_hit_range.tooltip": "AABB 碰撞箱半边长",
   "lzxnoneterraria.configuration.terragrim_damage": "伤害",
   "lzxnoneterraria.configuration.terragrim_damage.tooltip": "每刻造成的伤害",
+  "lzxnoneterraria.configuration.terragrim_rotate_range": "刀光偏转角范围",
+  "lzxnoneterraria.configuration.terragrim_rotate_range.tooltip": "刀光旋转角度范围",
 
   "lzxnoneterraria.configuration.excalibur_settings": "断钢剑 设置",
   "lzxnoneterraria.configuration.excalibur_rotate_range": "刀光偏转角范围",

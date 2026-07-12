@@ -109,7 +109,7 @@ public class Terragrim extends SwordItem {
             int rotate = summon.getEntityData().get(StaticSummon.RZP);
 
             Quaternionf rotation = new Quaternionf()
-                .fromAxisAngleRad(dirs[0], (float) Math.toRadians(Math.abs(dirs[0].y) > 0.999 ? 0 : rotate));
+                .fromAxisAngleRad(dirs[0], (float) Math.toRadians(rotate));
             poseStack.mulPose(rotation);
 
             float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
@@ -191,7 +191,7 @@ public class Terragrim extends SwordItem {
             summon.setPos(pos);
             summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.TERRAGRIM_BEAM);
             summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-            summon.getEntityData().set(StaticSummon.RZP, (int) ((Math.random() * 2 - 1) * 45));
+            summon.getEntityData().set(StaticSummon.RZP, (int) ((Math.random() * 2 - 1) * Config.terragrimRotateRange));
             summon.getEntityData().set(StaticSummon.LIFETIME, 1);
             summon.getEntityData().set(StaticSummon.GLOW, true);
 

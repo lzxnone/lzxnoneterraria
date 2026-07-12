@@ -23,7 +23,7 @@ public class SolarExplosionParticle extends TextureSheetParticle {
         this.baseSize = 0.5F;
         this.quadSize = baseSize;
 
-        this.lifetime = 20;
+        this.lifetime = 10;
 
         this.spriteSet = spriteSet;
         this.setSpriteFromAge(this.spriteSet);
