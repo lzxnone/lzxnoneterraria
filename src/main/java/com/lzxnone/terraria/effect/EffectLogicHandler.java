@@ -1,9 +1,12 @@
 package com.lzxnone.terraria.effect;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import net.minecraft.core.Holder;
 import net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
@@ -20,7 +23,9 @@ public class EffectLogicHandler {
     @SubscribeEvent
     public static void onEffectAdded(MobEffectEvent.Added event) {
         LivingEntity entity = event.getEntity();
-        if(!entity.level().isClientSide() && !(entity instanceof Player)) {
+        MobEffectInstance instance = event.getEffectInstance();
+        Holder<MobEffect> currentEffect = instance.getEffect();
+        if(checkEffect(currentEffect) && !entity.level().isClientSide() && !(entity instanceof Player)) {
             if(entity.level() instanceof ServerLevel serverLevel) {
                 serverLevel.getChunkSource().broadcast(entity,
                         new ClientboundUpdateMobEffectPacket(entity.getId(), event.getEffectInstance(), false));
@@ -31,7 +36,9 @@ public class EffectLogicHandler {
     @SubscribeEvent
     public static void onEffectRemoved(MobEffectEvent.Remove event) {
         LivingEntity entity = event.getEntity();
-        if(!entity.level().isClientSide() && !(entity instanceof Player)) {
+        MobEffectInstance instance = event.getEffectInstance();
+        Holder<MobEffect> currentEffect = instance.getEffect();
+        if(checkEffect(currentEffect) && !entity.level().isClientSide() && !(entity instanceof Player)) {
             if(entity.level() instanceof ServerLevel serverLevel) {
                 if(event.getEffectInstance() != null) {
                     serverLevel.getChunkSource().broadcast(entity,
@@ -44,8 +51,10 @@ public class EffectLogicHandler {
     @SubscribeEvent
     public static void onEffectExpired(MobEffectEvent.Expired event) {
         LivingEntity entity = event.getEntity();
-        if (!entity.level().isClientSide() && !(entity instanceof Player)) {
-            if (entity.level() instanceof ServerLevel serverLevel) {
+        MobEffectInstance instance = event.getEffectInstance();
+        Holder<MobEffect> currentEffect = instance.getEffect();
+        if(checkEffect(currentEffect) && !entity.level().isClientSide() && !(entity instanceof Player)) {
+            if(entity.level() instanceof ServerLevel serverLevel) {
                 if(event.getEffectInstance() != null) {
                     serverLevel.getChunkSource().broadcast(entity,
                             new ClientboundRemoveMobEffectPacket(entity.getId(), event.getEffectInstance().getEffect()));
@@ -54,11 +63,9 @@ public class EffectLogicHandler {
         }
     }
 
-    @SubscribeEvent
-    public static void onLivingTick(EntityTickEvent.Post event) {
-        if(!event.getEntity().level().isClientSide() && event.getEntity() instanceof PathfinderMob mob) {
-
-        }
+    public static boolean checkEffect(Holder<MobEffect> effect) {
+        return
+            effect == ModEffects.CONFUSED ||
+            effect == ModEffects.BLOOD_BUTCHERED;
     }
-
 }

@@ -18,6 +18,10 @@ public class Config {
     public static final ModConfigSpec.IntValue BEE_KEEPER_CONFUSION_DURATION;
     public static final ModConfigSpec.DoubleValue BEE_KEEPER_BEE_DAMAGE;
 
+    public static final ModConfigSpec.IntValue BLOOD_BUTCHERER_EFFECT_DURATION;
+    public static final ModConfigSpec.IntValue BLOOD_BUTCHERER_MAX_LEVEL;
+    public static final ModConfigSpec.DoubleValue BLOOD_BUTCHERER_DAMAGE_PER_LEVEL;
+
     public static final ModConfigSpec.DoubleValue STARFURY_DAMAGE;
     public static final ModConfigSpec.DoubleValue STARFURY_MAX_RANGE;
     public static final ModConfigSpec.DoubleValue STARFURY_SPEED;
@@ -51,6 +55,25 @@ public class Config {
     public static final ModConfigSpec.DoubleValue MEOWMERE_GRAVITY;
     public static final ModConfigSpec.DoubleValue MEOWMERE_INITIAL_SPEED;
 
+    public static final ModConfigSpec.DoubleValue LIGHTS_BANE_BIG_DAMAGE;
+    public static final ModConfigSpec.DoubleValue LIGHTS_BANE_SMALL_DAMAGE;
+    public static final ModConfigSpec.DoubleValue LIGHTS_BANE_TARGET_RANGE;
+
+    public static final ModConfigSpec.IntValue EXCALIBUR_ROTATE_RANGE;
+    public static final ModConfigSpec.IntValue EXCALIBUR_MAX_HIT_COUNT;
+    public static final ModConfigSpec.DoubleValue EXCALIBUR_DAMAGE;
+
+    public static final ModConfigSpec.BooleanValue NIGHTS_EDGE_PROJECTILE_ALIGN_TO_BLADE;
+    public static final ModConfigSpec.IntValue NIGHTS_EDGE_ROTATE_RANGE;
+    public static final ModConfigSpec.IntValue NIGHTS_EDGE_PROJECTILE_ROTATE_RANGE;
+    public static final ModConfigSpec.IntValue NIGHTS_EDGE_MAX_HIT_COUNT;
+    public static final ModConfigSpec.IntValue NIGHTS_EDGE_PROJECTILE_MAX_HIT_COUNT;
+    public static final ModConfigSpec.DoubleValue NIGHTS_EDGE_DAMAGE;
+    public static final ModConfigSpec.DoubleValue NIGHTS_EDGE_PROJECTILE_DAMAGE;
+    public static final ModConfigSpec.DoubleValue NIGHTS_EDGE_PROJECTILE_SPEED;
+    public static final ModConfigSpec.IntValue NIGHTS_EDGE_PROJECTILE_LIFETIME;
+    public static final ModConfigSpec.IntValue NIGHTS_EDGE_PROJECTILE_ROTATION_SPEED;
+
     public static final ModConfigSpec.BooleanValue TERRA_PROJECTILE_ALIGN_TO_BLADE;
     public static final ModConfigSpec.IntValue TERRA_BLADE_ROTATE_RANGE;
     public static final ModConfigSpec.IntValue TERRA_PROJECTILE_ROTATE_RANGE;
@@ -63,6 +86,8 @@ public class Config {
 
     public static final ModConfigSpec.DoubleValue ZENITH_DAMAGE;
     public static final ModConfigSpec.DoubleValue ZENITH_MAX_RANGE;
+    public static final ModConfigSpec.BooleanValue ZENITH_DISTANCE_MODE;
+    public static final ModConfigSpec.IntValue ZENITH_SCROLL_SPEED;
     public static final ModConfigSpec.DoubleValue ZENITH_TRAIL_B;
     public static final ModConfigSpec.IntValue ZENITH_TRAIL_OFFSET;
     public static final ModConfigSpec.IntValue ZENITH_WEAPON_COUNT;
@@ -72,6 +97,21 @@ public class Config {
     public static final ModConfigSpec.DoubleValue ZENITH_TRAIL_ALPHA;
     public static final ModConfigSpec.IntValue ZENITH_TRAIL_MAX_LENGTH;
 
+    public static final ModConfigSpec.IntValue TRUE_EXCALIBUR_ROTATE_RANGE;
+    public static final ModConfigSpec.IntValue TRUE_EXCALIBUR_MAX_HIT_COUNT;
+    public static final ModConfigSpec.DoubleValue TRUE_EXCALIBUR_DAMAGE;
+
+    public static final ModConfigSpec.BooleanValue TRUE_NIGHTS_EDGE_PROJECTILE_ALIGN_TO_BLADE;
+    public static final ModConfigSpec.IntValue TRUE_NIGHTS_EDGE_ROTATE_RANGE;
+    public static final ModConfigSpec.IntValue TRUE_NIGHTS_EDGE_PROJECTILE_ROTATE_RANGE;
+    public static final ModConfigSpec.IntValue TRUE_NIGHTS_EDGE_MAX_HIT_COUNT;
+    public static final ModConfigSpec.IntValue TRUE_NIGHTS_EDGE_PROJECTILE_MAX_HIT_COUNT;
+    public static final ModConfigSpec.DoubleValue TRUE_NIGHTS_EDGE_DAMAGE;
+    public static final ModConfigSpec.DoubleValue TRUE_NIGHTS_EDGE_PROJECTILE_DAMAGE;
+    public static final ModConfigSpec.DoubleValue TRUE_NIGHTS_EDGE_PROJECTILE_SPEED;
+    public static final ModConfigSpec.IntValue TRUE_NIGHTS_EDGE_PROJECTILE_LIFETIME;
+    public static final ModConfigSpec.IntValue TRUE_NIGHTS_EDGE_PROJECTILE_ROTATION_SPEED;
+
     public static double enchantedSwordDamage;
     public static int enchantedSwordLifetime;
     public static double enchantedSwordSpeed;
@@ -79,6 +119,10 @@ public class Config {
     public static int beeKeeperMaxBees;
     public static int beeKeeperConfusionDuration;
     public static double beeKeeperBeeDamage;
+
+    public static int bloodButchererEffectDuration;
+    public static int bloodButchererMaxLevel;
+    public static double bloodButchererDamagePerLevel;
 
     public static double starfuryDamage;
     public static double starfuryMaxRange;
@@ -113,6 +157,25 @@ public class Config {
     public static double meowmereGravity;
     public static double meowmereInitialSpeed;
 
+    public static double lightsBaneBigDamage;
+    public static double lightsBaneSmallDamage;
+    public static double lightsBaneTargetRange;
+
+    public static int excaliburRotateRange;
+    public static int excaliburMaxHitCount;
+    public static double excaliburDamage;
+
+    public static boolean nightsEdgeProjectileAlignToBlade;
+    public static int nightsEdgeRotateRange;
+    public static int nightsEdgeProjectileRotateRange;
+    public static int nightsEdgeMaxHitCount;
+    public static int nightsEdgeProjectileMaxHitCount;
+    public static double nightsEdgeDamage;
+    public static double nightsEdgeProjectileDamage;
+    public static double nightsEdgeProjectileSpeed;
+    public static int nightsEdgeProjectileLifetime;
+    public static int nightsEdgeProjectileRotationSpeed;
+
     public static boolean terraProjectileAlignToBlade;
     public static int terraBladeRotateRange;
     public static int terraProjectileRotateRange;
@@ -125,6 +188,8 @@ public class Config {
 
     public static double zenithDamage;
     public static double zenithMaxRange;
+    public static boolean zenithDistanceMode;
+    public static int zenithMouseSpeed;
     public static double zenithTrailB;
     public static int zenithTrailOffset;
     public static int zenithWeaponCount;
@@ -133,6 +198,21 @@ public class Config {
     public static double zenithScale;
     public static double zenithTrailAlpha;
     public static int zenithTrailMaxLength;
+
+    public static int trueExcaliburRotateRange;
+    public static int trueExcaliburMaxHitCount;
+    public static double trueExcaliburDamage;
+
+    public static boolean trueNightsEdgeProjectileAlignToBlade;
+    public static int trueNightsEdgeRotateRange;
+    public static int trueNightsEdgeProjectileRotateRange;
+    public static int trueNightsEdgeMaxHitCount;
+    public static int trueNightsEdgeProjectileMaxHitCount;
+    public static double trueNightsEdgeDamage;
+    public static double trueNightsEdgeProjectileDamage;
+    public static double trueNightsEdgeProjectileSpeed;
+    public static int trueNightsEdgeProjectileLifetime;
+    public static int trueNightsEdgeProjectileRotationSpeed;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -170,6 +250,21 @@ public class Config {
 
         builder.pop();
 
+        builder.push("blood_butcherer_settings");
+
+        BLOOD_BUTCHERER_EFFECT_DURATION = builder
+            .comment("血腥屠宰效果持续时间（刻）")
+            .defineInRange("blood_butcherer_effect_duration", 180, 0, 72000);
+
+        BLOOD_BUTCHERER_MAX_LEVEL = builder
+            .comment("血腥屠宰效果最大等级")
+            .defineInRange("blood_butcherer_max_level", 4, 0, 255);
+
+        BLOOD_BUTCHERER_DAMAGE_PER_LEVEL = builder
+            .comment("血腥屠宰效果每级伤害")
+            .defineInRange("blood_butcherer_damage_per_level", 0.5, 0, 8388600);
+
+        builder.pop();
 
         builder.push("starfury_settings");
 
@@ -309,6 +404,85 @@ public class Config {
         builder.pop();
 
 
+        builder.push("lights_bane_settings");
+
+        LIGHTS_BANE_BIG_DAMAGE = builder
+            .comment("大斩击伤害")
+            .defineInRange("lights_bane_big_damage", 4.0, 0, 2147483647.0);
+
+        LIGHTS_BANE_SMALL_DAMAGE = builder
+            .comment("小斩击伤害")
+            .defineInRange("lights_bane_small_damage", 2.0, 0, 2147483647.0);
+
+        LIGHTS_BANE_TARGET_RANGE = builder
+            .comment("寻敌范围")
+            .defineInRange("lights_bane_target_range", 2.0, 1.0, 64.0);
+
+        builder.pop();
+
+
+        builder.push("excalibur_settings");
+
+        EXCALIBUR_ROTATE_RANGE = builder
+            .comment("刀光偏转角范围")
+            .defineInRange("excalibur_rotate_range", 45, 0, 90);
+
+        EXCALIBUR_MAX_HIT_COUNT = builder
+            .comment("刀光单次最大击中生物数量")
+            .defineInRange("excalibur_max_hit_count", 3, 0, 100);
+
+        EXCALIBUR_DAMAGE = builder
+            .comment("刀光伤害")
+            .defineInRange("excalibur_damage", 8.0, 0, 2147483647.0);
+
+        builder.pop();
+
+
+        builder.push("nights_edge_settings");
+
+        NIGHTS_EDGE_PROJECTILE_ALIGN_TO_BLADE = builder
+            .comment("弹射是否匹配刀光方向")
+            .define("nights_edge_projectile_align_to_blade", true);
+
+        NIGHTS_EDGE_ROTATE_RANGE = builder
+            .comment("刀光偏转角范围")
+            .defineInRange("nights_edge_rotate_range", 45, 0, 90);
+
+        NIGHTS_EDGE_PROJECTILE_ROTATE_RANGE = builder
+            .comment("弹射偏转角范围")
+            .defineInRange("nights_edge_projectile_rotate_range", 40, 0, 90);
+
+        NIGHTS_EDGE_MAX_HIT_COUNT = builder
+            .comment("刀光单次最大击中生物数量")
+            .defineInRange("nights_edge_max_hit_count", 2, 0, 100);
+
+        NIGHTS_EDGE_PROJECTILE_MAX_HIT_COUNT = builder
+            .comment("弹射刀光单次最大击中生物数量")
+            .defineInRange("nights_edge_projectile_max_hit_count", 2, 0, 100);
+
+        NIGHTS_EDGE_DAMAGE = builder
+            .comment("刀光伤害")
+            .defineInRange("nights_edge_damage", 7.0, 0, 2147483647.0);
+
+        NIGHTS_EDGE_PROJECTILE_DAMAGE = builder
+            .comment("弹射伤害")
+            .defineInRange("nights_edge_projectile_damage", 7.0, 0, 2147483647.0);
+
+        NIGHTS_EDGE_PROJECTILE_SPEED = builder
+            .comment("弹射速度")
+            .defineInRange("nights_edge_projectile_speed", 0.25, 0, 10);
+
+        NIGHTS_EDGE_PROJECTILE_LIFETIME = builder
+            .comment("弹射持续时间")
+            .defineInRange("nights_edge_projectile_lifetime", 10, 1, 1200);
+
+        NIGHTS_EDGE_PROJECTILE_ROTATION_SPEED = builder
+            .comment("弹射旋转速度")
+            .defineInRange("nights_edge_projectile_rotation_speed", 36, 0, 360);
+
+        builder.pop();
+
+
         builder.push("terra_blade_settings");
 
         TERRA_PROJECTILE_ALIGN_TO_BLADE = builder
@@ -317,11 +491,11 @@ public class Config {
 
         TERRA_BLADE_ROTATE_RANGE = builder
             .comment("刀光偏转角范围")
-            .defineInRange("terra_blade_rotate_range", 30, 0, 90);
+            .defineInRange("terra_blade_rotate_range", 45, 0, 90);
 
         TERRA_PROJECTILE_ROTATE_RANGE = builder
             .comment("弹射偏转角范围")
-            .defineInRange("terra_projectile_rotate_range", 30, 0, 90);
+            .defineInRange("terra_projectile_rotate_range", 45, 0, 90);
 
         TERRA_BLADE_MAX_HIT_COUNT = builder
             .comment("刀光单次最大击中生物数量")
@@ -360,6 +534,14 @@ public class Config {
             .comment("最大范围(2a)")
             .defineInRange("zenith_max_range", 64.0, 1.0, 1024.0);
 
+        ZENITH_DISTANCE_MODE = builder
+            .comment("使用相对距离")
+            .define("zenith_distance_mode", true);
+
+        ZENITH_SCROLL_SPEED = builder
+            .comment("滚轮调节距离速度")
+            .defineInRange("zenith_mouse_speed", 4, 0, 128);
+
         ZENITH_TRAIL_B = builder
             .comment("椭圆轨道半短轴(b)")
             .defineInRange("zenith_trail_b", 4.0, 0.1, 512.0);
@@ -394,6 +576,66 @@ public class Config {
 
         builder.pop();
 
+        builder.push("true_excalibur_settings");
+
+        TRUE_EXCALIBUR_ROTATE_RANGE = builder
+            .comment("刀光偏转角范围")
+            .defineInRange("true_excalibur_rotate_range", 45, 0, 90);
+
+        TRUE_EXCALIBUR_MAX_HIT_COUNT = builder
+            .comment("刀光单次最大击中生物数量")
+            .defineInRange("true_excalibur_max_hit_count", 6, 0, 100);
+
+        TRUE_EXCALIBUR_DAMAGE = builder
+            .comment("刀光伤害")
+            .defineInRange("true_excalibur_damage", 8.0, 0, 2147483647.0);
+
+        builder.pop();
+
+        builder.push("true_nights_edge_settings");
+
+        TRUE_NIGHTS_EDGE_PROJECTILE_ALIGN_TO_BLADE = builder
+            .comment("弹射是否匹配刀光方向")
+            .define("true_nights_edge_projectile_align_to_blade", true);
+
+        TRUE_NIGHTS_EDGE_ROTATE_RANGE = builder
+            .comment("刀光偏转角范围")
+            .defineInRange("true_nights_edge_rotate_range", 45, 0, 90);
+
+        TRUE_NIGHTS_EDGE_PROJECTILE_ROTATE_RANGE = builder
+            .comment("弹射偏转角范围")
+            .defineInRange("true_nights_edge_projectile_rotate_range", 45, 0, 90);
+
+        TRUE_NIGHTS_EDGE_MAX_HIT_COUNT = builder
+            .comment("刀光单次最大击中生物数量")
+            .defineInRange("true_nights_edge_max_hit_count", 2, 0, 100);
+
+        TRUE_NIGHTS_EDGE_PROJECTILE_MAX_HIT_COUNT = builder
+            .comment("弹射刀光单次最大击中生物数量")
+            .defineInRange("true_nights_edge_projectile_max_hit_count", 3, 0, 100);
+
+        TRUE_NIGHTS_EDGE_DAMAGE = builder
+            .comment("刀光伤害")
+            .defineInRange("true_nights_edge_damage", 8.0, 0, 2147483647.0);
+
+        TRUE_NIGHTS_EDGE_PROJECTILE_DAMAGE = builder
+            .comment("弹射伤害")
+            .defineInRange("true_nights_edge_projectile_damage", 4.0, 0, 2147483647.0);
+
+        TRUE_NIGHTS_EDGE_PROJECTILE_SPEED = builder
+            .comment("弹射速度")
+            .defineInRange("true_nights_edge_projectile_speed", 0.5, 0, 10);
+
+        TRUE_NIGHTS_EDGE_PROJECTILE_LIFETIME = builder
+            .comment("弹射持续时间")
+            .defineInRange("true_nights_edge_projectile_lifetime", 60, 1, 1200);
+
+        TRUE_NIGHTS_EDGE_PROJECTILE_ROTATION_SPEED = builder
+            .comment("弹射旋转速度")
+            .defineInRange("true_nights_edge_projectile_rotation_speed", 30, 0, 360);
+
+        builder.pop();
+
         SPEC = builder.build();
     }
 
@@ -406,6 +648,9 @@ public class Config {
             beeKeeperMaxBees = BEE_KEEPER_MAX_BEES.get();
             beeKeeperConfusionDuration = BEE_KEEPER_CONFUSION_DURATION.get();
             beeKeeperBeeDamage = BEE_KEEPER_BEE_DAMAGE.get();
+            bloodButchererEffectDuration = BLOOD_BUTCHERER_EFFECT_DURATION.get();
+            bloodButchererMaxLevel = BLOOD_BUTCHERER_MAX_LEVEL.get();
+            bloodButchererDamagePerLevel = BLOOD_BUTCHERER_DAMAGE_PER_LEVEL.get();
             starfuryDamage = STARFURY_DAMAGE.get();
             starfuryMaxRange = STARFURY_MAX_RANGE.get();
             starfurySpeed = STARFURY_SPEED.get();
@@ -433,6 +678,22 @@ public class Config {
             meowmereDamage = MEOWMERE_DAMAGE.get();
             meowmereGravity = MEOWMERE_GRAVITY.get();
             meowmereInitialSpeed = MEOWMERE_INITIAL_SPEED.get();
+            lightsBaneBigDamage = LIGHTS_BANE_BIG_DAMAGE.get();
+            lightsBaneSmallDamage = LIGHTS_BANE_SMALL_DAMAGE.get();
+            lightsBaneTargetRange = LIGHTS_BANE_TARGET_RANGE.get();
+            excaliburRotateRange = EXCALIBUR_ROTATE_RANGE.get();
+            excaliburMaxHitCount = EXCALIBUR_MAX_HIT_COUNT.get();
+            excaliburDamage = EXCALIBUR_DAMAGE.get();
+            nightsEdgeProjectileAlignToBlade = NIGHTS_EDGE_PROJECTILE_ALIGN_TO_BLADE.get();
+            nightsEdgeRotateRange = NIGHTS_EDGE_ROTATE_RANGE.get();
+            nightsEdgeProjectileRotateRange = NIGHTS_EDGE_PROJECTILE_ROTATE_RANGE.get();
+            nightsEdgeMaxHitCount = NIGHTS_EDGE_MAX_HIT_COUNT.get();
+            nightsEdgeProjectileMaxHitCount = NIGHTS_EDGE_PROJECTILE_MAX_HIT_COUNT.get();
+            nightsEdgeDamage = NIGHTS_EDGE_DAMAGE.get();
+            nightsEdgeProjectileDamage = NIGHTS_EDGE_PROJECTILE_DAMAGE.get();
+            nightsEdgeProjectileSpeed = NIGHTS_EDGE_PROJECTILE_SPEED.get();
+            nightsEdgeProjectileLifetime = NIGHTS_EDGE_PROJECTILE_LIFETIME.get();
+            nightsEdgeProjectileRotationSpeed = NIGHTS_EDGE_PROJECTILE_ROTATION_SPEED.get();
             terraProjectileAlignToBlade = TERRA_PROJECTILE_ALIGN_TO_BLADE.get();
             terraBladeRotateRange = TERRA_BLADE_ROTATE_RANGE.get();
             terraProjectileRotateRange = TERRA_PROJECTILE_ROTATE_RANGE.get();
@@ -444,6 +705,8 @@ public class Config {
             terraProjectileDamageDecay = TERRA_PROJECTILE_DAMAGE_DECAY.get();
             zenithDamage = ZENITH_DAMAGE.get();
             zenithMaxRange = ZENITH_MAX_RANGE.get();
+            zenithDistanceMode = ZENITH_DISTANCE_MODE.get();
+            zenithMouseSpeed = ZENITH_SCROLL_SPEED.get();
             zenithTrailB = ZENITH_TRAIL_B.get();
             zenithTrailOffset = ZENITH_TRAIL_OFFSET.get();
             zenithWeaponCount = ZENITH_WEAPON_COUNT.get();
@@ -452,6 +715,19 @@ public class Config {
             zenithScale = ZENITH_SCALE.get();
             zenithTrailAlpha = ZENITH_TRAIL_ALPHA.get();
             zenithTrailMaxLength = ZENITH_TRAIL_MAX_LENGTH.get();
+            trueExcaliburRotateRange = TRUE_EXCALIBUR_ROTATE_RANGE.get();
+            trueExcaliburMaxHitCount = TRUE_EXCALIBUR_MAX_HIT_COUNT.get();
+            trueExcaliburDamage = TRUE_EXCALIBUR_DAMAGE.get();
+            trueNightsEdgeProjectileAlignToBlade = TRUE_NIGHTS_EDGE_PROJECTILE_ALIGN_TO_BLADE.get();
+            trueNightsEdgeRotateRange = TRUE_NIGHTS_EDGE_ROTATE_RANGE.get();
+            trueNightsEdgeProjectileRotateRange = TRUE_NIGHTS_EDGE_PROJECTILE_ROTATE_RANGE.get();
+            trueNightsEdgeMaxHitCount = TRUE_NIGHTS_EDGE_MAX_HIT_COUNT.get();
+            trueNightsEdgeProjectileMaxHitCount = TRUE_NIGHTS_EDGE_PROJECTILE_MAX_HIT_COUNT.get();
+            trueNightsEdgeDamage = TRUE_NIGHTS_EDGE_DAMAGE.get();
+            trueNightsEdgeProjectileDamage = TRUE_NIGHTS_EDGE_PROJECTILE_DAMAGE.get();
+            trueNightsEdgeProjectileSpeed = TRUE_NIGHTS_EDGE_PROJECTILE_SPEED.get();
+            trueNightsEdgeProjectileLifetime = TRUE_NIGHTS_EDGE_PROJECTILE_LIFETIME.get();
+            trueNightsEdgeProjectileRotationSpeed = TRUE_NIGHTS_EDGE_PROJECTILE_ROTATION_SPEED.get();
         }
     }
 }

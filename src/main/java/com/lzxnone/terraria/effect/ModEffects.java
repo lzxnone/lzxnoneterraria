@@ -12,4 +12,6 @@ public class ModEffects {
 
     public static final DeferredHolder<MobEffect, ConfusedEffect> CONFUSED =
             MOB_EFFECTS.register("confused", ConfusedEffect::new);
+    public static final DeferredHolder<MobEffect, BloodButcheredEffect> BLOOD_BUTCHERED =
+            MOB_EFFECTS.register("blood_butchered", BloodButcheredEffect::new);
 }

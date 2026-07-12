@@ -146,8 +146,8 @@ public class Meowmere extends SwordItem {
             EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(motion));
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
-                if(summon.getOwner() instanceof Player player && target instanceof LivingEntity livingEntity) {
-                    if(livingEntity.hurt(summon.damageSources().playerAttack(player), (float) Config.meowmereDamage)) {
+                if(summon.getOwner() instanceof Player player) {
+                    if(DamageUtil.attack(player, target, (float) Config.meowmereDamage)) {
                         if(customData.contains("hitEntity") && customData.getInt("hitEntity") < 4) {
                             customData.putInt("hitEntity", customData.getInt("hitEntity") + 1);
                             summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
@@ -155,7 +155,7 @@ public class Meowmere extends SwordItem {
                             onDied(summon);
                             return;
                         }
-                        livingEntity.invulnerableTime = 2;
+                        target.invulnerableTime = 2;
                     }
                 }
                 return;

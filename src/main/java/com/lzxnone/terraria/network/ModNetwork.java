@@ -2,7 +2,9 @@ package com.lzxnone.terraria.network;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.network.handler.SwordBeamHandler;
+import com.lzxnone.terraria.network.handler.ZenithScrollHandler;
 import com.lzxnone.terraria.network.payload.SwordBeamPayload;
+import com.lzxnone.terraria.network.payload.ZenithScrollPayload;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -17,6 +19,11 @@ public class ModNetwork {
                 SwordBeamPayload.TYPE,
                 SwordBeamPayload.CODEC,
                 SwordBeamHandler::handle
+        );
+        registrar.playToServer(
+                ZenithScrollPayload.TYPE,
+                ZenithScrollPayload.CODEC,
+                ZenithScrollHandler::handle
         );
     }
 }

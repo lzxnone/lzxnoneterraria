@@ -29,5 +29,11 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.TERRA_BLADE.get());
                 output.accept(ModItems.ZENITH.get());
                 output.accept(ModItems.TRUE_COPPER_SHORTSWORD.get());
+                output.accept(ModItems.EXCALIBUR.get());
+                output.accept(ModItems.NIGHTS_EDGE.get());
+                output.accept(ModItems.TRUE_EXCALIBUR.get());
+                output.accept(ModItems.TRUE_NIGHTS_EDGE.get());
+                output.accept(ModItems.LIGHTS_BANE.get());
+                output.accept(ModItems.BLOOD_BUTCHERER.get());
             }).build());
 }

@@ -14,10 +14,7 @@ import com.lzxnone.terraria.item.IItemWaveBehavior;
 import com.lzxnone.terraria.network.payload.SwordBeamPayload;
 import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.particle.ModParticles;
-import com.lzxnone.terraria.utils.FilterUtil;
-import com.lzxnone.terraria.utils.MathUtil;
-import com.lzxnone.terraria.utils.ParticleUtil;
-import com.lzxnone.terraria.utils.SoundUtil;
+import com.lzxnone.terraria.utils.*;
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -105,12 +102,13 @@ public class TheHorsemansBlade extends SwordItem {
         @Override
         public void onHitEntity(SwordBeam beam, EntityHitResult result) {
             if(!beam.level().isClientSide()) {
-                if(result.getEntity() instanceof LivingEntity target && beam.getOwner() instanceof Player player && FilterUtil.createLivingTargetFilter(player).test(target)) {
+                Entity target = result.getEntity();
+                if(beam.getOwner() instanceof Player player && FilterUtil.createTargetFilter(player).test(target)) {
                     CompoundTag custom_data = beam.getEntityData().get(SwordBeam.CUSTOM_DATA);
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < Config.horsemansBladeMaxHitCount) {
-                            if(target.hurt(beam.level().damageSources().playerAttack(player), (float) Config.horsemansBladeDamage)) {
+                            if(DamageUtil.attack(player, target, (float) Config.horsemansBladeDamage)) {
                                 target.invulnerableTime = 20;
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
@@ -242,7 +240,7 @@ public class TheHorsemansBlade extends SwordItem {
                 summon.setYRot(xyRot[1]);
 
                 if(selfPos.distanceToSqr(targetPos) < 2.0D) {
-                    if(summon.getOwner() instanceof Player player && FilterUtil.createLivingTargetFilter(player).test(target) && target.hurt(summon.damageSources().playerAttack(player), (float) Config.horsemansPumpkinDamage)) onDied(summon);
+                    if(summon.getOwner() instanceof Player player && FilterUtil.createLivingTargetFilter(player).test(target) && DamageUtil.attack(player, target, (float) Config.horsemansPumpkinDamage)) onDied(summon);
                 }
             }else {
                 Vec3 dir = summon.getLookAngle().normalize();
@@ -267,7 +265,7 @@ public class TheHorsemansBlade extends SwordItem {
                     for(Entity hitEntity : hitEntities) {
                         if(target != null && hitEntity.getUUID() == target.getUUID()) continue;
                         if(summon.getOwner() instanceof Player player) {
-                            if(hitEntity.hurt(summon.damageSources().playerAttack(player), (float) Config.horsemansPumpkinDamage)) {
+                            if(DamageUtil.attack(player, target, (float) Config.horsemansPumpkinDamage)) {
                                 hitEntity.invulnerableTime = 2;
                             }
                         }

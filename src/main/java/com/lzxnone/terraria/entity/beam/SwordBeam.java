@@ -40,6 +40,8 @@ public class SwordBeam extends Entity {
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.VECTOR3);
     public static final EntityDataAccessor<Boolean> RIGHT =
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Float> INFLATE =
+            SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Integer> AGE =
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> LIFETIME =
@@ -147,18 +149,6 @@ public class SwordBeam extends Entity {
         Quaternionf rotation2 = new Quaternionf()
             .fromAxisAngleRad(up, angle);
 
-
-        /*float xzLen = (float) Math.sqrt(current.x() * current.x() + current.z() * current.z());
-        float pitch = (float) (Math.atan2(-current.y(), xzLen) * (180.0 / Math.PI));
-        float yaw = (float) (Math.atan2(-current.x(), current.z()) * (180.0 / Math.PI));
-
-        Quaternionf rotation = new Quaternionf()
-            .fromAxisAngleRad(up, angle)
-            .rotateY((float) Math.toRadians(-yaw))
-            .rotateX((float) Math.toRadians(pitch))
-            .rotateX((float) Math.toRadians(-90.0))
-            .rotateZ((float) Math.toRadians(-90.0));*/
-
         Vector3f axisX = new Vector3f(1, 0, 0).rotate(rotation).rotate(rotation2);
         Vector3f axisY = new Vector3f(0, 1, 0).rotate(rotation).rotate(rotation2);
         Vector3f axisZ = new Vector3f(0, 0, 1).rotate(rotation).rotate(rotation2);
@@ -170,7 +160,7 @@ public class SwordBeam extends Entity {
         AABB hitBox = new AABB(
             centerX - extX, centerY - extY, centerZ - extZ,
             centerX + extX, centerY + extY, centerZ + extZ
-        );
+        ).inflate(this.getEntityData().get(SwordBeam.INFLATE));
         this.setBoundingBox(hitBox);
 
         List<Entity> targets = this.level().getEntities(this, hitBox, FilterUtil.createTargetFilter(this, this.getOwner()));
@@ -201,6 +191,7 @@ public class SwordBeam extends Entity {
         builder.define(BEHAVIOR, "default");
         builder.define(ROTATE, 0);
         builder.define(RIGHT, false);
+        builder.define(INFLATE, 0.0f);
         builder.define(COLOR0, new Vector3f(1.0f, 1.0f, 1.0f));
         builder.define(COLOR1, new Vector3f(1.0f, 1.0f, 1.0f));
         builder.define(COLOR2, new Vector3f(1.0f, 1.0f, 1.0f));
@@ -216,6 +207,7 @@ public class SwordBeam extends Entity {
         tag.putString("behavior", this.entityData.get(BEHAVIOR));
         tag.putInt("rotate", this.entityData.get(ROTATE));
         tag.putBoolean("right", this.entityData.get(RIGHT));
+        tag.putFloat("inflate", this.entityData.get(INFLATE));
         Vector3f c0 = this.entityData.get(COLOR0);
         tag.putFloat("color0R", c0.x);
         tag.putFloat("color0G", c0.y);
@@ -243,6 +235,7 @@ public class SwordBeam extends Entity {
         if(tag.contains("behavior")) this.entityData.set(BEHAVIOR, tag.getString("behavior"));
         if(tag.contains("rotate")) this.entityData.set(ROTATE, tag.getInt("rotate"));
         if(tag.contains("right")) this.entityData.set(RIGHT, tag.getBoolean("right"));
+        if(tag.contains("inflate")) this.entityData.set(INFLATE, tag.getFloat("inflate"));
         if(tag.contains("color0R")) {
             this.entityData.set(COLOR0, new Vector3f(
                 tag.getFloat("color0R"), tag.getFloat("color0G"), tag.getFloat("color0B")

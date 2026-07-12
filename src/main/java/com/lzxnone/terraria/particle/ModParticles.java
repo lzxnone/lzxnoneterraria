@@ -84,4 +84,14 @@ public class ModParticles {
             PARTICLE_TYPES.register("influx_waver_drop_particle", () -> new SimpleParticleType(true));
     public static final Supplier<SimpleParticleType> TERRA_BEAM_HIT_PARTICLE =
             PARTICLE_TYPES.register("terra_beam_hit_particle", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> EXCALIBUR_HIT_PARTICLE =
+            PARTICLE_TYPES.register("excalibur_hit_particle", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> TRUE_EXCALIBUR_HIT_PARTICLE =
+            PARTICLE_TYPES.register("true_excalibur_hit_particle", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> NIGHTS_EDGE_HIT_PARTICLE =
+            PARTICLE_TYPES.register("nights_edge_hit_particle", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> TRUE_NIGHTS_EDGE_HIT_PARTICLE =
+            PARTICLE_TYPES.register("true_nights_edge_hit_particle", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> BLOOD_BUTCHERED_PARTICLE =
+            PARTICLE_TYPES.register("blood_butchered_particle", () -> new SimpleParticleType(true));
 }

@@ -12,10 +12,7 @@ import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.particle.ModParticles;
-import com.lzxnone.terraria.utils.CollisionUtil;
-import com.lzxnone.terraria.utils.FilterUtil;
-import com.lzxnone.terraria.utils.MathUtil;
-import com.lzxnone.terraria.utils.ParticleUtil;
+import com.lzxnone.terraria.utils.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -151,9 +148,9 @@ public class InfluxWaver extends SwordItem {
                         Entity hitTarget = entityHitResult.getEntity();
                         Entity target = customData.contains("target") ? summon.level().getEntity(customData.getInt("target")) : null;
                         if(target != null && !hitTarget.getUUID().equals(target.getUUID())) return;
-                        if(hitTarget instanceof LivingEntity livingEntity && summon.getOwner() instanceof Player player && FilterUtil.createLivingTargetFilter(player).test(livingEntity)) {
-                            if(livingEntity.hurt(summon.damageSources().playerAttack(player), (float) Config.influxWaverDamage)) {
-                                livingEntity.invulnerableTime = 2;
+                        if(summon.getOwner() instanceof Player player && FilterUtil.createTargetFilter(player).test(hitTarget)) {
+                            if(DamageUtil.attack(player, hitTarget, (float) Config.influxWaverDamage)) {
+                                hitTarget.invulnerableTime = 2;
                             }
                             customData.putBoolean("dead", false);
                             summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);

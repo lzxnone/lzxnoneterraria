@@ -60,9 +60,9 @@ public class Seedler extends SwordItem {
             EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(motion));
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
-                if(summon.getOwner() instanceof Player player && target instanceof LivingEntity livingEntity) {
-                    if(livingEntity.hurt(summon.damageSources().playerAttack(player), (float) Config.seedlerThornDamage)) {
-                        livingEntity.invulnerableTime = 2;
+                if(summon.getOwner() instanceof Player player) {
+                    if(DamageUtil.attack(player, target, (float) Config.seedlerThornDamage)) {
+                        target.invulnerableTime = 2;
                     }
                 }
                 onDied(summon);
@@ -173,14 +173,13 @@ public class Seedler extends SwordItem {
         @Override
         public void onHitEntity(StaticProjectile projectile, EntityHitResult result) {
             if(!projectile.level().isClientSide()) {
-                if(result.getEntity() instanceof LivingEntity target) {
-                    Entity owner = projectile.getOwner();
-                    if(owner == null) return;
-                    if(!FilterUtil.createLivingTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                    if(target.hurt(projectile.damageSources().playerAttack(player), (float) Config.seedlerThornDamage)) {
-                        target.invulnerableTime = 2;
-                        onDied(projectile);
-                    }
+                Entity target = result.getEntity();
+                Entity owner = projectile.getOwner();
+                if(owner == null) return;
+                if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
+                if(DamageUtil.attack(player, target, (float) Config.seedlerThornDamage)) {
+                    target.invulnerableTime = 2;
+                    onDied(projectile);
                 }
             }
         }

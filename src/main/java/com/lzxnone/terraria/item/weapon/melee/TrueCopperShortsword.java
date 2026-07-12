@@ -38,14 +38,19 @@ public class TrueCopperShortsword extends SwordItem {
         ));
     }
 
-    public static void summon(Player player) {
+    public static void summon(Player player, double deltaDist) {
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
         int randomAngle = (int) ((Math.random() * 2 - 1) * Config.zenithTrailOffset);
         dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], randomAngle);
 
         Vec3 pos = (player.getBoundingBox().getCenter()).add(MathUtil.toVec3(dirs[0]).scale(-2));
-        Vec3 targetPos = MathUtil.getCrosshairPos(player, player.level(), Config.zenithMaxRange);
-        double dist = targetPos.subtract(pos).length();
+        double dist;
+        if(Config.zenithDistanceMode) {
+            Vec3 targetPos = MathUtil.getCrosshairPos(player, player.level(), Config.zenithMaxRange);
+            dist = Math.max(0, Math.min(targetPos.subtract(pos).length() + deltaDist, Config.zenithMaxRange));
+        }else {
+            dist = deltaDist;
+        }
         int cycle = (int) Math.max(10, dist / Config.zenithMaxRange * Config.zenithCycle);
         double a = Math.max(dist / 2, 2);
         double b = Math.min(Math.random() * Config.zenithTrailB + Config.zenithTrailB, a / 2);
@@ -142,10 +147,12 @@ public class TrueCopperShortsword extends SwordItem {
         if(entity instanceof Player player) {
             if(isSelected) {
                 if(player.tickCount % 3 == 0) {
+                    double deltaDist = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                        .copyTag().getDouble("deltaDist");
                     int count = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                         .copyTag().getInt("attackCount");
                     if(count > 0) {
-                        summon(player);
+                        summon(player, deltaDist);
                         CustomData.update(DataComponents.CUSTOM_DATA, stack,
                             tag -> tag.putInt("attackCount", count - 1));
                     }

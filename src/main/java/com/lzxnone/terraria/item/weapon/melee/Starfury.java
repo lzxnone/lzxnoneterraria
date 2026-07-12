@@ -61,13 +61,12 @@ public class Starfury extends SwordItem {
         @Override
         public void onHitEntity(StaticProjectile projectile, EntityHitResult result) {
             if(!projectile.level().isClientSide()) {
-                if(result.getEntity() instanceof LivingEntity target) {
-                    Entity owner = projectile.getOwner();
-                    if(owner == null) return;
-                    if(!FilterUtil.createLivingTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                    if(target.hurt(projectile.damageSources().playerAttack(player), (float) Config.starfuryDamage)) {
-                        target.invulnerableTime = 5;
-                    }
+                Entity target = result.getEntity();
+                Entity owner = projectile.getOwner();
+                if(owner == null) return;
+                if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
+                if(DamageUtil.attack(player, target, (float) Config.starfuryDamage)) {
+                    target.invulnerableTime = 5;
                 }
             }
         }

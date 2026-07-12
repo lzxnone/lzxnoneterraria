@@ -82,12 +82,11 @@ public class StarWrath extends SwordItem {
         @Override
         public void onHitEntity(StaticProjectile projectile, EntityHitResult result) {
             if(!projectile.level().isClientSide()) {
-                if(result.getEntity() instanceof LivingEntity target) {
-                    Entity owner = projectile.getOwner();
-                    if(!FilterUtil.createLivingTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                    if(target.hurt(projectile.damageSources().playerAttack(player), (float) Config.starWrathDamage)) {
-                        target.invulnerableTime = 2;
-                    }
+                Entity target = result.getEntity();
+                Entity owner = projectile.getOwner();
+                if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
+                if(DamageUtil.attack(player, target, (float) Config.starWrathDamage)) {
+                    target.invulnerableTime = 2;
                 }
             }
         }

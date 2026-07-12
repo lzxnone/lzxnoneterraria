@@ -59,6 +59,20 @@ public class LzxnoneTerrariaClient {
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
             event.registerSpriteSet(ModParticles.TERRA_BEAM_HIT_PARTICLE.get(), TerraBeamHitParticle.Provider::new);
         });
-
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.EXCALIBUR_HIT_PARTICLE.get(), ExcaliburHitParticle.Provider::new);
+        });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.TRUE_EXCALIBUR_HIT_PARTICLE.get(), TrueExcaliburHitParticle.Provider::new);
+        });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.NIGHTS_EDGE_HIT_PARTICLE.get(), NightsEdgeHitParticle.Provider::new);
+        });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.TRUE_NIGHTS_EDGE_HIT_PARTICLE.get(), TrueNightsEdgeHitParticle.Provider::new);
+        });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.BLOOD_BUTCHERED_PARTICLE.get(), BloodButcheredParticle.Provider::new);
+        });
     }
 }

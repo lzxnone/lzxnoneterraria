@@ -9,10 +9,7 @@ import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.particle.ModParticles;
-import com.lzxnone.terraria.utils.FilterUtil;
-import com.lzxnone.terraria.utils.MathUtil;
-import com.lzxnone.terraria.utils.ParticleUtil;
-import com.lzxnone.terraria.utils.SoundUtil;
+import com.lzxnone.terraria.utils.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -66,19 +63,18 @@ public class EnchantedSword extends SwordItem {
         @Override
         public void onHitEntity(StaticProjectile projectile, EntityHitResult result) {
             if(!projectile.level().isClientSide()) {
-                if(result.getEntity() instanceof LivingEntity target) {
-                    Entity owner = projectile.getOwner();
-                    if(owner == null) return;
-                    if(!FilterUtil.createLivingTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                    if(target.hurt(projectile.damageSources().playerAttack(player), (float) Config.enchantedSwordDamage)) {
-                        target.invulnerableTime = 5;
-                        ParticleUtil.addParticles(
-                            (ServerLevel) projectile.level(), ModParticles.COLORFUL_PARTICLE,
-                            projectile.position(), new Vec3(0.2, 0.2, 0.2),
-                            0.2, 25
-                        );
-                        onDied(projectile);
-                    }
+                Entity target = result.getEntity();
+                Entity owner = projectile.getOwner();
+                if(owner == null) return;
+                if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
+                if(DamageUtil.attack(player, target, (float) Config.enchantedSwordDamage)) {
+                    target.invulnerableTime = 5;
+                    ParticleUtil.addParticles(
+                        (ServerLevel) projectile.level(), ModParticles.COLORFUL_PARTICLE,
+                        projectile.position(), new Vec3(0.2, 0.2, 0.2),
+                        0.2, 25
+                    );
+                    onDied(projectile);
                 }
             }
         }

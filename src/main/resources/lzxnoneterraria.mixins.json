@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.lzxnone.terraria.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ZenithRenderMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

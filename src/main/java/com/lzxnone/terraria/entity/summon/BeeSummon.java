@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.entity.summon;
 
 import com.lzxnone.terraria.Config;
+import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.MathUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -121,8 +122,13 @@ public class BeeSummon extends Bee {
     @Override
     public boolean doHurtTarget(Entity target) {
         if(owner == null) return false;
-        DamageSource damageSource = this.damageSources().mobAttack(owner);
-        boolean isHurt = target.hurt(damageSource, (float) Config.beeKeeperBeeDamage);
+        boolean isHurt;
+        if(owner instanceof Player player) {
+            isHurt = DamageUtil.attack(player, target, (float) Config.beeKeeperBeeDamage);
+        }else {
+            DamageSource damageSource = this.damageSources().mobAttack(owner);
+            isHurt = target.hurt(damageSource, (float) Config.beeKeeperBeeDamage);
+        }
 
         if(isHurt) {
             this.customAttackCount++;

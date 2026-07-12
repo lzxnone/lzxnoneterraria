@@ -14,6 +14,9 @@ public class StaticSummonBehaviors {
     public static final String INFLUX_WAVER_BEAM = "influx_waver_beam";
     public static final String MEOWMERE_PROJECTILE = "meowmere_projectile";
     public static final String TERRA_BLADE_BEAM = "terra_blade_beam";
+    public static final String TRUE_NIGHTS_EDGE_BEAM = "true_nights_edge_beam";
+    public static final String NIGHTS_EDGE_BEAM = "nights_edge_beam";
+    public static final String LIGHTS_BANE_SLASH = "lights_bane_slash";
 
     static {
         BEHAVIORS.put(DEFAULT, new IStaticSummonBehavior() {});
@@ -22,6 +25,9 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(INFLUX_WAVER_BEAM, InfluxWaver.SUMMON_BEHAVIOR);
         BEHAVIORS.put(MEOWMERE_PROJECTILE, Meowmere.SUMMON_BEHAVIOR);
         BEHAVIORS.put(TERRA_BLADE_BEAM, TerraBlade.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(TRUE_NIGHTS_EDGE_BEAM, TrueNightsEdge.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(NIGHTS_EDGE_BEAM, NightsEdge.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(LIGHTS_BANE_SLASH, LightsBane.SUMMON_BEHAVIOR);
     }
 
     public static IStaticSummonBehavior getBehavior(String id) {
