@@ -45,7 +45,7 @@ import java.util.List;
 
 public class Zenith extends SwordItem {
     public Zenith() {
-        super(Tiers.DIAMOND, new Item.Properties().attributes(ItemAttributeModifiers.builder()
+        super(Tiers.NETHERITE, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
                 new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_damage"), 20, AttributeModifier.Operation.ADD_VALUE),
                 EquipmentSlotGroup.MAINHAND)

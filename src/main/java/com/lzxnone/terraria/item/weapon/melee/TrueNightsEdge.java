@@ -50,7 +50,7 @@ import java.util.List;
 
 public class TrueNightsEdge extends SwordItem {
     public TrueNightsEdge() {
-        super(Tiers.NETHERITE, new Item.Properties().attributes(ItemAttributeModifiers.builder()
+        super(Tiers.DIAMOND, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
                 new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_damage"), 7.0f, AttributeModifier.Operation.ADD_VALUE),
                 EquipmentSlotGroup.MAINHAND)
@@ -408,6 +408,18 @@ public class TrueNightsEdge extends SwordItem {
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
+
+            //运动逻辑
+            Vec3 motion = summon.getDeltaMovement();
+            double currentSpeed = motion.length();
+            double maxSpeed = Config.trueNightsEdgeProjectileMaxSpeed;
+            double acceleration = Config.trueNightsEdgeProjectileAcceleration;
+            if(currentSpeed < maxSpeed && currentSpeed > 0) {
+                Vec3 dir = motion.normalize();
+                double newSpeed = Math.min(currentSpeed + acceleration, maxSpeed);
+                summon.setDeltaMovement(dir.scale(newSpeed));
+            }
+
             CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
 
             //碰撞箱计算
@@ -450,7 +462,7 @@ public class TrueNightsEdge extends SwordItem {
             );
             BlockHitResult blockHit = summon.level().clip(context);
             if(blockHit.getType() != HitResult.Type.MISS) {
-
+                onDied(summon);
             }
 
             //粒子
@@ -521,7 +533,7 @@ public class TrueNightsEdge extends SwordItem {
         customData.putFloat("rightZ", dirs[2].z);
         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
 
-        summon.setDeltaMovement(player.getLookAngle().normalize().scale(Config.trueNightsEdgeProjectileSpeed));
+        summon.setDeltaMovement(player.getLookAngle().normalize().scale(Config.trueNightsEdgeProjectileMaxSpeed * 0.1));
 
         player.level().addFreshEntity(summon);
     }

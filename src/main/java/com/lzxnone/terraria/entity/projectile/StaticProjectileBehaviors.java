@@ -16,6 +16,8 @@ public class StaticProjectileBehaviors {
     public static final String SEEDLER_THORN = "seedler_thorn";
     public static final String STAR_WRATH_STAR = "star_wrath_star";
     public static final String ZENITH_PROJECTILE = "zenith_projectile";
+    public static final String MURAMASA_PROJECTILE = "muramasa_projectile";
+    public static final String LEAF_PROJECTILE = "leaf_projectile";
 
     static {
         BEHAVIORS.put(DEFAULT, new IStaticProjectileBehavior() {
@@ -37,6 +39,8 @@ public class StaticProjectileBehaviors {
         BEHAVIORS.put(SEEDLER_THORN, Seedler.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(STAR_WRATH_STAR, StarWrath.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(ZENITH_PROJECTILE, Zenith.PROJECTILE_BEHAVIOR);
+        BEHAVIORS.put(MURAMASA_PROJECTILE, Muramasa.PROJECTILE_BEHAVIOR);
+        BEHAVIORS.put(LEAF_PROJECTILE, BladeOfGrass.PROJECTILE_BEHAVIOR);
     }
 
     public static IStaticProjectileBehavior getBehavior(String id) {

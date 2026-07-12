@@ -2,21 +2,25 @@ package com.lzxnone.terraria.event_handler;
 
 import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.melee.TrueCopperShortsword;
 import com.lzxnone.terraria.item.weapon.melee.Zenith;
 import com.lzxnone.terraria.network.payload.ZenithScrollPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = LzxnoneTerraria.MODID, value = Dist.CLIENT)
@@ -54,6 +58,16 @@ public class InputHandler {
 
                 PacketDistributor.sendToServer(new ZenithScrollPayload(scrollDelta));
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onMovementInputUpdate(MovementInputUpdateEvent event) {
+        Player player = event.getEntity();
+        if(player.isUsingItem() && player.getUseItem().is(ModItems.TERRAGRIM.get())) {
+            Input input = event.getInput();
+            input.forwardImpulse *= 5.0F;
+            input.leftImpulse *= 5.0F;
         }
     }
 }

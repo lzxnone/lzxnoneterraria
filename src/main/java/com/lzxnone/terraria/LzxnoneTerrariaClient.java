@@ -74,5 +74,11 @@ public class LzxnoneTerrariaClient {
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
             event.registerSpriteSet(ModParticles.BLOOD_BUTCHERED_PARTICLE.get(), BloodButcheredParticle.Provider::new);
         });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.LEAF_PARTICLE.get(), LeafParticle.Provider::new);
+        });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.SOLAR_EXPLOSION_PARTICLE.get(), SolarExplosionParticle.Provider::new);
+        });
     }
 }

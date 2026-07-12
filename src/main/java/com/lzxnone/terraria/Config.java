@@ -22,6 +22,19 @@ public class Config {
     public static final ModConfigSpec.IntValue BLOOD_BUTCHERER_MAX_LEVEL;
     public static final ModConfigSpec.DoubleValue BLOOD_BUTCHERER_DAMAGE_PER_LEVEL;
 
+    public static final ModConfigSpec.DoubleValue BLADE_OF_GRASS_PROJECTILE_DAMAGE;
+    public static final ModConfigSpec.IntValue BLADE_OF_GRASS_EFFECT_DURATION;
+    public static final ModConfigSpec.DoubleValue BLADE_OF_GRASS_TARGET_RANGE;
+    public static final ModConfigSpec.IntValue BLADE_OF_GRASS_PROJECTILE_LIFETIME;
+    public static final ModConfigSpec.IntValue BLADE_OF_GRASS_PROJECTILE_MAX_HIT_COUNT;
+    public static final ModConfigSpec.DoubleValue BLADE_OF_GRASS_RADIUS_GROWTH;
+    public static final ModConfigSpec.DoubleValue BLADE_OF_GRASS_ROTATION_SPEED;
+
+    public static final ModConfigSpec.DoubleValue VOLCANO_EXPLOSION_RANGE;
+    public static final ModConfigSpec.DoubleValue VOLCANO_EXPLOSION_DAMAGE;
+    public static final ModConfigSpec.IntValue VOLCANO_EXPLOSION_MAX_HIT_COUNT;
+    public static final ModConfigSpec.IntValue VOLCANO_IGNITE_SECONDS;
+
     public static final ModConfigSpec.DoubleValue STARFURY_DAMAGE;
     public static final ModConfigSpec.DoubleValue STARFURY_MAX_RANGE;
     public static final ModConfigSpec.DoubleValue STARFURY_SPEED;
@@ -58,6 +71,11 @@ public class Config {
     public static final ModConfigSpec.DoubleValue LIGHTS_BANE_BIG_DAMAGE;
     public static final ModConfigSpec.DoubleValue LIGHTS_BANE_SMALL_DAMAGE;
     public static final ModConfigSpec.DoubleValue LIGHTS_BANE_TARGET_RANGE;
+
+    public static final ModConfigSpec.DoubleValue MURAMASA_BEAM_DAMAGE;
+
+    public static final ModConfigSpec.DoubleValue TERRAGRIM_HIT_RANGE;
+    public static final ModConfigSpec.DoubleValue TERRAGRIM_DAMAGE;
 
     public static final ModConfigSpec.IntValue EXCALIBUR_ROTATE_RANGE;
     public static final ModConfigSpec.IntValue EXCALIBUR_MAX_HIT_COUNT;
@@ -108,7 +126,8 @@ public class Config {
     public static final ModConfigSpec.IntValue TRUE_NIGHTS_EDGE_PROJECTILE_MAX_HIT_COUNT;
     public static final ModConfigSpec.DoubleValue TRUE_NIGHTS_EDGE_DAMAGE;
     public static final ModConfigSpec.DoubleValue TRUE_NIGHTS_EDGE_PROJECTILE_DAMAGE;
-    public static final ModConfigSpec.DoubleValue TRUE_NIGHTS_EDGE_PROJECTILE_SPEED;
+    public static final ModConfigSpec.DoubleValue TRUE_NIGHTS_EDGE_PROJECTILE_MAX_SPEED;
+    public static final ModConfigSpec.DoubleValue TRUE_NIGHTS_EDGE_PROJECTILE_ACCELERATION;
     public static final ModConfigSpec.IntValue TRUE_NIGHTS_EDGE_PROJECTILE_LIFETIME;
     public static final ModConfigSpec.IntValue TRUE_NIGHTS_EDGE_PROJECTILE_ROTATION_SPEED;
 
@@ -123,6 +142,19 @@ public class Config {
     public static int bloodButchererEffectDuration;
     public static int bloodButchererMaxLevel;
     public static double bloodButchererDamagePerLevel;
+
+    public static double bladeOfGrassProjectileDamage;
+    public static int bladeOfGrassEffectDuration;
+    public static double bladeOfGrassTargetRange;
+    public static int bladeOfGrassProjectileLifetime;
+    public static int bladeOfGrassProjectileMaxHitCount;
+    public static double bladeOfGrassRadiusGrowth;
+    public static double bladeOfGrassRotationSpeed;
+
+    public static double volcanoExplosionRange;
+    public static double volcanoExplosionDamage;
+    public static int volcanoExplosionMaxHitCount;
+    public static int volcanoIgniteSeconds;
 
     public static double starfuryDamage;
     public static double starfuryMaxRange;
@@ -160,6 +192,11 @@ public class Config {
     public static double lightsBaneBigDamage;
     public static double lightsBaneSmallDamage;
     public static double lightsBaneTargetRange;
+
+    public static double muramasaBeamDamage;
+
+    public static double terragrimHitRange;
+    public static double terragrimDamage;
 
     public static int excaliburRotateRange;
     public static int excaliburMaxHitCount;
@@ -210,7 +247,8 @@ public class Config {
     public static int trueNightsEdgeProjectileMaxHitCount;
     public static double trueNightsEdgeDamage;
     public static double trueNightsEdgeProjectileDamage;
-    public static double trueNightsEdgeProjectileSpeed;
+    public static double trueNightsEdgeProjectileMaxSpeed;
+    public static double trueNightsEdgeProjectileAcceleration;
     public static int trueNightsEdgeProjectileLifetime;
     public static int trueNightsEdgeProjectileRotationSpeed;
 
@@ -263,6 +301,58 @@ public class Config {
         BLOOD_BUTCHERER_DAMAGE_PER_LEVEL = builder
             .comment("血腥屠宰效果每级伤害")
             .defineInRange("blood_butcherer_damage_per_level", 0.5, 0, 8388600);
+
+        builder.pop();
+
+        builder.push("blade_of_grass_settings");
+
+        BLADE_OF_GRASS_PROJECTILE_DAMAGE = builder
+            .comment("弹射伤害")
+            .defineInRange("blade_of_grass_projectile_damage", 2.0, 0, 2147483647.0);
+
+        BLADE_OF_GRASS_EFFECT_DURATION = builder
+            .comment("效果持续时间（刻）")
+            .defineInRange("blade_of_grass_effect_duration", 140, 0, 72000);
+
+        BLADE_OF_GRASS_TARGET_RANGE = builder
+            .comment("弹射最大寻敌范围")
+            .defineInRange("blade_of_grass_target_range", 8.0, 1.0, 64.0);
+
+        BLADE_OF_GRASS_PROJECTILE_LIFETIME = builder
+            .comment("弹射持续时间")
+            .defineInRange("blade_of_grass_projectile_lifetime", 60, 1, 600);
+
+        BLADE_OF_GRASS_PROJECTILE_MAX_HIT_COUNT = builder
+            .comment("弹射最大击中数")
+            .defineInRange("blade_of_grass_projectile_max_hit_count", 2, 0, 100);
+
+        BLADE_OF_GRASS_RADIUS_GROWTH = builder
+            .comment("弹射半径增大速度")
+            .defineInRange("blade_of_grass_radius_growth", 0.05, 0, 1.0);
+
+        BLADE_OF_GRASS_ROTATION_SPEED = builder
+            .comment("弹射旋转速度")
+            .defineInRange("blade_of_grass_rotation_speed", 0.2, 0, 1.0);
+
+        builder.pop();
+
+        builder.push("volcano_settings");
+
+        VOLCANO_EXPLOSION_RANGE = builder
+            .comment("爆炸范围")
+            .defineInRange("volcano_explosion_range", 4.0, 1.0, 64.0);
+
+        VOLCANO_EXPLOSION_DAMAGE = builder
+            .comment("爆炸伤害")
+            .defineInRange("volcano_explosion_damage", 6.0, 0, 2147483647.0);
+
+        VOLCANO_EXPLOSION_MAX_HIT_COUNT = builder
+            .comment("爆炸最大击中数")
+            .defineInRange("volcano_explosion_max_hit_count", 2, 0, 100);
+
+        VOLCANO_IGNITE_SECONDS = builder
+            .comment("着火时间（秒）")
+            .defineInRange("volcano_ignite_seconds", 3, 0, 60);
 
         builder.pop();
 
@@ -417,6 +507,28 @@ public class Config {
         LIGHTS_BANE_TARGET_RANGE = builder
             .comment("寻敌范围")
             .defineInRange("lights_bane_target_range", 2.0, 1.0, 64.0);
+
+        builder.pop();
+
+
+        builder.push("muramasa_settings");
+
+        MURAMASA_BEAM_DAMAGE = builder
+            .comment("蓝色光线伤害")
+            .defineInRange("muramasa_beam_damage", 2.5, 0, 2147483647.0);
+
+        builder.pop();
+
+
+        builder.push("terragrim_settings");
+
+        TERRAGRIM_HIT_RANGE = builder
+            .comment("碰撞箱范围")
+            .defineInRange("terragrim_hit_range", 2.5, 0.5, 10.0);
+
+        TERRAGRIM_DAMAGE = builder
+            .comment("伤害")
+            .defineInRange("terragrim_damage", 0.25, 0, 2147483647.0);
 
         builder.pop();
 
@@ -622,9 +734,13 @@ public class Config {
             .comment("弹射伤害")
             .defineInRange("true_nights_edge_projectile_damage", 4.0, 0, 2147483647.0);
 
-        TRUE_NIGHTS_EDGE_PROJECTILE_SPEED = builder
-            .comment("弹射速度")
-            .defineInRange("true_nights_edge_projectile_speed", 0.5, 0, 10);
+        TRUE_NIGHTS_EDGE_PROJECTILE_MAX_SPEED = builder
+            .comment("弹射最大速度")
+            .defineInRange("true_nights_edge_projectile_max_speed", 2.0, 0, 10);
+
+        TRUE_NIGHTS_EDGE_PROJECTILE_ACCELERATION = builder
+            .comment("弹射加速度")
+            .defineInRange("true_nights_edge_projectile_acceleration", 0.03, 0, 10.0);
 
         TRUE_NIGHTS_EDGE_PROJECTILE_LIFETIME = builder
             .comment("弹射持续时间")
@@ -651,6 +767,17 @@ public class Config {
             bloodButchererEffectDuration = BLOOD_BUTCHERER_EFFECT_DURATION.get();
             bloodButchererMaxLevel = BLOOD_BUTCHERER_MAX_LEVEL.get();
             bloodButchererDamagePerLevel = BLOOD_BUTCHERER_DAMAGE_PER_LEVEL.get();
+            bladeOfGrassProjectileDamage = BLADE_OF_GRASS_PROJECTILE_DAMAGE.get();
+            bladeOfGrassEffectDuration = BLADE_OF_GRASS_EFFECT_DURATION.get();
+            bladeOfGrassTargetRange = BLADE_OF_GRASS_TARGET_RANGE.get();
+            bladeOfGrassProjectileLifetime = BLADE_OF_GRASS_PROJECTILE_LIFETIME.get();
+            bladeOfGrassProjectileMaxHitCount = BLADE_OF_GRASS_PROJECTILE_MAX_HIT_COUNT.get();
+            bladeOfGrassRadiusGrowth = BLADE_OF_GRASS_RADIUS_GROWTH.get();
+            bladeOfGrassRotationSpeed = BLADE_OF_GRASS_ROTATION_SPEED.get();
+            volcanoExplosionRange = VOLCANO_EXPLOSION_RANGE.get();
+            volcanoExplosionDamage = VOLCANO_EXPLOSION_DAMAGE.get();
+            volcanoExplosionMaxHitCount = VOLCANO_EXPLOSION_MAX_HIT_COUNT.get();
+            volcanoIgniteSeconds = VOLCANO_IGNITE_SECONDS.get();
             starfuryDamage = STARFURY_DAMAGE.get();
             starfuryMaxRange = STARFURY_MAX_RANGE.get();
             starfurySpeed = STARFURY_SPEED.get();
@@ -681,6 +808,9 @@ public class Config {
             lightsBaneBigDamage = LIGHTS_BANE_BIG_DAMAGE.get();
             lightsBaneSmallDamage = LIGHTS_BANE_SMALL_DAMAGE.get();
             lightsBaneTargetRange = LIGHTS_BANE_TARGET_RANGE.get();
+            muramasaBeamDamage = MURAMASA_BEAM_DAMAGE.get();
+            terragrimHitRange = TERRAGRIM_HIT_RANGE.get();
+            terragrimDamage = TERRAGRIM_DAMAGE.get();
             excaliburRotateRange = EXCALIBUR_ROTATE_RANGE.get();
             excaliburMaxHitCount = EXCALIBUR_MAX_HIT_COUNT.get();
             excaliburDamage = EXCALIBUR_DAMAGE.get();
@@ -725,7 +855,8 @@ public class Config {
             trueNightsEdgeProjectileMaxHitCount = TRUE_NIGHTS_EDGE_PROJECTILE_MAX_HIT_COUNT.get();
             trueNightsEdgeDamage = TRUE_NIGHTS_EDGE_DAMAGE.get();
             trueNightsEdgeProjectileDamage = TRUE_NIGHTS_EDGE_PROJECTILE_DAMAGE.get();
-            trueNightsEdgeProjectileSpeed = TRUE_NIGHTS_EDGE_PROJECTILE_SPEED.get();
+            trueNightsEdgeProjectileMaxSpeed = TRUE_NIGHTS_EDGE_PROJECTILE_MAX_SPEED.get();
+            trueNightsEdgeProjectileAcceleration = TRUE_NIGHTS_EDGE_PROJECTILE_ACCELERATION.get();
             trueNightsEdgeProjectileLifetime = TRUE_NIGHTS_EDGE_PROJECTILE_LIFETIME.get();
             trueNightsEdgeProjectileRotationSpeed = TRUE_NIGHTS_EDGE_PROJECTILE_ROTATION_SPEED.get();
         }

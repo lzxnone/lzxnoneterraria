@@ -17,6 +17,7 @@ public class StaticSummonBehaviors {
     public static final String TRUE_NIGHTS_EDGE_BEAM = "true_nights_edge_beam";
     public static final String NIGHTS_EDGE_BEAM = "nights_edge_beam";
     public static final String LIGHTS_BANE_SLASH = "lights_bane_slash";
+    public static final String TERRAGRIM_BEAM = "terragrim_beam";
 
     static {
         BEHAVIORS.put(DEFAULT, new IStaticSummonBehavior() {});
@@ -28,6 +29,7 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(TRUE_NIGHTS_EDGE_BEAM, TrueNightsEdge.SUMMON_BEHAVIOR);
         BEHAVIORS.put(NIGHTS_EDGE_BEAM, NightsEdge.SUMMON_BEHAVIOR);
         BEHAVIORS.put(LIGHTS_BANE_SLASH, LightsBane.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(TERRAGRIM_BEAM, Terragrim.SUMMON_BEHAVIOR);
     }
 
     public static IStaticSummonBehavior getBehavior(String id) {

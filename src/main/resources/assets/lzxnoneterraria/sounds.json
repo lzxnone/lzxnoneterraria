@@ -28,5 +28,14 @@
   },
   "cat2": {
     "sounds": ["lzxnoneterraria:cat2"]
+  },
+  "explosive_trap_explode0": {
+    "sounds": ["lzxnoneterraria:explosive_trap_explode0"]
+  },
+  "explosive_trap_explode1": {
+    "sounds": ["lzxnoneterraria:explosive_trap_explode1"]
+  },
+  "explosive_trap_explode2": {
+    "sounds": ["lzxnoneterraria:explosive_trap_explode2"]
   }
 }

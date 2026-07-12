@@ -51,4 +51,16 @@ public class ModSounds {
             SOUND_EVENTS.register("cat2",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "cat2")));
+    public static final Supplier<SoundEvent> EXPLOSIVE_TRAP_EXPLODE0 =
+            SOUND_EVENTS.register("explosive_trap_explode0",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "explosive_trap_explode0")));
+    public static final Supplier<SoundEvent> EXPLOSIVE_TRAP_EXPLODE1 =
+            SOUND_EVENTS.register("explosive_trap_explode1",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "explosive_trap_explode1")));
+    public static final Supplier<SoundEvent> EXPLOSIVE_TRAP_EXPLODE2 =
+            SOUND_EVENTS.register("explosive_trap_explode2",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "explosive_trap_explode2")));
 }

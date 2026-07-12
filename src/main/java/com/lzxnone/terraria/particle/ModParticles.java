@@ -94,4 +94,8 @@ public class ModParticles {
             PARTICLE_TYPES.register("true_nights_edge_hit_particle", () -> new SimpleParticleType(true));
     public static final Supplier<SimpleParticleType> BLOOD_BUTCHERED_PARTICLE =
             PARTICLE_TYPES.register("blood_butchered_particle", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> LEAF_PARTICLE =
+            PARTICLE_TYPES.register("leaf_particle", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> SOLAR_EXPLOSION_PARTICLE =
+            PARTICLE_TYPES.register("solar_explosion_particle", () -> new SimpleParticleType(true));
 }

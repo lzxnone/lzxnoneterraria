@@ -42,7 +42,7 @@ import org.joml.Vector3f;
 
 public class TrueExcalibur extends SwordItem {
     public TrueExcalibur() {
-        super(Tiers.NETHERITE, new Item.Properties().attributes(ItemAttributeModifiers.builder()
+        super(Tiers.DIAMOND, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
                 new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_damage"), 7.0f, AttributeModifier.Operation.ADD_VALUE),
                 EquipmentSlotGroup.MAINHAND)

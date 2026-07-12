@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "lzxnoneterraria:item/weapon",
   "textures": {
     "layer0": "lzxnoneterraria:item/terragrim"
   }

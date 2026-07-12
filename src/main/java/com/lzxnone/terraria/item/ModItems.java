@@ -41,4 +41,5 @@ public class ModItems {
     public static final DeferredItem<Item> INFLUX_WAVER_BEAM = ITEMS.register("influx_waver_beam", InfluxWaverBeam::new);
     public static final DeferredItem<Item> STAR_WRATH_STAR = ITEMS.register("star_wrath_star", StarWrathStar::new);
     public static final DeferredItem<Item> MEOWMERE_PROJECTILE = ITEMS.register("meowmere_projectile", MeowmereProjectile::new);
+    public static final DeferredItem<Item> LEAF_PROJECTILE = ITEMS.register("leaf_projectile", LeafProjectile::new);
 }

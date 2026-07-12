@@ -35,5 +35,9 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.TRUE_NIGHTS_EDGE.get());
                 output.accept(ModItems.LIGHTS_BANE.get());
                 output.accept(ModItems.BLOOD_BUTCHERER.get());
+                output.accept(ModItems.MURAMASA.get());
+                output.accept(ModItems.BLADE_OF_GRASS.get());
+                output.accept(ModItems.VOLCANO.get());
+                output.accept(ModItems.TERRAGRIM.get());
             }).build());
 }

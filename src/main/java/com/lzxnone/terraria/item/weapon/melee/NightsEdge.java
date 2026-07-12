@@ -50,7 +50,7 @@ import java.util.List;
 
 public class NightsEdge extends SwordItem {
     public NightsEdge() {
-        super(Tiers.DIAMOND, new Item.Properties().attributes(ItemAttributeModifiers.builder()
+        super(Tiers.IRON, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
                 new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_damage"), 6.0, AttributeModifier.Operation.ADD_VALUE),
                 EquipmentSlotGroup.MAINHAND)
