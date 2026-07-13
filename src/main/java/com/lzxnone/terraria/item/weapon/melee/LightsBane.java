@@ -143,8 +143,8 @@ public class LightsBane extends SwordItem {
             ));
 
             if(!summon.level().isClientSide() && summon.getOwner() instanceof Player player) {
-                List<LivingEntity> targets = summon.level().getEntitiesOfClass(LivingEntity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
-                for(LivingEntity target : targets) {
+                List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
+                for(Entity target : targets) {
                     float damage = customData.contains("big") && customData.getBoolean("big") ? (float) Config.lightsBaneBigDamage : (float) Config.lightsBaneSmallDamage;
                     if(DamageUtil.attack(player, target, damage)) {
 

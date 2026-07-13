@@ -327,12 +327,12 @@ public class Zenith extends SwordItem {
             ));
 
             if(!projectile.level().isClientSide()) {
-                List<LivingEntity> targets = projectile.level().getEntitiesOfClass(
-                    LivingEntity.class,
+                List<Entity> targets = projectile.level().getEntitiesOfClass(
+                    Entity.class,
                     projectile.getBoundingBox(),
-                    FilterUtil.createLivingTargetFilter(projectile, projectile.getOwner())
+                    FilterUtil.createTargetFilter(projectile, projectile.getOwner())
                 );
-                for(LivingEntity target : targets) this.onHitEntity(projectile, new EntityHitResult(target, target.position()));
+                for(Entity target : targets) this.onHitEntity(projectile, new EntityHitResult(target, target.position()));
             }else {
                 if(lifeRadio > 0.1f && lifeRadio < 0.9f && projectile.getRandom().nextInt(5) == 0) {
                     Vector3f color = new Vector3f(

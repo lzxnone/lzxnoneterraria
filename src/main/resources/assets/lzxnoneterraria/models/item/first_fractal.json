@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/weapon3",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/first_fractal"
+  }
+}

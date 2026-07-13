@@ -31,7 +31,7 @@ public class ZenithRenderMixin {
                                          MultiBufferSource buffer, int combinedLight, CallbackInfo ci) {
 
         if(!player.isScoping()) {
-            if(stack.is(ModItems.ZENITH.get()) || stack.is(ModItems.TRUE_COPPER_SHORTSWORD.get())) {
+            if(stack.is(ModItems.ZENITH.get()) || stack.is(ModItems.TRUE_COPPER_SHORTSWORD.get()) || stack.is(ModItems.FIRST_FRACTAL.get())) {
                 int count = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                     .copyTag().getInt("attackCount");
                 if(count > 0) {
@@ -56,7 +56,7 @@ public class ZenithRenderMixin {
                                          boolean leftHand, PoseStack poseStack, MultiBufferSource buffer,
                                          int seed, CallbackInfo ci) {
 
-        if(itemStack.is(ModItems.ZENITH.get()) || itemStack.is(ModItems.TRUE_COPPER_SHORTSWORD.get())) {
+        if(itemStack.is(ModItems.ZENITH.get()) || itemStack.is(ModItems.TRUE_COPPER_SHORTSWORD.get()) || itemStack.is(ModItems.FIRST_FRACTAL.get())) {
             int count = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                     .copyTag().getInt("attackCount");
             if(count > 0) {

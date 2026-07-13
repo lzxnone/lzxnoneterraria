@@ -5,7 +5,6 @@ import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.BeeSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
-import com.lzxnone.terraria.entity.summon.StaticSummonRenderer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;

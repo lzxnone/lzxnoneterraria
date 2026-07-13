@@ -39,5 +39,6 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.BLADE_OF_GRASS.get());
                 output.accept(ModItems.VOLCANO.get());
                 output.accept(ModItems.TERRAGRIM.get());
+                output.accept(ModItems.FIRST_FRACTAL.get());
             }).build());
 }

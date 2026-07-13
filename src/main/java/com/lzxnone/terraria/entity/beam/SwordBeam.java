@@ -75,7 +75,9 @@ public class SwordBeam extends Entity {
             if(this.entityData.get(OWNER).orElse(null) != null) {
                 UUID uuid = this.entityData.get(OWNER).orElse(null);
                 if(!this.level().isClientSide()) {
-                    setOwner(((ServerLevel) this.level()).getEntity(uuid));
+                    if(uuid != null) {
+                        setOwner(((ServerLevel) this.level()).getEntity(uuid));
+                    }
                 }else {
                     for(Entity entity : this.level().getEntities(this, this.getBoundingBox().inflate(64.0))) {
                         if(entity.getUUID().equals(uuid)) {

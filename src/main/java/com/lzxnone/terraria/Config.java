@@ -116,6 +116,15 @@ public class Config {
     public static final ModConfigSpec.DoubleValue ZENITH_TRAIL_ALPHA;
     public static final ModConfigSpec.IntValue ZENITH_TRAIL_MAX_LENGTH;
 
+    public static final ModConfigSpec.DoubleValue FIRST_FRACTAL_PROJECTILE_DAMAGE;
+    public static final ModConfigSpec.DoubleValue FIRST_FRACTAL_BOUNDING_BOX_SIZE;
+    public static final ModConfigSpec.DoubleValue FIRST_FRACTAL_PROJECTILE_SPEED;
+    public static final ModConfigSpec.IntValue FIRST_FRACTAL_PROJECTILE_LIFETIME;
+    public static final ModConfigSpec.BooleanValue FIRST_FRACTAL_DISTANCE_MODE;
+    public static final ModConfigSpec.IntValue FIRST_FRACTAL_SCROLL_SPEED;
+    public static final ModConfigSpec.DoubleValue FIRST_FRACTAL_MAX_RANGE;
+    public static final ModConfigSpec.DoubleValue FIRST_FRACTAL_SPAWN_RANGE;
+
     public static final ModConfigSpec.IntValue TRUE_EXCALIBUR_ROTATE_RANGE;
     public static final ModConfigSpec.IntValue TRUE_EXCALIBUR_MAX_HIT_COUNT;
     public static final ModConfigSpec.DoubleValue TRUE_EXCALIBUR_DAMAGE;
@@ -237,6 +246,15 @@ public class Config {
     public static double zenithScale;
     public static double zenithTrailAlpha;
     public static int zenithTrailMaxLength;
+
+    public static double firstFractalProjectileDamage;
+    public static double firstFractalBoundingBoxSize;
+    public static double firstFractalProjectileSpeed;
+    public static int firstFractalProjectileLifetime;
+    public static boolean firstFractalDistanceMode;
+    public static int firstFractalScrollSpeed;
+    public static double firstFractalMaxRange;
+    public static double firstFractalSpawnRange;
 
     public static int trueExcaliburRotateRange;
     public static int trueExcaliburMaxHitCount;
@@ -694,6 +712,42 @@ public class Config {
 
         builder.pop();
 
+        builder.push("first_fractal_settings");
+
+        FIRST_FRACTAL_PROJECTILE_DAMAGE = builder
+            .comment("弹射伤害")
+            .defineInRange("first_fractal_projectile_damage", 10.0, 0, 2147483647.0);
+
+        FIRST_FRACTAL_BOUNDING_BOX_SIZE = builder
+            .comment("弹射碰撞箱大小")
+            .defineInRange("first_fractal_bounding_box_size", 1.5, 0.5, 10.0);
+
+        FIRST_FRACTAL_PROJECTILE_SPEED = builder
+            .comment("弹射速度")
+            .defineInRange("first_fractal_projectile_speed", 1.5, 0, 10.0);
+
+        FIRST_FRACTAL_PROJECTILE_LIFETIME = builder
+            .comment("弹射生命周期")
+            .defineInRange("first_fractal_projectile_lifetime", 30, 1, 1200);
+
+        FIRST_FRACTAL_DISTANCE_MODE = builder
+            .comment("使用相对距离模式")
+            .define("first_fractal_distance_mode", true);
+
+        FIRST_FRACTAL_SCROLL_SPEED = builder
+            .comment("滚轮调节距离速度")
+            .defineInRange("first_fractal_scroll_speed", 4, 0, 128);
+
+        FIRST_FRACTAL_MAX_RANGE = builder
+            .comment("最大范围")
+            .defineInRange("first_fractal_max_range", 64.0, 1.0, 1024.0);
+
+        FIRST_FRACTAL_SPAWN_RANGE = builder
+            .comment("弹射生成范围")
+            .defineInRange("first_fractal_spawn_range", 16.0, 1.0, 64.0);
+
+        builder.pop();
+
         builder.push("true_excalibur_settings");
 
         TRUE_EXCALIBUR_ROTATE_RANGE = builder
@@ -852,6 +906,14 @@ public class Config {
             zenithScale = ZENITH_SCALE.get();
             zenithTrailAlpha = ZENITH_TRAIL_ALPHA.get();
             zenithTrailMaxLength = ZENITH_TRAIL_MAX_LENGTH.get();
+            firstFractalProjectileDamage = FIRST_FRACTAL_PROJECTILE_DAMAGE.get();
+            firstFractalBoundingBoxSize = FIRST_FRACTAL_BOUNDING_BOX_SIZE.get();
+            firstFractalProjectileSpeed = FIRST_FRACTAL_PROJECTILE_SPEED.get();
+            firstFractalProjectileLifetime = FIRST_FRACTAL_PROJECTILE_LIFETIME.get();
+            firstFractalDistanceMode = FIRST_FRACTAL_DISTANCE_MODE.get();
+            firstFractalScrollSpeed = FIRST_FRACTAL_SCROLL_SPEED.get();
+            firstFractalMaxRange = FIRST_FRACTAL_MAX_RANGE.get();
+            firstFractalSpawnRange = FIRST_FRACTAL_SPAWN_RANGE.get();
             trueExcaliburRotateRange = TRUE_EXCALIBUR_ROTATE_RANGE.get();
             trueExcaliburMaxHitCount = TRUE_EXCALIBUR_MAX_HIT_COUNT.get();
             trueExcaliburDamage = TRUE_EXCALIBUR_DAMAGE.get();

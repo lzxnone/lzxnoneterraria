@@ -145,24 +145,32 @@ public class Terragrim extends SwordItem {
             ));
             if(!summon.level().isClientSide()) {
                 if(summon.getOwner() instanceof Player player) {
-                    List<LivingEntity> targets = summon.level().getEntitiesOfClass(
-                        LivingEntity.class,
+                    List<Entity> targets = summon.level().getEntitiesOfClass(
+                        Entity.class,
                         summon.getBoundingBox(),
-                        FilterUtil.createLivingTargetFilter(summon, player)
+                        FilterUtil.createTargetFilter(summon, player)
                     );
-                    for(LivingEntity target : targets) {
-                        AttributeInstance knockbackResist = null;
-                        double originalResist = 0.0;
-                        knockbackResist = target.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
-                        if(knockbackResist != null) {
-                            originalResist = knockbackResist.getBaseValue();
-                            knockbackResist.setBaseValue(Math.max(0.9, originalResist));
-                        }
-                        if(DamageUtil.attack(player, target, (float) Config.terragrimDamage)) {
-                            target.invulnerableTime = 0;
-                        }
-                        if(knockbackResist != null) {
-                            knockbackResist.setBaseValue(originalResist);
+                    for(Entity target : targets) {
+                        if(target instanceof LivingEntity livingEntity) {
+                            AttributeInstance knockbackResist = null;
+                            double originalResist = 0.0;
+                            knockbackResist = livingEntity.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
+                            if(knockbackResist != null) {
+                                originalResist = knockbackResist.getBaseValue();
+                                knockbackResist.setBaseValue(Math.max(0.9, originalResist));
+                            }
+
+                            if(DamageUtil.attack(player, target, (float) Config.terragrimDamage)) {
+                                target.invulnerableTime = 0;
+                            }
+
+                            if(knockbackResist != null) {
+                                knockbackResist.setBaseValue(originalResist);
+                            }
+                        }else {
+                            if(DamageUtil.attack(player, target, (float) Config.terragrimDamage)) {
+                                target.invulnerableTime = 0;
+                            }
                         }
                     }
                 }

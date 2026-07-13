@@ -332,8 +332,8 @@ public class NightsEdge extends SwordItem {
             if(!summon.level().isClientSide() && customData.contains("hitCount") && summon.getOwner() instanceof Player player) {
                 int count = customData.getInt("hitCount");
                 if(count < Config.nightsEdgeProjectileMaxHitCount) {
-                    List<LivingEntity> targets = summon.level().getEntitiesOfClass(LivingEntity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
-                    for(LivingEntity target : targets) {
+                    List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
+                    for(Entity target : targets) {
                         if(count >= Config.nightsEdgeProjectileMaxHitCount) break;
                         if(DamageUtil.attack(player, target, (float) Config.nightsEdgeProjectileDamage)) {
                             count++;
@@ -469,7 +469,6 @@ public class NightsEdge extends SwordItem {
             SwordBeamBehaviors.getBehavior("nights_edge").generate(player, BEAM_DATA);
         }else {
             SoundUtil.playClientSound(player, ModSounds.WAVE.get());
-            SoundUtil.playClientSound(player, ModSounds.WAVE3.get());
         }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }

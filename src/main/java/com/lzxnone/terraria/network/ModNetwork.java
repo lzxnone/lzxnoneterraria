@@ -1,8 +1,10 @@
 package com.lzxnone.terraria.network;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.network.handler.FirstFractalScrollHandler;
 import com.lzxnone.terraria.network.handler.SwordBeamHandler;
 import com.lzxnone.terraria.network.handler.ZenithScrollHandler;
+import com.lzxnone.terraria.network.payload.FirstFractalScrollPayload;
 import com.lzxnone.terraria.network.payload.SwordBeamPayload;
 import com.lzxnone.terraria.network.payload.ZenithScrollPayload;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -24,6 +26,11 @@ public class ModNetwork {
                 ZenithScrollPayload.TYPE,
                 ZenithScrollPayload.CODEC,
                 ZenithScrollHandler::handle
+        );
+        registrar.playToServer(
+                FirstFractalScrollPayload.TYPE,
+                FirstFractalScrollPayload.CODEC,
+                FirstFractalScrollHandler::handle
         );
     }
 }

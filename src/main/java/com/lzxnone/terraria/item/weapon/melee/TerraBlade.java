@@ -371,8 +371,8 @@ public class TerraBlade extends SwordItem {
             //碰撞计算
             if(!summon.level().isClientSide() && customData.contains("hitCount") && summon.getOwner() instanceof Player player) {
                 int count = customData.getInt("hitCount");
-                List<LivingEntity> targets = summon.level().getEntitiesOfClass(LivingEntity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
-                for(LivingEntity target : targets) {
+                List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
+                for(Entity target : targets) {
                     if(DamageUtil.attack(player, target, (float) Config.terraProjectileDamage * (float) Math.pow(Config.terraProjectileDamageDecay, count))) {
                         count++;
                         ParticleUtil.addParticles(

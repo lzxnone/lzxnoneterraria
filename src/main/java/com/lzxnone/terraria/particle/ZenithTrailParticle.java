@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.particle;
 
+import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.utils.MathUtil;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
@@ -45,6 +46,7 @@ public class ZenithTrailParticle extends TextureSheetParticle {
         this.dir = new Vec3(xSpeed, ySpeed, zSpeed).normalize();
         this.up = new Vec3(options.up).normalize();
         this.right = new Vec3(options.right).normalize();
+        this.angle = options.angle;
 
         this.rCol = options.color.x;
         this.gCol = options.color.y;

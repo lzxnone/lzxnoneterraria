@@ -110,26 +110,27 @@ public class InfluxWaver extends SwordItem {
                     if(customData.contains("target")) {
                         Entity target = summon.level().getEntity(customData.getInt("target"));
                         if(target == null || !target.isAlive()) {
-                            summon.setDeltaMovement(summon.getLookAngle().normalize().scale(Config.influxWaverSpeed));
+                            //summon.setDeltaMovement(summon.getLookAngle().normalize().scale(Config.influxWaverSpeed));
                             checkEntity = false;
                         }else {
-                            Vec3 targetPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ());
-                            summon.setDeltaMovement(targetPos.subtract(summon.position()).normalize().scale(Config.influxWaverSpeed));
+                            //Vec3 targetPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ());
+                            //summon.setDeltaMovement(targetPos.subtract(summon.position()).normalize().scale(Config.influxWaverSpeed));
                         }
                     }else {
-                        summon.setDeltaMovement(summon.getLookAngle().normalize().scale(Config.influxWaverSpeed));
+                        //summon.setDeltaMovement(summon.getLookAngle().normalize().scale(Config.influxWaverSpeed));
                         checkEntity = false;
                     }
+                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(Config.influxWaverSpeed));
                 }
             }
 
-            if(idx > 0) {
+            /*if(idx > 0) {
                 float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(summon.getDeltaMovement()));
                 summon.setXRot(xyRot[0]);
                 summon.xRotO = xyRot[0];
                 summon.setYRot(xyRot[1]);
                 summon.yRotO = xyRot[1];
-            }
+            }*/
 
             //碰撞逻辑
             if(!summon.level().isClientSide()) {
@@ -186,7 +187,8 @@ public class InfluxWaver extends SwordItem {
         summon.setOwner(player);
         summon.setPos(pos);
 
-        Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
+        //Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
+        Vector3f[] dirs = MathUtil.computeCoordinateSystem(dir.toVector3f(), player.getYRot());
         float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
         summon.setXRot(xyRot[0]);
         summon.xRotO = xyRot[0];
