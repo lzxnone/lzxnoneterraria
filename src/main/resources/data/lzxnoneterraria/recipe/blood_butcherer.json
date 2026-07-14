@@ -3,13 +3,14 @@
   "category": "combat",
   "pattern": [
     "  A",
-    " B ",
-    "C  "
+    "DB ",
+    "CD "
   ],
   "key": {
     "A": { "item": "minecraft:emerald" },
     "B": { "item": "minecraft:stick" },
-    "C": { "item": "minecraft:nether_wart_block" }
+    "C": { "item": "minecraft:nether_wart_block" },
+    "D": { "item": "minecraft:ender_eye" }
   },
   "result": {
     "id": "lzxnoneterraria:blood_butcherer",

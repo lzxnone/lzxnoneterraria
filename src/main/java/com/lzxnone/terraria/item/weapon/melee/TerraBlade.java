@@ -4,6 +4,7 @@ import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
+import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.beam.ISwordBeamBehavior;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.beam.SwordBeamBehaviors;
@@ -187,7 +188,7 @@ public class TerraBlade extends SwordItem {
             float size = 1.0f -  0.25f * progress;
             poseStack.scale(size, size, size);
 
-            VertexConsumer vertexConsumer0 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES0));
+            VertexConsumer vertexConsumer0 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES0));
 
             //左边
             poseStack.pushPose();
@@ -214,7 +215,7 @@ public class TerraBlade extends SwordItem {
                     COLOR2.x(), COLOR2.y(), COLOR2.z(), alpha, halfWidth, halfHeight, 0f, 0, 0.01f);
             poseStack.popPose();
 
-            VertexConsumer vertexConsumer1 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES1));
+            VertexConsumer vertexConsumer1 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES1));
 
             //三线
             poseStack.pushPose();
@@ -241,7 +242,7 @@ public class TerraBlade extends SwordItem {
                     1.0f, 1.0f, 1.0f, alpha, halfWidth, halfHeight, 0f, 0f, 0.02f);
             poseStack.popPose();
 
-            VertexConsumer vertexConsumer2 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES2));
+            VertexConsumer vertexConsumer2 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES2));
 
             //边缘高光
             poseStack.pushPose();
@@ -264,7 +265,7 @@ public class TerraBlade extends SwordItem {
                 sparkleAlpha = (progress - FADE_IN) / (FADE_OUT - FADE_IN);
             }
 
-            VertexConsumer vertexConsumer3 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES3));
+            VertexConsumer vertexConsumer3 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES3));
 
             //闪烁(外层)
             poseStack.pushPose();

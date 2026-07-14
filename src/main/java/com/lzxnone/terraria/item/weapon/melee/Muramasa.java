@@ -3,6 +3,7 @@ package com.lzxnone.terraria.item.weapon.melee;
 import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.ModEntities;
+import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.projectile.IStaticProjectileBehavior;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
@@ -158,7 +159,7 @@ public class Muramasa extends SwordItem {
             if(!(entity instanceof StaticProjectile projectile)) return;
             Vec3 currentPos = projectile.getPosition(partialTick);
 
-            VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES));
+            VertexConsumer vertexConsumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES));
             Matrix4f matrix = poseStack.last().pose();
 
             int quadCount = projectile.trailPositions.size() / 2 - 1;

@@ -4,6 +4,7 @@ import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
+import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.TintedVertexConsumer;
 import com.lzxnone.terraria.entity.projectile.IStaticProjectileBehavior;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
@@ -181,7 +182,7 @@ public class Zenith extends SwordItem {
 
             Vec3 currentPos = proj.getPosition(partialTick);
 
-            VertexConsumer vertexConsumer0 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES0));
+            VertexConsumer vertexConsumer0 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES0));
             Matrix4f matrix = poseStack.last().pose();
 
             Vector3f color = new Vector3f(
@@ -254,7 +255,7 @@ public class Zenith extends SwordItem {
             }
             if(Math.abs(alpha) < 0.001) return;
 
-            VertexConsumer vertexConsumer1 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES1));
+            VertexConsumer vertexConsumer1 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES1));
             poseStack.pushPose();
 
             Vector3f tempRight = right.toVector3f();

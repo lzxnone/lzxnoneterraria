@@ -22,11 +22,20 @@ public class StaticProjectileRenderer extends EntityRenderer<Entity> {
                        PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         if(!(entity instanceof StaticProjectile proj)) return;
         if(!proj.isInit) return;
+        /*
         if(proj.getEntityData().get(StaticProjectile.RENDER_MODE).equals("item") && proj.getEntityData().get(StaticProjectile.ITEM) != ItemStack.EMPTY) {
             StaticProjectileBehaviors.getBehavior(proj.getEntityData().get(StaticProjectile.BEHAVIOR)).renderItem(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         }else if(proj.getEntityData().get(StaticProjectile.RENDER_MODE).equals("block") && proj.getEntityData().get(StaticProjectile.BLOCK) != Blocks.AIR.defaultBlockState()) {
             StaticProjectileBehaviors.getBehavior(proj.getEntityData().get(StaticProjectile.BEHAVIOR)).renderBlock(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         }else if(!proj.getEntityData().get(StaticProjectile.GLOW)) {
+            StaticProjectileBehaviors.getBehavior(proj.getEntityData().get(StaticProjectile.BEHAVIOR)).render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        }
+        */
+        if(proj.getEntityData().get(StaticProjectile.RENDER_MODE).equals("item") && proj.getEntityData().get(StaticProjectile.ITEM) != ItemStack.EMPTY) {
+            StaticProjectileBehaviors.getBehavior(proj.getEntityData().get(StaticProjectile.BEHAVIOR)).renderItem(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        }else if(proj.getEntityData().get(StaticProjectile.RENDER_MODE).equals("block") && proj.getEntityData().get(StaticProjectile.BLOCK) != Blocks.AIR.defaultBlockState()) {
+            StaticProjectileBehaviors.getBehavior(proj.getEntityData().get(StaticProjectile.BEHAVIOR)).renderBlock(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        }else if(proj.getEntityData().get(StaticProjectile.RENDER_MODE).equals("custom")) {
             StaticProjectileBehaviors.getBehavior(proj.getEntityData().get(StaticProjectile.BEHAVIOR)).render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         }
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);

@@ -3,13 +3,14 @@
   "category": "combat",
   "pattern": [
     "  A",
-    " B ",
-    "C  "
+    "DB ",
+    "CD "
   ],
   "key": {
     "A": { "item": "minecraft:diamond" },
     "B": { "item": "minecraft:stick" },
-    "C": { "item": "minecraft:prismarine" }
+    "C": { "item": "minecraft:prismarine" },
+    "D": { "item": "minecraft:ender_eye" }
   },
   "result": {
     "id": "lzxnoneterraria:lights_bane",

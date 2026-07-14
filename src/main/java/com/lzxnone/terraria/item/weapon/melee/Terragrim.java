@@ -4,6 +4,7 @@ import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
+import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
@@ -101,7 +102,7 @@ public class Terragrim extends SwordItem {
             CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
             if(!customData.contains("idx")) return;
 
-            VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES[Math.min(customData.getInt("idx"), RES.length - 1)]));
+            VertexConsumer vertexConsumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES[Math.min(customData.getInt("idx"), RES.length - 1)]));
             Vector3f[] dirs = MathUtil.computeCoordinateSystem(owner);
             int rotate = summon.getEntityData().get(StaticSummon.RZP);
 

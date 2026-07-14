@@ -23,6 +23,7 @@ public class ModEntities {
                 .sized(1.0f, 1.0f)
                 .clientTrackingRange(1024)
                 .updateInterval(1)
+                .fireImmune()
                 .build("static_projectile")
         );
     public static final Supplier<EntityType<StaticSummon>> STATIC_SUMMON =
@@ -31,6 +32,7 @@ public class ModEntities {
                 .sized(1.0f, 1.0f)
                 .clientTrackingRange(1024)
                 .updateInterval(1)
+                .fireImmune()
                 .build("static_summon")
         );
 
@@ -40,6 +42,7 @@ public class ModEntities {
                 .sized(0.5f, 0.5f)
                 .clientTrackingRange(1024)
                 .updateInterval(1)
+                .fireImmune()
                 .build("sword_beam")
         );
 
@@ -47,7 +50,8 @@ public class ModEntities {
         ENTITY_TYPES.register("bee_summon", () -> EntityType.Builder.of(
             BeeSummon::new, MobCategory.MISC)
                 .sized(0.7F, 0.6F)
-                .clientTrackingRange(8)
+                .clientTrackingRange(1024)
+                .fireImmune()
                 .build("bee_summon")
         );
 }

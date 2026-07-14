@@ -3,6 +3,7 @@ package com.lzxnone.terraria.item.weapon.melee;
 import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
+import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.beam.ISwordBeamBehavior;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.beam.SwordBeamBehaviors;
@@ -114,7 +115,7 @@ public class TrueExcalibur extends SwordItem {
             float halfWidth = SwordBeam.HALF_WIDTH * SwordBeam.SCALE;
             float halfHeight = SwordBeam.HALF_HEIGHT * SwordBeam.SCALE;
 
-            VertexConsumer vertexConsumer0 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES0));
+            VertexConsumer vertexConsumer0 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES0));
 
             //左边
             poseStack.pushPose();
@@ -142,8 +143,8 @@ public class TrueExcalibur extends SwordItem {
             renderQuad(poseStack.last().pose(), vertexConsumer0,
                     color1.x(), color1.y(), color1.z(), alpha, halfWidth, halfHeight, 0f, 0f, -0.04f);
             poseStack.popPose();
-            VertexConsumer vertexConsumer1 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES3));
 
+            VertexConsumer vertexConsumer1 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES3));
 
             //三线
             poseStack.pushPose();
@@ -170,7 +171,7 @@ public class TrueExcalibur extends SwordItem {
                     color3.x(), color3.y(), color3.z(), alpha, halfWidth, halfHeight, 0f, 0f, -0.045f);
             poseStack.popPose();
 
-            VertexConsumer vertexConsumer2 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES4));
+            VertexConsumer vertexConsumer2 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES4));
 
             //边缘高光
             poseStack.pushPose();
@@ -183,7 +184,7 @@ public class TrueExcalibur extends SwordItem {
             }
             poseStack.popPose();
 
-            VertexConsumer vertexConsumer3 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES5));
+            VertexConsumer vertexConsumer3 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES5));
 
             //闪烁
             poseStack.pushPose();

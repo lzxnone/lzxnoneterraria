@@ -15,7 +15,8 @@ public class SwordBeamRenderer extends EntityRenderer<Entity> {
     @Override
     public void render(Entity entity, float entityYaw, float partialTick,
                        PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-        if(!(entity instanceof SwordBeam)) return;
+        if(!(entity instanceof SwordBeam beam)) return;
+        SwordBeamBehaviors.getBehavior(beam.getEntityData().get(SwordBeam.BEHAVIOR)).render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 

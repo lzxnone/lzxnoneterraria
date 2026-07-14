@@ -4,6 +4,7 @@ import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
+import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.beam.ISwordBeamBehavior;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.beam.SwordBeamBehaviors;
@@ -126,7 +127,7 @@ public class TrueNightsEdge extends SwordItem {
             float halfWidth = SwordBeam.HALF_WIDTH * SwordBeam.SCALE;
             float halfHeight = SwordBeam.HALF_HEIGHT * SwordBeam.SCALE;
 
-            VertexConsumer vertexConsumer0 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES0));
+            VertexConsumer vertexConsumer0 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES0));
 
             //左边
             poseStack.pushPose();
@@ -152,7 +153,7 @@ public class TrueNightsEdge extends SwordItem {
                     color1.x(), color1.y(), color1.z(), alpha, halfWidth, halfHeight, 0f, 0f, 0f);
             poseStack.popPose();
 
-            VertexConsumer vertexConsumer1 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES3));
+            VertexConsumer vertexConsumer1 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES3));
 
             //外线
             poseStack.pushPose();
@@ -163,7 +164,7 @@ public class TrueNightsEdge extends SwordItem {
                     color3.x(), color3.y(), color3.z(), alpha, halfWidth, halfHeight, 0f, 0f, 0.02f);
             poseStack.popPose();
 
-            VertexConsumer vertexConsumer2 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES5));
+            VertexConsumer vertexConsumer2 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES5));
 
             //闪烁
             poseStack.pushPose();
@@ -276,7 +277,7 @@ public class TrueNightsEdge extends SwordItem {
             double rotateSpeed = summon.getEntityData().get(StaticSummon.RZPS);
             float rotateAngle = (float) ((summon.getEntityData().get(StaticSummon.AGE) + partialTick) * rotateSpeed);
 
-            VertexConsumer vertexConsumer0 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES0));
+            VertexConsumer vertexConsumer0 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES0));
 
             //外层(亮)
             poseStack.pushPose();
@@ -349,7 +350,7 @@ public class TrueNightsEdge extends SwordItem {
                     COLOR1.x(), COLOR1.y(), COLOR1.z(), alpha * 0.125f, halfWidth, halfHeight, 0f, 0f, -0.02f);
             poseStack.popPose();
 
-            VertexConsumer vertexConsumer1 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES1));
+            VertexConsumer vertexConsumer1 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES1));
 
             //外线
             poseStack.pushPose();
@@ -370,7 +371,7 @@ public class TrueNightsEdge extends SwordItem {
                     1.0f, 1.0f, 1.0f, alpha, halfWidth, halfHeight, 0f, 0f, 0.02f);
             poseStack.popPose();
 
-            VertexConsumer vertexConsumer2 = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES2));
+            VertexConsumer vertexConsumer2 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES2));
 
             //闪烁
             poseStack.pushPose();

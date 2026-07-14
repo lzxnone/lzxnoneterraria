@@ -5,6 +5,7 @@ import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.ModEntities;
+import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.projectile.IStaticProjectileBehavior;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
@@ -79,7 +80,7 @@ public class BladeOfGrass extends SwordItem {
 
             Vec3 currentPos = projectile.getPosition(partialTick);
 
-            VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.entityTranslucent(RES));
+            VertexConsumer vertexConsumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucent(RES));
             Matrix4f matrix = poseStack.last().pose();
 
             int quadCount = projectile.trailPositions.size() / 2 - 1;
@@ -110,16 +111,16 @@ public class BladeOfGrass extends SwordItem {
 
                 vertexConsumer.addVertex(matrix, (float)x1, (float)y1, (float)z1)
                     .setColor(TRAIL_COLOR.x, TRAIL_COLOR.y, TRAIL_COLOR.z, TRAIL_ALPHA).setUv(radio1, 0.0f)
-                    .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
+                    .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0, 1, 0);
                 vertexConsumer.addVertex(matrix, (float)x2, (float)y2, (float)z2)
                     .setColor(TRAIL_COLOR.x, TRAIL_COLOR.y, TRAIL_COLOR.z, TRAIL_ALPHA).setUv(radio1, 1.0f)
-                    .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
+                    .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0, 1, 0);
                 vertexConsumer.addVertex(matrix, (float)x3, (float)y3, (float)z3)
                     .setColor(TRAIL_COLOR.x, TRAIL_COLOR.y, TRAIL_COLOR.z, TRAIL_ALPHA).setUv(radio2, 1.0f)
-                    .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
+                    .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0, 1, 0);
                 vertexConsumer.addVertex(matrix, (float)x4, (float)y4, (float)z4)
                     .setColor(TRAIL_COLOR.x, TRAIL_COLOR.y, TRAIL_COLOR.z, TRAIL_ALPHA).setUv(radio2, 0.0f)
-                    .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
+                    .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0, 1, 0);
             }
         }
 

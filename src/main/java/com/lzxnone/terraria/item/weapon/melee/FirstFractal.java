@@ -4,6 +4,7 @@ import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
+import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.TintedVertexConsumer;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.*;
@@ -159,7 +160,7 @@ public class FirstFractal extends SwordItem {
             poseStack.pushPose();
             float starHalfWidth = 45 * 0.06f;
             float starHalfHeight = 17 * 0.06f;
-            VertexConsumer starConsumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES2));
+            VertexConsumer starConsumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES2));
 
             poseStack.translate(
                 dirs[0].x * 0 + dirs[1].x * 1.3,
@@ -194,7 +195,7 @@ public class FirstFractal extends SwordItem {
             float sparkleHalfWidth = 32 * 0.12f;
             float sparkleHalfHeight = 32 * 0.03f;
 
-            VertexConsumer sparkleConsumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES));
+            VertexConsumer sparkleConsumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES));
 
             poseStack.translate(
                 dirs[0].x * 2 + dirs[1].x * 1.3,
@@ -267,7 +268,7 @@ public class FirstFractal extends SwordItem {
             poseStack.scale(-1.0F, -1.0F, 1.0F);
             poseStack.translate(0.0F, -1.501F, 0.0F);
 
-            VertexConsumer modelConsumer = bufferSource.getBuffer(RenderType.entityTranslucent(playerSkin.texture()));
+            VertexConsumer modelConsumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucent(playerSkin.texture()));
 
             int packedColor = FastColor.ARGB32.color(Math.min((int)(alpha * 255), 255), 255, 255, 255);
             activeModel.renderToBuffer(poseStack, modelConsumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, packedColor);

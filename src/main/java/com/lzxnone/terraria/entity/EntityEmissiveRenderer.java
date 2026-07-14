@@ -23,7 +23,9 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 public class EntityEmissiveRenderer {
     @SubscribeEvent
     public static void onRenderStage(RenderLevelStageEvent event) {
-        if(event.getStage() != RenderLevelStageEvent.Stage.AFTER_WEATHER) return;
+        if(event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES) return;
+
+        /*
 
         Minecraft mc = Minecraft.getInstance();
         if(mc.level == null || mc.player == null) return;
@@ -68,5 +70,7 @@ public class EntityEmissiveRenderer {
             }
             bufferSource.endBatch();
         }
+
+         */
     }
 }

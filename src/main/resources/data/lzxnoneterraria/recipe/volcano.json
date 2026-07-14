@@ -10,7 +10,7 @@
     "A": { "item": "minecraft:magma_block" },
     "B": { "item": "minecraft:magma_cream" },
     "C": { "item": "minecraft:nether_wart" },
-    "D": { "item": "minecraft:stick" }
+    "D": { "item": "minecraft:blaze_rod" }
   },
   "result": {
     "id": "lzxnoneterraria:volcano",

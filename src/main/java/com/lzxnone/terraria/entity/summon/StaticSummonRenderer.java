@@ -43,11 +43,20 @@ public class StaticSummonRenderer extends EntityRenderer<Entity>  {
     public void render(Entity entity, float entityYaw, float partialTick,
                        PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         if(!(entity instanceof StaticSummon summon)) return;
-        if(summon.getEntityData().get(StaticSummon.RENDER_MODE).equals("item") && summon.getEntityData().get(StaticSummon.ITEM) != ItemStack.EMPTY) {
+        /*if(summon.getEntityData().get(StaticSummon.RENDER_MODE).equals("item") && summon.getEntityData().get(StaticSummon.ITEM) != ItemStack.EMPTY) {
             StaticSummonBehaviors.getBehavior(summon.getEntityData().get(StaticSummon.BEHAVIOR)).renderItem(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         }else if(summon.getEntityData().get(StaticSummon.RENDER_MODE).equals("block") && summon.getEntityData().get(StaticSummon.BLOCK) != Blocks.AIR.defaultBlockState()) {
             StaticSummonBehaviors.getBehavior(summon.getEntityData().get(StaticSummon.BEHAVIOR)).renderBlock(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         }else if(!summon.getEntityData().get(StaticSummon.GLOW)) {
+            StaticSummonBehaviors.getBehavior(summon.getEntityData().get(StaticSummon.BEHAVIOR)).render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        }
+
+         */
+        if(summon.getEntityData().get(StaticSummon.RENDER_MODE).equals("item") && summon.getEntityData().get(StaticSummon.ITEM) != ItemStack.EMPTY) {
+            StaticSummonBehaviors.getBehavior(summon.getEntityData().get(StaticSummon.BEHAVIOR)).renderItem(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        }else if(summon.getEntityData().get(StaticSummon.RENDER_MODE).equals("block") && summon.getEntityData().get(StaticSummon.BLOCK) != Blocks.AIR.defaultBlockState()) {
+            StaticSummonBehaviors.getBehavior(summon.getEntityData().get(StaticSummon.BEHAVIOR)).renderBlock(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        }else if(summon.getEntityData().get(StaticSummon.RENDER_MODE).equals("custom")) {
             StaticSummonBehaviors.getBehavior(summon.getEntityData().get(StaticSummon.BEHAVIOR)).render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         }
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);

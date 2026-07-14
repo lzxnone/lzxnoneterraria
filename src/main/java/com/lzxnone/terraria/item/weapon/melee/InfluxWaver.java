@@ -200,7 +200,7 @@ public class InfluxWaver extends SwordItem {
         summon.getEntityData().set(StaticSummon.RXP, -90);
         summon.getEntityData().set(StaticSummon.RZP, -135);
         summon.getEntityData().set(StaticSummon.GLOW, true);
-        summon.getEntityData().set(StaticSummon.LIFETIME, 300);
+        summon.getEntityData().set(StaticSummon.LIFETIME, 150);
         summon.setNoGravity(true);
         summon.noPhysics = true;
 

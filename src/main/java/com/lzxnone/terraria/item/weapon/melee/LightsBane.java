@@ -3,6 +3,7 @@ package com.lzxnone.terraria.item.weapon.melee;
 import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.ModEntities;
+import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
@@ -99,7 +100,7 @@ public class LightsBane extends SwordItem {
             poseStack.pushPose();
             poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
 
-            VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES[frame]));
+            VertexConsumer consumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES[frame]));
             Matrix4f matrix = poseStack.last().pose();
 
             CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
