@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "DBD",
+    "EAE",
+    "DCD"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:excalibur" },
+    "B": { "item": "minecraft:dragon_egg" },
+    "C": { "item": "minecraft:nether_star" },
+    "D": { "item": "minecraft:netherite_ingot" },
+    "E": { "item": "minecraft:dragon_head" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:true_excalibur",
+    "count": 1
+  }
+}

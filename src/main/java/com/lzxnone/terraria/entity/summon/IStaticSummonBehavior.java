@@ -17,6 +17,8 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+
 import java.util.UUID;
 
 public interface IStaticSummonBehavior {
@@ -129,5 +131,9 @@ public interface IStaticSummonBehavior {
 
     default void onDied(StaticSummon summon) {
         if(!summon.level().isClientSide()) summon.discard();
+    }
+
+    default AABB getBoundingBoxForCulling(StaticSummon summon) {
+        return summon.getBoundingBox();
     }
 }

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "EFA",
+    "BCF",
+    "DBE"
+  ],
+  "key": {
+    "A": { "item": "minecraft:diamond_block" },
+    "B": { "item": "minecraft:netherite_ingot" },
+    "C": { "item": "minecraft:nether_star"},
+    "D": { "item": "minecraft:stick" },
+    "E": { "item": "minecraft:conduit" },
+    "F": { "item": "minecraft:silence_armor_trim_smithing_template" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:star_wrath",
+    "count": 1
+  }
+}

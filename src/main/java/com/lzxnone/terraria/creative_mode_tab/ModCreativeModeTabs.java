@@ -40,5 +40,6 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.VOLCANO.get());
                 output.accept(ModItems.TERRAGRIM.get());
                 output.accept(ModItems.FIRST_FRACTAL.get());
+                output.accept(ModItems.MACE.get());
             }).build());
 }

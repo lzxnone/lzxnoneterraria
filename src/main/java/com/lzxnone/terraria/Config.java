@@ -72,6 +72,12 @@ public class Config {
     public static final ModConfigSpec.DoubleValue LIGHTS_BANE_SMALL_DAMAGE;
     public static final ModConfigSpec.DoubleValue LIGHTS_BANE_TARGET_RANGE;
 
+    public static final ModConfigSpec.DoubleValue MACE_PROJECTILE_SPEED;
+    public static final ModConfigSpec.DoubleValue MACE_GRAVITY;
+    public static final ModConfigSpec.DoubleValue MACE_DAMAGE;
+    public static final ModConfigSpec.IntValue MACE_FLY_TIME;
+    public static final ModConfigSpec.DoubleValue MACE_MAX_RANGE;
+
     public static final ModConfigSpec.DoubleValue MURAMASA_BEAM_DAMAGE;
 
     public static final ModConfigSpec.DoubleValue TERRAGRIM_HIT_RANGE;
@@ -202,6 +208,12 @@ public class Config {
     public static double lightsBaneBigDamage;
     public static double lightsBaneSmallDamage;
     public static double lightsBaneTargetRange;
+
+    public static double maceProjectileSpeed;
+    public static double maceGravity;
+    public static double maceDamage;
+    public static int maceFlyTime;
+    public static double maceMaxRange;
 
     public static double muramasaBeamDamage;
 
@@ -530,6 +542,29 @@ public class Config {
 
         builder.pop();
 
+        builder.push("mace_settings");
+
+        MACE_PROJECTILE_SPEED = builder
+            .comment("弹射速度")
+            .defineInRange("mace_projectile_speed", 2.0, 0, 10);
+
+        MACE_GRAVITY = builder
+            .comment("弹射重力")
+            .defineInRange("mace_gravity", 0.75, 0, 5);
+
+        MACE_DAMAGE = builder
+            .comment("弹射伤害")
+            .defineInRange("mace_damage", 4.0, 0, 2147483647.0);
+
+        MACE_FLY_TIME = builder
+            .comment("弹射最大飞行时间")
+            .defineInRange("mace_fly_time", 10, 1, 100);
+
+        MACE_MAX_RANGE = builder
+            .comment("弹射最大范围")
+            .defineInRange("mace_max_range", 32.0, 1.0, 512.0);
+
+        builder.pop();
 
         builder.push("muramasa_settings");
 
@@ -868,6 +903,11 @@ public class Config {
             lightsBaneBigDamage = LIGHTS_BANE_BIG_DAMAGE.get();
             lightsBaneSmallDamage = LIGHTS_BANE_SMALL_DAMAGE.get();
             lightsBaneTargetRange = LIGHTS_BANE_TARGET_RANGE.get();
+            maceProjectileSpeed = MACE_PROJECTILE_SPEED.get();
+            maceGravity = MACE_GRAVITY.get();
+            maceDamage = MACE_DAMAGE.get();
+            maceFlyTime = MACE_FLY_TIME.get();
+            maceMaxRange = MACE_MAX_RANGE.get();
             muramasaBeamDamage = MURAMASA_BEAM_DAMAGE.get();
             terragrimHitRange = TERRAGRIM_HIT_RANGE.get();
             terragrimDamage = TERRAGRIM_DAMAGE.get();

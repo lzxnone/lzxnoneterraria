@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "ABC",
+    "EDE",
+    "FGF"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:blade_of_grass" },
+    "B": { "item": "lzxnoneterraria:muramasa" },
+    "C": { "item": "lzxnoneterraria:volcano" },
+    "D": { "item": "lzxnoneterraria:blood_butcherer" },
+    "E": { "item": "minecraft:netherite_ingot" },
+    "F": { "item": "minecraft:diamond_block" },
+    "G": { "item": "minecraft:nether_star" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:nights_edge",
+    "count": 1
+  }
+}

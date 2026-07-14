@@ -91,7 +91,7 @@ public class InputHandler {
     @SubscribeEvent
     public static void onMovementInputUpdate(MovementInputUpdateEvent event) {
         Player player = event.getEntity();
-        if(player.isUsingItem() && player.getUseItem().is(ModItems.TERRAGRIM.get())) {
+        if(player.isUsingItem() && (player.getUseItem().is(ModItems.TERRAGRIM.get()) || player.getUseItem().is(ModItems.MACE.get()))) {
             Input input = event.getInput();
             input.forwardImpulse *= 5.0F;
             input.leftImpulse *= 5.0F;

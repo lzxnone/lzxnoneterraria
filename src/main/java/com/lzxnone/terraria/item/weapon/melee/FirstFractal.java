@@ -54,7 +54,7 @@ public class FirstFractal extends SwordItem {
                 new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_speed"), -2.4, AttributeModifier.Operation.ADD_VALUE),
                 EquipmentSlotGroup.MAINHAND)
             .build()
-        ));
+        ).fireResistant().rarity(Rarity.EPIC));
     }
 
     private static ItemStack[] weapons;
@@ -109,12 +109,14 @@ public class FirstFractal extends SwordItem {
 
             boolean isSlim = playerSkin.model() == PlayerSkin.Model.SLIM;
             PlayerModel<LivingEntity> activeModel = isSlim ? StaticSummonRenderer.getSlimModel() : StaticSummonRenderer.getWideModel();
-            activeModel.head.resetPose();
-            activeModel.body.resetPose();
             activeModel.rightArm.resetPose();
             activeModel.leftArm.resetPose();
             activeModel.rightLeg.resetPose();
             activeModel.leftLeg.resetPose();
+            activeModel.rightSleeve.resetPose();
+            activeModel.leftSleeve.resetPose();
+            activeModel.rightPants.resetPose();
+            activeModel.leftPants.resetPose();
             activeModel.young = false;
 
             //确定模型方向
@@ -124,6 +126,13 @@ public class FirstFractal extends SwordItem {
             activeModel.leftArm.yRot = (float) Math.toRadians(30);
             activeModel.rightLeg.xRot = (float) Math.toRadians(-30);
             activeModel.leftLeg.xRot = (float) Math.toRadians(30);
+
+            activeModel.rightSleeve.xRot = activeModel.rightArm.xRot;
+            activeModel.rightSleeve.yRot = activeModel.rightArm.yRot;
+            activeModel.leftSleeve.xRot = activeModel.leftArm.xRot;
+            activeModel.leftSleeve.yRot = activeModel.leftArm.yRot;
+            activeModel.rightPants.xRot = activeModel.rightLeg.xRot;
+            activeModel.leftPants.xRot = activeModel.leftLeg.xRot;
 
             Vector3f[] dirs = MathUtil.computeCoordinateSystem(summon.getLookAngle().toVector3f(), 0);
             float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
@@ -264,6 +273,16 @@ public class FirstFractal extends SwordItem {
             activeModel.renderToBuffer(poseStack, modelConsumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, packedColor);
             poseStack.popPose();
 
+            //恢复模型
+            activeModel.rightArm.resetPose();
+            activeModel.leftArm.resetPose();
+            activeModel.rightLeg.resetPose();
+            activeModel.leftLeg.resetPose();
+            activeModel.rightSleeve.resetPose();
+            activeModel.leftSleeve.resetPose();
+            activeModel.rightPants.resetPose();
+            activeModel.leftPants.resetPose();
+            activeModel.young = false;
         }
 
         @Override

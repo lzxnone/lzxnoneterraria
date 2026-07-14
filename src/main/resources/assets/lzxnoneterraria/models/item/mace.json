@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/flail",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/mace"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "  A",
+    " B ",
+    "C  "
+  ],
+  "key": {
+    "A": { "item": "minecraft:diamond" },
+    "B": { "item": "minecraft:stick" },
+    "C": { "item": "minecraft:prismarine" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:lights_bane",
+    "count": 1
+  }
+}

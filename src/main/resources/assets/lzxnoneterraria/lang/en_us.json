@@ -25,6 +25,7 @@
   "item.lzxnoneterraria.true_excalibur": "True Excalibur",
   "item.lzxnoneterraria.true_copper_shortsword": "True Copper Shortsword",
   "item.lzxnoneterraria.first_fractal": "First Fractal",
+  "item.lzxnoneterraria.mace": "Mace",
 
   "entity.lzxnoneterraria.static_projectile": "Projectile",
   "entity.lzxnoneterraria.static_summon": "Summon",
@@ -156,6 +157,18 @@
   "lzxnoneterraria.configuration.lights_bane_small_damage.tooltip": "Damage dealt by small slash",
   "lzxnoneterraria.configuration.lights_bane_target_range": "Target Acquisition Range",
   "lzxnoneterraria.configuration.lights_bane_target_range.tooltip": "Range to search for nearby enemies",
+
+  "lzxnoneterraria.configuration.mace_settings": "Mace Settings",
+  "lzxnoneterraria.configuration.mace_projectile_speed": "Projectile Speed",
+  "lzxnoneterraria.configuration.mace_projectile_speed.tooltip": "Projectile movement speed",
+  "lzxnoneterraria.configuration.mace_gravity": "Gravity",
+  "lzxnoneterraria.configuration.mace_gravity.tooltip": "Gravity applied to projectile",
+  "lzxnoneterraria.configuration.mace_damage": "Damage",
+  "lzxnoneterraria.configuration.mace_damage.tooltip": "Damage per hit",
+  "lzxnoneterraria.configuration.mace_fly_time": "Max Fly Time",
+  "lzxnoneterraria.configuration.mace_fly_time.tooltip": "Maximum projectile fly time in ticks",
+  "lzxnoneterraria.configuration.mace_max_range": "Max Range",
+  "lzxnoneterraria.configuration.mace_max_range.tooltip": "Maximum projectile travel range",
 
   "lzxnoneterraria.configuration.muramasa_settings": "Muramasa Settings",
   "lzxnoneterraria.configuration.muramasa_beam_damage": "Beam Damage",

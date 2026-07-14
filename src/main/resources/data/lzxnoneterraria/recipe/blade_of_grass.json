@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "  A",
+    "BA ",
+    "DC "
+  ],
+  "key": {
+    "A": { "item": "minecraft:grass_block" },
+    "B": { "item": "minecraft:short_grass" },
+    "C": { "item": "minecraft:tall_grass" },
+    "D": { "item": "minecraft:stick" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:blade_of_grass",
+    "count": 1
+  }
+}

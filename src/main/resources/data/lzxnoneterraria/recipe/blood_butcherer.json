@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "  A",
+    " B ",
+    "C  "
+  ],
+  "key": {
+    "A": { "item": "minecraft:emerald" },
+    "B": { "item": "minecraft:stick" },
+    "C": { "item": "minecraft:nether_wart_block" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:blood_butcherer",
+    "count": 1
+  }
+}

@@ -9,13 +9,14 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
@@ -197,6 +198,11 @@ public class StaticSummon extends Entity {
             getOwner();
         }
         if(tag.contains("customData")) this.entityData.set(CUSTOM_DATA, tag.getCompound("customData"));
+    }
+
+    @Override
+    public @NonNull AABB getBoundingBoxForCulling() {
+        return StaticSummonBehaviors.getBehavior(this.entityData.get(BEHAVIOR)).getBoundingBoxForCulling(this);
     }
 
 }

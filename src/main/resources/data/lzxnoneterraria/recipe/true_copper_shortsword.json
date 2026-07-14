@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "ingredient": {
+    "item": "lzxnoneterraria:zenith"
+  },
+  "result": {
+    "id": "lzxnoneterraria:true_copper_shortsword"
+  },
+  "experience": 0.0,
+  "cookingtime": 1200
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "  A",
+    "BA ",
+    "CB "
+  ],
+  "key": {
+    "A": { "item": "minecraft:diamond" },
+    "B": { "item": "minecraft:gold_block" },
+    "C": { "item": "minecraft:stick" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:starfury",
+    "count": 1
+  }
+}

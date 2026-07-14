@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": {
+    "item": "minecraft:netherite_upgrade_smithing_template"
+  },
+  "base": {
+    "item": "lzxnoneterraria:terragrim"
+  },
+  "addition": {
+    "item": "lzxnoneterraria:copper_shortsword"
+  },
+  "result": {
+    "id": "lzxnoneterraria:zenith",
+    "count": 1
+  }
+}

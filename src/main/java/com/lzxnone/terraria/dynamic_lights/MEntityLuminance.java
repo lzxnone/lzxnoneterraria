@@ -36,7 +36,7 @@ public class MEntityLuminance implements EntityLuminance {
 			}
 		}else if(entity instanceof StaticSummon summon) {
 			switch(summon.getEntityData().get(StaticProjectile.BEHAVIOR)) {
-				case StaticSummonBehaviors.THE_HORSEMANS_BLADE_JACK, StaticSummonBehaviors.INFLUX_WAVER_BEAM, StaticSummonBehaviors.MEOWMERE_PROJECTILE, StaticSummonBehaviors.TERRA_BLADE_BEAM, StaticSummonBehaviors.TRUE_NIGHTS_EDGE_BEAM, StaticSummonBehaviors.NIGHTS_EDGE_BEAM, StaticSummonBehaviors.LIGHTS_BANE_SLASH, StaticSummonBehaviors.TERRAGRIM_BEAM, StaticSummonBehaviors.FIRST_FRACTAL_PROJECTILE -> {
+				case StaticSummonBehaviors.THE_HORSEMANS_BLADE_JACK, StaticSummonBehaviors.INFLUX_WAVER_BEAM, StaticSummonBehaviors.MEOWMERE_PROJECTILE, StaticSummonBehaviors.TERRA_BLADE_BEAM, StaticSummonBehaviors.TRUE_NIGHTS_EDGE_BEAM, StaticSummonBehaviors.NIGHTS_EDGE_BEAM, StaticSummonBehaviors.LIGHTS_BANE_SLASH, StaticSummonBehaviors.VOLCANO_LIGHT, StaticSummonBehaviors.TERRAGRIM_BEAM, StaticSummonBehaviors.FIRST_FRACTAL_PROJECTILE -> {
 					return 15;
 				}
 				default -> {

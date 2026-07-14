@@ -63,4 +63,8 @@ public class ModSounds {
             SOUND_EVENTS.register("explosive_trap_explode2",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "explosive_trap_explode2")));
+    public static final Supplier<SoundEvent> DIG =
+            SOUND_EVENTS.register("dig",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "dig")));
 }

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "AAB",
+    "AAB",
+    "AAB"
+  ],
+  "key": {
+    "A": { "item": "minecraft:iron_ingot" },
+    "B": { "item": "minecraft:stick" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:mace",
+    "count": 1
+  }
+}

@@ -25,6 +25,7 @@
   "item.lzxnoneterraria.true_excalibur": "真断钢剑",
   "item.lzxnoneterraria.true_copper_shortsword": "真铜短剑",
   "item.lzxnoneterraria.first_fractal": "第一分形",
+  "item.lzxnoneterraria.mace": "链锤",
 
   "entity.lzxnoneterraria.static_projectile": "弹射物",
   "entity.lzxnoneterraria.static_summon": "召唤物",
@@ -156,6 +157,18 @@
   "lzxnoneterraria.configuration.lights_bane_small_damage.tooltip": "小斩击造成的伤害",
   "lzxnoneterraria.configuration.lights_bane_target_range": "寻敌范围",
   "lzxnoneterraria.configuration.lights_bane_target_range.tooltip": "搜索附近敌人的距离",
+
+  "lzxnoneterraria.configuration.mace_settings": "链球 设置",
+  "lzxnoneterraria.configuration.mace_projectile_speed": "弹射速度",
+  "lzxnoneterraria.configuration.mace_projectile_speed.tooltip": "弹射物移动速度",
+  "lzxnoneterraria.configuration.mace_gravity": "重力",
+  "lzxnoneterraria.configuration.mace_gravity.tooltip": "弹射物受到的重力",
+  "lzxnoneterraria.configuration.mace_damage": "伤害",
+  "lzxnoneterraria.configuration.mace_damage.tooltip": "每次命中伤害",
+  "lzxnoneterraria.configuration.mace_fly_time": "最大飞行时间",
+  "lzxnoneterraria.configuration.mace_fly_time.tooltip": "弹射物最大飞行时间（刻）",
+  "lzxnoneterraria.configuration.mace_max_range": "最大范围",
+  "lzxnoneterraria.configuration.mace_max_range.tooltip": "弹射物最大飞行距离",
 
   "lzxnoneterraria.configuration.muramasa_settings": "村正 设置",
   "lzxnoneterraria.configuration.muramasa_beam_damage": "光线伤害",

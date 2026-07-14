@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "CBA",
+    "DAB",
+    "EDC"
+  ],
+  "key": {
+    "A": { "item": "minecraft:gold_block" },
+    "B": { "item": "minecraft:netherite_ingot" },
+    "C": { "item": "minecraft:diamond_block" },
+    "D": { "item": "minecraft:echo_shard" },
+    "E": { "item": "minecraft:stick" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:excalibur",
+    "count": 1
+  }
+}

@@ -37,5 +37,8 @@
   },
   "explosive_trap_explode2": {
     "sounds": ["lzxnoneterraria:explosive_trap_explode2"]
+  },
+  "dig": {
+    "sounds": ["lzxnoneterraria:dig"]
   }
 }

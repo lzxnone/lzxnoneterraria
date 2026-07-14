@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": {
+    "item": "minecraft:netherite_upgrade_smithing_template"
+  },
+  "base": {
+    "item": "lzxnoneterraria:terragrim"
+  },
+  "addition": {
+    "item": "minecraft:music_disc_5"
+  },
+  "result": {
+    "id": "lzxnoneterraria:first_fractal",
+    "count": 1
+  }
+}

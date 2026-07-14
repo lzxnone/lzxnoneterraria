@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "ABC",
+    "DEF",
+    "GHI"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:enchanted_sword" },
+    "B": { "item": "lzxnoneterraria:bee_keeper" },
+    "C": { "item": "lzxnoneterraria:starfury" },
+    "D": { "item": "lzxnoneterraria:seedler" },
+    "E": { "item": "lzxnoneterraria:the_horsemans_blade" },
+    "F": { "item": "lzxnoneterraria:influx_waver" },
+    "G": { "item": "lzxnoneterraria:star_wrath" },
+    "H": { "item": "lzxnoneterraria:meowmere" },
+    "I": { "item": "lzxnoneterraria:terra_blade" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:terragrim",
+    "count": 1
+  }
+}

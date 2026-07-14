@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "  A",
+    " A ",
+    "B  "
+  ],
+  "key": {
+    "A": { "item": "minecraft:copper_ingot" },
+    "B": { "item": "minecraft:stick" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:copper_shortsword",
+    "count": 1
+  }
+}

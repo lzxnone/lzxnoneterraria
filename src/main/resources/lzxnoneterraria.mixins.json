@@ -4,8 +4,7 @@
   "package": "com.lzxnone.terraria.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ZenithRenderMixin",
-    "TerragrimRenderMixin"
+    "ItemInHandRenderMixin"
   ],
   "client": [],
   "injectors": {

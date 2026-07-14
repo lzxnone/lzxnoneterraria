@@ -3,6 +3,10 @@ package com.lzxnone.terraria.item.weapon.melee;
 import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
+import com.lzxnone.terraria.entity.ModEntities;
+import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
+import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.IItemWaveBehavior;
 import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.particle.ModParticles;
@@ -53,6 +57,8 @@ public class Volcano extends SwordItem {
             new Vector3f(1.0F, 0.9F, 0.0F),
         }
     );
+
+    public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {};
 
     public static final IItemWaveBehavior ITEM_WAVE_BEHAVIOR = new IItemWaveBehavior() {
         @Override
@@ -117,6 +123,18 @@ public class Volcano extends SwordItem {
                                     hitCount++;
                                 }
                             }
+
+                            StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), livingTarget.level());
+                            summon.setOwner(player);
+                            Vec3 pos = livingTarget.position();
+                            summon.setPos(pos);
+                            summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.VOLCANO_LIGHT);
+                            summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
+                            summon.getEntityData().set(StaticSummon.LIFETIME, 10);
+                            summon.setNoGravity(true);
+                            summon.noPhysics = true;
+                            summon.level().addFreshEntity(summon);
+
                             int randomSound = player.getRandom().nextInt(3);
                             if(randomSound == 0) {
                                 SoundUtil.playServerSound(target.level(), ModSounds.EXPLOSIVE_TRAP_EXPLODE0.get(), target.position());
@@ -133,14 +151,14 @@ public class Volcano extends SwordItem {
                             ParticleUtil.addParticles(
                                 (ServerLevel) target.level(), ModParticles.EXPLODE_PARTICLE.get(),
                                 new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2.0, target.getZ()), new Vec3(0, 0, 0),
-                                0.2, (int) (4 + Math.random() * 4)
+                                0.2, (int) (30 + Math.random() * 30)
                             );
                             ParticleUtil.addParticles(
                                 (ServerLevel) target.level(), PARTICLE,
                                 new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2.0, target.getZ()), new Vec3(0, 0, 0),
-                                0.4, 50
+                                0.4, 100
                             );
-                            player.getCooldowns().addCooldown(item, 20);
+                            player.getCooldowns().addCooldown(item, 10);
                         }
                         if(player.getRandom().nextInt(2) == 0) livingTarget.igniteForSeconds(Config.volcanoIgniteSeconds);
                     }

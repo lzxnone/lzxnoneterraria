@@ -64,6 +64,7 @@ public class EffectLogicHandler {
     }
 
     public static boolean checkEffect(Holder<MobEffect> effect) {
+        if(effect == null) return false;
         return
             effect == ModEffects.CONFUSED ||
             effect == ModEffects.BLOOD_BUTCHERED;

@@ -17,8 +17,10 @@ public class StaticSummonBehaviors {
     public static final String TRUE_NIGHTS_EDGE_BEAM = "true_nights_edge_beam";
     public static final String NIGHTS_EDGE_BEAM = "nights_edge_beam";
     public static final String LIGHTS_BANE_SLASH = "lights_bane_slash";
+    public static final String VOLCANO_LIGHT = "volcano_light";
     public static final String TERRAGRIM_BEAM = "terragrim_beam";
     public static final String FIRST_FRACTAL_PROJECTILE = "first_fractal_projectile";
+    public static final String MACE_PROJECTILE = "mace_projectile";
 
     static {
         BEHAVIORS.put(DEFAULT, new IStaticSummonBehavior() {});
@@ -30,8 +32,10 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(TRUE_NIGHTS_EDGE_BEAM, TrueNightsEdge.SUMMON_BEHAVIOR);
         BEHAVIORS.put(NIGHTS_EDGE_BEAM, NightsEdge.SUMMON_BEHAVIOR);
         BEHAVIORS.put(LIGHTS_BANE_SLASH, LightsBane.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(VOLCANO_LIGHT, Volcano.SUMMON_BEHAVIOR);
         BEHAVIORS.put(TERRAGRIM_BEAM, Terragrim.SUMMON_BEHAVIOR);
         BEHAVIORS.put(FIRST_FRACTAL_PROJECTILE, FirstFractal.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(MACE_PROJECTILE, Mace.SUMMON_BEHAVIOR);
     }
 
     public static IStaticSummonBehavior getBehavior(String id) {

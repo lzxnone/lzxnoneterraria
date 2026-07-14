@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "EFA",
+    "BCF",
+    "DBE"
+  ],
+  "key": {
+    "A": { "item": "minecraft:diamond_block" },
+    "B": { "item": "minecraft:nether_star" },
+    "C": { "item": "minecraft:dragon_egg" },
+    "D": { "item": "minecraft:stick" },
+    "E": { "item": "minecraft:mace" },
+    "F": { "item": "minecraft:ominous_bottle" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:meowmere",
+    "count": 1
+  }
+}

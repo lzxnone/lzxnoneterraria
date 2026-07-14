@@ -53,7 +53,7 @@ public class Zenith extends SwordItem {
                 new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_speed"), -2.4, AttributeModifier.Operation.ADD_VALUE),
                 EquipmentSlotGroup.MAINHAND)
             .build()
-        ));
+        ).fireResistant().rarity(Rarity.EPIC));
     }
 
     private static ItemStack[] weapons;

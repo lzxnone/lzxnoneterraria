@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "EFA",
+    "BAG",
+    "CBH"
+  ],
+  "key": {
+    "A": { "item": "minecraft:gold_block" },
+    "B": { "item": "minecraft:netherite_ingot" },
+    "C": { "item": "minecraft:stick" },
+    "E": { "item": "minecraft:skeleton_skull" },
+    "F": { "item": "minecraft:zombie_head" },
+    "G": { "item": "minecraft:creeper_head" },
+    "H": { "item": "minecraft:piglin_head" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:the_horsemans_blade",
+    "count": 1
+  }
+}
