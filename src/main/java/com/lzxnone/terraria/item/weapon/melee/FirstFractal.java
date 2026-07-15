@@ -10,6 +10,7 @@ import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.*;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.particle.ZenithTrailParticleOptions;
+import com.lzxnone.terraria.network.SkinFetch;
 import com.lzxnone.terraria.utils.*;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -105,7 +106,7 @@ public class FirstFractal extends SwordItem {
             ItemStack item = summon.getEntityData().get(StaticSummon.ITEM);
             if(item == ItemStack.EMPTY) return;
 
-            GameProfile profile = new GameProfile(uuid, "");
+            GameProfile profile = SkinFetch.getCachedProfile(uuid);
             PlayerSkin playerSkin = Minecraft.getInstance().getSkinManager().getInsecureSkin(profile);
 
             boolean isSlim = playerSkin.model() == PlayerSkin.Model.SLIM;
