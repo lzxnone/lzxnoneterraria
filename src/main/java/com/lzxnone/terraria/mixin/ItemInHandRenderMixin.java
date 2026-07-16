@@ -31,28 +31,14 @@ public class ItemInHandRenderMixin {
                                          InteractionHand hand, float swingProgress, ItemStack stack,
                                          float equippedProgress, PoseStack poseStack,
                                          MultiBufferSource buffer, int combinedLight, CallbackInfo ci) {
-
         if(!player.isScoping()) {
-            if(stack.is(ModItems.ZENITH.get()) || stack.is(ModItems.TRUE_COPPER_SHORTSWORD.get()) || stack.is(ModItems.FIRST_FRACTAL.get())) {
-                int count = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                    .copyTag().getInt("attackCount");
-                if(count > 0) {
-                    boolean isMainHand = hand == InteractionHand.MAIN_HAND;
-                    HumanoidArm humanoidarm = isMainHand ? player.getMainArm() : player.getMainArm().getOpposite();
-
-                    poseStack.pushPose();
-
-                    if(!player.isInvisible()) {
-                        this.renderPlayerArm(poseStack, buffer, combinedLight, equippedProgress, swingProgress, humanoidarm);
-                    }
-
-                    poseStack.popPose();
-                    ci.cancel();
-                }
-            }else if(stack.is(ModItems.TERRAGRIM.get())) {
+            if(stack.is(ModItems.ZENITH.get())
+                || stack.is(ModItems.TRUE_COPPER_SHORTSWORD.get())
+                || stack.is(ModItems.FIRST_FRACTAL.get())
+                || stack.is(ModItems.TERRAGRIM.get())) {
                 if(player.isUsingItem()) {
                     ItemStack usingStack = player.getUseItem();
-                    if(usingStack.is(ModItems.TERRAGRIM.get())) {
+                    if(usingStack.is(stack.getItem())) {
                         boolean isMainHand = hand == InteractionHand.MAIN_HAND;
                         HumanoidArm humanoidarm = isMainHand ? player.getMainArm() : player.getMainArm().getOpposite();
 
@@ -91,16 +77,13 @@ public class ItemInHandRenderMixin {
                                          boolean leftHand, PoseStack poseStack, MultiBufferSource buffer,
                                          int seed, CallbackInfo ci) {
 
-        if(itemStack.is(ModItems.ZENITH.get()) || itemStack.is(ModItems.TRUE_COPPER_SHORTSWORD.get()) || itemStack.is(ModItems.FIRST_FRACTAL.get())) {
-            int count = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                    .copyTag().getInt("attackCount");
-            if(count > 0) {
-                ci.cancel();
-            }
-        }else if(itemStack.is(ModItems.TERRAGRIM.get()) && entity instanceof Player player) {
+        if((itemStack.is(ModItems.ZENITH.get())
+            || itemStack.is(ModItems.TRUE_COPPER_SHORTSWORD.get())
+            || itemStack.is(ModItems.FIRST_FRACTAL.get())
+            || itemStack.is(ModItems.TERRAGRIM.get())) && entity instanceof Player player) {
             if(player.isUsingItem()) {
                 ItemStack usingStack = player.getUseItem();
-                if(usingStack.is(ModItems.TERRAGRIM.get())) {
+                if(usingStack.is(itemStack.getItem())) {
                     ci.cancel();
                 }
             }
@@ -109,7 +92,6 @@ public class ItemInHandRenderMixin {
                     .copyTag().getInt("state");
             if(state != Mace.State.IDLE.ordinal()) {
                 ci.cancel();
-
             }
         }
     }

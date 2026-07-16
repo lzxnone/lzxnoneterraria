@@ -8,7 +8,6 @@ import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
-import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
@@ -18,7 +17,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -37,10 +35,10 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -224,5 +222,10 @@ public class Terragrim extends SwordItem {
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
         return 72000;
+    }
+
+    @Override
+    public @NonNull UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.BLOCK;
     }
 }

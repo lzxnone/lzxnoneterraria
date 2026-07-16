@@ -151,6 +151,7 @@ public interface ISwordBeamBehavior {
                     color1.x(), color1.y(), color1.z(), alpha, 32 * SwordBeam.SCALE, 32 * SwordBeam.SCALE, 0f, 0f, 0.03f);
         }
         poseStack.popPose();
+
     }
 
     default void renderQuad(Matrix4f matrix, VertexConsumer consumer, float r, float g, float b, float a, float halfWidth, float halfHeight, float offsetX, float offsetY, float offsetZ) {

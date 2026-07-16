@@ -42,6 +42,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -376,42 +377,28 @@ public class FirstFractal extends SwordItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-
-        if(!level.isClientSide()) {
-            CustomData.update(DataComponents.CUSTOM_DATA, stack,
-                    tag -> tag.putInt("attackCount", 3));
-        }else {
-            SoundUtil.playClientSound(player, ModSounds.WAVE.get());
-        }
-
-        player.getCooldowns().addCooldown(stack.getItem(), 3);
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+        player.startUsingItem(hand);
+        return InteractionResultHolder.consume(stack);
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level level, net.minecraft.world.entity.Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
-        if(entity instanceof Player player) {
-            if(isSelected) {
-                if(player.tickCount % 3 == 0) {
-                    double deltaDist = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                        .copyTag().getDouble("deltaDist");
-                    int count = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                        .copyTag().getInt("attackCount");
-                    if(count > 0) {
-                        summon(player, deltaDist);
-                        CustomData.update(DataComponents.CUSTOM_DATA, stack,
-                            tag -> tag.putInt("attackCount", count - 1));
-                    }
-                }
-            }else {
-                int count = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                    .copyTag().getInt("attackCount");
-                if(count > 0) {
-                    CustomData.update(DataComponents.CUSTOM_DATA, stack,
-                        tag -> tag.putInt("attackCount", 0));
-                }
-            }
+    public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int count) {
+        if(!(livingEntity instanceof Player player)) return;
+        if(player.tickCount % 3 == 0) {
+            double deltaDist = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                .copyTag().getDouble("deltaDist");
+            summon(player, deltaDist);
+            SoundUtil.playClientSound(player, ModSounds.WAVE.get());
         }
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return 72000;
+    }
+
+    @Override
+    public @NonNull UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.BLOCK;
     }
 }

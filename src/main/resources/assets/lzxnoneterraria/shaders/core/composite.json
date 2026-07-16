@@ -1,0 +1,12 @@
+{
+  "vertex": "lzxnoneterraria:composite",
+  "fragment": "lzxnoneterraria:composite",
+  "samplers": [
+    { "name": "Sampler0" }
+  ],
+  "attributes": [
+    "Position",
+    "UV0"
+  ],
+  "uniforms": []
+}

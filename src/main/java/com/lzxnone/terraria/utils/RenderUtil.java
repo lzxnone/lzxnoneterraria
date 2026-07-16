@@ -56,4 +56,20 @@ public class RenderUtil {
                 .setColor(ir, ig, ib, ia).setUv(0.0f, 0.0f)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0.0f, 1.0f, 0.0f);
     }
+
+    public static void renderGlow(Matrix4f matrix, VertexConsumer consumer,
+                                  float r, float g, float b, float baseAlpha,
+                                  float halfWidth, float halfHeight,
+                                  int layers, float scaleStep, float alphaDecay,
+                                  float offsetX, float offsetY, float offsetZ) {
+        float scale = 1.0f;
+        float a = baseAlpha;
+        for (int i = 0; i < layers; i++) {
+            renderQuad(matrix, consumer, r, g, b, a,
+                    halfWidth * scale, halfHeight * scale,
+                    offsetX, offsetY, offsetZ);
+            scale += scaleStep;
+            a *= alphaDecay;
+        }
+    }
 }

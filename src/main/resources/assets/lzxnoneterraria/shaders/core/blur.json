@@ -1,0 +1,14 @@
+{
+  "vertex": "lzxnoneterraria:blur",
+  "fragment": "lzxnoneterraria:blur",
+  "samplers": [
+    { "name": "Sampler0" }
+  ],
+  "attributes": [
+    "Position",
+    "UV0"
+  ],
+  "uniforms": [
+    { "name": "Direction", "type": "float", "count": 2, "values": [ 1.0, 0.0 ] }
+  ]
+}
