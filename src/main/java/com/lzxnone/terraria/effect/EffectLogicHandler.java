@@ -24,7 +24,10 @@ public class EffectLogicHandler {
     public static void onEffectAdded(MobEffectEvent.Added event) {
         LivingEntity entity = event.getEntity();
         MobEffectInstance instance = event.getEffectInstance();
-        Holder<MobEffect> currentEffect = instance.getEffect();
+        Holder<MobEffect> currentEffect = null;
+        if(instance != null) {
+            currentEffect = instance.getEffect();
+        }
         if(checkEffect(currentEffect) && !entity.level().isClientSide() && !(entity instanceof Player)) {
             if(entity.level() instanceof ServerLevel serverLevel) {
                 serverLevel.getChunkSource().broadcast(entity,
@@ -37,7 +40,10 @@ public class EffectLogicHandler {
     public static void onEffectRemoved(MobEffectEvent.Remove event) {
         LivingEntity entity = event.getEntity();
         MobEffectInstance instance = event.getEffectInstance();
-        Holder<MobEffect> currentEffect = instance.getEffect();
+        Holder<MobEffect> currentEffect = null;
+        if(instance != null) {
+            currentEffect = instance.getEffect();
+        }
         if(checkEffect(currentEffect) && !entity.level().isClientSide() && !(entity instanceof Player)) {
             if(entity.level() instanceof ServerLevel serverLevel) {
                 if(event.getEffectInstance() != null) {
@@ -52,7 +58,10 @@ public class EffectLogicHandler {
     public static void onEffectExpired(MobEffectEvent.Expired event) {
         LivingEntity entity = event.getEntity();
         MobEffectInstance instance = event.getEffectInstance();
-        Holder<MobEffect> currentEffect = instance.getEffect();
+        Holder<MobEffect> currentEffect = null;
+        if(instance != null) {
+            currentEffect = instance.getEffect();
+        }
         if(checkEffect(currentEffect) && !entity.level().isClientSide() && !(entity instanceof Player)) {
             if(entity.level() instanceof ServerLevel serverLevel) {
                 if(event.getEffectInstance() != null) {
