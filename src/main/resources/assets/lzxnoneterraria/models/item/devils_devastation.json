@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/sword3",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/devils_devastation"
+  }
+}

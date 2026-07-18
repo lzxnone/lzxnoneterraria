@@ -1,5 +1,5 @@
 {
-  "parent": "lzxnoneterraria:item/weapon",
+  "parent": "lzxnoneterraria:item/sword",
   "textures": {
     "layer0": "lzxnoneterraria:item/terragrim"
   }

@@ -40,5 +40,11 @@
   },
   "dig": {
     "sounds": ["lzxnoneterraria:dig"]
+  },
+  "demon_sword_swing": {
+    "sounds": ["lzxnoneterraria:demon_sword_swing", "lzxnoneterraria:demon_sword_swing2"]
+  },
+  "demon_sword_impact": {
+    "sounds": ["lzxnoneterraria:demon_sword_impact", "lzxnoneterraria:demon_sword_impact2"]
   }
 }

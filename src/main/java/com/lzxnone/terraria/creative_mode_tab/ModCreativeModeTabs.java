@@ -12,8 +12,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, LzxnoneTerraria.MODID);
 
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> WEAPON_TAB = CREATIVE_MODE_TABS.register("weapon_tab", () -> CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.lzxnoneterraria.weapon"))
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MELEE_TAB = CREATIVE_MODE_TABS.register("melee_tab", () -> CreativeModeTab.builder()
+            .title(Component.translatable("itemGroup.lzxnoneterraria.melee"))
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .icon(() -> ModItems.TERRA_BLADE.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
@@ -41,5 +41,13 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.TERRAGRIM.get());
                 output.accept(ModItems.FIRST_FRACTAL.get());
                 output.accept(ModItems.MACE.get());
+            }).build());
+
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CALAMITY_MELEE_TAB = CREATIVE_MODE_TABS.register("calamity_melee_tab", () -> CreativeModeTab.builder()
+            .title(Component.translatable("itemGroup.lzxnoneterraria.calamity_melee"))
+            .withTabsBefore(CreativeModeTabs.COMBAT)
+            .icon(() -> ModItems.DEVILS_DEVASTATION.get().getDefaultInstance())
+            .displayItems((parameters, output) -> {
+                output.accept(ModItems.DEVILS_DEVASTATION.get());
             }).build());
 }

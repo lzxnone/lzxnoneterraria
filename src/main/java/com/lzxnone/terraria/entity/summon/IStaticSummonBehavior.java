@@ -114,7 +114,7 @@ public interface IStaticSummonBehavior {
 
     default void checkBeforeTick(StaticSummon summon) {
         if(summon.level().isClientSide()) return;
-        if(summon.getOwner() == null) {
+        if(summon.getOwner() == null || !summon.getOwner().isAlive()) {
             onDied(summon);
             return;
         }

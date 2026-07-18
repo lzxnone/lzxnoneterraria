@@ -1,5 +1,6 @@
 package com.lzxnone.terraria;
 
+import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.block.ModBlocks;
 import com.lzxnone.terraria.creative_mode_tab.ModCreativeModeTabs;
 import com.lzxnone.terraria.effect.ModEffects;
@@ -34,6 +35,7 @@ public class LzxnoneTerraria {
         ModParticles.PARTICLE_TYPES.register(modEventBus);
         ModSounds.SOUND_EVENTS.register(modEventBus);
         ModCreativeModeTabs.CREATIVE_MODE_TABS.register(modEventBus);
+        ModAttachments.ATTACHMENT_TYPES.register(modEventBus);
 
         //实体属性创建
         modEventBus.addListener(this::onEntityAttributeCreation);

@@ -27,7 +27,7 @@ public class MEntityLuminance implements EntityLuminance {
 	public @Range(from = 0, to = 15) int getLuminance(@NonNull ItemLightSourceManager itemLightSourceManager, @NonNull Entity entity) {
 		if(entity instanceof StaticProjectile projectile) {
 			switch(projectile.getEntityData().get(StaticProjectile.BEHAVIOR)) {
-				case StaticProjectileBehaviors.ENCHANTED_SWORD_BEAM, StaticProjectileBehaviors.STARFURY_STAR, StaticProjectileBehaviors.STAR_WRATH_STAR, StaticProjectileBehaviors.ZENITH_PROJECTILE, StaticProjectileBehaviors.MURAMASA_PROJECTILE -> {
+				case StaticProjectileBehaviors.ENCHANTED_SWORD_BEAM, StaticProjectileBehaviors.STARFURY_STAR, StaticProjectileBehaviors.STAR_WRATH_STAR, StaticProjectileBehaviors.ZENITH_PROJECTILE, StaticProjectileBehaviors.MURAMASA_PROJECTILE, StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE -> {
 					return 15;
 				}
 				default -> {

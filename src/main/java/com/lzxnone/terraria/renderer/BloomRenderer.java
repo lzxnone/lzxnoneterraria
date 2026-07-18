@@ -1,6 +1,7 @@
-package com.lzxnone.terraria.entity;
+package com.lzxnone.terraria.renderer;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.entity.IrisCompat;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.beam.SwordBeamBehaviors;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;

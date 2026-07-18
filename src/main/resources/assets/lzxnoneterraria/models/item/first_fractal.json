@@ -1,5 +1,5 @@
 {
-  "parent": "lzxnoneterraria:item/weapon3",
+  "parent": "lzxnoneterraria:item/sword3",
   "textures": {
     "layer0": "lzxnoneterraria:item/first_fractal"
   }

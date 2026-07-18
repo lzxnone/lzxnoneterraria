@@ -74,6 +74,28 @@ public class ModParticles {
                     return ZenithTrailParticleOptions.STREAM_CODEC;
                 }
             });
+    public static final Supplier<ParticleType<IronSparkParticleOptions>> IRON_SPARK_PARTICLE =
+            PARTICLE_TYPES.register("iron_spark_particle", () -> new ParticleType<>(false) {
+                @Override
+                public MapCodec<IronSparkParticleOptions> codec() {
+                    return IronSparkParticleOptions.CODEC;
+                }
+                @Override
+                public StreamCodec<? super RegistryFriendlyByteBuf, IronSparkParticleOptions> streamCodec() {
+                    return IronSparkParticleOptions.STREAM_CODEC;
+                }
+            });
+    public static final Supplier<ParticleType<CircleParticleOptions>> CIRCLE_PARTICLE =
+            PARTICLE_TYPES.register("circle_particle", () -> new ParticleType<>(false) {
+                @Override
+                public MapCodec<CircleParticleOptions> codec() {
+                    return CircleParticleOptions.CODEC;
+                }
+                @Override
+                public StreamCodec<? super RegistryFriendlyByteBuf, CircleParticleOptions> streamCodec() {
+                    return CircleParticleOptions.STREAM_CODEC;
+                }
+            });
     public static final Supplier<SimpleParticleType> STAR_PARTICLE =
             PARTICLE_TYPES.register("star_particle", () -> new SimpleParticleType(true));
     public static final Supplier<SimpleParticleType> EXPLODE_PARTICLE =
@@ -98,4 +120,10 @@ public class ModParticles {
             PARTICLE_TYPES.register("leaf_particle", () -> new SimpleParticleType(true));
     public static final Supplier<SimpleParticleType> SOLAR_EXPLOSION_PARTICLE =
             PARTICLE_TYPES.register("solar_explosion_particle", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> DEVILS_DEVASTATION_RUNE_PARTICLE =
+            PARTICLE_TYPES.register("devils_devastation_rune_particle", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> DEVILS_DEVASTATION_RUNE_PARTICLE2 =
+            PARTICLE_TYPES.register("devils_devastation_rune_particle2", () -> new SimpleParticleType(true));
+
+
 }

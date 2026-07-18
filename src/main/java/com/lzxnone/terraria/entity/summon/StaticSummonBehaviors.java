@@ -21,6 +21,8 @@ public class StaticSummonBehaviors {
     public static final String TERRAGRIM_BEAM = "terragrim_beam";
     public static final String FIRST_FRACTAL_PROJECTILE = "first_fractal_projectile";
     public static final String MACE_PROJECTILE = "mace_projectile";
+    public static final String DEVILS_DEVASTATION_PROJECTILE = "devils_devastation_projectile";
+    public static final String DEVILS_DEVASTATION_LIGHTNING = "devils_devastation_lightning";
 
     static {
         BEHAVIORS.put(DEFAULT, new IStaticSummonBehavior() {});
@@ -36,6 +38,8 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(TERRAGRIM_BEAM, Terragrim.SUMMON_BEHAVIOR);
         BEHAVIORS.put(FIRST_FRACTAL_PROJECTILE, FirstFractal.SUMMON_BEHAVIOR);
         BEHAVIORS.put(MACE_PROJECTILE, Mace.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(DEVILS_DEVASTATION_PROJECTILE, DevilsDevastation.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(DEVILS_DEVASTATION_LIGHTNING, DevilsDevastation.SUMMON_BEHAVIOR2);
     }
 
     public static IStaticSummonBehavior getBehavior(String id) {

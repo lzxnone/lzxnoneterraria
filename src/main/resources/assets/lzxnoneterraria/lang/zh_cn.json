@@ -1,6 +1,8 @@
 {
-  "itemGroup.lzxnoneterraria.weapon": "泰拉瑞亚 武器",
+  "itemGroup.lzxnoneterraria.melee": "泰拉瑞亚 近战武器",
   "itemGroup.lzxnoneterraria.block": "泰拉瑞亚 方块",
+
+  "itemGroup.lzxnoneterraria.calamity_melee": "泰拉瑞亚灾厄 近战武器",
 
   "item.lzxnoneterraria.bee_keeper": "养蜂人",
   "item.lzxnoneterraria.copper_shortsword": "铜短剑",
@@ -26,6 +28,7 @@
   "item.lzxnoneterraria.true_copper_shortsword": "真铜短剑",
   "item.lzxnoneterraria.first_fractal": "第一分形",
   "item.lzxnoneterraria.mace": "链锤",
+  "item.lzxnoneterraria.devils_devastation": "破灭魔王剑",
 
   "entity.lzxnoneterraria.static_projectile": "弹射物",
   "entity.lzxnoneterraria.static_summon": "召唤物",
@@ -33,6 +36,9 @@
 
   "effect.lzxnoneterraria.confused": "困惑",
   "effect.lzxnoneterraria.blood_butchered": "血腥屠宰",
+
+  "key.lzxnoneterraria.kill_mode": "进入杀戮模式",
+  "key.categories.lzxnoneterraria": "lzxnoneterraria",
 
   "lzxnoneterraria.configuration.enchanted_sword_settings": "附魔剑 设置",
   "lzxnoneterraria.configuration.enchanted_sword_damage": "弹射伤害",

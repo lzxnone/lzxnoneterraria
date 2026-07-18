@@ -1,6 +1,8 @@
 {
-  "itemGroup.lzxnoneterraria.weapon": "Terraria Weapon",
+  "itemGroup.lzxnoneterraria.melee": "Terraria Melee",
   "itemGroup.lzxnoneterraria.block": "Terraria Block",
+
+  "itemGroup.lzxnoneterraria.calamity_melee": "Terraria Calamity Melee",
 
   "item.lzxnoneterraria.bee_keeper": "Bee Keeper",
   "item.lzxnoneterraria.copper_shortsword": "Copper Shortsword",
@@ -26,6 +28,7 @@
   "item.lzxnoneterraria.true_copper_shortsword": "True Copper Shortsword",
   "item.lzxnoneterraria.first_fractal": "First Fractal",
   "item.lzxnoneterraria.mace": "Mace",
+  "item.lzxnoneterraria.devils_devastation": "Devil's Devastation",
 
   "entity.lzxnoneterraria.static_projectile": "Projectile",
   "entity.lzxnoneterraria.static_summon": "Summon",
@@ -33,6 +36,9 @@
 
   "effect.lzxnoneterraria.confused": "Confused",
   "effect.lzxnoneterraria.blood_butchered": "Blood Butchered",
+
+  "key.lzxnoneterraria.kill_mode": "Kill Mode",
+  "key.categories.lzxnoneterraria": "lzxnoneterraria",
 
   "lzxnoneterraria.configuration.enchanted_sword_settings": "Enchanted Sword Settings",
   "lzxnoneterraria.configuration.enchanted_sword_damage": "Projectile Damage",

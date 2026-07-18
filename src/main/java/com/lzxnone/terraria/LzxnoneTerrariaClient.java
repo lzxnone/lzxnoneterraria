@@ -42,6 +42,12 @@ public class LzxnoneTerrariaClient {
             event.registerSpriteSet(ModParticles.ZENITH_TRAIL_PARTICLE.get(), ZenithTrailParticle.Provider::new);
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.IRON_SPARK_PARTICLE.get(), IronSparkParticle.Provider::new);
+        });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.CIRCLE_PARTICLE.get(), CircleParticle.Provider::new);
+        });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
             event.registerSpriteSet(ModParticles.STAR_PARTICLE.get(), StarParticle.Provider::new);
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
@@ -76,6 +82,12 @@ public class LzxnoneTerrariaClient {
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
             event.registerSpriteSet(ModParticles.SOLAR_EXPLOSION_PARTICLE.get(), SolarExplosionParticle.Provider::new);
+        });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.DEVILS_DEVASTATION_RUNE_PARTICLE.get(), DevilsDevastationRuneParticle.Provider::new);
+        });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.DEVILS_DEVASTATION_RUNE_PARTICLE2.get(), DevilsDevastationRuneParticle2.Provider::new);
         });
     }
 }

@@ -96,6 +96,32 @@ public class MathUtil {
         return getRandomPosForRadius(pos, radius, false);
     }
 
+
+    public static Vec3 getSurfaceRandomPosForRadius(Vec3 pos, Vec3 axisX, Vec3 axisY, double radius, boolean on) {
+        axisX = axisX.normalize().scale(radius);
+        axisY = axisY.normalize().scale(radius);
+        if(!on) {
+            double s = Math.sqrt(Math.random());
+            axisX = axisX.scale(s);
+            axisY = axisY.scale(s);
+        }
+        double rad = Math.PI * 2 * Math.random();
+        double cos = Math.cos(rad);
+        double sin = Math.sin(rad);
+        return new Vec3(
+            pos.x + cos * axisX.x + sin * axisY.x,
+            pos.y + cos * axisX.y + sin * axisY.y,
+            pos.z + cos * axisX.z + sin * axisY.z
+        );
+    }
+
+    public static Vec3 getSurfaceRandomPosOnRadius(Vec3 pos, Vec3 axisX, Vec3 axisY, double radius) {
+        return getSurfaceRandomPosForRadius(pos, axisX, axisY, radius, true);
+    }
+
+    public static Vec3 getSurfaceRandomPosInRadius(Vec3 pos, Vec3 axisX, Vec3 axisY, double radius) {
+        return getSurfaceRandomPosForRadius(pos, axisX, axisY, radius, false);
+    }
     public static Vec3 getCrosshairPos(Player player, Level level, double range, boolean checkBlock, boolean checkEntity) {
         Vec3 eyePos = player.getEyePosition(1.0F);
         Vec3 lookVec = player.getLookAngle().normalize();

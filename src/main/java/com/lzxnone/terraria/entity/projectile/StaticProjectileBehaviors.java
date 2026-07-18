@@ -19,6 +19,8 @@ public class StaticProjectileBehaviors {
     public static final String MURAMASA_PROJECTILE = "muramasa_projectile";
     public static final String LEAF_PROJECTILE = "leaf_projectile";
     public static final String MACE_PROJECTILE = "mace_projectile";
+    public static final String DEVILS_DEVASTATION_PROJECTILE = "devils_devastation_projectile";
+    public static final String DEVILS_DEVASTATION_PROJECTILE2 = "devils_devastation_projectile2";
 
     static {
         BEHAVIORS.put(DEFAULT, new IStaticProjectileBehavior() {
@@ -43,6 +45,8 @@ public class StaticProjectileBehaviors {
         BEHAVIORS.put(MURAMASA_PROJECTILE, Muramasa.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(LEAF_PROJECTILE, BladeOfGrass.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(MACE_PROJECTILE, Mace.PROJECTILE_BEHAVIOR);
+        BEHAVIORS.put(DEVILS_DEVASTATION_PROJECTILE, DevilsDevastation.PROJECTILE_BEHAVIOR);
+        BEHAVIORS.put(DEVILS_DEVASTATION_PROJECTILE2, DevilsDevastation.PROJECTILE_BEHAVIOR2);
     }
 
     public static IStaticProjectileBehavior getBehavior(String id) {

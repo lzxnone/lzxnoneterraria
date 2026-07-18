@@ -1,13 +1,11 @@
 package com.lzxnone.terraria.entity.projectile;
 
-import com.lzxnone.terraria.entity.summon.StaticSummon;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -95,6 +93,7 @@ public class StaticProjectile extends Projectile {
     public boolean positionOverridden = false;
 
     public LinkedList<Vec3> trailPositions = new LinkedList<>();
+    public LinkedList<Vec3> trailPositions2 = new LinkedList<>();
 
     public StaticProjectile(EntityType<StaticProjectile> type, Level level) {
         super(type, level);
