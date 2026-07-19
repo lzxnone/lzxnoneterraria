@@ -1,12 +1,8 @@
 package com.lzxnone.terraria.network;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
-import com.lzxnone.terraria.network.handler.FirstFractalScrollHandler;
-import com.lzxnone.terraria.network.handler.SwordBeamHandler;
-import com.lzxnone.terraria.network.handler.ZenithScrollHandler;
-import com.lzxnone.terraria.network.payload.FirstFractalScrollPayload;
-import com.lzxnone.terraria.network.payload.SwordBeamPayload;
-import com.lzxnone.terraria.network.payload.ZenithScrollPayload;
+import com.lzxnone.terraria.network.handler.*;
+import com.lzxnone.terraria.network.payload.*;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -31,6 +27,16 @@ public class ModNetwork {
                 FirstFractalScrollPayload.TYPE,
                 FirstFractalScrollPayload.CODEC,
                 FirstFractalScrollHandler::handle
+        );
+        registrar.playToServer(
+                DevilsDevastationKillModePayload.TYPE,
+                DevilsDevastationKillModePayload.CODEC,
+                DevilsDevastationKillModeHandler::handle
+        );
+        registrar.playToServer(
+                DevilsDevastationLeftClickPayload.TYPE,
+                DevilsDevastationLeftClickPayload.CODEC,
+                DevilsDevastationLeftClickHandler::handle
         );
     }
 }

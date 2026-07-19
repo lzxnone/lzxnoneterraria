@@ -31,7 +31,7 @@ public class EffectLogicHandler {
         if(checkEffect(currentEffect) && !entity.level().isClientSide() && !(entity instanceof Player)) {
             if(entity.level() instanceof ServerLevel serverLevel) {
                 serverLevel.getChunkSource().broadcast(entity,
-                        new ClientboundUpdateMobEffectPacket(entity.getId(), event.getEffectInstance(), false));
+                        new ClientboundUpdateMobEffectPacket(entity.getId(), instance, false));
             }
         }
     }
@@ -48,7 +48,11 @@ public class EffectLogicHandler {
             if(entity.level() instanceof ServerLevel serverLevel) {
                 if(event.getEffectInstance() != null) {
                     serverLevel.getChunkSource().broadcast(entity,
-                            new ClientboundRemoveMobEffectPacket(entity.getId(), event.getEffectInstance().getEffect()));
+                            new ClientboundRemoveMobEffectPacket(entity.getId(), currentEffect));
+                }
+                if(currentEffect == ModEffects.KILL_MODE) {
+                    MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, 100, 0);
+                    entity.addEffect(effectInstance);
                 }
             }
         }
@@ -66,7 +70,11 @@ public class EffectLogicHandler {
             if(entity.level() instanceof ServerLevel serverLevel) {
                 if(event.getEffectInstance() != null) {
                     serverLevel.getChunkSource().broadcast(entity,
-                            new ClientboundRemoveMobEffectPacket(entity.getId(), event.getEffectInstance().getEffect()));
+                            new ClientboundRemoveMobEffectPacket(entity.getId(), currentEffect));
+                }
+                if(currentEffect == ModEffects.KILL_MODE) {
+                    MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, 100, 0);
+                    entity.addEffect(effectInstance);
                 }
             }
         }
@@ -75,7 +83,7 @@ public class EffectLogicHandler {
     public static boolean checkEffect(Holder<MobEffect> effect) {
         if(effect == null) return false;
         return
-            effect == ModEffects.CONFUSED ||
-            effect == ModEffects.BLOOD_BUTCHERED;
+            effect == ModEffects.CONFUSED
+            || effect == ModEffects.KILL_MODE;
     }
 }

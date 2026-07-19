@@ -14,4 +14,8 @@ public class ModEffects {
             MOB_EFFECTS.register("confused", ConfusedEffect::new);
     public static final DeferredHolder<MobEffect, BloodButcheredEffect> BLOOD_BUTCHERED =
             MOB_EFFECTS.register("blood_butchered", BloodButcheredEffect::new);
+    public static final DeferredHolder<MobEffect, KillModeEffect> KILL_MODE =
+            MOB_EFFECTS.register("kill_mode", KillModeEffect::new);
+    public static final DeferredHolder<MobEffect, KillModeCooldownEffect> KILL_MODE_COOLDOWN =
+            MOB_EFFECTS.register("kill_mode_cooldown", KillModeCooldownEffect::new);
 }

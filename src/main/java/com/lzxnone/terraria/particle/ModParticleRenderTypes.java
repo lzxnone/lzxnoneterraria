@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.particle;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -35,10 +36,8 @@ public final class ModParticleRenderTypes {
         @Override
         public BufferBuilder begin(Tesselator tesselator, TextureManager textureManager) {
             Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
-            // 走与实体发光相同的着色器(rendertype_entity_translucent_emissive)，
-            // Iris 会将其写入泛光缓冲区并做高斯模糊泛光。
             RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
+            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
             RenderSystem.depthMask(false);
             RenderSystem.setShader(GameRenderer::getRendertypeEntityTranslucentEmissiveShader);
             RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);

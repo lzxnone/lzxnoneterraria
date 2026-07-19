@@ -20,6 +20,7 @@ public class ItemWaveBehaviors {
     public static final String BLOOD_BUTCHERER = "blood_butcherer";
     public static final String MURAMASA = "muramasa";
     public static final String VOLCANO = "volcano";
+    public static final String DEVILS_DEVASTATION = "devils_devastation";
 
     static {
         BEHAVIORS.put(DEFAULT, new IItemWaveBehavior() {});
@@ -34,6 +35,7 @@ public class ItemWaveBehaviors {
         BEHAVIORS.put(BLOOD_BUTCHERER, BloodButcherer.ITEM_WAVE_BEHAVIOR);
         BEHAVIORS.put(MURAMASA, Muramasa.ITEM_WAVE_BEHAVIOR);
         BEHAVIORS.put(VOLCANO, Volcano.ITEM_WAVE_BEHAVIOR);
+        BEHAVIORS.put(DEVILS_DEVASTATION, DevilsDevastation.ITEM_WAVE_BEHAVIOR);
     }
 
     public static IItemWaveBehavior getBehavior(String id) {

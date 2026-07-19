@@ -4,24 +4,25 @@ import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.attachment.ModAttachments;
+import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.ModRenderTypes;
-import com.lzxnone.terraria.entity.TintedVertexConsumer;
 import com.lzxnone.terraria.entity.projectile.IStaticProjectileBehavior;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
+import com.lzxnone.terraria.item.IItemWaveBehavior;
 import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.network.payload.DevilsDevastationLeftClickPayload;
+import com.lzxnone.terraria.network.payload.FirstFractalScrollPayload;
 import com.lzxnone.terraria.particle.CircleParticleOptions;
-import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.particle.IronSparkParticleOptions;
 import com.lzxnone.terraria.particle.ModParticles;
 import com.lzxnone.terraria.utils.*;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -32,12 +33,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
@@ -45,7 +46,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.checkerframework.checker.units.qual.C;
+import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -69,9 +72,11 @@ public class DevilsDevastation extends SwordItem {
         ).fireResistant().rarity(Rarity.EPIC));
     }
 
-    public static final ResourceLocation RES = ResourceLocation.parse("lzxnoneterraria:textures/vfx/devils_devastation_lightning.png");
+    public static final ResourceLocation RES = ResourceLocation.parse("lzxnoneterraria:textures/vfx/normal_trail.png");
     public static final ResourceLocation RES2 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/circular_smear_smokey.png");
     public static final ResourceLocation RES3 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/circular_smear_fire3.png");
+    public static final ResourceLocation RES4 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/sylvestaff_streak.png");
+
 
     public static final float PROJECTILE_MOVING_RADIUS = 0.25F;
 
@@ -81,25 +86,25 @@ public class DevilsDevastation extends SwordItem {
     public static final float PROJECTILE_HIT_JITTER = 0.45F;
     public static final int PROJECTILE_HIT_RING = 8;
 
-    //右键生成的弹射
+    //鍙抽敭鐢熸垚鐨勫脊灏?
     public static final IStaticProjectileBehavior PROJECTILE_BEHAVIOR = new IStaticProjectileBehavior() {
         @Override
         public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
             if(!(entity instanceof StaticProjectile projectile)) return;
             renderItem(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-            VertexConsumer buffer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES));
+            VertexConsumer buffer = bufferSource.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES));
             Vec3 entWorldPos = new Vec3(
                 Mth.lerp(partialTick, projectile.xo, projectile.getX()),
                 Mth.lerp(partialTick, projectile.yo, projectile.getY()),
                 Mth.lerp(partialTick, projectile.zo, projectile.getZ())
             );
             Matrix4f matrix = poseStack.last().pose();
-            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions, PROJECTILE_MOVING_RADIUS * 1.0F, 1.0f, 1,1,1);
-            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions, PROJECTILE_MOVING_RADIUS * 1.25F, 1.0f * 0.5F, 0.7F,0.15F,0.55F);
-            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions, PROJECTILE_MOVING_RADIUS * 1.5F, 1.0f * 0.2F, 0.5F,0.1F,0.4F);
-            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions2, PROJECTILE_MOVING_RADIUS * 1.0F, 1.0f, 1,1,1);
-            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions2, PROJECTILE_MOVING_RADIUS * 1.25F, 1.0f * 0.5F, 0.7F,0.15F,0.55F);
-            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions2, PROJECTILE_MOVING_RADIUS * 1.5F, 1.0f * 0.2F, 0.5F,0.1F,0.4F);
+            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions, PROJECTILE_MOVING_RADIUS * 1.0F, 1.0f, 1,1,1, true);
+            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions, PROJECTILE_MOVING_RADIUS * 1.25F, 1.0f * 0.5F, 0.7F,0.15F,0.55F, true);
+            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions, PROJECTILE_MOVING_RADIUS * 1.5F, 1.0f * 0.2F, 0.5F,0.1F,0.4F, true);
+            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions2, PROJECTILE_MOVING_RADIUS * 1.0F, 1.0f, 1,1,1, true);
+            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions2, PROJECTILE_MOVING_RADIUS * 1.25F, 1.0f * 0.5F, 0.7F,0.15F,0.55F, true);
+            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions2, PROJECTILE_MOVING_RADIUS * 1.5F, 1.0f * 0.2F, 0.5F,0.1F,0.4F, true);
         }
 
         @Override
@@ -184,7 +189,7 @@ public class DevilsDevastation extends SwordItem {
                     uuids.add(summon.getUUID());
                     target.setData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE, uuids);
 
-                    for(int i = 0;i < 20;i++) {
+                    for(int i = 0;i < 50;i++) {
                         Vec3 dir = MathUtil.toVec3(projectile.getEntityData().get(StaticProjectile.DIRECTION));
                         dir = spreadDir(dir, new Random(), 0.5f).normalize();
                         Vector3f[] dirs = MathUtil.computeCoordinateSystem(dir.toVector3f(), 0);
@@ -226,7 +231,7 @@ public class DevilsDevastation extends SwordItem {
         public void onHitBlock(StaticProjectile projectile, BlockHitResult result) {}
     };
 
-    //弹出的弹射
+    //寮瑰嚭鐨勫脊灏?
     public static final IStaticProjectileBehavior PROJECTILE_BEHAVIOR2 = new IStaticProjectileBehavior() {
         @Override
         public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
@@ -244,10 +249,10 @@ public class DevilsDevastation extends SwordItem {
             int rotate = projectile.getEntityData().get(StaticProjectile.RZP);
 
             poseStack.pushPose();
-            //旋转
+            //鏃嬭浆
             RenderUtil.applyRotate(poseStack, dir, up, age * 30 + 60, rotate);
 
-            //缩放
+            //缂╂斁
             poseStack.scale(4.0f, 4.0f, 4.0f);
 
             Minecraft.getInstance().getItemRenderer().renderStatic(
@@ -263,10 +268,10 @@ public class DevilsDevastation extends SwordItem {
             poseStack.popPose();
 
             poseStack.pushPose();
-            //旋转
+            //鏃嬭浆
             RenderUtil.applyRotate(poseStack, dir, up, age * 30 + 180, rotate);
 
-            //缩放
+            //缂╂斁
             poseStack.scale(scaleX, scaleY, scaleZ);
 
             VertexConsumer buffer0 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES2));
@@ -274,10 +279,10 @@ public class DevilsDevastation extends SwordItem {
             poseStack.popPose();
 
             poseStack.pushPose();
-            //旋转
+            //鏃嬭浆
             RenderUtil.applyRotate(poseStack, dir, up, age * 30, rotate);
 
-            //缩放
+            //缂╂斁
             poseStack.scale(scaleX, scaleY, scaleZ);
 
             VertexConsumer buffer1 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES3));
@@ -298,25 +303,35 @@ public class DevilsDevastation extends SwordItem {
                 Vector3f dir = projectile.getEntityData().get(StaticProjectile.DIRECTION);
                 Vector3f up = projectile.getEntityData().get(StaticProjectile.UP);
                 Vector3f right = projectile.getEntityData().get(StaticProjectile.RIGHT);
-
+                int rotate = projectile.getEntityData().get(StaticProjectile.RZP);
                 float[] xyRot = MathUtil.computeXYRot(dir, up);
-                Quaternionf rotation = new Quaternionf().fromAxisAngleRad(up, (float) Math.toRadians(age * 30)).rotateY((float) Math.toRadians(-xyRot[1])).rotateX((float) Math.toRadians(xyRot[0]));
-                Vector3f pos = new Vector3f(0, 0, 4);
-                pos.rotate(rotation);
+
+                Quaternionf rotation = new Quaternionf()
+                    .fromAxisAngleRad(up, (float) Math.toRadians(age * 30));
+                Quaternionf rotation2 = new Quaternionf()
+                    .fromAxisAngleRad(dir, (float) Math.toRadians(Math.abs(dir.y) > 0.999 ? 0 : rotate))
+                    .rotateY((float) Math.toRadians(-xyRot[1]))
+                    .rotateX((float) Math.toRadians(xyRot[0]));
+
+                Vector3f currentDir = new Vector3f(0, 0, 1);
+                currentDir.rotate(rotation);
+                currentDir.rotate(rotation2);
+
+                Vector3f speed = new Vector3f(currentDir.x, currentDir.y, currentDir.z).mul(0.2f);
 
                 IronSparkParticleOptions ironSparkParticleOptions;
                 if(projectile.getRandom().nextInt(2) == 0) {
                     ironSparkParticleOptions = new IronSparkParticleOptions(
-                            1.0f, 40, 4.0f, new Vector3f(0.729f, 0.396f, 0.345f), dir.mul(0.2f), right
+                            1.0f, 40, 4.0f, new Vector3f(0.729f, 0.396f, 0.345f), speed, right
                     );
                 }else {
                     ironSparkParticleOptions = new IronSparkParticleOptions(
-                            1.0f, 40, 4.0f, new Vector3f(0.8f, 0.176f, 0.78f), dir.mul(0.2f), right
+                            1.0f, 40, 4.0f, new Vector3f(0.8f, 0.176f, 0.78f), speed, right
                     );
                 }
                 ParticleUtil.addParticle(
                     projectile.level(), ironSparkParticleOptions,
-                    MathUtil.toVec3(pos), 0.5,
+                    projectile.position().add(MathUtil.toVec3(currentDir).scale(4)), 0,
                     new Vec3(0, 0, 0), 0.0
                 );
             }
@@ -340,7 +355,7 @@ public class DevilsDevastation extends SwordItem {
         public void onHitBlock(StaticProjectile projectile, BlockHitResult result) {}
     };
 
-    //弹出弹射然后生成新的旋转弹射
+    //寮瑰嚭寮瑰皠鐒跺悗鐢熸垚鏂扮殑鏃嬭浆寮瑰皠
     public static void summonStuckProjectile(StaticSummon stuckProjectile) {
         if(stuckProjectile == null || !stuckProjectile.isAlive()) return;
         CompoundTag customData = stuckProjectile.getEntityData().get(StaticSummon.CUSTOM_DATA);
@@ -376,7 +391,39 @@ public class DevilsDevastation extends SwordItem {
         }
     }
 
-    //依附在实体上的剑
+    //鏉€鎴ā寮忕敓鎴愮殑寮瑰皠
+    public static final IStaticProjectileBehavior PROJECTILE_BEHAVIOR3 = new IStaticProjectileBehavior() {
+
+    };
+
+    public static void summonKilModeProjectile(Player player) {
+        if(!player.level().isClientSide()) {
+            Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
+            float radius = 32;
+            float w = (float) Math.PI * 1.5f / 10f;
+
+            StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), player.level());
+            projectile.setOwner(player);
+            Vec3 pos = player.getBoundingBox().getCenter();
+            projectile.setPos(pos);
+            projectile.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE3);
+            projectile.getEntityData().set(StaticProjectile.RENDER_MODE, "custom");
+            projectile.getEntityData().set(StaticProjectile.ORIGIN, pos.toVector3f());
+            projectile.getEntityData().set(StaticProjectile.DIRECTION, dirs[0]);
+            projectile.getEntityData().set(StaticProjectile.UP, dirs[1]);
+            projectile.getEntityData().set(StaticProjectile.RIGHT, dirs[2]);
+            projectile.getEntityData().set(StaticProjectile.ITEM, new ItemStack(ModItems.DEVILS_DEVASTATION.get()));
+            projectile.getEntityData().set(StaticProjectile.LIFETIME, 10);
+            projectile.getEntityData().set(StaticProjectile.GLOW, true);
+            projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3f*t)", radius, w));
+            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*sin(%.3f*t)", radius, w));
+            projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
+            player.level().addFreshEntity(projectile);
+        }
+    }
+
+
+    //渚濋檮鍦ㄥ疄浣撲笂鐨勫墤
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
         public void tick(StaticSummon summon) {
@@ -402,7 +449,7 @@ public class DevilsDevastation extends SwordItem {
         }
     };
 
-    //弹射击中实体产生的闪电
+    //寮瑰皠鍑讳腑瀹炰綋浜х敓鐨勯棯鐢?
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR2 = new IStaticSummonBehavior() {
         @Override
         public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
@@ -424,7 +471,7 @@ public class DevilsDevastation extends SwordItem {
                 Mth.lerp(partialTick, summon.yo, summon.getY()),
                 Mth.lerp(partialTick, summon.zo, summon.getZ())
             );
-            VertexConsumer buffer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES));
+            VertexConsumer buffer = bufferSource.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES));
             Matrix4f matrix = poseStack.last().pose();
 
             Random rand0 = new Random(seed);
@@ -443,9 +490,9 @@ public class DevilsDevastation extends SwordItem {
 
 
             for(List<Vec3> branch : new List[]{branch0, branch1, branch2}) {
-                renderTube(buffer, matrix, entWorldPos, branch, radius * 1.0F, alpha, 1,1,1);
-                renderTube(buffer, matrix, entWorldPos, branch, radius * 1.25F, alpha * 0.5F, 0.7F,0.15F,0.55F);
-                renderTube(buffer, matrix, entWorldPos, branch, radius * 0.75F, alpha * 0.2F, 0.5F,0.1F,0.4F);
+                renderTube(buffer, matrix, entWorldPos, branch, radius * 1.0F, alpha, 1,1,1, true);
+                renderTube(buffer, matrix, entWorldPos, branch, radius * 1.25F, alpha * 0.5F, 0.7F,0.15F,0.55F, true);
+                renderTube(buffer, matrix, entWorldPos, branch, radius * 0.75F, alpha * 0.2F, 0.5F,0.1F,0.4F, true);
             }
         }
 
@@ -501,7 +548,7 @@ public class DevilsDevastation extends SwordItem {
     }
 
     public static void renderTube(VertexConsumer buffer, Matrix4f matrix, Vec3 entityWorldPos,
-                                    List<Vec3> points, float radius, float alpha, float colorR, float colorG, float colorB) {
+                                    List<Vec3> points, float radius, float alpha, float colorR, float colorG, float colorB, boolean linear) {
         int n = points.size();
         if(n < 2) return;
 
@@ -516,8 +563,8 @@ public class DevilsDevastation extends SwordItem {
         }
 
         for(int i = 0;i < n - 1;i++) {
-            float r0 = radius * (1.0F - (float) i / (float) (n - 1));
-            float r1 = radius * (1.0F - (float) (i + 1) / (float) (n - 1));
+            float r0 = linear ? radius * (1.0F - (float) i / (float) (n - 1)) : radius;
+            float r1 = linear ? radius * (1.0F - (float) (i + 1) / (float) (n - 1)) : radius;
             if(r0 <= 0.001F && r1 <= 0.001F) continue;
             Vec3 N = right[i], B = up[i], N1 = right[i + 1], B1 = up[i + 1];
             Vec3 P = points.get(i), P1 = points.get(i + 1);
@@ -533,10 +580,108 @@ public class DevilsDevastation extends SwordItem {
                 Vec3 v2 = P1.add(d1b.scale(r1));
                 Vec3 v3 = P.add(d0b.scale(r0));
                 for(int k = 0;k < 3;k++) {
-                    writeVert(buffer, matrix, entityWorldPos, v0, alpha, colorR, colorG, colorB);
-                    writeVert(buffer, matrix, entityWorldPos, v1, alpha, colorR, colorG, colorB);
-                    writeVert(buffer, matrix, entityWorldPos, v2, alpha, colorR, colorG, colorB);
-                    writeVert(buffer, matrix, entityWorldPos, v3, alpha, colorR, colorG, colorB);
+                    writeVert(buffer, matrix, entityWorldPos, v0, 0.5f, 0.5f, alpha, colorR, colorG, colorB);
+                    writeVert(buffer, matrix, entityWorldPos, v1, 0.5f, 0.5f, alpha, colorR, colorG, colorB);
+                    writeVert(buffer, matrix, entityWorldPos, v2, 0.5f, 0.5f, alpha, colorR, colorG, colorB);
+                    writeVert(buffer, matrix, entityWorldPos, v3, 0.5f, 0.5f, alpha, colorR, colorG, colorB);
+                }
+            }
+        }
+    }
+
+    public static void renderTubeSegmented(VertexConsumer buffer, Matrix4f matrix, Vec3 entityWorldPos,
+                                            List<Vec3> points, float[] radii,
+                                            Vector3f[] colors, float alpha) {
+        int n = points.size();
+        if(n < 2 || radii.length < n || colors.length < n) return;
+
+        Vector3f[][] oriDirs = new Vector3f[n][3];
+        Vec3[] dir = new Vec3[n], up = new Vec3[n], right = new Vec3[n];
+        for(int i = 0;i < n;i++) {
+            if(i == n - 1) oriDirs[i] = MathUtil.computeCoordinateSystem(points.get(n - 1).subtract(points.get(n - 2)).toVector3f(), 0);
+            else oriDirs[i] = MathUtil.computeCoordinateSystem(points.get(i + 1).subtract(points.get(i)).toVector3f(), 0);
+            dir[i] = MathUtil.toVec3(oriDirs[i][0]);
+            up[i] = MathUtil.toVec3(oriDirs[i][1]);
+            right[i] = MathUtil.toVec3(oriDirs[i][2]);
+        }
+
+        for(int i = 0;i < n - 1;i++) {
+            float r0 = radii[i];
+            float r1 = radii[i + 1];
+            if(r0 <= 0.001F && r1 <= 0.001F) continue;
+            Vec3 N = right[i], B = up[i], N1 = right[i + 1], B1 = up[i + 1];
+            Vec3 P = points.get(i), P1 = points.get(i + 1);
+            Vector3f c0 = colors[i], c1 = colors[i + 1];
+            for(int j = 0;j < PROJECTILE_HIT_RING;j++) {
+                float a0 = (float) (2.0 * Math.PI * j / PROJECTILE_HIT_RING);
+                float a1 = (float) (2.0 * Math.PI * (j + 1) / PROJECTILE_HIT_RING);
+                Vec3 d0 = computeRingDir(N, B, a0);
+                Vec3 d1 = computeRingDir(N1, B1, a0);
+                Vec3 d0b = computeRingDir(N, B, a1);
+                Vec3 d1b = computeRingDir(N1, B1, a1);
+                Vec3 v0 = P.add(d0.scale(r0));
+                Vec3 v1 = P1.add(d1.scale(r1));
+                Vec3 v2 = P1.add(d1b.scale(r1));
+                Vec3 v3 = P.add(d0b.scale(r0));
+                for(int k = 0;k < 3;k++) {
+                    writeVert(buffer, matrix, entityWorldPos, v0, 0.5f, 0.5f, alpha, c0.x(), c0.y(), c0.z());
+                    writeVert(buffer, matrix, entityWorldPos, v1, 0.5f, 0.5f, alpha, c1.x(), c1.y(), c1.z());
+                    writeVert(buffer, matrix, entityWorldPos, v2, 0.5f, 0.5f, alpha, c1.x(), c1.y(), c1.z());
+                    writeVert(buffer, matrix, entityWorldPos, v3, 0.5f, 0.5f, alpha, c0.x(), c0.y(), c0.z());
+                }
+            }
+        }
+    }
+
+
+    public static void renderTubeSegmented(VertexConsumer buffer, Matrix4f matrix, Vec3 entityWorldPos,
+                                            List<Vec3> points, float[] radii,
+                                            Vector3f[] colors, float alpha,
+                                            float uvOffsetU, float uvOffsetV, float uvScaleU, float uvScaleV) {
+        int n = points.size();
+        if(n < 2 || radii.length < n || colors.length < n) return;
+
+        Vector3f[][] oriDirs = new Vector3f[n][3];
+        Vec3[] dir = new Vec3[n], up = new Vec3[n], right = new Vec3[n];
+        for(int i = 0;i < n;i++) {
+            if(i == n - 1) oriDirs[i] = MathUtil.computeCoordinateSystem(points.get(n - 1).subtract(points.get(n - 2)).toVector3f(), 0);
+            else oriDirs[i] = MathUtil.computeCoordinateSystem(points.get(i + 1).subtract(points.get(i)).toVector3f(), 0);
+            dir[i] = MathUtil.toVec3(oriDirs[i][0]);
+            up[i] = MathUtil.toVec3(oriDirs[i][1]);
+            right[i] = MathUtil.toVec3(oriDirs[i][2]);
+        }
+
+        for(int i = 0;i < n - 1;i++) {
+            float r0 = radii[i];
+            float r1 = radii[i + 1];
+            if(r0 <= 0.001F && r1 <= 0.001F) continue;
+            Vec3 N = right[i], B = up[i], N1 = right[i + 1], B1 = up[i + 1];
+            Vec3 P = points.get(i), P1 = points.get(i + 1);
+            Vector3f c0 = colors[i], c1 = colors[i + 1];
+
+            float u0 = uvOffsetU + uvScaleU * ((float)i / (float)(n - 1));
+            float u1 = uvOffsetU + uvScaleU * ((float)(i + 1) / (float)(n - 1));
+
+            for(int j = 0;j < PROJECTILE_HIT_RING;j++) {
+                float a0 = (float) (2.0 * Math.PI * j / PROJECTILE_HIT_RING);
+                float a1 = (float) (2.0 * Math.PI * (j + 1) / PROJECTILE_HIT_RING);
+
+                float v0 = uvOffsetV + uvScaleV * ((float)j / (float)PROJECTILE_HIT_RING);
+                float v1 = uvOffsetV + uvScaleV * ((float)(j + 1) / (float)PROJECTILE_HIT_RING);
+
+                Vec3 d0 = computeRingDir(N, B, a0);
+                Vec3 d1 = computeRingDir(N1, B1, a0);
+                Vec3 d0b = computeRingDir(N, B, a1);
+                Vec3 d1b = computeRingDir(N1, B1, a1);
+                Vec3 v00 = P.add(d0.scale(r0));
+                Vec3 v01 = P1.add(d1.scale(r1));
+                Vec3 v02 = P1.add(d1b.scale(r1));
+                Vec3 v03 = P.add(d0b.scale(r0));
+                for(int k = 0;k < 3;k++) {
+                    writeVert(buffer, matrix, entityWorldPos, v00, u0, v0, alpha, c0.x(), c0.y(), c0.z());
+                    writeVert(buffer, matrix, entityWorldPos, v01, u1, v0, alpha, c1.x(), c1.y(), c1.z());
+                    writeVert(buffer, matrix, entityWorldPos, v02, u1, v1, alpha, c1.x(), c1.y(), c1.z());
+                    writeVert(buffer, matrix, entityWorldPos, v03, u0, v1, alpha, c0.x(), c0.y(), c0.z());
                 }
             }
         }
@@ -547,21 +692,130 @@ public class DevilsDevastation extends SwordItem {
     }
 
     public static void writeVert(VertexConsumer buffer, Matrix4f matrix, Vec3 entityWorldPos,
-                                  Vec3 worldPos, float alpha, float colorR, float colorG, float colorB) {
+                                  Vec3 worldPos, float u, float v, float alpha, float colorR, float colorG, float colorB) {
         double lx = worldPos.x - entityWorldPos.x;
         double ly = worldPos.y - entityWorldPos.y;
         double lz = worldPos.z - entityWorldPos.z;
 
         buffer.addVertex(matrix, (float)lx, (float)ly, (float)lz)
             .setColor(colorR, colorG, colorB, alpha)
-            .setUv(0.5F, 0.5F)
+            .setUv(u, v)
             .setOverlay(OverlayTexture.NO_OVERLAY)
             .setLight(LightTexture.FULL_BRIGHT)
             .setNormal(0.0F, 1.0F, 0.0F);
     }
+
+
+
+    public static void renderTriangularBlade(MultiBufferSource buffer, PoseStack poseStack, Entity entity) {
+        Matrix4f matrix = poseStack.last().pose();
+        int time = entity.tickCount;
+
+        poseStack.translate(0, 2.5, 0.6);
+
+        float length = 32;
+        int seg = 16;
+        float speed = 0.25f;
+        float baseRadius = 1.0f;
+        float wiggleRadius = 0.15f;
+        float freq = 0.3f;
+
+        Vector3f colorA = new Vector3f(0.729f, 0.396f, 0.345f);
+        Vector3f colorB = new Vector3f(0.8f, 0.176f, 0.78f);
+
+        List<Vec3> points = new ArrayList<>();
+        float[] radii = new float[seg + 1];
+        Vector3f[] colors = new Vector3f[seg + 1];
+
+        for (int i = 0; i <= seg; i++) {
+            float t = (float) i / seg;
+            float y = t * length;
+
+            // X/Z 鍛ㄦ湡鎬ф憜鍔紝浜х敓娴佸姩鎰?
+            float angle = time * freq - t * (float) Math.PI * 4;
+            float ox = (float) Math.sin(angle) * wiggleRadius;
+            float oz = (float) Math.cos(angle) * wiggleRadius;
+
+            points.add(new Vec3(ox, y, oz));
+
+            // 鍗婂緞锛氬墠绮楀悗缁?(cos 浠?1鈫?) + 鏃堕棿鑴夊姩
+            float taper = (float) Math.cos(t * Math.PI * 0.5f);
+            float pulse = 0.8f + 0.2f * (float) Math.sin(time * 1.0f * speed - t * (float) Math.PI * 6);
+            radii[i] = baseRadius * taper * pulse;
+
+            // 棰滆壊锛氫袱绉嶉鑹查殢鏃堕棿 + 浣嶇疆娴佸姩
+            float blend = 0.5f + 0.5f * (float) Math.sin(time * 0.75f * speed - t * (float) Math.PI * 3);
+            colors[i] = new Vector3f(
+                colorA.x + (colorB.x - colorA.x) * blend,
+                colorA.y + (colorB.y - colorA.y) * blend,
+                colorA.z + (colorB.z - colorA.z) * blend
+            );
+        }
+
+
+
+        // 第二层：能量流动条纹叠加 (sylvestaff_streak.png)
+        float streakSpeed = 0.15f;
+        float uvScroll = time * streakSpeed;
+        Vector3f[] whiteColors = new Vector3f[seg + 1];
+        float[] rrr1 = new float[seg + 1];
+        for (int i = 0; i <= seg; i++) {
+            whiteColors[i] = new Vector3f(1.0f, 1.0f, 1.0f);
+            rrr1[i] = radii[i] * 1.2f;
+        }
+        VertexConsumer consumer0 = buffer.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES));
+        renderTubeSegmented(consumer0, matrix, new Vec3(0, 0, 0), points, radii, whiteColors, 1.0f);
+        VertexConsumer consumer1 = buffer.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES4));
+        renderTubeSegmented(consumer1, matrix, new Vec3(0, 0, 0), points, rrr1, colors, 1.0f,
+            uvScroll, 0.0f, 2.0f, 1.0f);
+        renderTubeSegmented(consumer1, matrix, new Vec3(0, 0, 0), points, rrr1, colors, 1.0f,
+            uvScroll, 0.0f, 2.0f, 1.0f);
+        renderTubeSegmented(consumer1, matrix, new Vec3(0, 0, 0), points, rrr1, colors, 1.0f,
+            uvScroll, 0.0f, 2.0f, 1.0f);
+        renderTubeSegmented(consumer1, matrix, new Vec3(0, 0, 0), points, rrr1, colors, 1.0f,
+            uvScroll, 0.0f, 2.0f, 1.0f);
+        renderTubeSegmented(consumer1, matrix, new Vec3(0, 0, 0), points, rrr1, colors, 1.0f,
+            uvScroll, 0.0f, 2.0f, 1.0f);
+
+    }
+
+    public static final IItemWaveBehavior ITEM_WAVE_BEHAVIOR = new IItemWaveBehavior() {
+        @Override
+        public void onLeftClickAir(PlayerInteractEvent.LeftClickEmpty event) {
+            Player player = event.getEntity();
+            ItemStack itemStack = player.getMainHandItem();
+            if(itemStack.isEmpty()) return;
+            if(itemStack.is(ModItems.DEVILS_DEVASTATION.get()) && player.getEffect(ModEffects.KILL_MODE) != null) {
+                PacketDistributor.sendToServer(new DevilsDevastationLeftClickPayload());
+            }
+        }
+
+        @Override
+        public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+            Player player = event.getEntity();
+            ItemStack itemStack = player.getMainHandItem();
+            if(itemStack.isEmpty()) return;
+            if(itemStack.is(ModItems.DEVILS_DEVASTATION.get()) && player.getEffect(ModEffects.KILL_MODE) != null) {
+                PacketDistributor.sendToServer(new DevilsDevastationLeftClickPayload());
+            }
+        }
+
+        @Override
+        public void onAttackEntity(AttackEntityEvent event) {
+            Player player = event.getEntity();
+            ItemStack itemStack = player.getMainHandItem();
+            if(itemStack.isEmpty()) return;
+            if(itemStack.is(ModItems.DEVILS_DEVASTATION.get()) && player.getEffect(ModEffects.KILL_MODE) != null) {
+                summonKilModeProjectile(player);
+                event.setCanceled(true);
+            }
+        }
+    };
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        if(player.getEffect(ModEffects.KILL_MODE) != null) return InteractionResultHolder.pass(stack);
         if(!level.isClientSide()) {
             Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
             StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), level);

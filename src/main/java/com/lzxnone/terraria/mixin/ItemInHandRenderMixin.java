@@ -1,8 +1,12 @@
 package com.lzxnone.terraria.mixin;
 
+import com.lzxnone.terraria.effect.ModEffects;
+import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.item.weapon.melee.Mace;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -14,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -92,6 +97,19 @@ public class ItemInHandRenderMixin {
                     .copyTag().getInt("state");
             if(state != Mace.State.IDLE.ordinal()) {
                 ci.cancel();
+            }
+        }
+    }
+
+    @Inject(method = "renderItem", at = @At("RETURN"))
+    private void renderItemPost(LivingEntity entity, ItemStack itemStack, ItemDisplayContext displayContext,
+                                boolean leftHand, PoseStack poseStack, MultiBufferSource buffer,
+                                int seed, CallbackInfo ci) {
+        if(itemStack.is(ModItems.DEVILS_DEVASTATION.get())) {
+            if(entity.getEffect(ModEffects.KILL_MODE) != null) {
+                poseStack.pushPose();
+                DevilsDevastation.renderTriangularBlade(buffer, poseStack, entity);
+                poseStack.popPose();
             }
         }
     }

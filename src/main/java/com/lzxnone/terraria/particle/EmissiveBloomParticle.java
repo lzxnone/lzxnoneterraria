@@ -26,7 +26,6 @@ public class EmissiveBloomParticle extends TextureSheetParticle {
         float f1 = (float) (Mth.lerp(partialTick, this.yo, this.y) - camera.getPosition().y);
         float f2 = (float) (Mth.lerp(partialTick, this.zo, this.z) - camera.getPosition().z);
 
-        // 相机朝向 billboard，叠加 roll 旋转
         Quaternionf quaternion = new Quaternionf(camera.rotation());
         quaternion.rotateZ(Mth.lerp(partialTick, this.oRoll, this.roll));
 

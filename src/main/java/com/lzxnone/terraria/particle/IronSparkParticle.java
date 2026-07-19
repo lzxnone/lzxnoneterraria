@@ -60,13 +60,15 @@ public class IronSparkParticle extends TextureSheetParticle {
     public void render(VertexConsumer buffer, Camera camera, float partialTick) {
         if (this.alpha <= 0.01F) return;
 
+        float lifeRatio = (this.age + partialTick) / (float) this.lifetime;
+
         float cx = (float) (Mth.lerp(partialTick, this.xo, this.x) - camera.getPosition().x);
         float cy = (float) (Mth.lerp(partialTick, this.yo, this.y) - camera.getPosition().y);
         float cz = (float) (Mth.lerp(partialTick, this.zo, this.z) - camera.getPosition().z);
 
         float size = this.quadSize;
-        float halfLen = size * this.sparkLength;
-        float halfWidth = size * 0.01f;
+        float halfLen = size * this.sparkLength * lifeRatio;
+        float halfWidth = size * this.sparkLength * (1 - lifeRatio) * 0.01f;
 
         float u0 = this.getU0();
         float u1 = this.getU1();
