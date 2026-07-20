@@ -18,4 +18,6 @@ public class ModEffects {
             MOB_EFFECTS.register("kill_mode", KillModeEffect::new);
     public static final DeferredHolder<MobEffect, KillModeCooldownEffect> KILL_MODE_COOLDOWN =
             MOB_EFFECTS.register("kill_mode_cooldown", KillModeCooldownEffect::new);
+    public static final DeferredHolder<MobEffect, DemonicFlamesEffect> DEMONIC_FLAMES =
+            MOB_EFFECTS.register("demonic_flames", DemonicFlamesEffect::new);
 }

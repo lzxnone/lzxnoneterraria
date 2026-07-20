@@ -75,9 +75,23 @@ public class ItemInHandRenderMixin {
                     ci.cancel();
                 }
             }else if(stack.is(ModItems.DEVILS_DEVASTATION.get())) {
-                MobEffectInstance effectInstance = player.getEffect(ModEffects.KILL_MODE);
-                if(effectInstance != null && player.getCooldowns().isOnCooldown(stack.getItem())) {
-                    ci.cancel();
+                if(player.getCooldowns().isOnCooldown(stack.getItem())) {
+                    MobEffectInstance effectInstance = player.getEffect(ModEffects.KILL_MODE);
+                    if(effectInstance != null) {
+                        ci.cancel();
+                    }else {
+                        boolean isMainHand = hand == InteractionHand.MAIN_HAND;
+                        HumanoidArm humanoidarm = isMainHand ? player.getMainArm() : player.getMainArm().getOpposite();
+
+                        poseStack.pushPose();
+
+                        if(!player.isInvisible()) {
+                            this.renderPlayerArm(poseStack, buffer, combinedLight, equippedProgress, swingProgress, humanoidarm);
+                        }
+
+                        poseStack.popPose();
+                        ci.cancel();
+                    }
                 }
             }
         }
@@ -105,8 +119,7 @@ public class ItemInHandRenderMixin {
                 ci.cancel();
             }
         }else if(itemStack.is(ModItems.DEVILS_DEVASTATION.get()) && entity instanceof Player player) {
-            MobEffectInstance effectInstance = player.getEffect(ModEffects.KILL_MODE);
-            if(effectInstance != null && player.getCooldowns().isOnCooldown(itemStack.getItem())) {
+            if(player.getCooldowns().isOnCooldown(itemStack.getItem())) {
                 ci.cancel();
             }
         }

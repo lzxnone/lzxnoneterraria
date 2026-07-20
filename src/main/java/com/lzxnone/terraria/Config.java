@@ -10,6 +10,9 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public class Config {
     public static final ModConfigSpec SPEC;
 
+    public static final ModConfigSpec.DoubleValue BLOOD_BUTCHERER_DAMAGE_PER_LEVEL;
+    public static final ModConfigSpec.DoubleValue DEMONIC_FLAMES_DAMAGE_PER_LEVEL;
+
     public static final ModConfigSpec.DoubleValue ENCHANTED_SWORD_DAMAGE;
     public static final ModConfigSpec.IntValue ENCHANTED_SWORD_LIFETIME;
     public static final ModConfigSpec.DoubleValue ENCHANTED_SWORD_SPEED;
@@ -20,7 +23,6 @@ public class Config {
 
     public static final ModConfigSpec.IntValue BLOOD_BUTCHERER_EFFECT_DURATION;
     public static final ModConfigSpec.IntValue BLOOD_BUTCHERER_MAX_LEVEL;
-    public static final ModConfigSpec.DoubleValue BLOOD_BUTCHERER_DAMAGE_PER_LEVEL;
 
     public static final ModConfigSpec.DoubleValue BLADE_OF_GRASS_PROJECTILE_DAMAGE;
     public static final ModConfigSpec.IntValue BLADE_OF_GRASS_EFFECT_DURATION;
@@ -147,6 +149,27 @@ public class Config {
     public static final ModConfigSpec.IntValue TRUE_NIGHTS_EDGE_PROJECTILE_LIFETIME;
     public static final ModConfigSpec.IntValue TRUE_NIGHTS_EDGE_PROJECTILE_ROTATION_SPEED;
 
+    public static final ModConfigSpec.IntValue DEVILS_DEVASTATION_KILL_MODE_TIME;
+    public static final ModConfigSpec.IntValue DEVILS_DEVASTATION_KILL_MODE_COOLDOWN_TIME;
+    public static final ModConfigSpec.DoubleValue DEVILS_DEVASTATION_PROJECTILE_DAMAGE;
+    public static final ModConfigSpec.IntValue DEVILS_DEVASTATION_PROJECTILE_LIFETIME;
+    public static final ModConfigSpec.DoubleValue DEVILS_DEVASTATION_PROJECTILE_SPEED;
+    public static final ModConfigSpec.DoubleValue DEVILS_DEVASTATION_STUCK_PROJECTILE_DAMAGE;
+    public static final ModConfigSpec.IntValue DEVILS_DEVASTATION_STUCK_PROJECTILE_LIFETIME;
+    public static final ModConfigSpec.DoubleValue DEVILS_DEVASTATION_STUCK_PROJECTILE_SPEED;
+    public static final ModConfigSpec.IntValue DEVILS_DEVASTATION_KILL_MODE_PROJECTILE_CYCLE;
+    public static final ModConfigSpec.DoubleValue DEVILS_DEVASTATION_KILL_MODE_PROJECTILE_DAMAGE;
+    public static final ModConfigSpec.IntValue DEVILS_DEVASTATION_KILL_MODE_PROJECTILE_ROTATE;
+    public static final ModConfigSpec.IntValue DEVILS_DEVASTATION_STUCK_LIFETIME;
+    public static final ModConfigSpec.IntValue DEVILS_DEVASTATION_MAX_STUCK_COUNT;
+    public static final ModConfigSpec.DoubleValue DEVILS_DEVASTATION_MARK_LIGHTNING_DAMAGE;
+    public static final ModConfigSpec.IntValue DEVILS_DEVASTATION_PROJECTILE_EFFECT_DURATION;
+    public static final ModConfigSpec.IntValue DEVILS_DEVASTATION_STUCK_PROJECTILE_EFFECT_DURATION;
+    public static final ModConfigSpec.IntValue DEVILS_DEVASTATION_KILL_MODE_PROJECTILE_EFFECT_DURATION;
+
+    public static double bloodButchererDamagePerLevel;
+    public static double demonicFlamesDamagePerLevel;
+
     public static double enchantedSwordDamage;
     public static int enchantedSwordLifetime;
     public static double enchantedSwordSpeed;
@@ -157,7 +180,6 @@ public class Config {
 
     public static int bloodButchererEffectDuration;
     public static int bloodButchererMaxLevel;
-    public static double bloodButchererDamagePerLevel;
 
     public static double bladeOfGrassProjectileDamage;
     public static int bladeOfGrassEffectDuration;
@@ -284,8 +306,38 @@ public class Config {
     public static int trueNightsEdgeProjectileLifetime;
     public static int trueNightsEdgeProjectileRotationSpeed;
 
+    public static int devilsDevastationKillModeTime;
+    public static int devilsDevastationKillModeCooldownTime;
+    public static double devilsDevastationProjectileDamage;
+    public static int devilsDevastationProjectileLifetime;
+    public static double devilsDevastationProjectileSpeed;
+    public static double devilsDevastationStuckProjectileDamage;
+    public static int devilsDevastationStuckProjectileLifetime;
+    public static double devilsDevastationStuckProjectileSpeed;
+    public static int devilsDevastationKillModeProjectileCycle;
+    public static double devilsDevastationKillModeProjectileDamage;
+    public static int devilsDevastationKillModeProjectileRotate;
+    public static int devilsDevastationStuckLifetime;
+    public static int devilsDevastationMaxStuckCount;
+    public static double devilsDevastationMarkLightningDamage;
+    public static int devilsDevastationProjectileEffectDuration;
+    public static int devilsDevastationStuckProjectileEffectDuration;
+    public static int devilsDevastationKillModeProjectileEffectDuration;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+
+        builder.push("effect_settings");
+
+        BLOOD_BUTCHERER_DAMAGE_PER_LEVEL = builder
+            .comment("血腥屠宰效果每级伤害")
+            .defineInRange("blood_butcherer_damage_per_level", 0.5, 0, 8388600);
+
+        DEMONIC_FLAMES_DAMAGE_PER_LEVEL = builder
+            .comment("恶魔之焰效果每级伤害")
+            .defineInRange("demonic_flames_damage_per_level", 2.5, 0, 8388600);
+
+        builder.pop();
 
         builder.push("enchanted_sword_settings");
 
@@ -329,10 +381,6 @@ public class Config {
         BLOOD_BUTCHERER_MAX_LEVEL = builder
             .comment("血腥屠宰效果最大等级")
             .defineInRange("blood_butcherer_max_level", 4, 0, 255);
-
-        BLOOD_BUTCHERER_DAMAGE_PER_LEVEL = builder
-            .comment("血腥屠宰效果每级伤害")
-            .defineInRange("blood_butcherer_damage_per_level", 0.5, 0, 8388600);
 
         builder.pop();
 
@@ -847,12 +895,86 @@ public class Config {
 
         builder.pop();
 
+        builder.push("devils_devastation_settings");
+
+        DEVILS_DEVASTATION_KILL_MODE_TIME = builder
+            .comment("杀戮模式持续时间（刻）")
+            .defineInRange("devils_devastation_kill_mode_time", 100, 0, 72000);
+
+        DEVILS_DEVASTATION_KILL_MODE_COOLDOWN_TIME = builder
+            .comment("杀戮模式冷却时间（刻）")
+            .defineInRange("devils_devastation_kill_mode_cooldown_time", 100, 0, 72000);
+
+        DEVILS_DEVASTATION_PROJECTILE_DAMAGE = builder
+            .comment("右键弹射伤害")
+            .defineInRange("devils_devastation_projectile_damage", 30.0, 0, 2147483647.0);
+
+        DEVILS_DEVASTATION_PROJECTILE_LIFETIME = builder
+            .comment("右键弹射持续时间（刻）")
+            .defineInRange("devils_devastation_projectile_lifetime", 40, 1, 1200);
+
+        DEVILS_DEVASTATION_PROJECTILE_SPEED = builder
+            .comment("右键弹射速度")
+            .defineInRange("devils_devastation_projectile_speed", 3.0, 0, 10);
+
+        DEVILS_DEVASTATION_STUCK_PROJECTILE_DAMAGE = builder
+            .comment("弹出弹射伤害")
+            .defineInRange("devils_devastation_stuck_projectile_damage", 30.0, 0, 2147483647.0);
+
+        DEVILS_DEVASTATION_STUCK_PROJECTILE_LIFETIME = builder
+            .comment("弹出弹射持续时间（刻）")
+            .defineInRange("devils_devastation_stuck_projectile_lifetime", 40, 1, 1200);
+
+        DEVILS_DEVASTATION_STUCK_PROJECTILE_SPEED = builder
+            .comment("弹出弹射速度")
+            .defineInRange("devils_devastation_stuck_projectile_speed", 3.0, 0, 10);
+
+        DEVILS_DEVASTATION_KILL_MODE_PROJECTILE_CYCLE = builder
+            .comment("杀戮模式弹射周期（刻）")
+            .defineInRange("devils_devastation_kill_mode_projectile_cycle", 10, 1, 200);
+
+        DEVILS_DEVASTATION_KILL_MODE_PROJECTILE_DAMAGE = builder
+            .comment("杀戮模式弹射伤害")
+            .defineInRange("devils_devastation_kill_mode_projectile_damage", 200.0, 0, 2147483647.0);
+
+        DEVILS_DEVASTATION_KILL_MODE_PROJECTILE_ROTATE = builder
+            .comment("杀戮模式弹射旋转角度")
+            .defineInRange("devils_devastation_kill_mode_projectile_rotate", 30, 0, 360);
+
+        DEVILS_DEVASTATION_STUCK_LIFETIME = builder
+            .comment("附着弹射存在时间（刻）")
+            .defineInRange("devils_devastation_stuck_lifetime", 200, 1, 72000);
+
+        DEVILS_DEVASTATION_MAX_STUCK_COUNT = builder
+            .comment("最大附着数量")
+            .defineInRange("devils_devastation_max_stuck_count", 5, 1, 50);
+
+        DEVILS_DEVASTATION_MARK_LIGHTNING_DAMAGE = builder
+            .comment("标记闪电伤害")
+            .defineInRange("devils_devastation_mark_lightning_damage", 100.0, 0, 2147483647.0);
+
+        DEVILS_DEVASTATION_PROJECTILE_EFFECT_DURATION = builder
+            .comment("右键弹射造成效果持续时间（刻）")
+            .defineInRange("devils_devastation_projectile_effect_duration", 40, 0, 72000);
+
+        DEVILS_DEVASTATION_STUCK_PROJECTILE_EFFECT_DURATION = builder
+            .comment("弹出弹射造成效果持续时间（刻）")
+            .defineInRange("devils_devastation_stuck_projectile_effect_duration", 60, 0, 72000);
+
+        DEVILS_DEVASTATION_KILL_MODE_PROJECTILE_EFFECT_DURATION = builder
+            .comment("杀戮模式弹射造成效果持续时间（刻）")
+            .defineInRange("devils_devastation_kill_mode_projectile_effect_duration", 70, 0, 72000);
+
+        builder.pop();
+
         SPEC = builder.build();
     }
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
         if(event.getConfig().getSpec() == SPEC) {
+            bloodButchererDamagePerLevel = BLOOD_BUTCHERER_DAMAGE_PER_LEVEL.get();
+            demonicFlamesDamagePerLevel = DEMONIC_FLAMES_DAMAGE_PER_LEVEL.get();
             enchantedSwordDamage = ENCHANTED_SWORD_DAMAGE.get();
             enchantedSwordLifetime = ENCHANTED_SWORD_LIFETIME.get();
             enchantedSwordSpeed = ENCHANTED_SWORD_SPEED.get();
@@ -968,6 +1090,23 @@ public class Config {
             trueNightsEdgeProjectileAcceleration = TRUE_NIGHTS_EDGE_PROJECTILE_ACCELERATION.get();
             trueNightsEdgeProjectileLifetime = TRUE_NIGHTS_EDGE_PROJECTILE_LIFETIME.get();
             trueNightsEdgeProjectileRotationSpeed = TRUE_NIGHTS_EDGE_PROJECTILE_ROTATION_SPEED.get();
+            devilsDevastationKillModeTime = DEVILS_DEVASTATION_KILL_MODE_TIME.get();
+            devilsDevastationKillModeCooldownTime = DEVILS_DEVASTATION_KILL_MODE_COOLDOWN_TIME.get();
+            devilsDevastationProjectileDamage = DEVILS_DEVASTATION_PROJECTILE_DAMAGE.get();
+            devilsDevastationProjectileLifetime = DEVILS_DEVASTATION_PROJECTILE_LIFETIME.get();
+            devilsDevastationProjectileSpeed = DEVILS_DEVASTATION_PROJECTILE_SPEED.get();
+            devilsDevastationStuckProjectileDamage = DEVILS_DEVASTATION_STUCK_PROJECTILE_DAMAGE.get();
+            devilsDevastationStuckProjectileLifetime = DEVILS_DEVASTATION_STUCK_PROJECTILE_LIFETIME.get();
+            devilsDevastationStuckProjectileSpeed = DEVILS_DEVASTATION_STUCK_PROJECTILE_SPEED.get();
+            devilsDevastationKillModeProjectileCycle = DEVILS_DEVASTATION_KILL_MODE_PROJECTILE_CYCLE.get();
+            devilsDevastationKillModeProjectileDamage = DEVILS_DEVASTATION_KILL_MODE_PROJECTILE_DAMAGE.get();
+            devilsDevastationKillModeProjectileRotate = DEVILS_DEVASTATION_KILL_MODE_PROJECTILE_ROTATE.get();
+            devilsDevastationStuckLifetime = DEVILS_DEVASTATION_STUCK_LIFETIME.get();
+            devilsDevastationMaxStuckCount = DEVILS_DEVASTATION_MAX_STUCK_COUNT.get();
+            devilsDevastationMarkLightningDamage = DEVILS_DEVASTATION_MARK_LIGHTNING_DAMAGE.get();
+            devilsDevastationProjectileEffectDuration = DEVILS_DEVASTATION_PROJECTILE_EFFECT_DURATION.get();
+            devilsDevastationStuckProjectileEffectDuration = DEVILS_DEVASTATION_STUCK_PROJECTILE_EFFECT_DURATION.get();
+            devilsDevastationKillModeProjectileEffectDuration = DEVILS_DEVASTATION_KILL_MODE_PROJECTILE_EFFECT_DURATION.get();
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.effect;
 
+import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import net.minecraft.core.Holder;
@@ -47,7 +48,7 @@ public class EffectLogicHandler {
                             new ClientboundRemoveMobEffectPacket(entity.getId(), currentEffect));
                 }
                 if(currentEffect == ModEffects.KILL_MODE) {
-                    MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, DevilsDevastation.KIll_MODE_COOLDOWN_TIME, 0);
+                    MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, Config.devilsDevastationKillModeCooldownTime, 0);
                     entity.addEffect(effectInstance);
                 }
             }
@@ -69,7 +70,7 @@ public class EffectLogicHandler {
                             new ClientboundRemoveMobEffectPacket(entity.getId(), currentEffect));
                 }
                 if(currentEffect == ModEffects.KILL_MODE) {
-                    MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, DevilsDevastation.KIll_MODE_COOLDOWN_TIME, 0);
+                    MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, Config.devilsDevastationKillModeCooldownTime, 0);
                     entity.addEffect(effectInstance);
                 }
             }

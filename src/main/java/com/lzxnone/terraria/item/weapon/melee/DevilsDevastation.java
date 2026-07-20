@@ -28,6 +28,7 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.nbt.CompoundTag;
@@ -74,6 +75,14 @@ public class DevilsDevastation extends SwordItem {
         ).fireResistant().rarity(Rarity.EPIC));
     }
 
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.translatable("tooltip.lzxnoneterraria.devils_devastation.0").withStyle(style -> style.withColor(0xAE3288)));
+        tooltipComponents.add(Component.translatable("tooltip.lzxnoneterraria.devils_devastation.1").withStyle(style -> style.withColor(0xAE3288)));
+        tooltipComponents.add(Component.translatable("tooltip.lzxnoneterraria.devils_devastation.2").withStyle(style -> style.withColor(0xAE3288)));
+    }
+
     public static final ResourceLocation RES = ResourceLocation.parse("lzxnoneterraria:textures/vfx/normal_trail.png");
     public static final ResourceLocation RES2 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/circular_smear_smokey.png");
     public static final ResourceLocation RES3 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/circular_smear_fire3.png");
@@ -87,31 +96,12 @@ public class DevilsDevastation extends SwordItem {
     public static final float ENERGY_WAVE_LENGTH = 30;
     public static final int ENERGY_WAVE_SEG = 20;
 
-    //杀戮模式
-    public static final int KIll_MODE_TIME = 100;
-    public static final int KIll_MODE_COOLDOWN_TIME = 100;
-
     //右键射出的弹射
     public static final int PROJECTILE_TRAIL_LENGTH = 10;
     public static final float PROJECTILE_TRAIL_RADIUS = 0.25F;
-    public static final float PROJECTILE_DAMAGE = 19.9f;
-    public static final int PROJECTILE_LIFETIME = 40;
-    public static final double PROJECTILE_SPEED = 3.0;
 
     //弹出的弹射
-    public static final float STUCK_PROJECTILE_DAMAGE = 30.0f;
-    public static final int STUCK_PROJECTILE_LIFETIME = 40;
-    public static final double STUCK_PROJECTILE_SPEED = 3.0;
     public static final double STUCK_PROJECTILE_BOUNDING_SIZE = 3.0;
-
-    //杀戮模式弹射
-    public static final int KILL_MODE_PROJECTILE_CYCLE = 10;
-    public static final float KILL_MODE_PROJECTILE_DAMAGE = 200.0f;
-    public static final int KILL_MODE_PROJECTILE_ROTATE = 30;
-
-    //附着在生物身上的弹射
-    public static final int STUCK_LIFETIME = 200;
-    public static final int MAX_STUCK_COUNT = 5;
 
     //右键弹射击中生成的闪电
     public static final float PROJECTILE_HIT_LIGHTNING_RADIUS = 1.0F;
@@ -124,7 +114,6 @@ public class DevilsDevastation extends SwordItem {
     public static final float MARK_LENGTH = 2.0f;
 
     //标记触发后的闪电
-    public static final int MARK_LIGHTNING_LIFETIME = 10;
     public static final float MARK_LIGHTNING_LENGTH = 32F;
     public static final float MARK_LIGHTNING_RADIUS = 3.0F;
     public static final int MARK_LIGHTNING_DEPTH = 3;
@@ -179,12 +168,18 @@ public class DevilsDevastation extends SwordItem {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.attack(player, target, PROJECTILE_DAMAGE)) {
+                if(DamageUtil.attack(player, target, (float) Config.devilsDevastationProjectileDamage)) {
+                    if(target instanceof LivingEntity le) {
+                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.DEMONIC_FLAMES, Config.devilsDevastationProjectileEffectDuration, 0);
+                        le.addEffect(effectInstance);
+                    }
+                    target.invulnerableTime = 5;
+
                     StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), projectile.level());
                     summon.setOwner(target);
                     Vec3 pos = projectile.position();
                     summon.setPos(pos);
-                    summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.DEVILS_DEVASTATION_PROJECTILE);
+                    summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.DEVILS_DEVASTATION_STUCK_PROJECTILE);
                     summon.getEntityData().set(StaticSummon.RENDER_MODE, "item");
                     summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.DEVILS_DEVASTATION.get()));
                     summon.getEntityData().set(StaticSummon.SCALE_X, 4.0f);
@@ -192,7 +187,7 @@ public class DevilsDevastation extends SwordItem {
                     summon.getEntityData().set(StaticSummon.SCALE_Z, 4.0f);
                     summon.getEntityData().set(StaticSummon.RXP, -90);
                     summon.getEntityData().set(StaticSummon.RZP, -135);
-                    summon.getEntityData().set(StaticSummon.LIFETIME, STUCK_LIFETIME);
+                    summon.getEntityData().set(StaticSummon.LIFETIME, Config.devilsDevastationStuckLifetime);
                     summon.getEntityData().set(StaticSummon.GLOW, true);
 
                     CompoundTag customData = new CompoundTag();
@@ -211,6 +206,21 @@ public class DevilsDevastation extends SwordItem {
 
                     summon.level().addFreshEntity(summon);
 
+                    if(!target.isAlive()) {
+                        summonStuckProjectile(summon);
+                    }
+                    if(target.isAlive()) {
+                        List<UUID> uuids = new ArrayList<>(target.getData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE));
+                        if (uuids.size() >= Config.devilsDevastationMaxStuckCount) {
+                            Entity stuckProjectile = ((ServerLevel) projectile.level()).getEntity(uuids.getFirst());
+                            if (stuckProjectile != null && stuckProjectile.isAlive() && stuckProjectile instanceof StaticSummon stuckStaticProjectile)
+                                summonStuckProjectile(stuckStaticProjectile);
+                            uuids.removeFirst();
+                        }
+                        uuids.add(summon.getUUID());
+                        target.setData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE, uuids);
+                    }
+
                     StaticSummon lightning = new StaticSummon(ModEntities.STATIC_SUMMON.get(), projectile.level());
                     lightning.setOwner(owner);
                     lightning.setPos(pos);
@@ -225,16 +235,6 @@ public class DevilsDevastation extends SwordItem {
                     lightning.getEntityData().set(StaticSummon.CUSTOM_DATA, lightningData);
                     lightning.getEntityData().set(StaticSummon.LIFETIME, 10);
                     lightning.level().addFreshEntity(lightning);
-
-                    target.invulnerableTime = 5;
-                    List<UUID> uuids = new ArrayList<>(target.getData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE));
-                    if(uuids.size() >= MAX_STUCK_COUNT) {
-                        Entity stuckProjectile = ((ServerLevel) projectile.level()).getEntity(uuids.getFirst());
-                        if(stuckProjectile != null && stuckProjectile.isAlive() && stuckProjectile instanceof StaticSummon stuckStaticProjectile) summonStuckProjectile(stuckStaticProjectile);
-                        uuids.removeFirst();
-                    }
-                    uuids.add(summon.getUUID());
-                    target.setData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE, uuids);
 
                     for(int i = 0;i < 50;i++) {
                         Vec3 dir = MathUtil.toVec3(projectile.getEntityData().get(StaticProjectile.DIRECTION));
@@ -400,7 +400,11 @@ public class DevilsDevastation extends SwordItem {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.attack(player, target, STUCK_PROJECTILE_DAMAGE)) {
+                if(DamageUtil.attack(player, target, (float) Config.devilsDevastationStuckProjectileDamage)) {
+                    if(target instanceof LivingEntity le) {
+                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.DEMONIC_FLAMES, Config.devilsDevastationStuckProjectileEffectDuration, 0);
+                        le.addEffect(effectInstance);
+                    }
                     target.invulnerableTime = 5;
                     onDied(projectile);
                 }
@@ -628,7 +632,14 @@ public class DevilsDevastation extends SwordItem {
         public void onHitEntity(StaticProjectile projectile, EntityHitResult result) {
             if(projectile.level() instanceof ServerLevel serverLevel) {
                 Entity target = result.getEntity();
-                if(projectile.getOwner() instanceof Player player && DamageUtil.attack(player, target, KILL_MODE_PROJECTILE_DAMAGE)) {
+                List<UUID> tempStuckList = target.getData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE);
+                boolean valid = !tempStuckList.isEmpty();
+                if(projectile.getOwner() instanceof Player player && DamageUtil.attack(player, target, (float) Config.devilsDevastationKillModeProjectileDamage)) {
+                    if(target instanceof LivingEntity le) {
+                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.DEMONIC_FLAMES, Config.devilsDevastationKillModeProjectileEffectDuration, 1);
+                        le.addEffect(effectInstance);
+                    }
+
                     ItemStack stack = player.getMainHandItem();
                     if(stack.is(ModItems.DEVILS_DEVASTATION.get())) {
                         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
@@ -648,7 +659,7 @@ public class DevilsDevastation extends SwordItem {
                     summon.setPos(pos);
                     summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.DEVILS_DEVASTATION_MARK);
                     summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-                    summon.getEntityData().set(StaticSummon.LIFETIME, KIll_MODE_TIME);
+                    summon.getEntityData().set(StaticSummon.LIFETIME, Config.devilsDevastationKillModeTime);
                     summon.getEntityData().set(StaticSummon.GLOW, true);
 
                     CompoundTag summonCustomData = new CompoundTag();
@@ -666,9 +677,8 @@ public class DevilsDevastation extends SwordItem {
                         customData.putBoolean("hit", true);
                         projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
                     }
-
                     List<UUID> stuckList = new ArrayList<>(target.getData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE));
-                    if(!customData.contains("validHit") && !stuckList.isEmpty()) {
+                    if(!customData.contains("validHit") && valid) {
                         customData.putBoolean("validHit", true);
                         while(!stuckList.isEmpty()) {
                             UUID uuid = stuckList.getLast();
@@ -678,8 +688,22 @@ public class DevilsDevastation extends SwordItem {
                         }
                         target.setData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE, stuckList);
                     }
-
                     projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
+
+                    StaticSummon lightning = new StaticSummon(ModEntities.STATIC_SUMMON.get(), projectile.level());
+                    lightning.setOwner(player);
+                    lightning.setPos(target.getBoundingBox().getCenter());
+                    lightning.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.DEVILS_DEVASTATION_LIGHTNING);
+                    lightning.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
+                    Vector3f dirVec = target.getBoundingBox().getCenter().subtract(projectile.position()).normalize().toVector3f();
+                    CompoundTag lightningData = new CompoundTag();
+                    lightningData.putDouble("dirX", dirVec.x());
+                    lightningData.putDouble("dirY", dirVec.y());
+                    lightningData.putDouble("dirZ", dirVec.z());
+                    lightningData.putLong("seed", projectile.getRandom().nextLong());
+                    lightning.getEntityData().set(StaticSummon.CUSTOM_DATA, lightningData);
+                    lightning.getEntityData().set(StaticSummon.LIFETIME, 10);
+                    lightning.level().addFreshEntity(lightning);
                 }
             }
         }
@@ -690,13 +714,13 @@ public class DevilsDevastation extends SwordItem {
                 CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
                 if(projectile.getOwner() instanceof LivingEntity livingEntity) {
                     if(customData.contains("validHit")) {
-                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE, KIll_MODE_TIME, 0);
+                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE, Config.devilsDevastationKillModeTime, 0);
                         livingEntity.addEffect(effectInstance);
 
                         MobEffectInstance effectInstance2 = livingEntity.getEffect(ModEffects.KILL_MODE_COOLDOWN);
                         if(effectInstance2 != null) livingEntity.removeEffect(effectInstance2.getEffect());
                     }else {
-                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, KIll_MODE_COOLDOWN_TIME, 0);
+                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, Config.devilsDevastationKillModeCooldownTime, 0);
                         livingEntity.addEffect(effectInstance);
 
                         MobEffectInstance effectInstance2 = livingEntity.getEffect(ModEffects.KILL_MODE);
@@ -776,7 +800,7 @@ public class DevilsDevastation extends SwordItem {
             Vec3 end2 = start2.add(spreadDir(dir, rand2, 0.4F).scale(PROJECTILE_HIT_LIGHTNING_LENGTH * 0.5F));
             List<Vec3> branch2 = generateBranch(start2, end2, rand2, PROJECTILE_HIT_LIGHTNING_DEPTH, PROJECTILE_HIT_LIGHTNING_JITTER);
 
-            for(List<Vec3> branch : new List[]{branch0, branch1, branch2}) {
+            for(List<Vec3> branch : List.of(branch0, branch1, branch2)) {
                 renderTube(buffer, matrix, entWorldPos, branch, radius * 1.0F, alpha, 1,1,1, true);
                 renderTube(buffer, matrix, entWorldPos, branch, radius * 1.25F, alpha * 0.5F, 0.7F,0.15F,0.55F, true);
                 renderTube(buffer, matrix, entWorldPos, branch, radius * 0.75F, alpha * 0.2F, 0.5F,0.1F,0.4F, true);
@@ -863,14 +887,14 @@ public class DevilsDevastation extends SwordItem {
                         UUID uuid = customData.getUUID("uuid");
                         Entity entity = serverLevel.getEntity(uuid);
                         if(entity instanceof Player player) {
-                            DamageUtil.attack(player, owner, 10f);
+                            DamageUtil.attack(player, owner, (float) Config.devilsDevastationMarkLightningDamage);
                             StaticSummon newSummon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), serverLevel);
                             newSummon.setOwner(player);
                             Vec3 pos = owner.getBoundingBox().getCenter();
                             newSummon.setPos(pos);
                             newSummon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.DEVILS_DEVASTATION_MARK_LIGHTNING);
                             newSummon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-                            newSummon.getEntityData().set(StaticSummon.LIFETIME, MARK_LIGHTNING_LIFETIME);
+                            newSummon.getEntityData().set(StaticSummon.LIFETIME, 10);
                             newSummon.getEntityData().set(StaticSummon.GLOW, true);
 
                             CompoundTag newCustomData = new CompoundTag();
@@ -975,9 +999,9 @@ public class DevilsDevastation extends SwordItem {
             projectile.getEntityData().set(StaticProjectile.RIGHT, dirs[2]);
             projectile.getEntityData().set(StaticProjectile.ITEM, new ItemStack(ModItems.DEVILS_DEVASTATION.get()));
             projectile.getEntityData().set(StaticProjectile.RZP, rotate);
-            projectile.getEntityData().set(StaticProjectile.LIFETIME, STUCK_PROJECTILE_LIFETIME);
+            projectile.getEntityData().set(StaticProjectile.LIFETIME, Config.devilsDevastationStuckProjectileLifetime);
             projectile.getEntityData().set(StaticProjectile.GLOW, true);
-            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", STUCK_PROJECTILE_SPEED));
+            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", Config.devilsDevastationStuckProjectileSpeed));
             projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
 
             serverLevel.addFreshEntity(projectile);
@@ -990,12 +1014,12 @@ public class DevilsDevastation extends SwordItem {
         ItemStack itemStack = player.getMainHandItem();
         if(!itemStack.is(ModItems.DEVILS_DEVASTATION.get())) return;
         if(player.getCooldowns().isOnCooldown(itemStack.getItem())) return;
-        player.getCooldowns().addCooldown(itemStack.getItem(), 20);
+        player.getCooldowns().addCooldown(itemStack.getItem(), Config.devilsDevastationKillModeProjectileCycle + 10);
         if(!player.level().isClientSide()) {
             float radius = 4.0f;
-            float w = (float) Math.PI * 1.5f / KILL_MODE_PROJECTILE_CYCLE;
+            float w = (float) Math.PI * 1.5f / Config.devilsDevastationKillModeProjectileCycle;
             if(player.getRandom().nextInt(2) == 0) w = -w;
-            int rotate = (int) ((Math.random() * 2 - 1) * KILL_MODE_PROJECTILE_ROTATE);
+            int rotate = (int) ((Math.random() * 2 - 1) * Config.devilsDevastationKillModeProjectileRotate);
             Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
             dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], rotate);
 
@@ -1010,7 +1034,7 @@ public class DevilsDevastation extends SwordItem {
             projectile.getEntityData().set(StaticProjectile.UP, dirs[1]);
             projectile.getEntityData().set(StaticProjectile.RIGHT, dirs[2]);
             projectile.getEntityData().set(StaticProjectile.ITEM, new ItemStack(ModItems.DEVILS_DEVASTATION.get()));
-            projectile.getEntityData().set(StaticProjectile.LIFETIME, KILL_MODE_PROJECTILE_CYCLE);
+            projectile.getEntityData().set(StaticProjectile.LIFETIME, Config.devilsDevastationKillModeProjectileCycle);
             projectile.getEntityData().set(StaticProjectile.GLOW, true);
             projectile.getEntityData().set(StaticProjectile.RZP, rotate);
             projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, w > 0 ? String.format("%.3f*cos(%.3f*t - 0.25 * 3.1415926)", radius, w) : String.format("%.3f*cos(%.3f*t - 0.75 * 3.1415926)", radius, w));
@@ -1338,9 +1362,9 @@ public class DevilsDevastation extends SwordItem {
             projectile.getEntityData().set(StaticProjectile.SCALE_Z, 4.0f);
             projectile.getEntityData().set(StaticProjectile.RXP, -90);
             projectile.getEntityData().set(StaticProjectile.RZP, -135);
-            projectile.getEntityData().set(StaticProjectile.LIFETIME, PROJECTILE_LIFETIME);
+            projectile.getEntityData().set(StaticProjectile.LIFETIME, Config.devilsDevastationProjectileLifetime);
             projectile.getEntityData().set(StaticProjectile.GLOW, true);
-            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", PROJECTILE_SPEED));
+            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", Config.devilsDevastationProjectileSpeed));
             projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
             level.addFreshEntity(projectile);
         }

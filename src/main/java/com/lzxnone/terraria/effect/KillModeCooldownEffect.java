@@ -5,6 +5,6 @@ import net.minecraft.world.effect.MobEffectCategory;
 
 public class KillModeCooldownEffect extends MobEffect {
     public KillModeCooldownEffect() {
-        super(MobEffectCategory.NEUTRAL, 0xFF00FF);
+        super(MobEffectCategory.NEUTRAL, 0xCC2DC7);
     }
 }
