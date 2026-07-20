@@ -12,8 +12,8 @@ import org.lwjgl.glfw.GLFW;
 public class ModKeyBindings {
     public static final KeyMapping KILL_MODE = new KeyMapping(
         "key.lzxnoneterraria.kill_mode",
-        InputConstants.Type.MOUSE,
-        GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
+        InputConstants.Type.KEYSYM,
+        GLFW.GLFW_KEY_C,
         "key.categories.lzxnoneterraria"
     );
 
