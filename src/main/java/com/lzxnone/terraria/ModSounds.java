@@ -75,4 +75,12 @@ public class ModSounds {
             SOUND_EVENTS.register("demon_sword_impact",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "demon_sword_impact")));
+    public static final Supplier<SoundEvent> DEMON_SWORD_INSANE_IMPACT =
+            SOUND_EVENTS.register("demon_sword_insane_impact",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "demon_sword_insane_impact")));
+    public static final Supplier<SoundEvent> DEMON_SWORD_KILL_MODE =
+            SOUND_EVENTS.register("demon_sword_kill_mode",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "demon_sword_kill_mode")));
 }

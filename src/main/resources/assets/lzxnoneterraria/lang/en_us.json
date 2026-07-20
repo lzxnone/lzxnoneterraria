@@ -36,6 +36,8 @@
 
   "effect.lzxnoneterraria.confused": "Confused",
   "effect.lzxnoneterraria.blood_butchered": "Blood Butchered",
+  "effect.lzxnoneterraria.kill_mode": "Kill Mode",
+  "effect.lzxnoneterraria.kill_mode_cooldown": "Kill Mode Cooldown",
 
   "key.lzxnoneterraria.kill_mode": "Kill Mode",
   "key.categories.lzxnoneterraria": "lzxnoneterraria",

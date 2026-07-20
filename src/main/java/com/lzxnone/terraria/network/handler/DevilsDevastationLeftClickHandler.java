@@ -19,7 +19,7 @@ public class DevilsDevastationLeftClickHandler {
             ItemStack stack = player.getMainHandItem();
             if(stack.is(ModItems.DEVILS_DEVASTATION.get())) {
                 MobEffectInstance instance = player.getEffect(ModEffects.KILL_MODE);
-                if(instance == null) {
+                if(instance != null) {
                     DevilsDevastation.summonKilModeProjectile(player);
                 }
             }

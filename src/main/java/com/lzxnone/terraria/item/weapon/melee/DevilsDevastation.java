@@ -7,6 +7,7 @@ import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.ModRenderTypes;
+import com.lzxnone.terraria.entity.TintedVertexConsumer;
 import com.lzxnone.terraria.entity.projectile.IStaticProjectileBehavior;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
@@ -23,10 +24,12 @@ import com.lzxnone.terraria.particle.ModParticles;
 import com.lzxnone.terraria.utils.*;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.nbt.CompoundTag;
@@ -36,10 +39,12 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -52,11 +57,11 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
+import net.minecraft.client.Camera;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+
+import java.util.*;
 
 
 public class DevilsDevastation extends SwordItem {
@@ -76,6 +81,7 @@ public class DevilsDevastation extends SwordItem {
     public static final ResourceLocation RES2 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/circular_smear_smokey.png");
     public static final ResourceLocation RES3 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/circular_smear_fire3.png");
     public static final ResourceLocation RES4 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/sylvestaff_streak.png");
+    public static final ResourceLocation RES5 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/circular_smear_smokey_white.png");
 
 
     public static final float PROJECTILE_MOVING_RADIUS = 0.25F;
@@ -85,6 +91,9 @@ public class DevilsDevastation extends SwordItem {
     public static final int PROJECTILE_HIT_DEPTH = 1;
     public static final float PROJECTILE_HIT_JITTER = 0.45F;
     public static final int PROJECTILE_HIT_RING = 8;
+
+    public static final float ENERGY_WAVE_LENGTH = 30;
+    public static final int ENERGY_WAVE_SEG = 20;
 
     //鍙抽敭鐢熸垚鐨勫脊灏?
     public static final IStaticProjectileBehavior PROJECTILE_BEHAVIOR = new IStaticProjectileBehavior() {
@@ -393,14 +402,317 @@ public class DevilsDevastation extends SwordItem {
 
     //鏉€鎴ā寮忕敓鎴愮殑寮瑰皠
     public static final IStaticProjectileBehavior PROJECTILE_BEHAVIOR3 = new IStaticProjectileBehavior() {
+        @Override
+        public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+            if(!(entity instanceof StaticProjectile projectile)) return;
+            ItemStack itemStack = projectile.getEntityData().get(StaticProjectile.ITEM);
+            if(itemStack == ItemStack.EMPTY) return;
+            CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
+            if(!customData.contains("w")) return;
+            float w = customData.getFloat("w");
+            float t = projectile.getEntityData().get(StaticProjectile.AGE) + partialTick;
 
+            Vec3 dir = MathUtil.toVec3(projectile.getEntityData().get(StaticProjectile.DIRECTION)).normalize();
+            Vec3 up = MathUtil.toVec3(projectile.getEntityData().get(StaticProjectile.UP)).normalize();
+
+            Quaternionf rotationDir = new Quaternionf()
+                .fromAxisAngleRad(dir.toVector3f(), (float) Math.toRadians(projectile.getEntityData().get(StaticProjectile.RZP)));
+            Quaternionf rotationUp;
+            Quaternionf rotationUp2;
+            if(w > 0) {
+                rotationUp = new Quaternionf().fromAxisAngleRad(up.toVector3f(), (float) Math.PI - w * t);
+                rotationUp2 = new Quaternionf().fromAxisAngleRad(up.toVector3f(), (float) Math.PI * 0.75f - w * t);
+            }else {
+                rotationUp = new Quaternionf().fromAxisAngleRad(up.toVector3f(), (float) -Math.PI - w * t);
+                rotationUp2 = new Quaternionf().fromAxisAngleRad(up.toVector3f(), (float) -Math.PI * 1.25f - w * t);
+            }
+
+            float[] xyRot = MathUtil.computeXYRot(dir.toVector3f(), up.toVector3f());
+
+            poseStack.pushPose();
+
+            //旋转
+            poseStack.mulPose(rotationUp);
+            poseStack.mulPose(rotationDir);
+            poseStack.mulPose(Axis.YP.rotationDegrees(-xyRot[1]));
+            poseStack.mulPose(Axis.XP.rotationDegrees(xyRot[0]));
+            poseStack.mulPose(Axis.XP.rotationDegrees(-90));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(-135));
+
+            //缩放
+            poseStack.scale(4.0f, 4.0f, 4.0f);
+
+            Minecraft.getInstance().getItemRenderer().renderStatic(
+                    itemStack,
+                    ItemDisplayContext.NONE,
+                    LightTexture.FULL_BRIGHT,
+                    OverlayTexture.NO_OVERLAY,
+                    poseStack,
+                    bufferSource,
+                    entity.level(),
+                    0
+            );
+            poseStack.popPose();
+
+            poseStack.pushPose();
+
+            Vector3f tipDir = dir.toVector3f().rotate(rotationUp);
+            poseStack.translate(-tipDir.x * 2, -tipDir.y * 2, -tipDir.z * 2);
+            poseStack.mulPose(rotationUp2);
+            poseStack.mulPose(rotationDir);
+            poseStack.mulPose(Axis.YP.rotationDegrees(-xyRot[1]));
+            poseStack.mulPose(Axis.XP.rotationDegrees(xyRot[0]));
+            poseStack.mulPose(Axis.XP.rotationDegrees(-90));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(-135));
+            renderEnergyWave(bufferSource, poseStack, projectile);
+
+            poseStack.popPose();
+
+            float radio = t / projectile.getEntityData().get(StaticProjectile.LIFETIME);
+            float alpha = 1.0f - radio;
+
+            if(alpha > 0.001f) {
+                poseStack.pushPose();
+
+                poseStack.mulPose(rotationUp);
+                poseStack.mulPose(rotationDir);
+                poseStack.mulPose(Axis.YP.rotationDegrees(-xyRot[1]));
+                poseStack.mulPose(Axis.XP.rotationDegrees(xyRot[0]));
+                poseStack.mulPose(Axis.XP.rotationDegrees(-90));
+                if(w > 0) poseStack.mulPose(Axis.ZP.rotationDegrees(-105));
+                else poseStack.mulPose(Axis.ZP.rotationDegrees(75));
+
+                float halfWidth = 78;
+                float halfHeight = 78;
+                VertexConsumer consumer = bufferSource.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES5));
+
+                Vector3f[] sizes = new Vector3f[]{
+                    new Vector3f(0.2f, 0.2f, 0.2f),
+                    new Vector3f(0.3f, 0.3f, 0.3f),
+                    new Vector3f(0.4f, 0.4f, 0.4f),
+                };
+                Vector3f[] colors = new Vector3f[]{
+                    new Vector3f(0.725f, 0.345f, 1.0f),
+                    new Vector3f(0.847f, 0.247f, 0.745f),
+                    new Vector3f(0.882f, 0.345f, 0.247f),
+                };
+
+                for(int i = 0;i < 3;i++) {
+                    poseStack.pushPose();
+                    poseStack.scale(sizes[i].x, sizes[i].y, sizes[i].z);
+
+                    for(int j = 0;j < 3;j++) {
+                        consumer.addVertex(poseStack.last().pose(), -halfWidth, halfHeight, 0.01f * i)
+                                .setColor(colors[i].x, colors[i].y, colors[i].z, alpha).setUv(0.0f, 0.0f)
+                                .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
+                        consumer.addVertex(poseStack.last().pose(), -halfWidth, -halfHeight, 0.01f * i)
+                                .setColor(colors[i].x, colors[i].y, colors[i].z, alpha).setUv(0.0f, 1.0f)
+                                .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
+                        consumer.addVertex(poseStack.last().pose(), halfWidth, -halfHeight, 0.01f * i)
+                                .setColor(colors[i].x, colors[i].y, colors[i].z, alpha).setUv(1.0f, 1.0f)
+                                .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
+                        consumer.addVertex(poseStack.last().pose(), halfWidth, halfHeight, 0.01f * i)
+                                .setColor(colors[i].x, colors[i].y, colors[i].z, alpha).setUv(1.0f, 0.0f)
+                                .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
+                    }
+
+                    poseStack.popPose();
+                }
+
+                poseStack.popPose();
+
+            }
+
+        }
+
+        @Override
+        public void onMoving(StaticProjectile projectile) {
+            CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
+            if(!customData.contains("w")) return;
+            float w = customData.getFloat("w");
+            int t = projectile.getEntityData().get(StaticProjectile.AGE);
+
+            Vec3 dir = MathUtil.toVec3(projectile.getEntityData().get(StaticProjectile.DIRECTION)).normalize();
+            Vec3 up = MathUtil.toVec3(projectile.getEntityData().get(StaticProjectile.UP)).normalize();
+
+            Quaternionf rotationUp;
+            if(w > 0) {
+                rotationUp = new Quaternionf().fromAxisAngleRad(up.toVector3f(), (float) Math.PI - w * t);
+            }else {
+                rotationUp = new Quaternionf().fromAxisAngleRad(up.toVector3f(), (float) -Math.PI - w * t);
+            }
+            Vector3f tipDir = dir.toVector3f().rotate(rotationUp);
+            Vec3 tipDir2 = MathUtil.toVec3(tipDir).normalize();
+            Vector3f[] currentDirs = MathUtil.computeCoordinateSystem(tipDir, 0);
+
+            //位置锁定
+            if(projectile.getOwner() != null) projectile.getEntityData().set(StaticProjectile.ORIGIN, projectile.getOwner().getBoundingBox().getCenter().toVector3f());
+
+
+            //实体击中判断
+            Vec3 start = projectile.position();
+            Vec3 end = start.add(tipDir2.scale(ENERGY_WAVE_LENGTH));
+            double r = 4.0f;
+            projectile.setBoundingBox(new AABB(
+                Math.min(start.x, end.x) - r, Math.min(start.y, end.y) - r, Math.min(start.z, end.z) - r,
+                Math.max(start.x, end.x) + r, Math.max(start.y, end.y) + r, Math.max(start.z, end.z) + r
+            ));
+
+            if(!projectile.level().isClientSide()) {
+                List<Entity> targets = projectile.level().getEntitiesOfClass(
+                        Entity.class,
+                        projectile.getBoundingBox(),
+                        FilterUtil.createTargetFilter(projectile, projectile.getOwner())
+                );
+                for(Entity target : targets) {
+                    this.onHitEntity(projectile, new EntityHitResult(target, target.position()));
+                }
+            }
+
+            //粒子
+            for(int i = 0;i < 50;i++) {
+                Vector3f speed = new Vector3f(
+                        (float) (Math.random() * currentDirs[0].x),
+                        (float) (Math.random() * currentDirs[0].y),
+                        (float) (Math.random() * currentDirs[0].z)
+                ).mul(0.2f);
+                IronSparkParticleOptions ironSparkParticleOptions;
+                if (projectile.getRandom().nextInt(2) == 0) {
+                    ironSparkParticleOptions = new IronSparkParticleOptions(
+                            1.0f, 20, 16.0f, new Vector3f(0.729f, 0.396f, 0.345f), speed, MathUtil.computeCoordinateSystem(speed, 0)[2]
+                    );
+                } else {
+                    ironSparkParticleOptions = new IronSparkParticleOptions(
+                            1.0f, 20, 16.0f, new Vector3f(0.8f, 0.176f, 0.78f), speed, MathUtil.computeCoordinateSystem(speed, 0)[2]
+                    );
+                }
+                ParticleUtil.addParticle(
+                        projectile.level(), ironSparkParticleOptions,
+                        projectile.position().add(tipDir2.scale(Math.random() * ENERGY_WAVE_LENGTH)), 0,
+                        new Vec3(0, 0, 0), 0.0
+                );
+            }
+            for(int i = 0;i < 3;i++) {
+                CircleParticleOptions circleParticleOptions;
+                if(projectile.getRandom().nextInt(2) == 0) {
+                    circleParticleOptions = new CircleParticleOptions(0.15f, 20, new Vector3f(0.729f, 0.396f, 0.345f));
+                }else {
+                    circleParticleOptions = new CircleParticleOptions(0.15f, 20, new Vector3f(0.8f, 0.176f, 0.78f));
+                }
+
+                ParticleUtil.addParticle(
+                        projectile.level(), circleParticleOptions,
+                        projectile.position().add(tipDir2.scale(ENERGY_WAVE_LENGTH)), 1.0,
+                        new Vec3(0, 0, 0), 0.0
+                );
+                ParticleUtil.addParticle(
+                        projectile.level(), ModParticles.DEVILS_DEVASTATION_RUNE_PARTICLE.get(),
+                        projectile.position().add(tipDir2.scale(ENERGY_WAVE_LENGTH)), 1.0,
+                        new Vec3(0, 0, 0), 0.2
+                );
+            }
+
+        }
+
+        @Override
+        public void onHitEntity(StaticProjectile projectile, EntityHitResult result) {
+            if(projectile.level() instanceof ServerLevel serverLevel) {
+                Entity target = result.getEntity();
+                if(projectile.getOwner() instanceof Player player && DamageUtil.attack(player, target, 1.0f)) {
+                    ItemStack stack = player.getMainHandItem();
+                    if(stack.is(ModItems.DEVILS_DEVASTATION.get())) {
+                        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                            .copyTag();
+                        if(tag != null && tag.hasUUID("mark")) {
+                            UUID uuid = tag.getUUID("mark");
+                            Entity entityMark = serverLevel.getEntity(uuid);
+                            if(entityMark instanceof StaticSummon summon && summon.isAlive()) {
+                                summon.discard();
+                            }
+                        }
+                    }
+
+                    StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), projectile.level());
+                    summon.setOwner(target);
+                    Vec3 pos = target.getBoundingBox().getCenter();
+                    summon.setPos(pos);
+                    summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.DEVILS_DEVASTATION_MARK);
+                    summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
+                    summon.getEntityData().set(StaticSummon.LIFETIME, 100);
+                    summon.getEntityData().set(StaticSummon.GLOW, true);
+
+                    CompoundTag summonCustomData = new CompoundTag();
+                    summonCustomData.putUUID("uuid", player.getUUID());
+                    summon.getEntityData().set(StaticSummon.CUSTOM_DATA, summonCustomData);
+
+                    serverLevel.addFreshEntity(summon);
+
+                    CustomData.update(DataComponents.CUSTOM_DATA, stack,
+                            tag -> tag.putUUID("uuid", summon.getUUID()));
+
+                    CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
+                    if(customData.contains("hit") && !customData.getBoolean("hit")) {
+                        SoundUtil.playServerSound(projectile.level(), ModSounds.DEMON_SWORD_INSANE_IMPACT.get(), target.position(), 16.0f, 1.0f);
+                        customData.putBoolean("hit", true);
+                        projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
+                    }
+
+                    List<UUID> stuckList = target.getData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE);
+                    if(!customData.contains("validHit") && !stuckList.isEmpty()) {
+                        customData.putBoolean("validHit", true);
+                        while(!stuckList.isEmpty()) {
+                            UUID uuid = stuckList.getLast();
+                            stuckList.removeLast();
+                            Entity stuck = serverLevel.getEntity(uuid);
+                            if(stuck instanceof StaticSummon stuckProjectile) summonStuckProjectile(stuckProjectile);
+                        }
+                    }
+
+                    projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
+                }
+            }
+        }
+
+        @Override
+        public void onDied(StaticProjectile projectile) {
+            if(!projectile.level().isClientSide()) {
+                CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
+                if(projectile.getOwner() instanceof LivingEntity livingEntity) {
+                    if(customData.contains("validHit")) {
+                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE, 100, 0);
+                        livingEntity.addEffect(effectInstance);
+
+                        MobEffectInstance effectInstance2 = livingEntity.getEffect(ModEffects.KILL_MODE_COOLDOWN);
+                        if(effectInstance2 != null) livingEntity.removeEffect(effectInstance2.getEffect());
+                    }else {
+                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, 100, 0);
+                        livingEntity.addEffect(effectInstance);
+
+                        MobEffectInstance effectInstance2 = livingEntity.getEffect(ModEffects.KILL_MODE);
+                        if(effectInstance2 != null) livingEntity.removeEffect(effectInstance2.getEffect());
+                    }
+                }
+                projectile.discard();
+            }
+        }
+
+        @Override
+        public void onHitBlock(StaticProjectile projectile, BlockHitResult result) {}
     };
 
     public static void summonKilModeProjectile(Player player) {
+        ItemStack itemStack = player.getMainHandItem();
+        if(!itemStack.is(ModItems.DEVILS_DEVASTATION.get())) return;
+        if(player.getCooldowns().isOnCooldown(itemStack.getItem())) return;
+        player.getCooldowns().addCooldown(itemStack.getItem(), 20);
         if(!player.level().isClientSide()) {
+            float radius = 4.0f;
+            int t = 10;
+            float w = (float) Math.PI * 1.5f / t;
+            if(player.getRandom().nextInt(2) == 0) w = -w;
+            int rotate = (int) ((Math.random() * 2 - 1) * 30);
             Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
-            float radius = 32;
-            float w = (float) Math.PI * 1.5f / 10f;
+            dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], rotate);
 
             StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), player.level());
             projectile.setOwner(player);
@@ -413,15 +725,53 @@ public class DevilsDevastation extends SwordItem {
             projectile.getEntityData().set(StaticProjectile.UP, dirs[1]);
             projectile.getEntityData().set(StaticProjectile.RIGHT, dirs[2]);
             projectile.getEntityData().set(StaticProjectile.ITEM, new ItemStack(ModItems.DEVILS_DEVASTATION.get()));
-            projectile.getEntityData().set(StaticProjectile.LIFETIME, 10);
+            projectile.getEntityData().set(StaticProjectile.LIFETIME, t);
             projectile.getEntityData().set(StaticProjectile.GLOW, true);
-            projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3f*t)", radius, w));
-            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*sin(%.3f*t)", radius, w));
-            projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
+            projectile.getEntityData().set(StaticProjectile.RZP, rotate);
+            projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, w > 0 ? String.format("%.3f*cos(%.3f*t - 0.25 * 3.1415926)", radius, w) : String.format("%.3f*cos(%.3f*t - 0.75 * 3.1415926)", radius, w));
+            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, w > 0 ? String.format("%.3f*sin(%.3f*t - 0.25 * 3.1415926)", radius, w) : String.format("%.3f*sin(%.3f*t - 0.75 * 3.1415926)", radius, w));
+
+            CompoundTag customData = new CompoundTag();
+            customData.putFloat("w", w);
+            customData.putBoolean("hit", false);
+            projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
+
             player.level().addFreshEntity(projectile);
         }
+
     }
 
+    public static void enterIntoKillMode(Player player) {
+        if(!player.level().isClientSide()) return;
+        SoundUtil.playClientSound(player, ModSounds.DEMON_SWORD_KILL_MODE.get());
+
+        Vec3 pos = player.getBoundingBox().getCenter();
+        Vector3f color = new Vector3f(0.8f, 0.176f, 0.78f);
+        int count = 24;
+        double radius = 2.0;
+
+        Vec3[] dirs = new Vec3[count];
+        for(int i = 0; i < count; i++) {
+            double angle = 2.0 * Math.PI * i / count;
+            dirs[i] = new Vec3(Math.cos(angle), 0, Math.sin(angle));
+        }
+
+        CircleParticleOptions options = new CircleParticleOptions(0.15f, 30, color);
+        for(int i = 0; i < count; i++) {
+            ParticleUtil.addParticle(
+                player.level(), options,
+                pos.add(dirs[i].scale(radius)), 0,
+                dirs[i].scale(0.2), 0
+            );
+        }
+        for(int i = 0; i < count; i++) {
+            ParticleUtil.addParticle(
+                player.level(), ModParticles.DEVILS_DEVASTATION_RUNE_PARTICLE2.get(),
+                pos.add(dirs[i].scale(radius)), 0,
+                dirs[i].scale(0.6), 0
+            );
+        }
+    }
 
     //渚濋檮鍦ㄥ疄浣撲笂鐨勫墤
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
@@ -501,6 +851,61 @@ public class DevilsDevastation extends SwordItem {
             double m = PROJECTILE_HIT_LENGTH + 8.0;
             Vec3 p = summon.position();
             return new AABB(p.x - m, p.y - m, p.z - m, p.x + m, p.y + m, p.z + m);
+        }
+    };
+
+    public static final IStaticSummonBehavior SUMMON_BEHAVIOR3 = new IStaticSummonBehavior() {
+        @Override
+        public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+            if(!(entity instanceof StaticSummon summon)) return;
+
+            Vec3 entWorldPos = new Vec3(
+                Mth.lerp(partialTick, entity.xo, entity.getX()),
+                Mth.lerp(partialTick, entity.yo, entity.getY()),
+                Mth.lerp(partialTick, entity.zo, entity.getZ())
+            );
+
+            // 公告板：根据相机计算平面基向量
+            Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+            Vec3 toCamera = camera.getPosition().subtract(entWorldPos).normalize();
+            Vec3 up = new Vec3(0, 1, 0);
+            Vec3 right = toCamera.cross(up).normalize();
+            if(right.lengthSqr() < 0.01) right = new Vec3(1, 0, 0);
+            Vec3 realUp = right.cross(toCamera).normalize();
+
+            // 十字交叉的4个方向
+            Vec3[] dirs = {
+                realUp.add(right).normalize(),
+                realUp.subtract(right).normalize(),
+                realUp.scale(-1.0).add(right).normalize(),
+                realUp.scale(-1.0).subtract(right).normalize()
+            };
+
+            float age = summon.getEntityData().get(StaticSummon.AGE) + partialTick;
+            float lifetime = summon.getEntityData().get(StaticSummon.LIFETIME);
+            float progress = age / lifetime;
+            float alpha = (1.0f - progress) * 0.8f;
+            float length = 2.0f + progress * 2.0f;
+            float radius = 0.15f + progress * 0.2f;
+
+            VertexConsumer buffer = bufferSource.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES));
+            Matrix4f matrix = poseStack.last().pose();
+
+            for(Vec3 dir : dirs) {
+                List<Vec3> points = new ArrayList<>();
+                points.add(Vec3.ZERO);
+                points.add(dir.scale(length));
+                renderTube(buffer, matrix, entWorldPos, points, radius, alpha, 0.8f, 0.176f, 0.78f, true);
+            }
+
+            LzxnoneTerraria.LOGGER.info("1");
+        }
+    };
+
+    public static final IStaticSummonBehavior SUMMON_BEHAVIOR4 = new IStaticSummonBehavior() {
+        @Override
+        public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+
         }
     };
 
@@ -591,51 +996,6 @@ public class DevilsDevastation extends SwordItem {
 
     public static void renderTubeSegmented(VertexConsumer buffer, Matrix4f matrix, Vec3 entityWorldPos,
                                             List<Vec3> points, float[] radii,
-                                            Vector3f[] colors, float alpha) {
-        int n = points.size();
-        if(n < 2 || radii.length < n || colors.length < n) return;
-
-        Vector3f[][] oriDirs = new Vector3f[n][3];
-        Vec3[] dir = new Vec3[n], up = new Vec3[n], right = new Vec3[n];
-        for(int i = 0;i < n;i++) {
-            if(i == n - 1) oriDirs[i] = MathUtil.computeCoordinateSystem(points.get(n - 1).subtract(points.get(n - 2)).toVector3f(), 0);
-            else oriDirs[i] = MathUtil.computeCoordinateSystem(points.get(i + 1).subtract(points.get(i)).toVector3f(), 0);
-            dir[i] = MathUtil.toVec3(oriDirs[i][0]);
-            up[i] = MathUtil.toVec3(oriDirs[i][1]);
-            right[i] = MathUtil.toVec3(oriDirs[i][2]);
-        }
-
-        for(int i = 0;i < n - 1;i++) {
-            float r0 = radii[i];
-            float r1 = radii[i + 1];
-            if(r0 <= 0.001F && r1 <= 0.001F) continue;
-            Vec3 N = right[i], B = up[i], N1 = right[i + 1], B1 = up[i + 1];
-            Vec3 P = points.get(i), P1 = points.get(i + 1);
-            Vector3f c0 = colors[i], c1 = colors[i + 1];
-            for(int j = 0;j < PROJECTILE_HIT_RING;j++) {
-                float a0 = (float) (2.0 * Math.PI * j / PROJECTILE_HIT_RING);
-                float a1 = (float) (2.0 * Math.PI * (j + 1) / PROJECTILE_HIT_RING);
-                Vec3 d0 = computeRingDir(N, B, a0);
-                Vec3 d1 = computeRingDir(N1, B1, a0);
-                Vec3 d0b = computeRingDir(N, B, a1);
-                Vec3 d1b = computeRingDir(N1, B1, a1);
-                Vec3 v0 = P.add(d0.scale(r0));
-                Vec3 v1 = P1.add(d1.scale(r1));
-                Vec3 v2 = P1.add(d1b.scale(r1));
-                Vec3 v3 = P.add(d0b.scale(r0));
-                for(int k = 0;k < 3;k++) {
-                    writeVert(buffer, matrix, entityWorldPos, v0, 0.5f, 0.5f, alpha, c0.x(), c0.y(), c0.z());
-                    writeVert(buffer, matrix, entityWorldPos, v1, 0.5f, 0.5f, alpha, c1.x(), c1.y(), c1.z());
-                    writeVert(buffer, matrix, entityWorldPos, v2, 0.5f, 0.5f, alpha, c1.x(), c1.y(), c1.z());
-                    writeVert(buffer, matrix, entityWorldPos, v3, 0.5f, 0.5f, alpha, c0.x(), c0.y(), c0.z());
-                }
-            }
-        }
-    }
-
-
-    public static void renderTubeSegmented(VertexConsumer buffer, Matrix4f matrix, Vec3 entityWorldPos,
-                                            List<Vec3> points, float[] radii,
                                             Vector3f[] colors, float alpha,
                                             float uvOffsetU, float uvOffsetV, float uvScaleU, float uvScaleV) {
         int n = points.size();
@@ -666,8 +1026,9 @@ public class DevilsDevastation extends SwordItem {
                 float a0 = (float) (2.0 * Math.PI * j / PROJECTILE_HIT_RING);
                 float a1 = (float) (2.0 * Math.PI * (j + 1) / PROJECTILE_HIT_RING);
 
-                float v0 = uvOffsetV + uvScaleV * ((float)j / (float)PROJECTILE_HIT_RING);
-                float v1 = uvOffsetV + uvScaleV * ((float)(j + 1) / (float)PROJECTILE_HIT_RING);
+                // 每个面独立映射完整纹理 V=[0,1]
+                float v0 = (float) j / (float)PROJECTILE_HIT_RING + uvOffsetV;
+                float v1 = (float) (j + 1) / (float)PROJECTILE_HIT_RING + uvOffsetV;
 
                 Vec3 d0 = computeRingDir(N, B, a0);
                 Vec3 d1 = computeRingDir(N1, B1, a0);
@@ -677,7 +1038,7 @@ public class DevilsDevastation extends SwordItem {
                 Vec3 v01 = P1.add(d1.scale(r1));
                 Vec3 v02 = P1.add(d1b.scale(r1));
                 Vec3 v03 = P.add(d0b.scale(r0));
-                for(int k = 0;k < 3;k++) {
+                for(int k = 0;k < 10;k++) {
                     writeVert(buffer, matrix, entityWorldPos, v00, u0, v0, alpha, c0.x(), c0.y(), c0.z());
                     writeVert(buffer, matrix, entityWorldPos, v01, u1, v0, alpha, c1.x(), c1.y(), c1.z());
                     writeVert(buffer, matrix, entityWorldPos, v02, u1, v1, alpha, c1.x(), c1.y(), c1.z());
@@ -705,78 +1066,62 @@ public class DevilsDevastation extends SwordItem {
             .setNormal(0.0F, 1.0F, 0.0F);
     }
 
-
-
-    public static void renderTriangularBlade(MultiBufferSource buffer, PoseStack poseStack, Entity entity) {
+    public static void renderEnergyWave(MultiBufferSource buffer, PoseStack poseStack, Entity entity) {
         Matrix4f matrix = poseStack.last().pose();
         int time = entity.tickCount;
 
         poseStack.translate(0, 2.5, 0.6);
 
-        float length = 32;
-        int seg = 16;
-        float speed = 0.25f;
         float baseRadius = 1.0f;
-        float wiggleRadius = 0.15f;
-        float freq = 0.3f;
+        float speed = 0.25f;
 
         Vector3f colorA = new Vector3f(0.729f, 0.396f, 0.345f);
         Vector3f colorB = new Vector3f(0.8f, 0.176f, 0.78f);
 
         List<Vec3> points = new ArrayList<>();
-        float[] radii = new float[seg + 1];
-        Vector3f[] colors = new Vector3f[seg + 1];
+        float[] outRadius = new float[ENERGY_WAVE_SEG + 1];
+        Vector3f[] outColors = new Vector3f[ENERGY_WAVE_SEG + 1];
 
-        for (int i = 0; i <= seg; i++) {
-            float t = (float) i / seg;
-            float y = t * length;
+        for(int i = 0; i <= ENERGY_WAVE_SEG; i++) {
+            float t = (float) i / ENERGY_WAVE_SEG;
+            float y = t * ENERGY_WAVE_LENGTH;
 
-            // X/Z 鍛ㄦ湡鎬ф憜鍔紝浜х敓娴佸姩鎰?
-            float angle = time * freq - t * (float) Math.PI * 4;
-            float ox = (float) Math.sin(angle) * wiggleRadius;
-            float oz = (float) Math.cos(angle) * wiggleRadius;
+            float phase = time * speed * 6f - t * (float) Math.PI * 5;
+            float wave = (float) Math.sin(phase);
 
-            points.add(new Vec3(ox, y, oz));
+            points.add(new Vec3(0, y, 0));
 
-            // 鍗婂緞锛氬墠绮楀悗缁?(cos 浠?1鈫?) + 鏃堕棿鑴夊姩
             float taper = (float) Math.cos(t * Math.PI * 0.5f);
-            float pulse = 0.8f + 0.2f * (float) Math.sin(time * 1.0f * speed - t * (float) Math.PI * 6);
-            radii[i] = baseRadius * taper * pulse;
+            float pulse = 0.7f + 0.3f * (0.5f + 0.5f * wave);
+            outRadius[i] = baseRadius * taper * pulse;
 
-            // 棰滆壊锛氫袱绉嶉鑹查殢鏃堕棿 + 浣嶇疆娴佸姩
-            float blend = 0.5f + 0.5f * (float) Math.sin(time * 0.75f * speed - t * (float) Math.PI * 3);
-            colors[i] = new Vector3f(
+            float blend = 0.5f + 0.5f * (float) Math.sin(time * 0.3f * speed - t * (float) Math.PI * 2);
+            outColors[i] = new Vector3f(
                 colorA.x + (colorB.x - colorA.x) * blend,
                 colorA.y + (colorB.y - colorA.y) * blend,
                 colorA.z + (colorB.z - colorA.z) * blend
             );
         }
 
-
-
-        // 第二层：能量流动条纹叠加 (sylvestaff_streak.png)
-        float streakSpeed = 0.15f;
-        float uvScroll = time * streakSpeed;
-        Vector3f[] whiteColors = new Vector3f[seg + 1];
-        float[] rrr1 = new float[seg + 1];
-        for (int i = 0; i <= seg; i++) {
-            whiteColors[i] = new Vector3f(1.0f, 1.0f, 1.0f);
-            rrr1[i] = radii[i] * 1.2f;
+        float[] inRadius = new float[ENERGY_WAVE_SEG + 1];
+        Vector3f[] inColors = new Vector3f[ENERGY_WAVE_SEG + 1];
+        for(int i = 0; i <= ENERGY_WAVE_SEG; i++) {
+            inRadius[i] = outRadius[i] * 0.1f;
+            inColors[i] = new Vector3f(1.0f, 1.0f, 1.0f);
         }
-        VertexConsumer consumer0 = buffer.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES));
-        renderTubeSegmented(consumer0, matrix, new Vec3(0, 0, 0), points, radii, whiteColors, 1.0f);
-        VertexConsumer consumer1 = buffer.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES4));
-        renderTubeSegmented(consumer1, matrix, new Vec3(0, 0, 0), points, rrr1, colors, 1.0f,
-            uvScroll, 0.0f, 2.0f, 1.0f);
-        renderTubeSegmented(consumer1, matrix, new Vec3(0, 0, 0), points, rrr1, colors, 1.0f,
-            uvScroll, 0.0f, 2.0f, 1.0f);
-        renderTubeSegmented(consumer1, matrix, new Vec3(0, 0, 0), points, rrr1, colors, 1.0f,
-            uvScroll, 0.0f, 2.0f, 1.0f);
-        renderTubeSegmented(consumer1, matrix, new Vec3(0, 0, 0), points, rrr1, colors, 1.0f,
-            uvScroll, 0.0f, 2.0f, 1.0f);
-        renderTubeSegmented(consumer1, matrix, new Vec3(0, 0, 0), points, rrr1, colors, 1.0f,
-            uvScroll, 0.0f, 2.0f, 1.0f);
+        VertexConsumer consumer2 = buffer.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES));
+        renderTubeSegmented(consumer2, matrix, new Vec3(0, 0, 0), points, inRadius, inColors, 1.0f,
+                    0, 0, 1.0f, 0.0f);
 
+        float uOffset = time * 0.125f;
+        float vOffset = time * 0.125f;
+        VertexConsumer consumer = buffer.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES4));
+        for(int i = 0;i < 1;i++) {
+            renderTubeSegmented(consumer, matrix, new Vec3(0, 0, 0), points, outRadius, outColors, 1.0f,
+                    uOffset, 0 + vOffset, 2.0f, 0.0f);
+            renderTubeSegmented(consumer, matrix, new Vec3(0, 0, 0), points, outRadius, outColors, 1.0f,
+                    uOffset, 0.5f + vOffset, 2.0f, 0.0f);
+        }
     }
 
     public static final IItemWaveBehavior ITEM_WAVE_BEHAVIOR = new IItemWaveBehavior() {
@@ -807,6 +1152,7 @@ public class DevilsDevastation extends SwordItem {
             if(itemStack.isEmpty()) return;
             if(itemStack.is(ModItems.DEVILS_DEVASTATION.get()) && player.getEffect(ModEffects.KILL_MODE) != null) {
                 summonKilModeProjectile(player);
+                enterIntoKillMode(player);
                 event.setCanceled(true);
             }
         }

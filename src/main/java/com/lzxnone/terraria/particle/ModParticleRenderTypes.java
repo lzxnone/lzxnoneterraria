@@ -39,6 +39,8 @@ public final class ModParticleRenderTypes {
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
             RenderSystem.depthMask(false);
+            RenderSystem.disableCull();
+            RenderSystem.enableDepthTest();
             RenderSystem.setShader(GameRenderer::getRendertypeEntityTranslucentEmissiveShader);
             RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
             return tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.NEW_ENTITY);

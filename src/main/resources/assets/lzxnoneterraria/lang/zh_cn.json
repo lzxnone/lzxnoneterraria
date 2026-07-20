@@ -36,6 +36,8 @@
 
   "effect.lzxnoneterraria.confused": "困惑",
   "effect.lzxnoneterraria.blood_butchered": "血腥屠宰",
+  "effect.lzxnoneterraria.kill_mode": "杀戮模式",
+  "effect.lzxnoneterraria.kill_mode_cooldown": "杀戮模式 冷却",
 
   "key.lzxnoneterraria.kill_mode": "进入杀戮模式",
   "key.categories.lzxnoneterraria": "lzxnoneterraria",

@@ -23,6 +23,8 @@ public class StaticSummonBehaviors {
     public static final String MACE_PROJECTILE = "mace_projectile";
     public static final String DEVILS_DEVASTATION_PROJECTILE = "devils_devastation_projectile";
     public static final String DEVILS_DEVASTATION_LIGHTNING = "devils_devastation_lightning";
+    public static final String DEVILS_DEVASTATION_MARK = "devils_devastation_mark";
+    public static final String DEVILS_DEVASTATION_MARK_LIGHTNING = "devils_devastation_mark_lightning";
 
     static {
         BEHAVIORS.put(DEFAULT, new IStaticSummonBehavior() {});
@@ -40,6 +42,8 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(MACE_PROJECTILE, Mace.SUMMON_BEHAVIOR);
         BEHAVIORS.put(DEVILS_DEVASTATION_PROJECTILE, DevilsDevastation.SUMMON_BEHAVIOR);
         BEHAVIORS.put(DEVILS_DEVASTATION_LIGHTNING, DevilsDevastation.SUMMON_BEHAVIOR2);
+        BEHAVIORS.put(DEVILS_DEVASTATION_MARK, DevilsDevastation.SUMMON_BEHAVIOR3);
+        BEHAVIORS.put(DEVILS_DEVASTATION_MARK_LIGHTNING, DevilsDevastation.SUMMON_BEHAVIOR4);
     }
 
     public static IStaticSummonBehavior getBehavior(String id) {

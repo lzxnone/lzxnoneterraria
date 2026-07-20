@@ -8,14 +8,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
-import net.neoforged.neoforge.event.tick.EntityTickEvent;
-
-import java.util.Objects;
 
 @EventBusSubscriber(modid = LzxnoneTerraria.MODID)
 public class EffectLogicHandler {
@@ -28,8 +23,8 @@ public class EffectLogicHandler {
         if(instance != null) {
             currentEffect = instance.getEffect();
         }
-        if(checkEffect(currentEffect) && !entity.level().isClientSide() && !(entity instanceof Player)) {
-            if(entity.level() instanceof ServerLevel serverLevel) {
+        if(checkEffect(currentEffect)) {
+            if(!entity.level().isClientSide() && entity.level() instanceof ServerLevel serverLevel) {
                 serverLevel.getChunkSource().broadcast(entity,
                         new ClientboundUpdateMobEffectPacket(entity.getId(), instance, false));
             }
@@ -44,7 +39,7 @@ public class EffectLogicHandler {
         if(instance != null) {
             currentEffect = instance.getEffect();
         }
-        if(checkEffect(currentEffect) && !entity.level().isClientSide() && !(entity instanceof Player)) {
+        if(checkEffect(currentEffect) && !entity.level().isClientSide()) {
             if(entity.level() instanceof ServerLevel serverLevel) {
                 if(event.getEffectInstance() != null) {
                     serverLevel.getChunkSource().broadcast(entity,
@@ -66,7 +61,7 @@ public class EffectLogicHandler {
         if(instance != null) {
             currentEffect = instance.getEffect();
         }
-        if(checkEffect(currentEffect) && !entity.level().isClientSide() && !(entity instanceof Player)) {
+        if(checkEffect(currentEffect) && !entity.level().isClientSide()) {
             if(entity.level() instanceof ServerLevel serverLevel) {
                 if(event.getEffectInstance() != null) {
                     serverLevel.getChunkSource().broadcast(entity,

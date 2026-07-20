@@ -5,6 +5,7 @@ import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModKeyBindings;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.item.weapon.melee.FirstFractal;
 import com.lzxnone.terraria.item.weapon.melee.TrueCopperShortsword;
 import com.lzxnone.terraria.item.weapon.melee.Zenith;
@@ -100,7 +101,11 @@ public class InputHandler {
                 ItemStack stack = player.getMainHandItem();
                 if(stack.is(ModItems.DEVILS_DEVASTATION.get())) {
                     MobEffectInstance instance = player.getEffect(ModEffects.KILL_MODE_COOLDOWN);
-                    if(instance == null) PacketDistributor.sendToServer(new DevilsDevastationKillModePayload());
+                    MobEffectInstance instance2 = player.getEffect(ModEffects.KILL_MODE);
+                    if(instance == null && instance2 == null) {
+                        PacketDistributor.sendToServer(new DevilsDevastationKillModePayload());
+                        DevilsDevastation.enterIntoKillMode(player);
+                    }
                 }
             }
         }

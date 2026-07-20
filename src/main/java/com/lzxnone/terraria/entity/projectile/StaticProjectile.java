@@ -94,6 +94,7 @@ public class StaticProjectile extends Projectile {
 
     public LinkedList<Vec3> trailPositions = new LinkedList<>();
     public LinkedList<Vec3> trailPositions2 = new LinkedList<>();
+    public LinkedList<Vec3> trailPositions3 = new LinkedList<>();
 
     public StaticProjectile(EntityType<StaticProjectile> type, Level level) {
         super(type, level);

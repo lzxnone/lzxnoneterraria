@@ -46,5 +46,11 @@
   },
   "demon_sword_impact": {
     "sounds": ["lzxnoneterraria:demon_sword_impact", "lzxnoneterraria:demon_sword_impact2"]
+  },
+  "demon_sword_insane_impact": {
+    "sounds": ["lzxnoneterraria:demon_sword_insane_impact"]
+  },
+  "demon_sword_kill_mode": {
+    "sounds": ["lzxnoneterraria:demon_sword_kill_mode"]
   }
 }

@@ -28,7 +28,7 @@ public class DevilsDevastationRuneParticle extends EmissiveBloomParticle {
             this.bCol = 0.345f;
         }
 
-        this.baseSize = 0.15F + this.random.nextFloat() * 0.05F;
+        this.baseSize = 0.5F + this.random.nextFloat() * 0.5F;
         this.quadSize = baseSize;
 
         this.roll = this.random.nextFloat() * ((float)Math.PI * 2F);

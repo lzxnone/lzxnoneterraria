@@ -18,7 +18,8 @@ public class DevilsDevastationKillModeHandler {
             ItemStack stack = player.getMainHandItem();
             if(stack.is(ModItems.DEVILS_DEVASTATION.get())) {
                 MobEffectInstance instance = player.getEffect(ModEffects.KILL_MODE_COOLDOWN);
-                if(instance == null) {
+                MobEffectInstance instance2 = player.getEffect(ModEffects.KILL_MODE);
+                if(instance == null && instance2 == null) {
                     MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE, 100, 0);
                     player.addEffect(effectInstance);
                 }

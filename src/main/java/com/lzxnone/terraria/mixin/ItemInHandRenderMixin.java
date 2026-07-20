@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -73,6 +74,11 @@ public class ItemInHandRenderMixin {
                     poseStack.popPose();
                     ci.cancel();
                 }
+            }else if(stack.is(ModItems.DEVILS_DEVASTATION.get())) {
+                MobEffectInstance effectInstance = player.getEffect(ModEffects.KILL_MODE);
+                if(effectInstance != null && player.getCooldowns().isOnCooldown(stack.getItem())) {
+                    ci.cancel();
+                }
             }
         }
     }
@@ -98,17 +104,22 @@ public class ItemInHandRenderMixin {
             if(state != Mace.State.IDLE.ordinal()) {
                 ci.cancel();
             }
-        }
+        }else if(itemStack.is(ModItems.DEVILS_DEVASTATION.get()) && entity instanceof Player player) {
+                MobEffectInstance effectInstance = player.getEffect(ModEffects.KILL_MODE);
+                if(effectInstance != null && player.getCooldowns().isOnCooldown(itemStack.getItem())) {
+                    ci.cancel();
+                }
+            }
     }
 
     @Inject(method = "renderItem", at = @At("RETURN"))
     private void renderItemPost(LivingEntity entity, ItemStack itemStack, ItemDisplayContext displayContext,
                                 boolean leftHand, PoseStack poseStack, MultiBufferSource buffer,
                                 int seed, CallbackInfo ci) {
-        if(itemStack.is(ModItems.DEVILS_DEVASTATION.get())) {
-            if(entity.getEffect(ModEffects.KILL_MODE) != null) {
+        if(itemStack.is(ModItems.DEVILS_DEVASTATION.get()) && entity instanceof Player player) {
+            if(entity.getEffect(ModEffects.KILL_MODE) != null && !player.getCooldowns().isOnCooldown(itemStack.getItem())) {
                 poseStack.pushPose();
-                DevilsDevastation.renderTriangularBlade(buffer, poseStack, entity);
+                DevilsDevastation.renderEnergyWave(buffer, poseStack, player);
                 poseStack.popPose();
             }
         }
