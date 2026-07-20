@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "ACD",
+    "BAC",
+    "ABA"
+  ],
+  "key": {
+    "A": { "item": "minecraft:netherite_block" },
+    "B": { "item": "lzxnoneterraria:zenith" },
+    "C": { "item": "lzxnoneterraria:first_fractal" },
+    "D": { "item": "lzxnoneterraria:true_copper_shortsword" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:devils_devastation",
+    "count": 1
+  }
+}

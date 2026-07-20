@@ -14,7 +14,7 @@ public class ModCreativeModeTabs {
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MELEE_TAB = CREATIVE_MODE_TABS.register("melee_tab", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.lzxnoneterraria.melee"))
-            .withTabsBefore(CreativeModeTabs.COMBAT)
+            .withTabsAfter(CreativeModeTabs.SPAWN_EGGS)
             .icon(() -> ModItems.TERRA_BLADE.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 output.accept(ModItems.COPPER_SHORTSWORD.get());
@@ -45,7 +45,7 @@ public class ModCreativeModeTabs {
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CALAMITY_MELEE_TAB = CREATIVE_MODE_TABS.register("calamity_melee_tab", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.lzxnoneterraria.calamity_melee"))
-            .withTabsBefore(CreativeModeTabs.COMBAT)
+            .withTabsAfter(MELEE_TAB.getKey())
             .icon(() -> ModItems.DEVILS_DEVASTATION.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 output.accept(ModItems.DEVILS_DEVASTATION.get());
