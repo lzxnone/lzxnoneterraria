@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.effect;
 
 import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -22,7 +23,7 @@ public class KillModeEffect extends MobEffect {
         if(!entity.level().isClientSide()) {
             ItemStack stack = entity.getMainHandItem();
             if(!stack.is(ModItems.DEVILS_DEVASTATION.get())) {
-                MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, 100, 0);
+                MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, DevilsDevastation.KIll_MODE_COOLDOWN_TIME, 0);
                 entity.addEffect(effectInstance);
 
                 MobEffectInstance effectInstance2 = entity.getEffect(ModEffects.KILL_MODE);

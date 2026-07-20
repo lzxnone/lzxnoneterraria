@@ -87,6 +87,10 @@ public class DevilsDevastation extends SwordItem {
     public static final float ENERGY_WAVE_LENGTH = 30;
     public static final int ENERGY_WAVE_SEG = 20;
 
+    //杀戮模式
+    public static final int KIll_MODE_TIME = 100;
+    public static final int KIll_MODE_COOLDOWN_TIME = 100;
+
     //右键射出的弹射
     public static final int PROJECTILE_TRAIL_LENGTH = 10;
     public static final float PROJECTILE_TRAIL_RADIUS = 0.25F;
@@ -116,7 +120,6 @@ public class DevilsDevastation extends SwordItem {
     public static final float PROJECTILE_HIT_LIGHTNING_JITTER = 0.45F;
 
     //标记
-    public static final int MARK_LIFETIME = 100;
     public static final float MARK_RADIUS = 0.25f;
     public static final float MARK_LENGTH = 2.0f;
 
@@ -645,7 +648,7 @@ public class DevilsDevastation extends SwordItem {
                     summon.setPos(pos);
                     summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.DEVILS_DEVASTATION_MARK);
                     summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-                    summon.getEntityData().set(StaticSummon.LIFETIME, MARK_LIFETIME);
+                    summon.getEntityData().set(StaticSummon.LIFETIME, KIll_MODE_TIME);
                     summon.getEntityData().set(StaticSummon.GLOW, true);
 
                     CompoundTag summonCustomData = new CompoundTag();
@@ -687,13 +690,13 @@ public class DevilsDevastation extends SwordItem {
                 CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
                 if(projectile.getOwner() instanceof LivingEntity livingEntity) {
                     if(customData.contains("validHit")) {
-                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE, 100, 0);
+                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE, KIll_MODE_TIME, 0);
                         livingEntity.addEffect(effectInstance);
 
                         MobEffectInstance effectInstance2 = livingEntity.getEffect(ModEffects.KILL_MODE_COOLDOWN);
                         if(effectInstance2 != null) livingEntity.removeEffect(effectInstance2.getEffect());
                     }else {
-                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, 100, 0);
+                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, KIll_MODE_COOLDOWN_TIME, 0);
                         livingEntity.addEffect(effectInstance);
 
                         MobEffectInstance effectInstance2 = livingEntity.getEffect(ModEffects.KILL_MODE);

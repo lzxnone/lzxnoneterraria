@@ -105,11 +105,11 @@ public class ItemInHandRenderMixin {
                 ci.cancel();
             }
         }else if(itemStack.is(ModItems.DEVILS_DEVASTATION.get()) && entity instanceof Player player) {
-                MobEffectInstance effectInstance = player.getEffect(ModEffects.KILL_MODE);
-                if(effectInstance != null && player.getCooldowns().isOnCooldown(itemStack.getItem())) {
-                    ci.cancel();
-                }
+            MobEffectInstance effectInstance = player.getEffect(ModEffects.KILL_MODE);
+            if(effectInstance != null && player.getCooldowns().isOnCooldown(itemStack.getItem())) {
+                ci.cancel();
             }
+        }
     }
 
     @Inject(method = "renderItem", at = @At("RETURN"))
