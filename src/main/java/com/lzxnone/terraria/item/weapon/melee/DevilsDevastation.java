@@ -7,7 +7,6 @@ import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.ModRenderTypes;
-import com.lzxnone.terraria.entity.TintedVertexConsumer;
 import com.lzxnone.terraria.entity.projectile.IStaticProjectileBehavior;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
@@ -17,7 +16,6 @@ import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.IItemWaveBehavior;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.network.payload.DevilsDevastationLeftClickPayload;
-import com.lzxnone.terraria.network.payload.FirstFractalScrollPayload;
 import com.lzxnone.terraria.particle.CircleParticleOptions;
 import com.lzxnone.terraria.particle.IronSparkParticleOptions;
 import com.lzxnone.terraria.particle.ModParticles;
@@ -57,7 +55,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 import net.minecraft.client.Camera;
 
 
@@ -83,19 +80,57 @@ public class DevilsDevastation extends SwordItem {
     public static final ResourceLocation RES4 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/sylvestaff_streak.png");
     public static final ResourceLocation RES5 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/circular_smear_smokey_white.png");
 
+    //圆柱的环数
+    public static final int RING = 8;
 
-    public static final float PROJECTILE_MOVING_RADIUS = 0.25F;
-
-    public static final float PROJECTILE_HIT_RADIUS = 1.0F;
-    public static final float PROJECTILE_HIT_LENGTH = 32F;
-    public static final int PROJECTILE_HIT_DEPTH = 1;
-    public static final float PROJECTILE_HIT_JITTER = 0.45F;
-    public static final int PROJECTILE_HIT_RING = 8;
-
+    //能量剑体
     public static final float ENERGY_WAVE_LENGTH = 30;
     public static final int ENERGY_WAVE_SEG = 20;
 
-    //鍙抽敭鐢熸垚鐨勫脊灏?
+    //右键射出的弹射
+    public static final int PROJECTILE_TRAIL_LENGTH = 10;
+    public static final float PROJECTILE_TRAIL_RADIUS = 0.25F;
+    public static final float PROJECTILE_DAMAGE = 19.9f;
+    public static final int PROJECTILE_LIFETIME = 40;
+    public static final double PROJECTILE_SPEED = 3.0;
+
+    //弹出的弹射
+    public static final float STUCK_PROJECTILE_DAMAGE = 30.0f;
+    public static final int STUCK_PROJECTILE_LIFETIME = 40;
+    public static final double STUCK_PROJECTILE_SPEED = 3.0;
+    public static final double STUCK_PROJECTILE_BOUNDING_SIZE = 3.0;
+
+    //杀戮模式弹射
+    public static final int KILL_MODE_PROJECTILE_CYCLE = 10;
+    public static final float KILL_MODE_PROJECTILE_DAMAGE = 200.0f;
+    public static final int KILL_MODE_PROJECTILE_ROTATE = 30;
+
+    //附着在生物身上的弹射
+    public static final int STUCK_LIFETIME = 200;
+    public static final int MAX_STUCK_COUNT = 5;
+
+    //右键弹射击中生成的闪电
+    public static final float PROJECTILE_HIT_LIGHTNING_RADIUS = 1.0F;
+    public static final float PROJECTILE_HIT_LIGHTNING_LENGTH = 32F;
+    public static final int PROJECTILE_HIT_LIGHTNING_DEPTH = 1;
+    public static final float PROJECTILE_HIT_LIGHTNING_JITTER = 0.45F;
+
+    //标记
+    public static final int MARK_LIFETIME = 100;
+    public static final float MARK_RADIUS = 0.25f;
+    public static final float MARK_LENGTH = 2.0f;
+
+    //标记触发后的闪电
+    public static final int MARK_LIGHTNING_LIFETIME = 10;
+    public static final float MARK_LIGHTNING_LENGTH = 32F;
+    public static final float MARK_LIGHTNING_RADIUS = 3.0F;
+    public static final int MARK_LIGHTNING_DEPTH = 3;
+    public static final float MARK_LIGHTNING_JITTER = 0.45F;
+    public static final int MARK_LIGHTNING_SUB_COUNT = 2;
+    public static final float MARK_LIGHTNING_SUB_LENGTH = 0.4F;
+    public static final float MARK_LIGHTNING_SUB_SPREAD = 0.6F;
+
+    //右键射出的弹射
     public static final IStaticProjectileBehavior PROJECTILE_BEHAVIOR = new IStaticProjectileBehavior() {
         @Override
         public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
@@ -108,21 +143,21 @@ public class DevilsDevastation extends SwordItem {
                 Mth.lerp(partialTick, projectile.zo, projectile.getZ())
             );
             Matrix4f matrix = poseStack.last().pose();
-            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions, PROJECTILE_MOVING_RADIUS * 1.0F, 1.0f, 1,1,1, true);
-            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions, PROJECTILE_MOVING_RADIUS * 1.25F, 1.0f * 0.5F, 0.7F,0.15F,0.55F, true);
-            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions, PROJECTILE_MOVING_RADIUS * 1.5F, 1.0f * 0.2F, 0.5F,0.1F,0.4F, true);
-            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions2, PROJECTILE_MOVING_RADIUS * 1.0F, 1.0f, 1,1,1, true);
-            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions2, PROJECTILE_MOVING_RADIUS * 1.25F, 1.0f * 0.5F, 0.7F,0.15F,0.55F, true);
-            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions2, PROJECTILE_MOVING_RADIUS * 1.5F, 1.0f * 0.2F, 0.5F,0.1F,0.4F, true);
+            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions, PROJECTILE_TRAIL_RADIUS * 1.0F, 1.0f, 1,1,1, true);
+            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions, PROJECTILE_TRAIL_RADIUS * 1.25F, 1.0f * 0.5F, 0.7F,0.15F,0.55F, true);
+            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions, PROJECTILE_TRAIL_RADIUS * 1.5F, 1.0f * 0.2F, 0.5F,0.1F,0.4F, true);
+            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions2, PROJECTILE_TRAIL_RADIUS * 1.0F, 1.0f, 1,1,1, true);
+            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions2, PROJECTILE_TRAIL_RADIUS * 1.25F, 1.0f * 0.5F, 0.7F,0.15F,0.55F, true);
+            renderTube(buffer, matrix, entWorldPos, projectile.trailPositions2, PROJECTILE_TRAIL_RADIUS * 1.5F, 1.0f * 0.2F, 0.5F,0.1F,0.4F, true);
         }
 
         @Override
         public void onMoving(StaticProjectile projectile) {
             Vec3 right = MathUtil.toVec3(projectile.getEntityData().get(StaticProjectile.RIGHT));
-            projectile.trailPositions.addFirst(projectile.position().add(right.scale(PROJECTILE_MOVING_RADIUS / 2 * 1.5f)));
-            projectile.trailPositions2.addFirst(projectile.position().add(right.scale(-PROJECTILE_MOVING_RADIUS / 2 * 1.5f)));
-            while(projectile.trailPositions.size() > 10) projectile.trailPositions.removeLast();
-            while(projectile.trailPositions2.size() > 10) projectile.trailPositions2.removeLast();
+            projectile.trailPositions.addFirst(projectile.position().add(right.scale(PROJECTILE_TRAIL_RADIUS / 2 * 1.5f)));
+            projectile.trailPositions2.addFirst(projectile.position().add(right.scale(-PROJECTILE_TRAIL_RADIUS / 2 * 1.5f)));
+            while(projectile.trailPositions.size() > PROJECTILE_TRAIL_LENGTH) projectile.trailPositions.removeLast();
+            while(projectile.trailPositions2.size() > PROJECTILE_TRAIL_LENGTH) projectile.trailPositions2.removeLast();
             if(projectile.level().isClientSide()) {
                 if(projectile.getRandom().nextInt(2) == 0) {
                     ParticleUtil.addParticle(
@@ -141,7 +176,7 @@ public class DevilsDevastation extends SwordItem {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.attack(player, target, 20.0f)) {
+                if(DamageUtil.attack(player, target, PROJECTILE_DAMAGE)) {
                     StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), projectile.level());
                     summon.setOwner(target);
                     Vec3 pos = projectile.position();
@@ -154,7 +189,7 @@ public class DevilsDevastation extends SwordItem {
                     summon.getEntityData().set(StaticSummon.SCALE_Z, 4.0f);
                     summon.getEntityData().set(StaticSummon.RXP, -90);
                     summon.getEntityData().set(StaticSummon.RZP, -135);
-                    summon.getEntityData().set(StaticSummon.LIFETIME, 200);
+                    summon.getEntityData().set(StaticSummon.LIFETIME, STUCK_LIFETIME);
                     summon.getEntityData().set(StaticSummon.GLOW, true);
 
                     CompoundTag customData = new CompoundTag();
@@ -190,7 +225,7 @@ public class DevilsDevastation extends SwordItem {
 
                     target.invulnerableTime = 5;
                     List<UUID> uuids = new ArrayList<>(target.getData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE));
-                    if(uuids.size() >= 5) {
+                    if(uuids.size() >= MAX_STUCK_COUNT) {
                         Entity stuckProjectile = ((ServerLevel) projectile.level()).getEntity(uuids.getFirst());
                         if(stuckProjectile != null && stuckProjectile.isAlive() && stuckProjectile instanceof StaticSummon stuckStaticProjectile) summonStuckProjectile(stuckStaticProjectile);
                         uuids.removeFirst();
@@ -240,7 +275,7 @@ public class DevilsDevastation extends SwordItem {
         public void onHitBlock(StaticProjectile projectile, BlockHitResult result) {}
     };
 
-    //寮瑰嚭鐨勫脊灏?
+    //弹出的弹射
     public static final IStaticProjectileBehavior PROJECTILE_BEHAVIOR2 = new IStaticProjectileBehavior() {
         @Override
         public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
@@ -258,10 +293,8 @@ public class DevilsDevastation extends SwordItem {
             int rotate = projectile.getEntityData().get(StaticProjectile.RZP);
 
             poseStack.pushPose();
-            //鏃嬭浆
-            RenderUtil.applyRotate(poseStack, dir, up, age * 30 + 60, rotate);
 
-            //缂╂斁
+            RenderUtil.applyRotate(poseStack, dir, up, age * 30 + 60, rotate);
             poseStack.scale(4.0f, 4.0f, 4.0f);
 
             Minecraft.getInstance().getItemRenderer().renderStatic(
@@ -277,10 +310,8 @@ public class DevilsDevastation extends SwordItem {
             poseStack.popPose();
 
             poseStack.pushPose();
-            //鏃嬭浆
-            RenderUtil.applyRotate(poseStack, dir, up, age * 30 + 180, rotate);
 
-            //缂╂斁
+            RenderUtil.applyRotate(poseStack, dir, up, age * 30 + 180, rotate);
             poseStack.scale(scaleX, scaleY, scaleZ);
 
             VertexConsumer buffer0 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES2));
@@ -288,20 +319,33 @@ public class DevilsDevastation extends SwordItem {
             poseStack.popPose();
 
             poseStack.pushPose();
-            //鏃嬭浆
-            RenderUtil.applyRotate(poseStack, dir, up, age * 30, rotate);
 
-            //缂╂斁
+            RenderUtil.applyRotate(poseStack, dir, up, age * 30, rotate);
             poseStack.scale(scaleX, scaleY, scaleZ);
 
             VertexConsumer buffer1 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES3));
             RenderUtil.renderQuad(poseStack.last().pose(), buffer1, 0.8f, 0.176f, 0.78f, 1.0f, 78, 78, 0, 0, 0);
             poseStack.popPose();
-
         }
 
         @Override
         public void onMoving(StaticProjectile projectile) {
+            projectile.setBoundingBox(new AABB(
+                projectile.getX() - STUCK_PROJECTILE_BOUNDING_SIZE, projectile.getY() - STUCK_PROJECTILE_BOUNDING_SIZE, projectile.getX() - STUCK_PROJECTILE_BOUNDING_SIZE,
+                projectile.getX() + STUCK_PROJECTILE_BOUNDING_SIZE, projectile.getY() + STUCK_PROJECTILE_BOUNDING_SIZE, projectile.getX() + STUCK_PROJECTILE_BOUNDING_SIZE
+            ));
+
+            if(!projectile.level().isClientSide()) {
+                List<Entity> targets = projectile.level().getEntitiesOfClass(
+                        Entity.class,
+                        projectile.getBoundingBox(),
+                        FilterUtil.createTargetFilter(projectile, projectile.getOwner())
+                );
+                for(Entity target : targets) {
+                    this.onHitEntity(projectile, new EntityHitResult(target, target.position()));
+                }
+            }
+
             if(projectile.level().isClientSide()) {
                 ParticleUtil.addParticle(
                     projectile.level(), ModParticles.DEVILS_DEVASTATION_RUNE_PARTICLE2.get(),
@@ -353,7 +397,7 @@ public class DevilsDevastation extends SwordItem {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.attack(player, target, 20.0f)) {
+                if(DamageUtil.attack(player, target, STUCK_PROJECTILE_DAMAGE)) {
                     target.invulnerableTime = 5;
                     onDied(projectile);
                 }
@@ -363,42 +407,6 @@ public class DevilsDevastation extends SwordItem {
         @Override
         public void onHitBlock(StaticProjectile projectile, BlockHitResult result) {}
     };
-
-    //寮瑰嚭寮瑰皠鐒跺悗鐢熸垚鏂扮殑鏃嬭浆寮瑰皠
-    public static void summonStuckProjectile(StaticSummon stuckProjectile) {
-        if(stuckProjectile == null || !stuckProjectile.isAlive()) return;
-        CompoundTag customData = stuckProjectile.getEntityData().get(StaticSummon.CUSTOM_DATA);
-        if(!customData.contains("uuid")) return;
-        if(stuckProjectile.level() instanceof ServerLevel serverLevel) {
-            UUID uuid = customData.getUUID("uuid");
-            Entity entity = serverLevel.getEntity(uuid);
-            if(!(entity instanceof Player player)) return;
-
-            Vector3f[] dirs = MathUtil.computeCoordinateSystem(stuckProjectile);
-            int rotate = (int) ((Math.random() * 2 - 1) * 90);
-            dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], rotate);
-
-            StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), serverLevel);
-            projectile.setOwner(player);
-            Vec3 pos = stuckProjectile.position();
-            projectile.setPos(pos);
-            projectile.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE2);
-            projectile.getEntityData().set(StaticProjectile.RENDER_MODE, "custom");
-            projectile.getEntityData().set(StaticProjectile.ORIGIN, pos.toVector3f());
-            projectile.getEntityData().set(StaticProjectile.DIRECTION, dirs[0]);
-            projectile.getEntityData().set(StaticProjectile.UP, dirs[1]);
-            projectile.getEntityData().set(StaticProjectile.RIGHT, dirs[2]);
-            projectile.getEntityData().set(StaticProjectile.ITEM, new ItemStack(ModItems.DEVILS_DEVASTATION.get()));
-            projectile.getEntityData().set(StaticProjectile.RZP, rotate);
-            projectile.getEntityData().set(StaticProjectile.LIFETIME, 40);
-            projectile.getEntityData().set(StaticProjectile.GLOW, true);
-            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", 3.0));
-            projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
-
-            serverLevel.addFreshEntity(projectile);
-            stuckProjectile.discard();
-        }
-    }
 
     //鏉€鎴ā寮忕敓鎴愮殑寮瑰皠
     public static final IStaticProjectileBehavior PROJECTILE_BEHAVIOR3 = new IStaticProjectileBehavior() {
@@ -548,7 +556,6 @@ public class DevilsDevastation extends SwordItem {
             //位置锁定
             if(projectile.getOwner() != null) projectile.getEntityData().set(StaticProjectile.ORIGIN, projectile.getOwner().getBoundingBox().getCenter().toVector3f());
 
-
             //实体击中判断
             Vec3 start = projectile.position();
             Vec3 end = start.add(tipDir2.scale(ENERGY_WAVE_LENGTH));
@@ -618,12 +625,12 @@ public class DevilsDevastation extends SwordItem {
         public void onHitEntity(StaticProjectile projectile, EntityHitResult result) {
             if(projectile.level() instanceof ServerLevel serverLevel) {
                 Entity target = result.getEntity();
-                if(projectile.getOwner() instanceof Player player && DamageUtil.attack(player, target, 1.0f)) {
+                if(projectile.getOwner() instanceof Player player && DamageUtil.attack(player, target, KILL_MODE_PROJECTILE_DAMAGE)) {
                     ItemStack stack = player.getMainHandItem();
                     if(stack.is(ModItems.DEVILS_DEVASTATION.get())) {
                         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                             .copyTag();
-                        if(tag != null && tag.hasUUID("mark")) {
+                        if(tag.hasUUID("mark")) {
                             UUID uuid = tag.getUUID("mark");
                             Entity entityMark = serverLevel.getEntity(uuid);
                             if(entityMark instanceof StaticSummon summon && summon.isAlive()) {
@@ -638,7 +645,7 @@ public class DevilsDevastation extends SwordItem {
                     summon.setPos(pos);
                     summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.DEVILS_DEVASTATION_MARK);
                     summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-                    summon.getEntityData().set(StaticSummon.LIFETIME, 100);
+                    summon.getEntityData().set(StaticSummon.LIFETIME, MARK_LIFETIME);
                     summon.getEntityData().set(StaticSummon.GLOW, true);
 
                     CompoundTag summonCustomData = new CompoundTag();
@@ -648,7 +655,7 @@ public class DevilsDevastation extends SwordItem {
                     serverLevel.addFreshEntity(summon);
 
                     CustomData.update(DataComponents.CUSTOM_DATA, stack,
-                            tag -> tag.putUUID("uuid", summon.getUUID()));
+                            tag -> tag.putUUID("mark", summon.getUUID()));
 
                     CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
                     if(customData.contains("hit") && !customData.getBoolean("hit")) {
@@ -657,7 +664,7 @@ public class DevilsDevastation extends SwordItem {
                         projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
                     }
 
-                    List<UUID> stuckList = target.getData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE);
+                    List<UUID> stuckList = new ArrayList<>(target.getData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE));
                     if(!customData.contains("validHit") && !stuckList.isEmpty()) {
                         customData.putBoolean("validHit", true);
                         while(!stuckList.isEmpty()) {
@@ -666,6 +673,7 @@ public class DevilsDevastation extends SwordItem {
                             Entity stuck = serverLevel.getEntity(uuid);
                             if(stuck instanceof StaticSummon stuckProjectile) summonStuckProjectile(stuckProjectile);
                         }
+                        target.setData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE, stuckList);
                     }
 
                     projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
@@ -700,6 +708,281 @@ public class DevilsDevastation extends SwordItem {
         public void onHitBlock(StaticProjectile projectile, BlockHitResult result) {}
     };
 
+    //附着弹射
+    public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
+        @Override
+        public void tick(StaticSummon summon) {
+            this.checkBeforeTick(summon);
+            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+            if(!customData.contains("dx") || !customData.contains("dy") || !customData.contains("dz")) { onDied(summon); return; }
+            Vec3 deltaPos = new Vec3(customData.getDouble("dx"), customData.getDouble("dy"), customData.getDouble("dz"));
+            Entity entity = summon.getOwner();
+            if(entity == null) { onDied(summon); return; }
+            summon.setPos(entity.position().add(deltaPos));
+        }
+        @Override
+        public void onDied(StaticSummon summon) {
+            if(!summon.level().isClientSide()) {
+                Entity entity = summon.getOwner();
+                if(entity != null && entity.isAlive()) {
+                    List<UUID> uuids = new ArrayList<>(entity.getData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE));
+                    uuids.remove(summon.getUUID());
+                    entity.setData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE, uuids);
+                }
+                summon.discard();
+            }
+        }
+    };
+
+    //右键弹射击中后生成的闪电
+    public static final IStaticSummonBehavior SUMMON_BEHAVIOR2 = new IStaticSummonBehavior() {
+        @Override
+        public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+            if(!(entity instanceof StaticSummon summon)) return;
+            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+            if(!customData.contains("dirX") || !customData.contains("dirY") || !customData.contains("dirZ") || !customData.contains("seed")) return;
+            Vec3 dir = new Vec3(customData.getDouble("dirX"), customData.getDouble("dirY"), customData.getDouble("dirZ")).normalize();
+            long seed = customData.getLong("seed");
+            int age = summon.getEntityData().get(StaticSummon.AGE);
+            int lifetime = summon.getEntityData().get(StaticSummon.LIFETIME);
+            if(lifetime <= 0) return;
+            float lifeRatio = Mth.clamp((age + partialTick) / (float) lifetime, 0.0F, 1.0F);
+            if(lifeRatio > 0.999f) return;
+            float radius = PROJECTILE_HIT_LIGHTNING_RADIUS * (1.0f - lifeRatio);
+            float alpha = 1.0f - lifeRatio;
+
+            Vec3 entWorldPos = new Vec3(
+                Mth.lerp(partialTick, summon.xo, summon.getX()),
+                Mth.lerp(partialTick, summon.yo, summon.getY()),
+                Mth.lerp(partialTick, summon.zo, summon.getZ())
+            );
+            VertexConsumer buffer = bufferSource.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES));
+            Matrix4f matrix = poseStack.last().pose();
+
+            Random rand0 = new Random(seed);
+            Vec3 start0 = entWorldPos.add(dir.scale(4.0));
+            Vec3 end0 = start0.add(dir.scale(PROJECTILE_HIT_LIGHTNING_LENGTH));
+            List<Vec3> branch0 = generateBranch(start0, end0, rand0, PROJECTILE_HIT_LIGHTNING_DEPTH, PROJECTILE_HIT_LIGHTNING_JITTER);
+
+            Random rand1 = new Random(seed + 1);
+            Vec3 end1 = start0.add(spreadDir(dir, rand1, 0.4F).scale(PROJECTILE_HIT_LIGHTNING_LENGTH * 0.7F));
+            List<Vec3> branch1 = generateBranch(start0, end1, rand1, PROJECTILE_HIT_LIGHTNING_DEPTH, PROJECTILE_HIT_LIGHTNING_JITTER);
+
+            Random rand2 = new Random(seed + 2);
+            Vec3 start2 = branch0.get(1);
+            Vec3 end2 = start2.add(spreadDir(dir, rand2, 0.4F).scale(PROJECTILE_HIT_LIGHTNING_LENGTH * 0.5F));
+            List<Vec3> branch2 = generateBranch(start2, end2, rand2, PROJECTILE_HIT_LIGHTNING_DEPTH, PROJECTILE_HIT_LIGHTNING_JITTER);
+
+            for(List<Vec3> branch : new List[]{branch0, branch1, branch2}) {
+                renderTube(buffer, matrix, entWorldPos, branch, radius * 1.0F, alpha, 1,1,1, true);
+                renderTube(buffer, matrix, entWorldPos, branch, radius * 1.25F, alpha * 0.5F, 0.7F,0.15F,0.55F, true);
+                renderTube(buffer, matrix, entWorldPos, branch, radius * 0.75F, alpha * 0.2F, 0.5F,0.1F,0.4F, true);
+            }
+        }
+
+        @Override
+        public AABB getBoundingBoxForCulling(StaticSummon summon) {
+            double m = PROJECTILE_HIT_LIGHTNING_LENGTH + 8.0;
+            Vec3 p = summon.position();
+            return new AABB(p.x - m, p.y - m, p.z - m, p.x + m, p.y + m, p.z + m);
+        }
+    };
+
+    //标记
+    public static final IStaticSummonBehavior SUMMON_BEHAVIOR3 = new IStaticSummonBehavior() {
+        @Override
+        public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+            if(!(entity instanceof StaticSummon summon)) return;
+
+            Vec3 entWorldPos = new Vec3(
+                Mth.lerp(partialTick, entity.xo, entity.getX()),
+                Mth.lerp(partialTick, entity.yo, entity.getY()),
+                Mth.lerp(partialTick, entity.zo, entity.getZ())
+            );
+
+            // 公告板：根据相机计算平面基向量
+            Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+            Vec3 toCamera = camera.getPosition().subtract(entWorldPos).normalize();
+            Vec3 up = new Vec3(0, 1, 0);
+            Vec3 right = toCamera.cross(up).normalize();
+            if(right.lengthSqr() < 0.01) right = new Vec3(1, 0, 0);
+            Vec3 realUp = right.cross(toCamera).normalize();
+
+            // 十字交叉的4个方向
+            Vec3[] dirs = {
+                realUp.add(right).normalize(),
+                realUp.subtract(right).normalize(),
+                realUp.scale(-1.0).add(right).normalize(),
+                realUp.scale(-1.0).subtract(right).normalize()
+            };
+
+            float age = summon.getEntityData().get(StaticSummon.AGE) + partialTick;
+            float lifetime = summon.getEntityData().get(StaticSummon.LIFETIME);
+            float progress = age / lifetime;
+            float alpha = 1.0f;
+            float length = MARK_LENGTH + progress * MARK_LENGTH * 2;
+            float radius = MARK_RADIUS + progress * MARK_RADIUS * 2;
+
+            VertexConsumer buffer = bufferSource.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES));
+            Matrix4f matrix = poseStack.last().pose();
+
+            for(Vec3 dir : dirs) {
+                List<Vec3> points = new ArrayList<>();
+                points.add(entWorldPos);
+                points.add(entWorldPos.add(dir.scale(length)));
+                renderTube(buffer, matrix, entWorldPos, points, radius * 0.5f, alpha * 0.8f, 1.0f, 1.0f, 1.0f, true);
+                renderTube(buffer, matrix, entWorldPos, points, radius, alpha, 0.8f, 0.176f, 0.78f, true);
+            }
+        }
+
+        @Override
+        public void tick(StaticSummon summon) {
+            this.checkBeforeTick(summon);
+            Entity entity = summon.getOwner();
+            if(entity != null) {
+                summon.setPos(entity.getBoundingBox().getCenter());
+            }
+        }
+
+        @Override
+        public void onDied(StaticSummon summon) {
+            if(summon.level() instanceof ServerLevel serverLevel) {
+                int age = summon.getEntityData().get(StaticSummon.AGE);
+                int lifetime = summon.getEntityData().get(StaticSummon.LIFETIME);
+                if(age < lifetime) {
+                    summon.discard();
+                    return;
+                }
+                Entity owner = summon.getOwner();
+                if(owner != null) {
+                    CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+                    if(customData.contains("uuid")) {
+                        UUID uuid = customData.getUUID("uuid");
+                        Entity entity = serverLevel.getEntity(uuid);
+                        if(entity instanceof Player player) {
+                            DamageUtil.attack(player, owner, 10f);
+                            StaticSummon newSummon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), serverLevel);
+                            newSummon.setOwner(player);
+                            Vec3 pos = owner.getBoundingBox().getCenter();
+                            newSummon.setPos(pos);
+                            newSummon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.DEVILS_DEVASTATION_MARK_LIGHTNING);
+                            newSummon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
+                            newSummon.getEntityData().set(StaticSummon.LIFETIME, MARK_LIGHTNING_LIFETIME);
+                            newSummon.getEntityData().set(StaticSummon.GLOW, true);
+
+                            CompoundTag newCustomData = new CompoundTag();
+                            newCustomData.putLong("seed", owner.blockPosition().hashCode() * 31L + System.currentTimeMillis());
+                            newSummon.getEntityData().set(StaticSummon.CUSTOM_DATA, newCustomData);
+
+                            serverLevel.addFreshEntity(newSummon);
+                        }
+                    }
+                }
+                SoundUtil.playServerSound(summon.level(), ModSounds.DEMON_SWORD_INSANE_IMPACT.get(), summon.position(), 16.0f, 1.0f);
+                summon.discard();
+            }
+        }
+    };
+
+    //标记触发后的大型闪电
+    public static final IStaticSummonBehavior SUMMON_BEHAVIOR4 = new IStaticSummonBehavior() {
+        @Override
+        public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+            if(!(entity instanceof StaticSummon summon)) return;
+            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+            if(!customData.contains("seed")) return;
+            long seed = customData.getLong("seed");
+            int ageInt = summon.getEntityData().get(StaticSummon.AGE);
+            int lifetime = summon.getEntityData().get(StaticSummon.LIFETIME);
+            if(lifetime <= 0) return;
+            float lifeRatio = Mth.clamp((ageInt + partialTick) / (float) lifetime, 0.0F, 1.0F);
+
+            float lengthScale = Math.min(1.0F, lifeRatio * 2.0F);
+            float length = MARK_LIGHTNING_LENGTH * lengthScale;
+            if(length < 0.5F) return;
+
+            float radius = MARK_LIGHTNING_RADIUS * (1.0F - lifeRatio);
+            float alpha = 1.0F - lifeRatio;
+
+            Vec3 entWorldPos = new Vec3(
+                Mth.lerp(partialTick, summon.xo, summon.getX()),
+                Mth.lerp(partialTick, summon.yo, summon.getY()),
+                Mth.lerp(partialTick, summon.zo, summon.getZ())
+            );
+            VertexConsumer buffer = bufferSource.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES));
+            Matrix4f matrix = poseStack.last().pose();
+
+            Random rand = new Random(seed);
+            float baseAngle = rand.nextFloat() * (float)Math.PI * 2;
+            Vec3[] dirs = {
+                new Vec3(Math.cos(baseAngle), 0, Math.sin(baseAngle)),
+                new Vec3(Math.cos(baseAngle + Math.PI / 2), 0, Math.sin(baseAngle + Math.PI / 2)),
+                new Vec3(Math.cos(baseAngle + Math.PI), 0, Math.sin(baseAngle + Math.PI)),
+                new Vec3(Math.cos(baseAngle + Math.PI * 3 / 2), 0, Math.sin(baseAngle + Math.PI * 3 / 2))
+            };
+
+            for(int d = 0; d < 4; d++) {
+                Random mainRand = new Random(seed + d);
+                Vec3 dir = dirs[d];
+
+                Vec3 start = entWorldPos;
+                Vec3 end = start.add(dir.scale(length));
+                List<Vec3> mainBranch = generateBranch(start, end, mainRand, MARK_LIGHTNING_DEPTH, MARK_LIGHTNING_JITTER);
+
+                renderTube(buffer, matrix, entWorldPos, mainBranch, radius, alpha, 0.8f, 0.176f, 0.78f, true);
+                renderTube(buffer, matrix, entWorldPos, mainBranch, radius * 0.5f, alpha * 0.8f, 1.0f, 1.0f, 1.0f, true);
+
+                for(int s = 0; s < MARK_LIGHTNING_SUB_COUNT; s++) {
+                    Random subRand = new Random(seed + d * 10 + s);
+                    int idx = subRand.nextInt(mainBranch.size());
+                    Vec3 branchPos = mainBranch.get(idx);
+                    Vec3 subEnd = branchPos.add(spreadDir(dir, subRand, MARK_LIGHTNING_SUB_SPREAD).scale(length * MARK_LIGHTNING_SUB_LENGTH));
+                    List<Vec3> subBranch = generateBranch(branchPos, subEnd, subRand, MARK_LIGHTNING_DEPTH, MARK_LIGHTNING_JITTER);
+
+                    renderTube(buffer, matrix, entWorldPos, subBranch, radius, alpha, 0.8f, 0.176f, 0.78f, true);
+                    renderTube(buffer, matrix, entWorldPos, subBranch, radius * 0.5f, alpha * 0.8f, 1.0f, 1.0f, 1.0f, true);
+                }
+            }
+        }
+    };
+
+    //生成弹出弹射
+    public static void summonStuckProjectile(StaticSummon stuckProjectile) {
+        if(stuckProjectile == null || !stuckProjectile.isAlive()) return;
+        CompoundTag customData = stuckProjectile.getEntityData().get(StaticSummon.CUSTOM_DATA);
+        if(!customData.contains("uuid")) return;
+        if(stuckProjectile.level() instanceof ServerLevel serverLevel) {
+            UUID uuid = customData.getUUID("uuid");
+            Entity entity = serverLevel.getEntity(uuid);
+            if(!(entity instanceof Player player)) return;
+
+            Vector3f[] dirs = MathUtil.computeCoordinateSystem(stuckProjectile);
+            int rotate = (int) ((Math.random() * 2 - 1) * 90);
+            dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], rotate);
+
+            StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), serverLevel);
+            projectile.setOwner(player);
+            Vec3 pos = stuckProjectile.position();
+            projectile.setPos(pos);
+            projectile.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE2);
+            projectile.getEntityData().set(StaticProjectile.RENDER_MODE, "custom");
+            projectile.getEntityData().set(StaticProjectile.ORIGIN, pos.toVector3f());
+            projectile.getEntityData().set(StaticProjectile.DIRECTION, dirs[0]);
+            projectile.getEntityData().set(StaticProjectile.UP, dirs[1]);
+            projectile.getEntityData().set(StaticProjectile.RIGHT, dirs[2]);
+            projectile.getEntityData().set(StaticProjectile.ITEM, new ItemStack(ModItems.DEVILS_DEVASTATION.get()));
+            projectile.getEntityData().set(StaticProjectile.RZP, rotate);
+            projectile.getEntityData().set(StaticProjectile.LIFETIME, STUCK_PROJECTILE_LIFETIME);
+            projectile.getEntityData().set(StaticProjectile.GLOW, true);
+            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", STUCK_PROJECTILE_SPEED));
+            projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
+
+            serverLevel.addFreshEntity(projectile);
+            stuckProjectile.discard();
+        }
+    }
+
+    //生成杀戮模式弹射
     public static void summonKilModeProjectile(Player player) {
         ItemStack itemStack = player.getMainHandItem();
         if(!itemStack.is(ModItems.DEVILS_DEVASTATION.get())) return;
@@ -707,10 +990,9 @@ public class DevilsDevastation extends SwordItem {
         player.getCooldowns().addCooldown(itemStack.getItem(), 20);
         if(!player.level().isClientSide()) {
             float radius = 4.0f;
-            int t = 10;
-            float w = (float) Math.PI * 1.5f / t;
+            float w = (float) Math.PI * 1.5f / KILL_MODE_PROJECTILE_CYCLE;
             if(player.getRandom().nextInt(2) == 0) w = -w;
-            int rotate = (int) ((Math.random() * 2 - 1) * 30);
+            int rotate = (int) ((Math.random() * 2 - 1) * KILL_MODE_PROJECTILE_ROTATE);
             Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
             dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], rotate);
 
@@ -725,7 +1007,7 @@ public class DevilsDevastation extends SwordItem {
             projectile.getEntityData().set(StaticProjectile.UP, dirs[1]);
             projectile.getEntityData().set(StaticProjectile.RIGHT, dirs[2]);
             projectile.getEntityData().set(StaticProjectile.ITEM, new ItemStack(ModItems.DEVILS_DEVASTATION.get()));
-            projectile.getEntityData().set(StaticProjectile.LIFETIME, t);
+            projectile.getEntityData().set(StaticProjectile.LIFETIME, KILL_MODE_PROJECTILE_CYCLE);
             projectile.getEntityData().set(StaticProjectile.GLOW, true);
             projectile.getEntityData().set(StaticProjectile.RZP, rotate);
             projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, w > 0 ? String.format("%.3f*cos(%.3f*t - 0.25 * 3.1415926)", radius, w) : String.format("%.3f*cos(%.3f*t - 0.75 * 3.1415926)", radius, w));
@@ -773,146 +1055,10 @@ public class DevilsDevastation extends SwordItem {
         }
     }
 
-    //渚濋檮鍦ㄥ疄浣撲笂鐨勫墤
-    public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
-        @Override
-        public void tick(StaticSummon summon) {
-            this.checkBeforeTick(summon);
-            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-            if(!customData.contains("dx") || !customData.contains("dy") || !customData.contains("dz")) { onDied(summon); return; }
-            Vec3 deltaPos = new Vec3(customData.getDouble("dx"), customData.getDouble("dy"), customData.getDouble("dz"));
-            Entity entity = summon.getOwner();
-            if(entity == null) { onDied(summon); return; }
-            summon.setPos(entity.position().add(deltaPos));
-        }
-        @Override
-        public void onDied(StaticSummon summon) {
-            if(!summon.level().isClientSide()) {
-                Entity entity = summon.getOwner();
-                if(entity != null && entity.isAlive()) {
-                    List<UUID> uuids = new ArrayList<>(entity.getData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE));
-                    uuids.remove(summon.getUUID());
-                    entity.setData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE, uuids);
-                }
-                summon.discard();
-            }
-        }
-    };
-
-    //寮瑰皠鍑讳腑瀹炰綋浜х敓鐨勯棯鐢?
-    public static final IStaticSummonBehavior SUMMON_BEHAVIOR2 = new IStaticSummonBehavior() {
-        @Override
-        public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-            if(!(entity instanceof StaticSummon summon)) return;
-            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-            if(!customData.contains("dirX") || !customData.contains("dirY") || !customData.contains("dirZ") || !customData.contains("seed")) return;
-            Vec3 dir = new Vec3(customData.getDouble("dirX"), customData.getDouble("dirY"), customData.getDouble("dirZ")).normalize();
-            long seed = customData.getLong("seed");
-            int age = summon.getEntityData().get(StaticSummon.AGE);
-            int lifetime = summon.getEntityData().get(StaticSummon.LIFETIME);
-            if(lifetime <= 0) return;
-            float lifeRatio = Mth.clamp((age + partialTick) / (float) lifetime, 0.0F, 1.0F);
-            if(lifeRatio > 0.999f) return;
-            float radius = PROJECTILE_HIT_RADIUS * (1.0f - lifeRatio);
-            float alpha = 1.0f - lifeRatio;
-
-            Vec3 entWorldPos = new Vec3(
-                Mth.lerp(partialTick, summon.xo, summon.getX()),
-                Mth.lerp(partialTick, summon.yo, summon.getY()),
-                Mth.lerp(partialTick, summon.zo, summon.getZ())
-            );
-            VertexConsumer buffer = bufferSource.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES));
-            Matrix4f matrix = poseStack.last().pose();
-
-            Random rand0 = new Random(seed);
-            Vec3 start0 = entWorldPos.add(dir.scale(4.0));
-            Vec3 end0 = start0.add(dir.scale(PROJECTILE_HIT_LENGTH));
-            List<Vec3> branch0 = generateBranch(start0, end0, rand0);
-
-            Random rand1 = new Random(seed + 1);
-            Vec3 end1 = start0.add(spreadDir(dir, rand1, 0.4F).scale(PROJECTILE_HIT_LENGTH * 0.7F));
-            List<Vec3> branch1 = generateBranch(start0, end1, rand1);
-
-            Random rand2 = new Random(seed + 2);
-            Vec3 start2 = branch0.get(1);
-            Vec3 end2 = start2.add(spreadDir(dir, rand2, 0.4F).scale(PROJECTILE_HIT_LENGTH * 0.5F));
-            List<Vec3> branch2 = generateBranch(start2, end2, rand2);
-
-
-            for(List<Vec3> branch : new List[]{branch0, branch1, branch2}) {
-                renderTube(buffer, matrix, entWorldPos, branch, radius * 1.0F, alpha, 1,1,1, true);
-                renderTube(buffer, matrix, entWorldPos, branch, radius * 1.25F, alpha * 0.5F, 0.7F,0.15F,0.55F, true);
-                renderTube(buffer, matrix, entWorldPos, branch, radius * 0.75F, alpha * 0.2F, 0.5F,0.1F,0.4F, true);
-            }
-        }
-
-        @Override
-        public AABB getBoundingBoxForCulling(StaticSummon summon) {
-            double m = PROJECTILE_HIT_LENGTH + 8.0;
-            Vec3 p = summon.position();
-            return new AABB(p.x - m, p.y - m, p.z - m, p.x + m, p.y + m, p.z + m);
-        }
-    };
-
-    public static final IStaticSummonBehavior SUMMON_BEHAVIOR3 = new IStaticSummonBehavior() {
-        @Override
-        public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-            if(!(entity instanceof StaticSummon summon)) return;
-
-            Vec3 entWorldPos = new Vec3(
-                Mth.lerp(partialTick, entity.xo, entity.getX()),
-                Mth.lerp(partialTick, entity.yo, entity.getY()),
-                Mth.lerp(partialTick, entity.zo, entity.getZ())
-            );
-
-            // 公告板：根据相机计算平面基向量
-            Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-            Vec3 toCamera = camera.getPosition().subtract(entWorldPos).normalize();
-            Vec3 up = new Vec3(0, 1, 0);
-            Vec3 right = toCamera.cross(up).normalize();
-            if(right.lengthSqr() < 0.01) right = new Vec3(1, 0, 0);
-            Vec3 realUp = right.cross(toCamera).normalize();
-
-            // 十字交叉的4个方向
-            Vec3[] dirs = {
-                realUp.add(right).normalize(),
-                realUp.subtract(right).normalize(),
-                realUp.scale(-1.0).add(right).normalize(),
-                realUp.scale(-1.0).subtract(right).normalize()
-            };
-
-            float age = summon.getEntityData().get(StaticSummon.AGE) + partialTick;
-            float lifetime = summon.getEntityData().get(StaticSummon.LIFETIME);
-            float progress = age / lifetime;
-            float alpha = (1.0f - progress) * 0.8f;
-            float length = 2.0f + progress * 2.0f;
-            float radius = 0.15f + progress * 0.2f;
-
-            VertexConsumer buffer = bufferSource.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES));
-            Matrix4f matrix = poseStack.last().pose();
-
-            for(Vec3 dir : dirs) {
-                List<Vec3> points = new ArrayList<>();
-                points.add(Vec3.ZERO);
-                points.add(dir.scale(length));
-                renderTube(buffer, matrix, entWorldPos, points, radius, alpha, 0.8f, 0.176f, 0.78f, true);
-            }
-
-            LzxnoneTerraria.LOGGER.info("1");
-        }
-    };
-
-    public static final IStaticSummonBehavior SUMMON_BEHAVIOR4 = new IStaticSummonBehavior() {
-        @Override
-        public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-
-        }
-    };
-
-    public static List<Vec3> generateBranch(Vec3 start, Vec3 end, Random rand) {
+    public static List<Vec3> generateBranch(Vec3 start, Vec3 end, Random rand, int depth, float jitter) {
         List<Vec3> branch = new ArrayList<>();
         branch.add(start);
-        subdivide(start, end, PROJECTILE_HIT_DEPTH, rand, branch);
+        subdivide(start, end, depth, jitter, rand, branch);
         branch.add(end);
         return branch;
     }
@@ -927,15 +1073,16 @@ public class DevilsDevastation extends SwordItem {
         new Quaternionf().fromAxisAngleRad(axisV.toVector3f().normalize(), angle).transform(d);
         return new Vec3(d.x(), d.y(), d.z());
     }
-    private static void subdivide(Vec3 start, Vec3 end, int depth, Random rand, List<Vec3> out) {
+
+    private static void subdivide(Vec3 start, Vec3 end, int depth, float jitter, Random rand, List<Vec3> out) {
         if(depth <= 0) return;
         Vec3 mid = start.add(end).scale(0.5);
         Vec3 seg = end.subtract(start);
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(seg.toVector3f(), 0);
-        mid = getSurfaceRandomPosInRadius(mid, MathUtil.toVec3(dirs[2]), MathUtil.toVec3(dirs[1]), seg.length() * PROJECTILE_HIT_JITTER, rand);
-        subdivide(start, mid, depth - 1, rand, out);
+        mid = getSurfaceRandomPosInRadius(mid, MathUtil.toVec3(dirs[2]), MathUtil.toVec3(dirs[1]), seg.length() * jitter, rand);
+        subdivide(start, mid, depth - 1, jitter, rand, out);
         out.add(mid);
-        subdivide(mid, end, depth - 1, rand, out);
+        subdivide(mid, end, depth - 1, jitter, rand, out);
     }
 
     public static Vec3 getSurfaceRandomPosInRadius(Vec3 pos, Vec3 axisX, Vec3 axisY, double radius, Random random) {
@@ -973,9 +1120,9 @@ public class DevilsDevastation extends SwordItem {
             if(r0 <= 0.001F && r1 <= 0.001F) continue;
             Vec3 N = right[i], B = up[i], N1 = right[i + 1], B1 = up[i + 1];
             Vec3 P = points.get(i), P1 = points.get(i + 1);
-            for(int j = 0;j < PROJECTILE_HIT_RING;j++) {
-                float a0 = (float) (2.0 * Math.PI * j / PROJECTILE_HIT_RING);
-                float a1 = (float) (2.0 * Math.PI * (j + 1) / PROJECTILE_HIT_RING);
+            for(int j = 0;j < RING;j++) {
+                float a0 = (float) (2.0 * Math.PI * j / RING);
+                float a1 = (float) (2.0 * Math.PI * (j + 1) / RING);
                 Vec3 d0 = computeRingDir(N, B, a0);
                 Vec3 d1 = computeRingDir(N1, B1, a0);
                 Vec3 d0b = computeRingDir(N, B, a1);
@@ -1022,13 +1169,13 @@ public class DevilsDevastation extends SwordItem {
             float u0 = uvOffsetU + uvScaleU * ((float)i / (float)(n - 1));
             float u1 = uvOffsetU + uvScaleU * ((float)(i + 1) / (float)(n - 1));
 
-            for(int j = 0;j < PROJECTILE_HIT_RING;j++) {
-                float a0 = (float) (2.0 * Math.PI * j / PROJECTILE_HIT_RING);
-                float a1 = (float) (2.0 * Math.PI * (j + 1) / PROJECTILE_HIT_RING);
+            for(int j = 0;j < RING;j++) {
+                float a0 = (float) (2.0 * Math.PI * j / RING);
+                float a1 = (float) (2.0 * Math.PI * (j + 1) / RING);
 
                 // 每个面独立映射完整纹理 V=[0,1]
-                float v0 = (float) j / (float)PROJECTILE_HIT_RING + uvOffsetV;
-                float v1 = (float) (j + 1) / (float)PROJECTILE_HIT_RING + uvOffsetV;
+                float v0 = (float) j / (float)RING + uvOffsetV;
+                float v1 = (float) (j + 1) / (float)RING + uvOffsetV;
 
                 Vec3 d0 = computeRingDir(N, B, a0);
                 Vec3 d1 = computeRingDir(N1, B1, a0);
@@ -1131,7 +1278,10 @@ public class DevilsDevastation extends SwordItem {
             ItemStack itemStack = player.getMainHandItem();
             if(itemStack.isEmpty()) return;
             if(itemStack.is(ModItems.DEVILS_DEVASTATION.get()) && player.getEffect(ModEffects.KILL_MODE) != null) {
-                PacketDistributor.sendToServer(new DevilsDevastationLeftClickPayload());
+                if(!player.getCooldowns().isOnCooldown(itemStack.getItem())) {
+                    SoundUtil.playClientSound(player, ModSounds.DEMON_SWORD_SWING.get());
+                    PacketDistributor.sendToServer(new DevilsDevastationLeftClickPayload());
+                }
             }
         }
 
@@ -1141,7 +1291,10 @@ public class DevilsDevastation extends SwordItem {
             ItemStack itemStack = player.getMainHandItem();
             if(itemStack.isEmpty()) return;
             if(itemStack.is(ModItems.DEVILS_DEVASTATION.get()) && player.getEffect(ModEffects.KILL_MODE) != null) {
-                PacketDistributor.sendToServer(new DevilsDevastationLeftClickPayload());
+                if(!player.getCooldowns().isOnCooldown(itemStack.getItem())) {
+                    SoundUtil.playClientSound(player, ModSounds.DEMON_SWORD_SWING.get());
+                    PacketDistributor.sendToServer(new DevilsDevastationLeftClickPayload());
+                }
             }
         }
 
@@ -1151,9 +1304,11 @@ public class DevilsDevastation extends SwordItem {
             ItemStack itemStack = player.getMainHandItem();
             if(itemStack.isEmpty()) return;
             if(itemStack.is(ModItems.DEVILS_DEVASTATION.get()) && player.getEffect(ModEffects.KILL_MODE) != null) {
-                summonKilModeProjectile(player);
-                enterIntoKillMode(player);
-                event.setCanceled(true);
+                if(!player.getCooldowns().isOnCooldown(itemStack.getItem())) {
+                    SoundUtil.playClientSound(player, ModSounds.DEMON_SWORD_SWING.get());
+                    summonKilModeProjectile(player);
+                    event.setCanceled(true);
+                }
             }
         }
     };
@@ -1180,9 +1335,9 @@ public class DevilsDevastation extends SwordItem {
             projectile.getEntityData().set(StaticProjectile.SCALE_Z, 4.0f);
             projectile.getEntityData().set(StaticProjectile.RXP, -90);
             projectile.getEntityData().set(StaticProjectile.RZP, -135);
-            projectile.getEntityData().set(StaticProjectile.LIFETIME, 40);
+            projectile.getEntityData().set(StaticProjectile.LIFETIME, PROJECTILE_LIFETIME);
             projectile.getEntityData().set(StaticProjectile.GLOW, true);
-            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", 3.0));
+            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", PROJECTILE_SPEED));
             projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
             level.addFreshEntity(projectile);
         }

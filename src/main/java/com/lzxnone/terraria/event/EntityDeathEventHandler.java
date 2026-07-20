@@ -21,6 +21,7 @@ public class EntityDeathEventHandler {
         LivingEntity livingEntity = event.getEntity();
 
         //消耗插入的破灭魔王剑
+        /*
         if(livingEntity.level() instanceof ServerLevel serverLevel) {
             List<UUID> stuckList = livingEntity.getData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE);
             while(!stuckList.isEmpty()) {
@@ -29,6 +30,6 @@ public class EntityDeathEventHandler {
                 Entity stuck = serverLevel.getEntity(uuid);
                 if(stuck instanceof StaticSummon stuckProjectile) DevilsDevastation.summonStuckProjectile(stuckProjectile);
             }
-        }
+        }*/
     }
 }
