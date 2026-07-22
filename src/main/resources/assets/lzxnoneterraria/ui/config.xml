@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ldlib2-ui>
+    <stylesheet location="ldlib2:lss/mc.lss"/>
+    <stylesheet location="lzxnoneterraria:lss/config.lss"/>
+
+    <root id="root" class="root">
+        <element class="header">
+            <element class="meta">
+                <button id="back-button" class="back-button" text="&lt;"/>
+                <label id="title" class="title"><lang key="lzxnoneterraria.configuration.title"/></label>
+            </element>
+            <element class="nav">
+                <element id="nav-item-weapon" class="nav-item">
+                    <button id="nav-button-weapon" class="nav-button" text="">
+                        <element class="nav-img nav-img-weapon"/>
+                        <label class="nav-label"><lang key="lzxnoneterraria.configuration.nav_weapon"/></label>
+                    </button>
+                    <element class="nav-indicator"/>
+                </element>
+                <element id="nav-item-effect" class="nav-item">
+                    <button id="nav-button-effect" class="nav-button" text="">
+                        <element class="nav-img nav-img-effect"/>
+                        <label class="nav-label"><lang key="lzxnoneterraria.configuration.nav_effect"/></label>
+                    </button>
+                    <element class="nav-indicator"/>
+                </element>
+            </element>
+        </element>
+
+
+        <element class="main">
+            <scroller-view id="toggle-scroll" class="toggle-scroll">
+                <element id="toggle-container" class="toggle-container">
+                </element>
+            </scroller-view>
+
+            <element class="main-divider"/>
+
+            <scroller-view id="config-scroll" class="config-scroll">
+                <element id="config-container" class="config-container">
+                </element>
+            </scroller-view>
+        </element>
+
+        <element class="footer">
+            <button id="button-cancel" class="footer-button" text="lzxnoneterraria.configuration.cancel_button"/>
+            <button id="button-confirm" class="footer-button" text="lzxnoneterraria.configuration.confirm_button"/>
+        </element>
+    </root>
+</ldlib2-ui>

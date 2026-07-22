@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.network.handler;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.item.weapon.melee.TrueCopperShortsword;
 import com.lzxnone.terraria.item.weapon.melee.Zenith;
 import com.lzxnone.terraria.network.payload.ZenithScrollPayload;
@@ -22,14 +21,14 @@ public class ZenithScrollHandler {
                 double scrollDelta = payload.scrollDelta();
                 double deltaDist = weapon.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                         .copyTag().getDouble("deltaDist");
-                double finalDelta = deltaDist + scrollDelta * Config.zenithMouseSpeed;
+                double finalDelta = deltaDist + scrollDelta * Zenith.getMouseSpeed();
 
-                if(Config.zenithDistanceMode) {
+                if(Zenith.isDistanceMode()) {
 
-                    if(finalDelta > Config.zenithMaxRange) finalDelta = Config.zenithMaxRange;
-                    else if(finalDelta < -Config.zenithMaxRange) finalDelta = -Config.zenithMaxRange;
+                    if(finalDelta > Zenith.getMaxRange()) finalDelta = Zenith.getMaxRange();
+                    else if(finalDelta < -Zenith.getMaxRange()) finalDelta = -Zenith.getMaxRange();
                 }else {
-                    if(finalDelta > Config.zenithMaxRange) finalDelta = Config.zenithMaxRange;
+                    if(finalDelta > Zenith.getMaxRange()) finalDelta = Zenith.getMaxRange();
                     else if(finalDelta < 0) finalDelta = 0;
                 }
 

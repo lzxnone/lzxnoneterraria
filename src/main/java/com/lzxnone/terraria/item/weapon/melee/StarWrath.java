@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -10,9 +9,14 @@ import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.particle.ModParticles;
+import com.lzxnone.terraria.ui.config.ConfigFactory;
+import com.lzxnone.terraria.ui.config.ConfigListItem;
+import com.lzxnone.terraria.ui.config.ConfigUtil;
+import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -31,6 +35,23 @@ import net.minecraft.world.phys.*;
 import org.joml.Vector3f;
 
 public class StarWrath extends SwordItem {
+    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
+
+    public static final String DAMAGE_PATH = "weapon.star_wrath.damage";
+    public static final double DAMAGE_DEFAULT = 16.0;
+    public static final double DAMAGE_MIN = 0.0;
+    public static final double DAMAGE_MAX = 2147483647.0;
+
+    public static final String SPEED_PATH = "weapon.star_wrath.speed";
+    public static final double SPEED_DEFAULT = 2.0;
+    public static final double SPEED_MIN = 0.0;
+    public static final double SPEED_MAX = 10.0;
+
+    public static final String MAX_RANGE_PATH = "weapon.star_wrath.max_range";
+    public static final double MAX_RANGE_DEFAULT = 48.0;
+    public static final double MAX_RANGE_MIN = 1.0;
+    public static final double MAX_RANGE_MAX = 1024.0;
+
     public StarWrath() {
         super(Tiers.DIAMOND, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
@@ -42,6 +63,42 @@ public class StarWrath extends SwordItem {
             .build()
         ).rarity(Rarity.RARE));
     }
+
+    public static final IConfigData CONFIG_DATA = new IConfigData() {
+        @Override
+        public void onConfigLoad() {
+            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("star_wrath_damage"), configTooltip("star_wrath_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigFactory.loadDoubleConfig(SPEED_PATH, configText("star_wrath_speed"), configTooltip("star_wrath_speed"), SPEED_DEFAULT, SPEED_MIN, SPEED_MAX);
+            ConfigFactory.loadDoubleConfig(MAX_RANGE_PATH, configText("star_wrath_max_range"), configTooltip("star_wrath_max_range"), MAX_RANGE_DEFAULT, MAX_RANGE_MIN, MAX_RANGE_MAX);
+        }
+    };
+
+    private static Component configText(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
+    }
+
+    private static Component configTooltip(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
+    }
+
+    public static double getDamage() {
+        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    }
+
+    public static double getSpeed() {
+        return Math.clamp(ConfigUtil.readDouble(SPEED_PATH, SPEED_DEFAULT), SPEED_MIN, SPEED_MAX);
+    }
+
+    public static double getMaxRange() {
+        return Math.clamp(ConfigUtil.readDouble(MAX_RANGE_PATH, MAX_RANGE_DEFAULT), MAX_RANGE_MIN, MAX_RANGE_MAX);
+    }
+
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        "star_wrath",
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/star_wrath.png"),
+        Component.translatable("item.lzxnoneterraria.star_wrath"),
+        CONFIG_DATA
+    );
 
     public static final DustParticleOptions PARTICLE = new DustParticleOptions(
         0.05f, 0.5f, 40, true, new Vector3f[]{
@@ -82,7 +139,7 @@ public class StarWrath extends SwordItem {
                 Entity target = result.getEntity();
                 Entity owner = projectile.getOwner();
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.attack(player, target, (float) Config.starWrathDamage)) {
+                if(DamageUtil.attack(player, target, (float) getDamage())) {
                     target.invulnerableTime = 2;
                 }
             }
@@ -144,7 +201,7 @@ public class StarWrath extends SwordItem {
         ItemStack itemstack = player.getItemInHand(hand);
         if(!level.isClientSide()) {
             for(int i = 0;i < SPAWN_COUNT;i++) {
-                Vec3 targetPos = MathUtil.getCrosshairPos(player, level, Config.starWrathMaxRange);
+                Vec3 targetPos = MathUtil.getCrosshairPos(player, level, getMaxRange());
 
                 Vec3 spawnPos = new Vec3(
                     targetPos.x + SPAWN_OFFSET * (Math.random() * 2 - 1),
@@ -176,10 +233,10 @@ public class StarWrath extends SwordItem {
                 projectile.getEntityData().set(StaticProjectile.GLOW, true);
                 projectile.getEntityData().set(StaticProjectile.RXP, 90);
                 projectile.getEntityData().set(StaticProjectile.RZP, 90);
-                projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", Config.starWrathSpeed));
+                projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", getSpeed()));
 
                 CompoundTag customData = new CompoundTag();
-                customData.putInt("targetLifetime", (int) Math.round(targetPos.distanceTo(spawnPos) / Config.starWrathSpeed));
+                customData.putInt("targetLifetime", (int) Math.round(targetPos.distanceTo(spawnPos) / getSpeed()));
                 projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
 
                 projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));

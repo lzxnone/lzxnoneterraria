@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -9,8 +8,13 @@ import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.particle.ModParticles;
+import com.lzxnone.terraria.ui.config.ConfigFactory;
+import com.lzxnone.terraria.ui.config.ConfigListItem;
+import com.lzxnone.terraria.ui.config.ConfigUtil;
+import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.*;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,6 +40,22 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 public class EnchantedSword extends SwordItem {
+    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
+
+    public static final String DAMAGE_PATH = "weapon.enchanted_sword.damage";
+    public static final double DAMAGE_DEFAULT = 4.0;
+    public static final double DAMAGE_MIN = 0.0;
+    public static final double DAMAGE_MAX = 2147483647.0;
+
+    public static final String LIFETIME_PATH = "weapon.enchanted_sword.lifetime";
+    public static final int LIFETIME_DEFAULT = 60;
+    public static final int LIFETIME_MIN = 1;
+    public static final int LIFETIME_MAX = 1200;
+
+    public static final String SPEED_PATH = "weapon.enchanted_sword.speed";
+    public static final double SPEED_DEFAULT = 1.0;
+    public static final double SPEED_MIN = 0.0;
+    public static final double SPEED_MAX = 10.0;
 
     public EnchantedSword() {
         super(Tiers.IRON, new Item.Properties().attributes(ItemAttributeModifiers.builder()
@@ -50,6 +70,42 @@ public class EnchantedSword extends SwordItem {
             .build()
         ));
     }
+
+    public static final IConfigData CONFIG_DATA = new IConfigData() {
+        @Override
+        public void onConfigLoad() {
+            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("enchanted_sword_damage"), configTooltip("enchanted_sword_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigFactory.loadIntConfig(LIFETIME_PATH, configText("enchanted_sword_lifetime"), configTooltip("enchanted_sword_lifetime"), LIFETIME_DEFAULT, LIFETIME_MIN, LIFETIME_MAX);
+            ConfigFactory.loadDoubleConfig(SPEED_PATH, configText("enchanted_sword_speed"), configTooltip("enchanted_sword_speed"), SPEED_DEFAULT, SPEED_MIN, SPEED_MAX);
+        }
+    };
+
+    private static Component configText(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
+    }
+
+    private static Component configTooltip(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
+    }
+
+    public static double getDamage() {
+        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    }
+
+    public static int getLifetime() {
+        return Math.clamp(ConfigUtil.readInt(LIFETIME_PATH, LIFETIME_DEFAULT), LIFETIME_MIN, LIFETIME_MAX);
+    }
+
+    public static double getSpeed() {
+        return Math.clamp(ConfigUtil.readDouble(SPEED_PATH, SPEED_DEFAULT), SPEED_MIN, SPEED_MAX);
+    }
+
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        "enchanted_sword",
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/enchanted_sword.png"),
+        Component.translatable("item.lzxnoneterraria.enchanted_sword"),
+        CONFIG_DATA
+    );
 
     public static final IStaticProjectileBehavior PROJECTILE_BEHAVIOR = new IStaticProjectileBehavior() {
         @Override
@@ -67,7 +123,7 @@ public class EnchantedSword extends SwordItem {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.attack(player, target, (float) Config.enchantedSwordDamage)) {
+                if(DamageUtil.attack(player, target, (float) getDamage())) {
                     target.invulnerableTime = 5;
                     ParticleUtil.addParticles(
                         (ServerLevel) projectile.level(), ModParticles.COLORFUL_PARTICLE,
@@ -110,8 +166,8 @@ public class EnchantedSword extends SwordItem {
             projectile.getEntityData().set(StaticProjectile.RZP, 45);
             projectile.getEntityData().set(StaticProjectile.RYPS, 10);
             projectile.getEntityData().set(StaticProjectile.GLOW, true);
-            projectile.getEntityData().set(StaticProjectile.LIFETIME, Config.enchantedSwordLifetime);
-            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", Config.enchantedSwordSpeed));
+            projectile.getEntityData().set(StaticProjectile.LIFETIME, getLifetime());
+            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", getSpeed()));
 
             projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
             level.addFreshEntity(projectile);

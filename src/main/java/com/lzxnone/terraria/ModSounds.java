@@ -83,4 +83,12 @@ public class ModSounds {
             SOUND_EVENTS.register("demon_sword_kill_mode",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "demon_sword_kill_mode")));
+    public static final Supplier<SoundEvent> DEMON_SWORD_KILL_MODE_OFF_COOLDOWN =
+            SOUND_EVENTS.register("demon_sword_kill_mode_off_cooldown",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "demon_sword_kill_mode_off_cooldown")));
+    public static final Supplier<SoundEvent> DEMON_SWORD_FINAL_STRIKE =
+            SOUND_EVENTS.register("demon_sword_final_strike",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "demon_sword_final_strike")));
 }

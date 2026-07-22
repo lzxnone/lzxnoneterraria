@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -42,24 +41,24 @@ public class TrueCopperShortsword extends SwordItem {
 
     public static void summon(Player player, double deltaDist) {
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
-        int randomAngle = (int) ((Math.random() * 2 - 1) * Config.zenithTrailOffset);
+        int randomAngle = (int) ((Math.random() * 2 - 1) * Zenith.getTrailOffset());
         dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], randomAngle);
 
         Vec3 pos = (player.getBoundingBox().getCenter()).add(MathUtil.toVec3(dirs[0]).scale(-2));
         double dist;
-        if(Config.zenithDistanceMode) {
-            Vec3 targetPos = MathUtil.getCrosshairPos(player, player.level(), Config.zenithMaxRange);
-            dist = Math.max(0, Math.min(targetPos.subtract(pos).length() + deltaDist, Config.zenithMaxRange));
+        if(Zenith.isDistanceMode()) {
+            Vec3 targetPos = MathUtil.getCrosshairPos(player, player.level(), Zenith.getMaxRange());
+            dist = Math.max(0, Math.min(targetPos.subtract(pos).length() + deltaDist, Zenith.getMaxRange()));
         }else {
             dist = deltaDist;
         }
-        int cycle = (int) Math.max(10, dist / Config.zenithMaxRange * Config.zenithCycle);
+        int cycle = (int) Math.max(10, dist / Zenith.getMaxRange() * Zenith.getCycle());
         double a = Math.max(dist / 2, 2);
-        double b = Math.min(Math.random() * Config.zenithTrailB + Config.zenithTrailB, a / 2);
+        double b = Math.min(Math.random() * Zenith.getTrailB() + Zenith.getTrailB(), a / 2);
         double w = Math.PI * 2 / (double) cycle;
         if(player.getRandom().nextInt(2) == 0) w = -w;
 
-        for(int i = 0;i < Config.zenithWeaponCount;i++) {
+        for(int i = 0;i < Zenith.getWeaponCount();i++) {
             StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), player.level());
             projectile.setOwner(player);
 
@@ -85,16 +84,16 @@ public class TrueCopperShortsword extends SwordItem {
             customData.putInt("angle", randomAngle);
             if(i == 0) {
                 projectile.getEntityData().set(StaticProjectile.COLOR_A, 1.0f);
-                projectile.getEntityData().set(StaticProjectile.SCALE_X, (float) Config.zenithScale);
-                projectile.getEntityData().set(StaticProjectile.SCALE_Y, (float) Config.zenithScale);
+                projectile.getEntityData().set(StaticProjectile.SCALE_X, (float) Zenith.getScale());
+                projectile.getEntityData().set(StaticProjectile.SCALE_Y, (float) Zenith.getScale());
                 projectile.getEntityData().set(StaticProjectile.LIFETIME, cycle);
                 projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3ft-1.571)", b, w));
                 projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*sin(%.3ft-1.571)+%.3f", a, w, a));
                 customData.putInt("start", 0);
             }else if(i == 1) {
                 projectile.getEntityData().set(StaticProjectile.COLOR_A, 0.75f);
-                projectile.getEntityData().set(StaticProjectile.SCALE_X, (float) Config.zenithScale * 0.75f);
-                projectile.getEntityData().set(StaticProjectile.SCALE_Y, (float) Config.zenithScale * 0.75f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_X, (float) Zenith.getScale() * 0.75f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_Y, (float) Zenith.getScale() * 0.75f);
                 projectile.getEntityData().set(StaticProjectile.LIFETIME, (int) (cycle * 1.25));
                 if(w > 0) {
                     projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3ft-3.142)", b, w));
@@ -106,8 +105,8 @@ public class TrueCopperShortsword extends SwordItem {
                 customData.putInt("start", (int) (cycle * 0.25));
             }else if(i == 2) {
                 projectile.getEntityData().set(StaticProjectile.COLOR_A, 0.5f);
-                projectile.getEntityData().set(StaticProjectile.SCALE_X, (float) Config.zenithScale * 0.5f);
-                projectile.getEntityData().set(StaticProjectile.SCALE_Y, (float) Config.zenithScale * 0.5f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_X, (float) Zenith.getScale() * 0.5f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_Y, (float) Zenith.getScale() * 0.5f);
                 projectile.getEntityData().set(StaticProjectile.LIFETIME, (int) (cycle * 1.5));
                 if(w > 0) {
                     projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3ft-4.713)", b, w));

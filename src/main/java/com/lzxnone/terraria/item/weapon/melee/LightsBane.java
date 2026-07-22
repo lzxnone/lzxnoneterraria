@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.ModRenderTypes;
@@ -11,6 +10,10 @@ import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.IItemWaveBehavior;
 import com.lzxnone.terraria.particle.DustParticleOptions;
+import com.lzxnone.terraria.ui.config.ConfigFactory;
+import com.lzxnone.terraria.ui.config.ConfigListItem;
+import com.lzxnone.terraria.ui.config.ConfigUtil;
+import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.ParticleUtil;
@@ -23,6 +26,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -47,6 +51,23 @@ import java.util.Comparator;
 import java.util.List;
 
 public class LightsBane extends SwordItem {
+    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
+
+    public static final String BIG_DAMAGE_PATH = "weapon.lights_bane.big_damage";
+    public static final double BIG_DAMAGE_DEFAULT = 4.0;
+    public static final double BIG_DAMAGE_MIN = 0.0;
+    public static final double BIG_DAMAGE_MAX = 2147483647.0;
+
+    public static final String SMALL_DAMAGE_PATH = "weapon.lights_bane.small_damage";
+    public static final double SMALL_DAMAGE_DEFAULT = 2.0;
+    public static final double SMALL_DAMAGE_MIN = 0.0;
+    public static final double SMALL_DAMAGE_MAX = 2147483647.0;
+
+    public static final String TARGET_RANGE_PATH = "weapon.lights_bane.target_range";
+    public static final double TARGET_RANGE_DEFAULT = 2.0;
+    public static final double TARGET_RANGE_MIN = 1.0;
+    public static final double TARGET_RANGE_MAX = 64.0;
+
     public LightsBane() {
         super(Tiers.IRON, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
@@ -58,6 +79,42 @@ public class LightsBane extends SwordItem {
             .build()
         ));
     }
+
+    public static final IConfigData CONFIG_DATA = new IConfigData() {
+        @Override
+        public void onConfigLoad() {
+            ConfigFactory.loadDoubleConfig(BIG_DAMAGE_PATH, configText("lights_bane_big_damage"), configTooltip("lights_bane_big_damage"), BIG_DAMAGE_DEFAULT, BIG_DAMAGE_MIN, BIG_DAMAGE_MAX);
+            ConfigFactory.loadDoubleConfig(SMALL_DAMAGE_PATH, configText("lights_bane_small_damage"), configTooltip("lights_bane_small_damage"), SMALL_DAMAGE_DEFAULT, SMALL_DAMAGE_MIN, SMALL_DAMAGE_MAX);
+            ConfigFactory.loadDoubleConfig(TARGET_RANGE_PATH, configText("lights_bane_target_range"), configTooltip("lights_bane_target_range"), TARGET_RANGE_DEFAULT, TARGET_RANGE_MIN, TARGET_RANGE_MAX);
+        }
+    };
+
+    private static Component configText(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
+    }
+
+    private static Component configTooltip(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
+    }
+
+    public static double getBigDamage() {
+        return Math.clamp(ConfigUtil.readDouble(BIG_DAMAGE_PATH, BIG_DAMAGE_DEFAULT), BIG_DAMAGE_MIN, BIG_DAMAGE_MAX);
+    }
+
+    public static double getSmallDamage() {
+        return Math.clamp(ConfigUtil.readDouble(SMALL_DAMAGE_PATH, SMALL_DAMAGE_DEFAULT), SMALL_DAMAGE_MIN, SMALL_DAMAGE_MAX);
+    }
+
+    public static double getTargetRange() {
+        return Math.clamp(ConfigUtil.readDouble(TARGET_RANGE_PATH, TARGET_RANGE_DEFAULT), TARGET_RANGE_MIN, TARGET_RANGE_MAX);
+    }
+
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        "lights_bane",
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/lights_bane.png"),
+        Component.translatable("item.lzxnoneterraria.lights_bane"),
+        CONFIG_DATA
+    );
 
     public static final DustParticleOptions PARTICLE = new DustParticleOptions(
         0.075f, 0.5f, 40, true, new Vector3f[]{
@@ -146,7 +203,7 @@ public class LightsBane extends SwordItem {
             if(!summon.level().isClientSide() && summon.getOwner() instanceof Player player) {
                 List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                 for(Entity target : targets) {
-                    float damage = customData.contains("big") && customData.getBoolean("big") ? (float) Config.lightsBaneBigDamage : (float) Config.lightsBaneSmallDamage;
+                    float damage = customData.contains("big") && customData.getBoolean("big") ? (float) getBigDamage() : (float) getSmallDamage();
                     if(DamageUtil.attack(player, target, damage)) {
 
                     }
@@ -167,9 +224,10 @@ public class LightsBane extends SwordItem {
                     if(!player.getCooldowns().isOnCooldown(item)) {
                         Entity target = event.getTarget();
                         Vec3 pos = target.position();
+                        double targetRange = getTargetRange();
                         AABB searchBox = new AABB(
-                            pos.x - Config.lightsBaneTargetRange, pos.y - Config.lightsBaneTargetRange, pos.z - Config.lightsBaneTargetRange,
-                            pos.x + Config.lightsBaneTargetRange, pos.y + Config.lightsBaneTargetRange, pos.z + Config.lightsBaneTargetRange
+                            pos.x - targetRange, pos.y - targetRange, pos.z - targetRange,
+                            pos.x + targetRange, pos.y + targetRange, pos.z + targetRange
                         );
                         List<Monster> entities = target.level().getEntitiesOfClass(
                             Monster.class,

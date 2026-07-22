@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -36,12 +35,90 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.*;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.joml.Vector3f;
+import com.lzxnone.terraria.ui.config.ConfigFactory;
+import com.lzxnone.terraria.ui.config.ConfigListItem;
+import com.lzxnone.terraria.ui.config.ConfigUtil;
+import com.lzxnone.terraria.ui.config.IConfigData;
+import net.minecraft.network.chat.Component;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
 public class InfluxWaver extends SwordItem {
+    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
+
+    public static final String DAMAGE_PATH = "weapon.influx_waver.damage";
+    public static final double DAMAGE_DEFAULT = 12.0;
+    public static final double DAMAGE_MIN = 0.0;
+    public static final double DAMAGE_MAX = 2147483647.0;
+
+    public static final String MAX_COUNT_PATH = "weapon.influx_waver.max_count";
+    public static final int MAX_COUNT_DEFAULT = 2;
+    public static final int MAX_COUNT_MIN = 0;
+    public static final int MAX_COUNT_MAX = 10;
+
+    public static final String SPEED_PATH = "weapon.influx_waver.speed";
+    public static final double SPEED_DEFAULT = 1.0;
+    public static final double SPEED_MIN = 0.0;
+    public static final double SPEED_MAX = 10.0;
+
+    public static final String SPAWN_RANGE_PATH = "weapon.influx_waver.spawn_range";
+    public static final double SPAWN_RANGE_DEFAULT = 8.0;
+    public static final double SPAWN_RANGE_MIN = 1.0;
+    public static final double SPAWN_RANGE_MAX = 64.0;
+
+    public static final String TARGET_RANGE_PATH = "weapon.influx_waver.target_range";
+    public static final double TARGET_RANGE_DEFAULT = 24.0;
+    public static final double TARGET_RANGE_MIN = 1.0;
+    public static final double TARGET_RANGE_MAX = 64.0;
+
+    public static final IConfigData CONFIG_DATA = new IConfigData() {
+        @Override
+        public void onConfigLoad() {
+            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("influx_waver_damage"), configTooltip("influx_waver_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigFactory.loadIntConfig(MAX_COUNT_PATH, configText("influx_waver_max_count"), configTooltip("influx_waver_max_count"), MAX_COUNT_DEFAULT, MAX_COUNT_MIN, MAX_COUNT_MAX);
+            ConfigFactory.loadDoubleConfig(SPEED_PATH, configText("influx_waver_speed"), configTooltip("influx_waver_speed"), SPEED_DEFAULT, SPEED_MIN, SPEED_MAX);
+            ConfigFactory.loadDoubleConfig(SPAWN_RANGE_PATH, configText("influx_waver_spawn_range"), configTooltip("influx_waver_spawn_range"), SPAWN_RANGE_DEFAULT, SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
+            ConfigFactory.loadDoubleConfig(TARGET_RANGE_PATH, configText("influx_waver_target_range"), configTooltip("influx_waver_target_range"), TARGET_RANGE_DEFAULT, TARGET_RANGE_MIN, TARGET_RANGE_MAX);
+        }
+    };
+
+    private static Component configText(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
+    }
+
+    private static Component configTooltip(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
+    }
+
+    public static double getDamage() {
+        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    }
+
+    public static int getMaxCount() {
+        return Math.clamp(ConfigUtil.readInt(MAX_COUNT_PATH, MAX_COUNT_DEFAULT), MAX_COUNT_MIN, MAX_COUNT_MAX);
+    }
+
+    public static double getSpeed() {
+        return Math.clamp(ConfigUtil.readDouble(SPEED_PATH, SPEED_DEFAULT), SPEED_MIN, SPEED_MAX);
+    }
+
+    public static double getSpawnRange() {
+        return Math.clamp(ConfigUtil.readDouble(SPAWN_RANGE_PATH, SPAWN_RANGE_DEFAULT), SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
+    }
+
+    public static double getTargetRange() {
+        return Math.clamp(ConfigUtil.readDouble(TARGET_RANGE_PATH, TARGET_RANGE_DEFAULT), TARGET_RANGE_MIN, TARGET_RANGE_MAX);
+    }
+
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        "influx_waver",
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/influx_waver.png"),
+        Component.translatable("item.lzxnoneterraria.influx_waver"),
+        CONFIG_DATA
+    );
+
     public InfluxWaver() {
         super(Tiers.DIAMOND, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
@@ -101,23 +178,23 @@ public class InfluxWaver extends SwordItem {
                 checkEntity = false;
             }else {
                 if(idx == 0) {
-                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(Config.influxWaverSpeed));
+                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(getSpeed()));
                 }else {
                     checkBlock = false;
                     if(customData.contains("target")) {
                         Entity target = summon.level().getEntity(customData.getInt("target"));
                         if(target == null || !target.isAlive()) {
-                            //summon.setDeltaMovement(summon.getLookAngle().normalize().scale(Config.influxWaverSpeed));
+                            //summon.setDeltaMovement(summon.getLookAngle().normalize().scale(getSpeed()));
                             checkEntity = false;
                         }else {
                             //Vec3 targetPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ());
-                            //summon.setDeltaMovement(targetPos.subtract(summon.position()).normalize().scale(Config.influxWaverSpeed));
+                            //summon.setDeltaMovement(targetPos.subtract(summon.position()).normalize().scale(getSpeed()));
                         }
                     }else {
-                        //summon.setDeltaMovement(summon.getLookAngle().normalize().scale(Config.influxWaverSpeed));
+                        //summon.setDeltaMovement(summon.getLookAngle().normalize().scale(getSpeed()));
                         checkEntity = false;
                     }
-                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(Config.influxWaverSpeed));
+                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(getSpeed()));
                 }
             }
 
@@ -147,7 +224,7 @@ public class InfluxWaver extends SwordItem {
                         Entity target = customData.contains("target") ? summon.level().getEntity(customData.getInt("target")) : null;
                         if(target != null && !hitTarget.getUUID().equals(target.getUUID())) return;
                         if(summon.getOwner() instanceof Player player && FilterUtil.createTargetFilter(player).test(hitTarget)) {
-                            if(DamageUtil.attack(player, hitTarget, (float) Config.influxWaverDamage)) {
+                            if(DamageUtil.attack(player, hitTarget, (float) getDamage())) {
                                 hitTarget.invulnerableTime = 2;
                             }
                             customData.putBoolean("dead", false);
@@ -163,12 +240,12 @@ public class InfluxWaver extends SwordItem {
         public void onDied(StaticSummon summon) {
             if(!summon.level().isClientSide()) {
                 CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-                if(customData.contains("dead") && !customData.getBoolean("dead") && customData.contains("idx") && customData.getInt("idx") < Config.influxWaverMaxCount) {
+                if(customData.contains("dead") && !customData.getBoolean("dead") && customData.contains("idx") && customData.getInt("idx") < getMaxCount()) {
                     if(summon.getOwner() instanceof Player player) {
                         Entity target = InfluxWaver.search(player, summon.position());
                         if(target != null) {
                             Vec3 targetPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ());
-                            Vec3 summonPos = MathUtil.getRandomPosOnRadius(targetPos, Config.influxWaverSpawnRange);
+                            Vec3 summonPos = MathUtil.getRandomPosOnRadius(targetPos, getSpawnRange());
                             InfluxWaver.summon(player, summonPos, targetPos.subtract(summonPos).normalize(), target, customData.getInt("idx") + 1);
                         }
                     }
@@ -214,8 +291,8 @@ public class InfluxWaver extends SwordItem {
 
     public static Entity search(Player player, Vec3 pos) {
         AABB searchBox = new AABB(
-            pos.x - Config.influxWaverTargetRange, pos.y - Config.influxWaverTargetRange, pos.z - Config.influxWaverTargetRange,
-            pos.x + Config.influxWaverTargetRange, pos.y + Config.influxWaverTargetRange, pos.z + Config.influxWaverTargetRange
+            pos.x - getTargetRange(), pos.y - getTargetRange(), pos.z - getTargetRange(),
+            pos.x + getTargetRange(), pos.y + getTargetRange(), pos.z + getTargetRange()
         );
         List<Monster> entities = player.level().getEntitiesOfClass(
             Monster.class,

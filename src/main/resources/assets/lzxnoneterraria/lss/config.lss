@@ -1,0 +1,325 @@
+// colors
+// background: sdf(#d4141820, 0)
+// hover-background: sdf(#44ffffff, 4)
+// pressed-background: sdf(#33000000, 4)
+
+.root {
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    padding-all: 8;
+    gap-all: 8;
+    background: sdf(#a8141820, 0);
+}
+
+.header {
+    width: 100%;
+    flex-direction: column;
+    gap-all: 2;
+    background: sdf(#CC141821, 6);
+}
+
+.meta {
+    width: 100%;
+    flex-direction: row;
+    gap-all: 8;
+}
+
+.back-button {
+    width: 24;
+    padding-all: 0;
+    base-background: empty;
+    hover-background: sdf(#44ffffff, 4);
+    pressed-background: sdf(#33000000, 4);
+}
+
+.title {
+    flex: 1;
+    height: 100%;
+    horizontal-align: CENTER;
+    vertical-align: CENTER;
+}
+
+.nav {
+    width: 100%;
+    flex-direction: row;
+    gap-all: 2;
+}
+
+.nav-item {
+    width: 64;
+    flex-direction: column;
+    gap-all: 0;
+}
+
+.nav-button {
+    flex: 1;
+    position: relative;
+    base-background: empty;
+    hover-background: sdf(#44ffffff, 4);
+    pressed-background: sdf(#33000000, 4);
+}
+
+.nav-item--selected .nav-indicator {
+    height: 1;
+    width: 100%;
+    background: sdf(#ff8ecbff, 2);
+}
+
+.nav-img {
+    width:16;
+    height:16;
+    left: 5;
+    top: 0;
+    position: absolute;
+}
+
+.nav-label {
+    width: 100%;
+    height: 100%;
+    left: 24;
+    top: 3;
+    position: absolute;
+}
+
+.nav-img-weapon {
+    background: sprite(lzxnoneterraria:textures/ui/nav_weapon_icon.png);
+}
+
+.nav-img-effect {
+    background: sprite(lzxnoneterraria:textures/ui/nav_effect_icon.png);
+}
+
+.main {
+    flex: 1;
+    flex-direction: row;
+    gap-all: 4;
+    align-items: center;
+    background: sdf(#CC141821, 6);
+}
+
+.sidebar {
+    width: 80;
+    height: 100%;
+    padding-all: 8;
+    gap-all: 4;
+    flex-direction: column;
+    background: sdf(#CC141821, 6);
+}
+
+.toggle-scroll {
+    width: 120;
+    height: 100%;
+    padding-all: 4;
+}
+
+.toggle-scroll .__scroller_view_view-port__ {
+    background: empty;
+}
+
+.toggle-container {
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    gap-all: 2;
+}
+
+.toggle-item {
+    flex: 1;
+    position: relative;
+    base-background: empty;
+    hover-background: sdf(#44ffffff, 4);
+    pressed-background: sdf(#33000000, 4);
+}
+
+.toggle-item--selected {
+    base-background: sdf(#33000000, 4);
+    hover-background: sdf(#33000000, 4);
+    pressed-background: sdf(#33000000, 4);
+}
+
+.toggle-item-img {
+    width:16;
+    height:16;
+    left: 5;
+    top: 0;
+    position: absolute;
+}
+
+.toggle-item-label {
+    width: 100%;
+    height: 100%;
+    left: 24;
+    top: 3;
+    position: absolute;
+}
+
+.main-divider {
+    width: 1;
+    height: 100%;
+    background: sdf(#44ffffff, 4);
+}
+
+.config-divider {
+    width: 100%;
+    height: 1;
+    background: sdf(#44ffffff, 4);
+}
+
+.reset-button {
+    width: auto;
+    adaptive-width: true;
+    base-background: sdf(#ff8ecbff, 2);
+    hover-background: sdf(#ffffffff, 2);
+    pressed-background: sdf(#ffaaeeff, 2);
+}
+
+.reset-button .__button_text__ {
+    text-color: #ff000000;
+    text-shadow: false;
+}
+
+.config-scroll {
+    flex: 1;
+    height: 100%;
+}
+
+.config-scroll .__scroller_view_view-port__ {
+    background: empty;
+}
+
+.toggle-scroll .__scroller_view_vertical-scroller__ .__scroller_scroll_container__,
+.config-scroll .__scroller_view_vertical-scroller__ .__scroller_scroll_container__ {
+    background: #ff3a3a3a;
+}
+
+.toggle-scroll .__scroller_view_vertical-scroller__ .__scroller_scroll_bar__,
+.config-scroll .__scroller_view_vertical-scroller__ .__scroller_scroll_bar__ {
+    base-background: #ff777777;
+    hover-background: #ff999999;
+    pressed-background: #ff555555;
+}
+
+.config-container {
+    width:100%;
+    height: 100%;
+    flex-direction: column;
+    padding-all: 4;
+    gap-all: 4;
+}
+
+.config-title {
+    width:100%;
+    font-size: 16;
+    text-bold: true;
+    margin-bottom: 16;
+}
+
+.config-scroller-container {
+    width: 100%;
+    height: 16;
+    flex-direction: row;
+    align-items: center;
+    gap-all: 4;
+}
+
+.config-scroller-label {
+    width: auto;
+    adaptive-width: true;
+    height: 100%;
+    vertical-align: CENTER;
+}
+
+.config-scroller-textfield {
+    width: 64px;
+    height: 100%;
+    background: sdf(#44ffffff, 4);
+    focus-overlay: sdf(#33000000, 4);
+    text-color: #ffffffff;
+    error-color: #ffff5555;
+    cursor-color: #ffffffff;
+}
+
+.config-scroller {
+    flex: 1;
+    height: 100%;
+    scroll-bar-size: 16;
+}
+
+.config-scroller .__scroller_scroll_container__ {
+    background: sdf(#44ffffff, 4);
+}
+
+.config-scroller .__scroller_scroll_bar__ {
+    base-background: sdf(#ff8ecbff, 2);
+    hover-background: sdf(#ffffffff, 2);
+    pressed-background: sdf(#ffaaeeff, 2);
+}
+
+.config-switch-container {
+    width: 100%;
+    height: 16;
+    flex-direction: row;
+    align-items: center;
+    gap-all: 4;
+}
+
+.config-switch-label {
+    flex: 1;
+    height: 100%;
+    vertical-align: CENTER;
+}
+
+.config-switch {
+    width: 32;
+    height: 100%;
+    base-background: sdf(#52525a, 5);
+    pressed-background: sdf(#71a4f4, 5);
+    unmark-background: sdf(#a1a1a9, 4);
+    mark-background: sdf(#18181b, 4);
+}
+
+.config-textfield-container {
+    width: 100%;
+    height: 16;
+    flex-direction: row;
+    align-items: center;
+    gap-all: 4;
+}
+
+.config-textfield-label {
+    width: auto;
+    adaptive-width: true;
+    height: 100%;
+    vertical-align: CENTER;
+}
+
+.config-textfield {
+    flex: 1;
+    height: 100%;
+    background: sdf(#44ffffff, 4);
+    focus-overlay: sdf(#33000000, 4);
+    text-color: #ffffffff;
+    error-color: #ffff5555;
+    cursor-color: #ffffffff;
+}
+
+.footer {
+    height: auto;
+    adaptive-height: true;
+    flex-direction: row;
+    gap-all: 32;
+    align-items: center;
+}
+
+.footer-button {
+    flex: 1;
+    base-background: sdf(#ff8ecbff, 2);
+    hover-background: sdf(#ffffffff, 2);
+    pressed-background: sdf(#ffaaeeff, 2);
+}
+
+.footer-button .__button_text__ {
+    text-color: #ff000000;
+    text-shadow: false;
+}

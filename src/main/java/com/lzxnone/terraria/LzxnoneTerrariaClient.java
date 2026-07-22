@@ -1,5 +1,6 @@
 package com.lzxnone.terraria;
 
+import com.lzxnone.terraria.ui.config.ConfigScreen;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.beam.SwordBeamRenderer;
 import com.lzxnone.terraria.entity.projectile.StaticProjectileRenderer;
@@ -12,13 +13,12 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 @Mod(value = LzxnoneTerraria.MODID, dist = Dist.CLIENT)
 public class LzxnoneTerrariaClient {
     public LzxnoneTerrariaClient(ModContainer container, IEventBus modEventBus) {
-        container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        container.registerExtensionPoint(IConfigScreenFactory.class, (modContainer, parent) -> ConfigScreen.create(parent));
 
         //Entity渲染
         modEventBus.addListener(EntityRenderersEvent.RegisterRenderers.class, event -> {

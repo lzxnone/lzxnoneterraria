@@ -88,6 +88,13 @@ Example mod description.
     ordering="NONE"
     side="BOTH"
 
+[[dependencies.${mod_id}]]
+    modId="ldlib2"
+    type="required"
+    versionRange="[2.2.29,)"
+    ordering="NONE"
+    side="CLIENT"
+
 #Optional dependency for dynamic lighting
 [[dependencies.${mod_id}]]
     modId="lambdynlights"

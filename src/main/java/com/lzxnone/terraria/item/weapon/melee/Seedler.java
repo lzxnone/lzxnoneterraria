@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -12,8 +11,13 @@ import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.particle.ModParticles;
+import com.lzxnone.terraria.ui.config.ConfigFactory;
+import com.lzxnone.terraria.ui.config.ConfigListItem;
+import com.lzxnone.terraria.ui.config.ConfigUtil;
+import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.*;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -35,6 +39,38 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Seedler extends SwordItem {
+    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
+
+    public static final String NUT_GRAVITY_PATH = "weapon.seedler.nut_gravity";
+    public static final double NUT_GRAVITY_DEFAULT = 0.075;
+    public static final double NUT_GRAVITY_MIN = 0.0;
+    public static final double NUT_GRAVITY_MAX = 1.0;
+
+    public static final String NUT_BOUNCE_PATH = "weapon.seedler.nut_bounce";
+    public static final double NUT_BOUNCE_DEFAULT = 0.5;
+    public static final double NUT_BOUNCE_MIN = 0.0;
+    public static final double NUT_BOUNCE_MAX = 1.0;
+
+    public static final String NUT_INITIAL_SPEED_PATH = "weapon.seedler.nut_initial_speed";
+    public static final double NUT_INITIAL_SPEED_DEFAULT = 0.75;
+    public static final double NUT_INITIAL_SPEED_MIN = 0.0;
+    public static final double NUT_INITIAL_SPEED_MAX = 10.0;
+
+    public static final String THORN_DAMAGE_PATH = "weapon.seedler.thorn_damage";
+    public static final double THORN_DAMAGE_DEFAULT = 2.0;
+    public static final double THORN_DAMAGE_MIN = 0.0;
+    public static final double THORN_DAMAGE_MAX = 2147483647.0;
+
+    public static final String THORN_LIFETIME_PATH = "weapon.seedler.thorn_lifetime";
+    public static final int THORN_LIFETIME_DEFAULT = 30;
+    public static final int THORN_LIFETIME_MIN = 1;
+    public static final int THORN_LIFETIME_MAX = 1200;
+
+    public static final String THORN_SPEED_PATH = "weapon.seedler.thorn_speed";
+    public static final double THORN_SPEED_DEFAULT = 2.0;
+    public static final double THORN_SPEED_MIN = 0.0;
+    public static final double THORN_SPEED_MAX = 10.0;
+
     public Seedler() {
         super(Tiers.DIAMOND, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
@@ -47,18 +83,69 @@ public class Seedler extends SwordItem {
         ).rarity(Rarity.UNCOMMON));
     }
 
+    public static final IConfigData CONFIG_DATA = new IConfigData() {
+        @Override
+        public void onConfigLoad() {
+            ConfigFactory.loadDoubleConfig(NUT_GRAVITY_PATH, configText("seedler_nut_gravity"), configTooltip("seedler_nut_gravity"), NUT_GRAVITY_DEFAULT, NUT_GRAVITY_MIN, NUT_GRAVITY_MAX);
+            ConfigFactory.loadDoubleConfig(NUT_BOUNCE_PATH, configText("seedler_nut_bounce"), configTooltip("seedler_nut_bounce"), NUT_BOUNCE_DEFAULT, NUT_BOUNCE_MIN, NUT_BOUNCE_MAX);
+            ConfigFactory.loadDoubleConfig(NUT_INITIAL_SPEED_PATH, configText("seedler_nut_initial_speed"), configTooltip("seedler_nut_initial_speed"), NUT_INITIAL_SPEED_DEFAULT, NUT_INITIAL_SPEED_MIN, NUT_INITIAL_SPEED_MAX);
+            ConfigFactory.loadDoubleConfig(THORN_DAMAGE_PATH, configText("seedler_thorn_damage"), configTooltip("seedler_thorn_damage"), THORN_DAMAGE_DEFAULT, THORN_DAMAGE_MIN, THORN_DAMAGE_MAX);
+            ConfigFactory.loadIntConfig(THORN_LIFETIME_PATH, configText("seedler_thorn_lifetime"), configTooltip("seedler_thorn_lifetime"), THORN_LIFETIME_DEFAULT, THORN_LIFETIME_MIN, THORN_LIFETIME_MAX);
+            ConfigFactory.loadDoubleConfig(THORN_SPEED_PATH, configText("seedler_thorn_speed"), configTooltip("seedler_thorn_speed"), THORN_SPEED_DEFAULT, THORN_SPEED_MIN, THORN_SPEED_MAX);
+        }
+    };
+
+    private static Component configText(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
+    }
+
+    private static Component configTooltip(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
+    }
+
+    public static double getNutGravity() {
+        return Math.clamp(ConfigUtil.readDouble(NUT_GRAVITY_PATH, NUT_GRAVITY_DEFAULT), NUT_GRAVITY_MIN, NUT_GRAVITY_MAX);
+    }
+
+    public static double getNutBounce() {
+        return Math.clamp(ConfigUtil.readDouble(NUT_BOUNCE_PATH, NUT_BOUNCE_DEFAULT), NUT_BOUNCE_MIN, NUT_BOUNCE_MAX);
+    }
+
+    public static double getNutInitialSpeed() {
+        return Math.clamp(ConfigUtil.readDouble(NUT_INITIAL_SPEED_PATH, NUT_INITIAL_SPEED_DEFAULT), NUT_INITIAL_SPEED_MIN, NUT_INITIAL_SPEED_MAX);
+    }
+
+    public static double getThornDamage() {
+        return Math.clamp(ConfigUtil.readDouble(THORN_DAMAGE_PATH, THORN_DAMAGE_DEFAULT), THORN_DAMAGE_MIN, THORN_DAMAGE_MAX);
+    }
+
+    public static int getThornLifetime() {
+        return Math.clamp(ConfigUtil.readInt(THORN_LIFETIME_PATH, THORN_LIFETIME_DEFAULT), THORN_LIFETIME_MIN, THORN_LIFETIME_MAX);
+    }
+
+    public static double getThornSpeed() {
+        return Math.clamp(ConfigUtil.readDouble(THORN_SPEED_PATH, THORN_SPEED_DEFAULT), THORN_SPEED_MIN, THORN_SPEED_MAX);
+    }
+
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        "seedler",
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/seedler.png"),
+        Component.translatable("item.lzxnoneterraria.seedler"),
+        CONFIG_DATA
+    );
+
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
             Vec3 motion = summon.getDeltaMovement();
-            motion = motion.add(0, -Config.seedlerNutGravity, 0);
+            motion = motion.add(0, -getNutGravity(), 0);
 
             EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(motion));
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
                 if(summon.getOwner() instanceof Player player) {
-                    if(DamageUtil.attack(player, target, (float) Config.seedlerThornDamage)) {
+                    if(DamageUtil.attack(player, target, (float) getThornDamage())) {
                         target.invulnerableTime = 2;
                     }
                 }
@@ -75,15 +162,15 @@ public class Seedler extends SwordItem {
                 double mz = motion.z;
 
                 switch(face.getAxis()) {
-                    case X -> mx = -mx * Config.seedlerNutBounce;
-                    case Y -> my = -my * Config.seedlerNutBounce;
-                    case Z -> mz = -mz * Config.seedlerNutBounce;
+                    case X -> mx = -mx * getNutBounce();
+                    case Y -> my = -my * getNutBounce();
+                    case Z -> mz = -mz * getNutBounce();
                 }
 
                 if(face == Direction.UP && Math.abs(my) < 0.1) {
                     my = 0;
-                    mx *= Config.seedlerNutBounce;
-                    mz *= Config.seedlerNutBounce;
+                    mx *= getNutBounce();
+                    mz *= getNutBounce();
                 }
 
                 motion = new Vec3(mx, my, mz);
@@ -129,8 +216,8 @@ public class Seedler extends SwordItem {
                     proj.getEntityData().set(StaticProjectile.SCALE_X, 0.5f);
                     proj.getEntityData().set(StaticProjectile.SCALE_Y, 0.5f);
                     proj.getEntityData().set(StaticProjectile.RXP, 90);
-                    proj.getEntityData().set(StaticProjectile.LIFETIME, Config.seedlerThornLifetime);
-                    proj.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", Config.seedlerThornSpeed));
+                    proj.getEntityData().set(StaticProjectile.LIFETIME, getThornLifetime());
+                    proj.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", getThornSpeed()));
 
                     proj.setDeltaMovement(MathUtil.toVec3(dirs[0]));
                     summon.level().addFreshEntity(proj);
@@ -174,7 +261,7 @@ public class Seedler extends SwordItem {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.attack(player, target, (float) Config.seedlerThornDamage)) {
+                if(DamageUtil.attack(player, target, (float) getThornDamage())) {
                     target.invulnerableTime = 2;
                     onDied(projectile);
                 }
@@ -213,7 +300,7 @@ public class Seedler extends SwordItem {
             float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
             summon.setXRot(xyRot[0]);
             summon.setYRot(xyRot[1]);
-            summon.setDeltaMovement(player.getLookAngle().normalize().scale(Config.seedlerNutInitialSpeed));
+            summon.setDeltaMovement(player.getLookAngle().normalize().scale(getNutInitialSpeed()));
             level.addFreshEntity(summon);
         }
 

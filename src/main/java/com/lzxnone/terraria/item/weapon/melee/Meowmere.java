@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -10,6 +9,10 @@ import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.particle.DustParticleOptions;
+import com.lzxnone.terraria.ui.config.ConfigFactory;
+import com.lzxnone.terraria.ui.config.ConfigListItem;
+import com.lzxnone.terraria.ui.config.ConfigUtil;
+import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.*;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -19,6 +22,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -39,6 +43,23 @@ import org.joml.Vector3f;
 import java.util.List;
 
 public class Meowmere extends SwordItem {
+    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
+
+    public static final String DAMAGE_PATH = "weapon.meowmere.damage";
+    public static final double DAMAGE_DEFAULT = 20.0;
+    public static final double DAMAGE_MIN = 0.0;
+    public static final double DAMAGE_MAX = 2147483647.0;
+
+    public static final String GRAVITY_PATH = "weapon.meowmere.gravity";
+    public static final double GRAVITY_DEFAULT = 0.025;
+    public static final double GRAVITY_MIN = 0.0;
+    public static final double GRAVITY_MAX = 1.0;
+
+    public static final String INITIAL_SPEED_PATH = "weapon.meowmere.initial_speed";
+    public static final double INITIAL_SPEED_DEFAULT = 1.5;
+    public static final double INITIAL_SPEED_MIN = 0.0;
+    public static final double INITIAL_SPEED_MAX = 10.0;
+
     public Meowmere() {
         super(Tiers.DIAMOND, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
@@ -50,6 +71,42 @@ public class Meowmere extends SwordItem {
             .build()
         ).rarity(Rarity.RARE));
     }
+
+    public static final IConfigData CONFIG_DATA = new IConfigData() {
+        @Override
+        public void onConfigLoad() {
+            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("meowmere_damage"), configTooltip("meowmere_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigFactory.loadDoubleConfig(GRAVITY_PATH, configText("meowmere_gravity"), configTooltip("meowmere_gravity"), GRAVITY_DEFAULT, GRAVITY_MIN, GRAVITY_MAX);
+            ConfigFactory.loadDoubleConfig(INITIAL_SPEED_PATH, configText("meowmere_initial_speed"), configTooltip("meowmere_initial_speed"), INITIAL_SPEED_DEFAULT, INITIAL_SPEED_MIN, INITIAL_SPEED_MAX);
+        }
+    };
+
+    private static Component configText(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
+    }
+
+    private static Component configTooltip(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
+    }
+
+    public static double getDamage() {
+        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    }
+
+    public static double getGravity() {
+        return Math.clamp(ConfigUtil.readDouble(GRAVITY_PATH, GRAVITY_DEFAULT), GRAVITY_MIN, GRAVITY_MAX);
+    }
+
+    public static double getInitialSpeed() {
+        return Math.clamp(ConfigUtil.readDouble(INITIAL_SPEED_PATH, INITIAL_SPEED_DEFAULT), INITIAL_SPEED_MIN, INITIAL_SPEED_MAX);
+    }
+
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        "meowmere",
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/meowmere.png"),
+        Component.translatable("item.lzxnoneterraria.meowmere"),
+        CONFIG_DATA
+    );
 
     public static final DustParticleOptions PARTICLE = new DustParticleOptions(
         0.05f, 0.5f, 40, true, new Vector3f[]{
@@ -136,7 +193,7 @@ public class Meowmere extends SwordItem {
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
             Vec3 motion = summon.getDeltaMovement();
-            motion = motion.add(0, -Config.meowmereGravity, 0);
+            motion = motion.add(0, -getGravity(), 0);
             Vec3 up = MathUtil.toVec3(MathUtil.computeCoordinateSystem(motion.toVector3f(), 0)[1]).normalize();
 
             summon.trailPositions.addFirst(summon.position().add(up.scale(0.5)));
@@ -149,7 +206,7 @@ public class Meowmere extends SwordItem {
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
                 if(summon.getOwner() instanceof Player player) {
-                    if(DamageUtil.attack(player, target, (float) Config.meowmereDamage)) {
+                    if(DamageUtil.attack(player, target, (float) getDamage())) {
                         if(customData.contains("hitEntity") && customData.getInt("hitEntity") < 4) {
                             customData.putInt("hitEntity", customData.getInt("hitEntity") + 1);
                             summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
@@ -202,7 +259,7 @@ public class Meowmere extends SwordItem {
                                 ),
                                 FilterUtil.createLivingTargetFilter(summon.getOwner())
                             );
-                            for(LivingEntity livingEntity : hitEntities) livingEntity.hurt(summon.damageSources().playerAttack(player), (float) Config.meowmereDamage);
+                            for(LivingEntity livingEntity : hitEntities) livingEntity.hurt(summon.damageSources().playerAttack(player), (float) getDamage());
                         }
                     }
 
@@ -296,7 +353,7 @@ public class Meowmere extends SwordItem {
             float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
             summon.setXRot(xyRot[0]);
             summon.setYRot(xyRot[1]);
-            summon.setDeltaMovement(player.getLookAngle().normalize().scale(Config.meowmereInitialSpeed));
+            summon.setDeltaMovement(player.getLookAngle().normalize().scale(getInitialSpeed()));
             level.addFreshEntity(summon);
         }else {
             ParticleUtil.addParticles(

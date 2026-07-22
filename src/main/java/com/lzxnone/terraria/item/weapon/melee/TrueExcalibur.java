@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModRenderTypes;
@@ -37,8 +36,66 @@ import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
+import com.lzxnone.terraria.ui.config.ConfigFactory;
+import com.lzxnone.terraria.ui.config.ConfigListItem;
+import com.lzxnone.terraria.ui.config.ConfigUtil;
+import com.lzxnone.terraria.ui.config.IConfigData;
+import net.minecraft.network.chat.Component;
 
 public class TrueExcalibur extends SwordItem {
+    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
+
+    public static final String ROTATE_RANGE_PATH = "weapon.true_excalibur.rotate_range";
+    public static final int ROTATE_RANGE_DEFAULT = 45;
+    public static final int ROTATE_RANGE_MIN = 0;
+    public static final int ROTATE_RANGE_MAX = 90;
+
+    public static final String MAX_HIT_COUNT_PATH = "weapon.true_excalibur.max_hit_count";
+    public static final int MAX_HIT_COUNT_DEFAULT = 6;
+    public static final int MAX_HIT_COUNT_MIN = 0;
+    public static final int MAX_HIT_COUNT_MAX = 100;
+
+    public static final String DAMAGE_PATH = "weapon.true_excalibur.damage";
+    public static final double DAMAGE_DEFAULT = 8.0;
+    public static final double DAMAGE_MIN = 0.0;
+    public static final double DAMAGE_MAX = 2147483647.0;
+
+    public static final IConfigData CONFIG_DATA = new IConfigData() {
+        @Override
+        public void onConfigLoad() {
+            ConfigFactory.loadIntConfig(ROTATE_RANGE_PATH, configText("true_excalibur_rotate_range"), configTooltip("true_excalibur_rotate_range"), ROTATE_RANGE_DEFAULT, ROTATE_RANGE_MIN, ROTATE_RANGE_MAX);
+            ConfigFactory.loadIntConfig(MAX_HIT_COUNT_PATH, configText("true_excalibur_max_hit_count"), configTooltip("true_excalibur_max_hit_count"), MAX_HIT_COUNT_DEFAULT, MAX_HIT_COUNT_MIN, MAX_HIT_COUNT_MAX);
+            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("true_excalibur_damage"), configTooltip("true_excalibur_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+        }
+    };
+
+    private static Component configText(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
+    }
+
+    private static Component configTooltip(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
+    }
+
+    public static int getRotateRange() {
+        return Math.clamp(ConfigUtil.readInt(ROTATE_RANGE_PATH, ROTATE_RANGE_DEFAULT), ROTATE_RANGE_MIN, ROTATE_RANGE_MAX);
+    }
+
+    public static int getMaxHitCount() {
+        return Math.clamp(ConfigUtil.readInt(MAX_HIT_COUNT_PATH, MAX_HIT_COUNT_DEFAULT), MAX_HIT_COUNT_MIN, MAX_HIT_COUNT_MAX);
+    }
+
+    public static double getDamage() {
+        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    }
+
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        "true_excalibur",
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/true_excalibur.png"),
+        Component.translatable("item.lzxnoneterraria.true_excalibur"),
+        CONFIG_DATA
+    );
+
     public TrueExcalibur() {
         super(Tiers.DIAMOND, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
@@ -219,8 +276,8 @@ public class TrueExcalibur extends SwordItem {
                     CompoundTag custom_data = beam.getEntityData().get(SwordBeam.CUSTOM_DATA);
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
-                        if(count < Config.trueExcaliburMaxHitCount) {
-                            if(DamageUtil.attack(player, target, (float) Config.trueExcaliburDamage)) {
+                        if(count < getMaxHitCount()) {
+                            if(DamageUtil.attack(player, target, (float) getDamage())) {
                                 target.invulnerableTime = 20;
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
@@ -244,7 +301,7 @@ public class TrueExcalibur extends SwordItem {
 
         @Override
         public void generate(Entity entity, CompoundTag beamData) {
-            beamData.putInt("rotate", (int) (Config.trueExcaliburRotateRange * (Math.random() * 2 - 1)));
+            beamData.putInt("rotate", (int) (getRotateRange() * (Math.random() * 2 - 1)));
             ISwordBeamBehavior.super.generate(entity, beamData);
         }
     };

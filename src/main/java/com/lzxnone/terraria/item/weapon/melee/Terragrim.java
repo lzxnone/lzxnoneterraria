@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -8,6 +7,10 @@ import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
+import com.lzxnone.terraria.ui.config.ConfigFactory;
+import com.lzxnone.terraria.ui.config.ConfigListItem;
+import com.lzxnone.terraria.ui.config.ConfigUtil;
+import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
@@ -20,6 +23,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -43,6 +47,23 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 
 public class Terragrim extends SwordItem {
+    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
+
+    public static final String HIT_RANGE_PATH = "weapon.terragrim.hit_range";
+    public static final double HIT_RANGE_DEFAULT = 2.5;
+    public static final double HIT_RANGE_MIN = 0.5;
+    public static final double HIT_RANGE_MAX = 10.0;
+
+    public static final String DAMAGE_PATH = "weapon.terragrim.damage";
+    public static final double DAMAGE_DEFAULT = 0.25;
+    public static final double DAMAGE_MIN = 0.0;
+    public static final double DAMAGE_MAX = 2147483647.0;
+
+    public static final String ROTATE_RANGE_PATH = "weapon.terragrim.rotate_range";
+    public static final int ROTATE_RANGE_DEFAULT = 45;
+    public static final int ROTATE_RANGE_MIN = 0;
+    public static final int ROTATE_RANGE_MAX = 90;
+
     public Terragrim() {
         super(Tiers.DIAMOND, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
@@ -54,6 +75,42 @@ public class Terragrim extends SwordItem {
             .build()
         ).rarity(Rarity.RARE));
     }
+
+    public static final IConfigData CONFIG_DATA = new IConfigData() {
+        @Override
+        public void onConfigLoad() {
+            ConfigFactory.loadDoubleConfig(HIT_RANGE_PATH, configText("terragrim_hit_range"), configTooltip("terragrim_hit_range"), HIT_RANGE_DEFAULT, HIT_RANGE_MIN, HIT_RANGE_MAX);
+            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("terragrim_damage"), configTooltip("terragrim_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigFactory.loadIntConfig(ROTATE_RANGE_PATH, configText("terragrim_rotate_range"), configTooltip("terragrim_rotate_range"), ROTATE_RANGE_DEFAULT, ROTATE_RANGE_MIN, ROTATE_RANGE_MAX);
+        }
+    };
+
+    private static Component configText(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
+    }
+
+    private static Component configTooltip(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
+    }
+
+    public static double getHitRange() {
+        return Math.clamp(ConfigUtil.readDouble(HIT_RANGE_PATH, HIT_RANGE_DEFAULT), HIT_RANGE_MIN, HIT_RANGE_MAX);
+    }
+
+    public static double getDamage() {
+        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    }
+
+    public static int getRotateRange() {
+        return Math.clamp(ConfigUtil.readInt(ROTATE_RANGE_PATH, ROTATE_RANGE_DEFAULT), ROTATE_RANGE_MIN, ROTATE_RANGE_MAX);
+    }
+
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        "terragrim",
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/terragrim.png"),
+        Component.translatable("item.lzxnoneterraria.terragrim"),
+        CONFIG_DATA
+    );
 
     public static final ResourceLocation[] RES = {
             ResourceLocation.parse("lzxnoneterraria:textures/vfx/terragrim_beam0.png"),
@@ -135,9 +192,10 @@ public class Terragrim extends SwordItem {
             if(summon.getOwner() != null) {
                 summon.setPos(summon.getOwner().getX(), summon.getOwner().getY() + summon.getOwner().getBbHeight() * 0.5, summon.getOwner().getZ());
             }
+            double hitRange = getHitRange();
             summon.setBoundingBox(new AABB(
-                summon.getX() - Config.terragrimHitRange, summon.getY() - Config.terragrimHitRange, summon.getZ() - Config.terragrimHitRange,
-                summon.getX() + Config.terragrimHitRange, summon.getY() + Config.terragrimHitRange, summon.getZ() + Config.terragrimHitRange
+                summon.getX() - hitRange, summon.getY() - hitRange, summon.getZ() - hitRange,
+                summon.getX() + hitRange, summon.getY() + hitRange, summon.getZ() + hitRange
             ));
             if(!summon.level().isClientSide()) {
                 if(summon.getOwner() instanceof Player player) {
@@ -156,7 +214,7 @@ public class Terragrim extends SwordItem {
                                 knockbackResist.setBaseValue(Math.max(0.9, originalResist));
                             }
 
-                            if(DamageUtil.attack(player, target, (float) Config.terragrimDamage)) {
+                            if(DamageUtil.attack(player, target, (float) getDamage())) {
                                 target.invulnerableTime = 0;
                             }
 
@@ -164,7 +222,7 @@ public class Terragrim extends SwordItem {
                                 knockbackResist.setBaseValue(originalResist);
                             }
                         }else {
-                            if(DamageUtil.attack(player, target, (float) Config.terragrimDamage)) {
+                            if(DamageUtil.attack(player, target, (float) getDamage())) {
                                 target.invulnerableTime = 0;
                             }
                         }
@@ -195,7 +253,7 @@ public class Terragrim extends SwordItem {
             summon.setPos(pos);
             summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.TERRAGRIM_BEAM);
             summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-            summon.getEntityData().set(StaticSummon.RZP, (int) ((Math.random() * 2 - 1) * Config.terragrimRotateRange));
+            summon.getEntityData().set(StaticSummon.RZP, (int) ((Math.random() * 2 - 1) * getRotateRange()));
             summon.getEntityData().set(StaticSummon.LIFETIME, 1);
             summon.getEntityData().set(StaticSummon.GLOW, true);
 

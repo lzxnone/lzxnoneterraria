@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -42,10 +41,156 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
+import com.lzxnone.terraria.ui.config.ConfigFactory;
+import com.lzxnone.terraria.ui.config.ConfigListItem;
+import com.lzxnone.terraria.ui.config.ConfigUtil;
+import com.lzxnone.terraria.ui.config.IConfigData;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
 public class Zenith extends SwordItem {
+    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
+
+    public static final String DAMAGE_PATH = "weapon.zenith.damage";
+    public static final double DAMAGE_DEFAULT = 4.0;
+    public static final double DAMAGE_MIN = 1.0;
+    public static final double DAMAGE_MAX = 2147483647.0;
+
+    public static final String MAX_RANGE_PATH = "weapon.zenith.max_range";
+    public static final double MAX_RANGE_DEFAULT = 64.0;
+    public static final double MAX_RANGE_MIN = 1.0;
+    public static final double MAX_RANGE_MAX = 1024.0;
+
+    public static final String DISTANCE_MODE_PATH = "weapon.zenith.distance_mode";
+    public static final boolean DISTANCE_MODE_DEFAULT = true;
+
+    public static final String MOUSE_SPEED_PATH = "weapon.zenith.mouse_speed";
+    public static final int MOUSE_SPEED_DEFAULT = 4;
+    public static final int MOUSE_SPEED_MIN = 0;
+    public static final int MOUSE_SPEED_MAX = 128;
+
+    public static final String TRAIL_B_PATH = "weapon.zenith.trail_b";
+    public static final double TRAIL_B_DEFAULT = 4.0;
+    public static final double TRAIL_B_MIN = 0.1;
+    public static final double TRAIL_B_MAX = 512.0;
+
+    public static final String TRAIL_OFFSET_PATH = "weapon.zenith.trail_offset";
+    public static final int TRAIL_OFFSET_DEFAULT = 30;
+    public static final int TRAIL_OFFSET_MIN = 0;
+    public static final int TRAIL_OFFSET_MAX = 90;
+
+    public static final String WEAPON_COUNT_PATH = "weapon.zenith.weapon_count";
+    public static final int WEAPON_COUNT_DEFAULT = 3;
+    public static final int WEAPON_COUNT_MIN = 1;
+    public static final int WEAPON_COUNT_MAX = 3;
+
+    public static final String BOUNDING_BOX_SIZE_PATH = "weapon.zenith.bounding_box_size";
+    public static final double BOUNDING_BOX_SIZE_DEFAULT = 1.5;
+    public static final double BOUNDING_BOX_SIZE_MIN = 0.1;
+    public static final double BOUNDING_BOX_SIZE_MAX = 4.0;
+
+    public static final String CYCLE_PATH = "weapon.zenith.cycle";
+    public static final int CYCLE_DEFAULT = 20;
+    public static final int CYCLE_MIN = 10;
+    public static final int CYCLE_MAX = 100;
+
+    public static final String SCALE_PATH = "weapon.zenith.scale";
+    public static final double SCALE_DEFAULT = 2.0;
+    public static final double SCALE_MIN = 0.1;
+    public static final double SCALE_MAX = 10.0;
+
+    public static final String TRAIL_ALPHA_PATH = "weapon.zenith.trail_alpha";
+    public static final double TRAIL_ALPHA_DEFAULT = 0.15;
+    public static final double TRAIL_ALPHA_MIN = 0.0;
+    public static final double TRAIL_ALPHA_MAX = 1.0;
+
+    public static final String TRAIL_MAX_LENGTH_PATH = "weapon.zenith.trail_max_length";
+    public static final int TRAIL_MAX_LENGTH_DEFAULT = 10;
+    public static final int TRAIL_MAX_LENGTH_MIN = 0;
+    public static final int TRAIL_MAX_LENGTH_MAX = 100;
+
+    public static final IConfigData CONFIG_DATA = new IConfigData() {
+        @Override
+        public void onConfigLoad() {
+            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("zenith_damage"), configTooltip("zenith_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigFactory.loadDoubleConfig(MAX_RANGE_PATH, configText("zenith_max_range"), configTooltip("zenith_max_range"), MAX_RANGE_DEFAULT, MAX_RANGE_MIN, MAX_RANGE_MAX);
+            ConfigFactory.loadBooleanConfig(DISTANCE_MODE_PATH, configText("zenith_distance_mode"), configTooltip("zenith_distance_mode"), DISTANCE_MODE_DEFAULT);
+            ConfigFactory.loadIntConfig(MOUSE_SPEED_PATH, configText("zenith_mouse_speed"), configTooltip("zenith_mouse_speed"), MOUSE_SPEED_DEFAULT, MOUSE_SPEED_MIN, MOUSE_SPEED_MAX);
+            ConfigFactory.loadDoubleConfig(TRAIL_B_PATH, configText("zenith_trail_b"), configTooltip("zenith_trail_b"), TRAIL_B_DEFAULT, TRAIL_B_MIN, TRAIL_B_MAX);
+            ConfigFactory.loadIntConfig(TRAIL_OFFSET_PATH, configText("zenith_trail_offset"), configTooltip("zenith_trail_offset"), TRAIL_OFFSET_DEFAULT, TRAIL_OFFSET_MIN, TRAIL_OFFSET_MAX);
+            ConfigFactory.loadIntConfig(WEAPON_COUNT_PATH, configText("zenith_weapon_count"), configTooltip("zenith_weapon_count"), WEAPON_COUNT_DEFAULT, WEAPON_COUNT_MIN, WEAPON_COUNT_MAX);
+            ConfigFactory.loadDoubleConfig(BOUNDING_BOX_SIZE_PATH, configText("zenith_bounding_box_size"), configTooltip("zenith_bounding_box_size"), BOUNDING_BOX_SIZE_DEFAULT, BOUNDING_BOX_SIZE_MIN, BOUNDING_BOX_SIZE_MAX);
+            ConfigFactory.loadIntConfig(CYCLE_PATH, configText("zenith_cycle"), configTooltip("zenith_cycle"), CYCLE_DEFAULT, CYCLE_MIN, CYCLE_MAX);
+            ConfigFactory.loadDoubleConfig(SCALE_PATH, configText("zenith_scale"), configTooltip("zenith_scale"), SCALE_DEFAULT, SCALE_MIN, SCALE_MAX);
+            ConfigFactory.loadDoubleConfig(TRAIL_ALPHA_PATH, configText("zenith_trail_alpha"), configTooltip("zenith_trail_alpha"), TRAIL_ALPHA_DEFAULT, TRAIL_ALPHA_MIN, TRAIL_ALPHA_MAX);
+            ConfigFactory.loadIntConfig(TRAIL_MAX_LENGTH_PATH, configText("zenith_trail_max_length"), configTooltip("zenith_trail_max_length"), TRAIL_MAX_LENGTH_DEFAULT, TRAIL_MAX_LENGTH_MIN, TRAIL_MAX_LENGTH_MAX);
+        }
+    };
+
+    private static Component configText(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
+    }
+
+    private static Component configTooltip(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
+    }
+
+    public static double getDamage() {
+        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    }
+
+    public static double getMaxRange() {
+        return Math.clamp(ConfigUtil.readDouble(MAX_RANGE_PATH, MAX_RANGE_DEFAULT), MAX_RANGE_MIN, MAX_RANGE_MAX);
+    }
+
+    public static boolean isDistanceMode() {
+        return ConfigUtil.readBoolean(DISTANCE_MODE_PATH, DISTANCE_MODE_DEFAULT);
+    }
+
+    public static int getMouseSpeed() {
+        return Math.clamp(ConfigUtil.readInt(MOUSE_SPEED_PATH, MOUSE_SPEED_DEFAULT), MOUSE_SPEED_MIN, MOUSE_SPEED_MAX);
+    }
+
+    public static double getTrailB() {
+        return Math.clamp(ConfigUtil.readDouble(TRAIL_B_PATH, TRAIL_B_DEFAULT), TRAIL_B_MIN, TRAIL_B_MAX);
+    }
+
+    public static int getTrailOffset() {
+        return Math.clamp(ConfigUtil.readInt(TRAIL_OFFSET_PATH, TRAIL_OFFSET_DEFAULT), TRAIL_OFFSET_MIN, TRAIL_OFFSET_MAX);
+    }
+
+    public static int getWeaponCount() {
+        return Math.clamp(ConfigUtil.readInt(WEAPON_COUNT_PATH, WEAPON_COUNT_DEFAULT), WEAPON_COUNT_MIN, WEAPON_COUNT_MAX);
+    }
+
+    public static double getBoundingBoxSize() {
+        return Math.clamp(ConfigUtil.readDouble(BOUNDING_BOX_SIZE_PATH, BOUNDING_BOX_SIZE_DEFAULT), BOUNDING_BOX_SIZE_MIN, BOUNDING_BOX_SIZE_MAX);
+    }
+
+    public static int getCycle() {
+        return Math.clamp(ConfigUtil.readInt(CYCLE_PATH, CYCLE_DEFAULT), CYCLE_MIN, CYCLE_MAX);
+    }
+
+    public static double getScale() {
+        return Math.clamp(ConfigUtil.readDouble(SCALE_PATH, SCALE_DEFAULT), SCALE_MIN, SCALE_MAX);
+    }
+
+    public static double getTrailAlpha() {
+        return Math.clamp(ConfigUtil.readDouble(TRAIL_ALPHA_PATH, TRAIL_ALPHA_DEFAULT), TRAIL_ALPHA_MIN, TRAIL_ALPHA_MAX);
+    }
+
+    public static int getTrailMaxLength() {
+        return Math.clamp(ConfigUtil.readInt(TRAIL_MAX_LENGTH_PATH, TRAIL_MAX_LENGTH_DEFAULT), TRAIL_MAX_LENGTH_MIN, TRAIL_MAX_LENGTH_MAX);
+    }
+
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        "zenith",
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/zenith.png"),
+        Component.translatable("item.lzxnoneterraria.zenith"),
+        CONFIG_DATA
+    );
+
     public Zenith() {
         super(Tiers.NETHERITE, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
@@ -191,7 +336,7 @@ public class Zenith extends SwordItem {
                 proj.getEntityData().get(StaticProjectile.COLOR_G),
                 proj.getEntityData().get(StaticProjectile.COLOR_B)
             );
-            float mainAlpha = (float) Config.zenithTrailAlpha;
+            float mainAlpha = (float) getTrailAlpha();
             if(idx == 1) mainAlpha = mainAlpha * 0.5f;
             if(idx == 2) mainAlpha = mainAlpha * 0.25f;
 
@@ -321,11 +466,11 @@ public class Zenith extends SwordItem {
 
             projectile.trailPositions.addFirst(projectile.position().add(right.scale(-1.2)));
             projectile.trailPositions.addFirst(projectile.position().add(right.scale(1.5)));
-            while(projectile.trailPositions.size() > Config.zenithTrailMaxLength) projectile.trailPositions.removeLast();
+            while(projectile.trailPositions.size() > getTrailMaxLength()) projectile.trailPositions.removeLast();
 
             projectile.setBoundingBox(new AABB(
-                projectile.getX() - Config.zenithBoundingBoxSize, projectile.getY() - Config.zenithBoundingBoxSize, projectile.getZ() - Config.zenithBoundingBoxSize,
-                projectile.getX() + Config.zenithBoundingBoxSize, projectile.getY() + Config.zenithBoundingBoxSize, projectile.getZ() + Config.zenithBoundingBoxSize
+                projectile.getX() - getBoundingBoxSize(), projectile.getY() - getBoundingBoxSize(), projectile.getZ() - getBoundingBoxSize(),
+                projectile.getX() + getBoundingBoxSize(), projectile.getY() + getBoundingBoxSize(), projectile.getZ() + getBoundingBoxSize()
             ));
 
             if(!projectile.level().isClientSide()) {
@@ -362,7 +507,7 @@ public class Zenith extends SwordItem {
             if(!projectile.level().isClientSide()) {
                 Entity target = result.getEntity();
                 if(projectile.getOwner() instanceof Player player && FilterUtil.createTargetFilter(projectile, projectile.getOwner()).test(target)) {
-                    if(DamageUtil.attack(player, target, (float) (Config.zenithDamage + Math.random() * Config.zenithDamage))) {
+                    if(DamageUtil.attack(player, target, (float) (getDamage() + Math.random() * getDamage()))) {
                         target.invulnerableTime = 2;
                     }
                 }
@@ -372,26 +517,26 @@ public class Zenith extends SwordItem {
 
     public static void summon(Player player, double deltaDist, boolean isFirst) {
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
-        int randomAngle = (int) ((Math.random() * 2 - 1) * Config.zenithTrailOffset);
+        int randomAngle = (int) ((Math.random() * 2 - 1) * getTrailOffset());
         dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], randomAngle);
 
         Vec3 pos = (player.getBoundingBox().getCenter()).add(MathUtil.toVec3(dirs[0]).scale(-2));
         double dist;
-        if(Config.zenithDistanceMode) {
-            Vec3 targetPos = MathUtil.getCrosshairPos(player, player.level(), Config.zenithMaxRange);
-            dist = Math.max(0, Math.min(targetPos.subtract(pos).length() + deltaDist, Config.zenithMaxRange));
+        if(isDistanceMode()) {
+            Vec3 targetPos = MathUtil.getCrosshairPos(player, player.level(), getMaxRange());
+            dist = Math.max(0, Math.min(targetPos.subtract(pos).length() + deltaDist, getMaxRange()));
         }else {
             dist = deltaDist;
         }
-        int cycle = (int) Math.max(10, dist / Config.zenithMaxRange * Config.zenithCycle);
+        int cycle = (int) Math.max(10, dist / getMaxRange() * getCycle());
         double a = Math.max(dist / 2, 2);
-        double b = Math.min(Math.random() * Config.zenithTrailB + Config.zenithTrailB, a / 2);
+        double b = Math.min(Math.random() * getTrailB() + getTrailB(), a / 2);
         double w = Math.PI * 2 / (double) cycle;
         if(player.getRandom().nextInt(2) == 0) w = -w;
 
         int randomIndex = isFirst ? getWeapons().length - 1 : player.getRandom().nextInt(getWeapons().length);
 
-        for(int i = 0;i < Config.zenithWeaponCount;i++) {
+        for(int i = 0;i < getWeaponCount();i++) {
             StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), player.level());
             projectile.setOwner(player);
 
@@ -417,16 +562,16 @@ public class Zenith extends SwordItem {
             customData.putInt("angle", randomAngle);
             if(i == 0) {
                 projectile.getEntityData().set(StaticProjectile.COLOR_A, 1.0f);
-                projectile.getEntityData().set(StaticProjectile.SCALE_X, (float) Config.zenithScale);
-                projectile.getEntityData().set(StaticProjectile.SCALE_Y, (float) Config.zenithScale);
+                projectile.getEntityData().set(StaticProjectile.SCALE_X, (float) getScale());
+                projectile.getEntityData().set(StaticProjectile.SCALE_Y, (float) getScale());
                 projectile.getEntityData().set(StaticProjectile.LIFETIME, cycle);
                 projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3ft-1.571)", b, w));
                 projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*sin(%.3ft-1.571)+%.3f", a, w, a));
                 customData.putInt("start", 0);
             }else if(i == 1) {
                 projectile.getEntityData().set(StaticProjectile.COLOR_A, 0.75f);
-                projectile.getEntityData().set(StaticProjectile.SCALE_X, (float) Config.zenithScale * 0.75f);
-                projectile.getEntityData().set(StaticProjectile.SCALE_Y, (float) Config.zenithScale * 0.75f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_X, (float) getScale() * 0.75f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_Y, (float) getScale() * 0.75f);
                 projectile.getEntityData().set(StaticProjectile.LIFETIME, (int) (cycle * 1.25));
                 if(w > 0) {
                     projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3ft-3.142)", b, w));
@@ -438,8 +583,8 @@ public class Zenith extends SwordItem {
                 customData.putInt("start", (int) (cycle * 0.25));
             }else if(i == 2) {
                 projectile.getEntityData().set(StaticProjectile.COLOR_A, 0.5f);
-                projectile.getEntityData().set(StaticProjectile.SCALE_X, (float) Config.zenithScale * 0.5f);
-                projectile.getEntityData().set(StaticProjectile.SCALE_Y, (float) Config.zenithScale * 0.5f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_X, (float) getScale() * 0.5f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_Y, (float) getScale() * 0.5f);
                 projectile.getEntityData().set(StaticProjectile.LIFETIME, (int) (cycle * 1.5));
                 if(w > 0) {
                     projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3ft-4.713)", b, w));

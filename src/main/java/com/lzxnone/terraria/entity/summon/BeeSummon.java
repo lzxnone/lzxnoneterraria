@@ -1,6 +1,6 @@
 package com.lzxnone.terraria.entity.summon;
 
-import com.lzxnone.terraria.Config;
+import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.MathUtil;
 import net.minecraft.nbt.CompoundTag;
@@ -124,10 +124,10 @@ public class BeeSummon extends Bee {
         if(owner == null) return false;
         boolean isHurt;
         if(owner instanceof Player player) {
-            isHurt = DamageUtil.attack(player, target, (float) Config.beeKeeperBeeDamage);
+            isHurt = DamageUtil.attack(player, target, (float) BeeKeeper.getBeeDamage());
         }else {
             DamageSource damageSource = this.damageSources().mobAttack(owner);
-            isHurt = target.hurt(damageSource, (float) Config.beeKeeperBeeDamage);
+            isHurt = target.hurt(damageSource, (float) BeeKeeper.getBeeDamage());
         }
 
         if(isHurt) {

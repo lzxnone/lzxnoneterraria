@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.event;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModKeyBindings;
 import com.lzxnone.terraria.effect.ModEffects;
@@ -46,18 +45,18 @@ public class InputHandler {
                     double deltaDist = mainHand.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                             .copyTag().getDouble("deltaDist");
 
-                    double finalDelta = deltaDist + scrollDelta * Config.zenithMouseSpeed;
+                    double finalDelta = deltaDist + scrollDelta * Zenith.getMouseSpeed();
 
-                    if(Config.zenithDistanceMode) {
-                        if(finalDelta > Config.zenithMaxRange) finalDelta = Config.zenithMaxRange;
-                        else if(finalDelta < -Config.zenithMaxRange) finalDelta = -Config.zenithMaxRange;
+                    if(Zenith.isDistanceMode()) {
+                        if(finalDelta > Zenith.getMaxRange()) finalDelta = Zenith.getMaxRange();
+                        else if(finalDelta < -Zenith.getMaxRange()) finalDelta = -Zenith.getMaxRange();
                     }else {
-                        if(finalDelta > Config.zenithMaxRange) finalDelta = Config.zenithMaxRange;
+                        if(finalDelta > Zenith.getMaxRange()) finalDelta = Zenith.getMaxRange();
                         else if(finalDelta < 0) finalDelta = 0;
                     }
 
                     MutableComponent displayText = Component.empty();
-                    displayText.append(Component.literal(String.format("%s", Config.zenithDistanceMode ? "相对距离: " : "绝对距离: ")).withStyle(ChatFormatting.WHITE))
+                    displayText.append(Component.literal(String.format("%s", Zenith.isDistanceMode() ? "相对距离: " : "绝对距离: ")).withStyle(ChatFormatting.WHITE))
                          .append(Component.literal(String.format("%.1f", finalDelta)).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
                     player.displayClientMessage(displayText, true);
 
@@ -72,17 +71,17 @@ public class InputHandler {
                     double deltaDist = mainHand.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                             .copyTag().getDouble("deltaDist");
 
-                    double finalDelta = deltaDist + scrollDelta * Config.firstFractalScrollSpeed;
+                    double finalDelta = deltaDist + scrollDelta * FirstFractal.getScrollSpeed();
 
-                    if(Config.firstFractalDistanceMode) {
-                        if(finalDelta > Config.firstFractalMaxRange) finalDelta = Config.firstFractalMaxRange;
-                        else if(finalDelta < -Config.firstFractalMaxRange) finalDelta = -Config.firstFractalMaxRange;
+                    if(FirstFractal.isDistanceMode()) {
+                        if(finalDelta > FirstFractal.getMaxRange()) finalDelta = FirstFractal.getMaxRange();
+                        else if(finalDelta < -FirstFractal.getMaxRange()) finalDelta = -FirstFractal.getMaxRange();
                     }else {
-                        if(finalDelta > Config.firstFractalMaxRange) finalDelta = Config.firstFractalMaxRange;
+                        if(finalDelta > FirstFractal.getMaxRange()) finalDelta = FirstFractal.getMaxRange();
                         else if(finalDelta < 0) finalDelta = 0;
                     }
                     MutableComponent displayText = Component.empty();
-                    displayText.append(Component.literal(String.format("%s", Config.firstFractalDistanceMode ? "相对距离: " : "绝对距离: ")).withStyle(ChatFormatting.WHITE))
+                    displayText.append(Component.literal(String.format("%s", FirstFractal.isDistanceMode() ? "相对距离: " : "绝对距离: ")).withStyle(ChatFormatting.WHITE))
                          .append(Component.literal(String.format("%.1f", finalDelta)).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
                     player.displayClientMessage(displayText, true);
 

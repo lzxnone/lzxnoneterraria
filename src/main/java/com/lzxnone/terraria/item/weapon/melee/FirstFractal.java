@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -43,11 +42,117 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
+import com.lzxnone.terraria.ui.config.ConfigFactory;
+import com.lzxnone.terraria.ui.config.ConfigListItem;
+import com.lzxnone.terraria.ui.config.ConfigUtil;
+import com.lzxnone.terraria.ui.config.IConfigData;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 import java.util.UUID;
 
 public class FirstFractal extends SwordItem {
+    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
+
+    public static final String PROJECTILE_DAMAGE_PATH = "weapon.first_fractal.projectile_damage";
+    public static final double PROJECTILE_DAMAGE_DEFAULT = 10.0;
+    public static final double PROJECTILE_DAMAGE_MIN = 0.0;
+    public static final double PROJECTILE_DAMAGE_MAX = 2147483647.0;
+
+    public static final String BOUNDING_BOX_SIZE_PATH = "weapon.first_fractal.bounding_box_size";
+    public static final double BOUNDING_BOX_SIZE_DEFAULT = 1.5;
+    public static final double BOUNDING_BOX_SIZE_MIN = 0.5;
+    public static final double BOUNDING_BOX_SIZE_MAX = 10.0;
+
+    public static final String PROJECTILE_SPEED_PATH = "weapon.first_fractal.projectile_speed";
+    public static final double PROJECTILE_SPEED_DEFAULT = 1.5;
+    public static final double PROJECTILE_SPEED_MIN = 0.0;
+    public static final double PROJECTILE_SPEED_MAX = 10.0;
+
+    public static final String PROJECTILE_LIFETIME_PATH = "weapon.first_fractal.projectile_lifetime";
+    public static final int PROJECTILE_LIFETIME_DEFAULT = 30;
+    public static final int PROJECTILE_LIFETIME_MIN = 1;
+    public static final int PROJECTILE_LIFETIME_MAX = 1200;
+
+    public static final String DISTANCE_MODE_PATH = "weapon.first_fractal.distance_mode";
+    public static final boolean DISTANCE_MODE_DEFAULT = true;
+
+    public static final String SCROLL_SPEED_PATH = "weapon.first_fractal.scroll_speed";
+    public static final int SCROLL_SPEED_DEFAULT = 4;
+    public static final int SCROLL_SPEED_MIN = 0;
+    public static final int SCROLL_SPEED_MAX = 128;
+
+    public static final String MAX_RANGE_PATH = "weapon.first_fractal.max_range";
+    public static final double MAX_RANGE_DEFAULT = 64.0;
+    public static final double MAX_RANGE_MIN = 1.0;
+    public static final double MAX_RANGE_MAX = 1024.0;
+
+    public static final String SPAWN_RANGE_PATH = "weapon.first_fractal.spawn_range";
+    public static final double SPAWN_RANGE_DEFAULT = 16.0;
+    public static final double SPAWN_RANGE_MIN = 1.0;
+    public static final double SPAWN_RANGE_MAX = 64.0;
+
+    public static final IConfigData CONFIG_DATA = new IConfigData() {
+        @Override
+        public void onConfigLoad() {
+            ConfigFactory.loadDoubleConfig(PROJECTILE_DAMAGE_PATH, configText("first_fractal_projectile_damage"), configTooltip("first_fractal_projectile_damage"), PROJECTILE_DAMAGE_DEFAULT, PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
+            ConfigFactory.loadDoubleConfig(BOUNDING_BOX_SIZE_PATH, configText("first_fractal_bounding_box_size"), configTooltip("first_fractal_bounding_box_size"), BOUNDING_BOX_SIZE_DEFAULT, BOUNDING_BOX_SIZE_MIN, BOUNDING_BOX_SIZE_MAX);
+            ConfigFactory.loadDoubleConfig(PROJECTILE_SPEED_PATH, configText("first_fractal_projectile_speed"), configTooltip("first_fractal_projectile_speed"), PROJECTILE_SPEED_DEFAULT, PROJECTILE_SPEED_MIN, PROJECTILE_SPEED_MAX);
+            ConfigFactory.loadIntConfig(PROJECTILE_LIFETIME_PATH, configText("first_fractal_projectile_lifetime"), configTooltip("first_fractal_projectile_lifetime"), PROJECTILE_LIFETIME_DEFAULT, PROJECTILE_LIFETIME_MIN, PROJECTILE_LIFETIME_MAX);
+            ConfigFactory.loadBooleanConfig(DISTANCE_MODE_PATH, configText("first_fractal_distance_mode"), configTooltip("first_fractal_distance_mode"), DISTANCE_MODE_DEFAULT);
+            ConfigFactory.loadIntConfig(SCROLL_SPEED_PATH, configText("first_fractal_scroll_speed"), configTooltip("first_fractal_scroll_speed"), SCROLL_SPEED_DEFAULT, SCROLL_SPEED_MIN, SCROLL_SPEED_MAX);
+            ConfigFactory.loadDoubleConfig(MAX_RANGE_PATH, configText("first_fractal_max_range"), configTooltip("first_fractal_max_range"), MAX_RANGE_DEFAULT, MAX_RANGE_MIN, MAX_RANGE_MAX);
+            ConfigFactory.loadDoubleConfig(SPAWN_RANGE_PATH, configText("first_fractal_spawn_range"), configTooltip("first_fractal_spawn_range"), SPAWN_RANGE_DEFAULT, SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
+        }
+    };
+
+    private static Component configText(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
+    }
+
+    private static Component configTooltip(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
+    }
+
+    public static double getProjectileDamage() {
+        return Math.clamp(ConfigUtil.readDouble(PROJECTILE_DAMAGE_PATH, PROJECTILE_DAMAGE_DEFAULT), PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
+    }
+
+    public static double getBoundingBoxSize() {
+        return Math.clamp(ConfigUtil.readDouble(BOUNDING_BOX_SIZE_PATH, BOUNDING_BOX_SIZE_DEFAULT), BOUNDING_BOX_SIZE_MIN, BOUNDING_BOX_SIZE_MAX);
+    }
+
+    public static double getProjectileSpeed() {
+        return Math.clamp(ConfigUtil.readDouble(PROJECTILE_SPEED_PATH, PROJECTILE_SPEED_DEFAULT), PROJECTILE_SPEED_MIN, PROJECTILE_SPEED_MAX);
+    }
+
+    public static int getProjectileLifetime() {
+        return Math.clamp(ConfigUtil.readInt(PROJECTILE_LIFETIME_PATH, PROJECTILE_LIFETIME_DEFAULT), PROJECTILE_LIFETIME_MIN, PROJECTILE_LIFETIME_MAX);
+    }
+
+    public static boolean isDistanceMode() {
+        return ConfigUtil.readBoolean(DISTANCE_MODE_PATH, DISTANCE_MODE_DEFAULT);
+    }
+
+    public static int getScrollSpeed() {
+        return Math.clamp(ConfigUtil.readInt(SCROLL_SPEED_PATH, SCROLL_SPEED_DEFAULT), SCROLL_SPEED_MIN, SCROLL_SPEED_MAX);
+    }
+
+    public static double getMaxRange() {
+        return Math.clamp(ConfigUtil.readDouble(MAX_RANGE_PATH, MAX_RANGE_DEFAULT), MAX_RANGE_MIN, MAX_RANGE_MAX);
+    }
+
+    public static double getSpawnRange() {
+        return Math.clamp(ConfigUtil.readDouble(SPAWN_RANGE_PATH, SPAWN_RANGE_DEFAULT), SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
+    }
+
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        "first_fractal",
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/first_fractal.png"),
+        Component.translatable("item.lzxnoneterraria.first_fractal"),
+        CONFIG_DATA
+    );
+
     public FirstFractal() {
         super(Tiers.NETHERITE, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
@@ -291,11 +396,11 @@ public class FirstFractal extends SwordItem {
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
-            summon.setDeltaMovement(summon.getLookAngle().normalize().scale(Config.firstFractalProjectileSpeed));
+            summon.setDeltaMovement(summon.getLookAngle().normalize().scale(getProjectileSpeed()));
 
             summon.setBoundingBox(new AABB(
-                summon.getX() - Config.firstFractalBoundingBoxSize, summon.getY() - Config.firstFractalBoundingBoxSize, summon.getZ() - Config.firstFractalBoundingBoxSize,
-                summon.getX() + Config.firstFractalBoundingBoxSize, summon.getY() + Config.firstFractalBoundingBoxSize, summon.getZ() + Config.firstFractalBoundingBoxSize
+                summon.getX() - getBoundingBoxSize(), summon.getY() - getBoundingBoxSize(), summon.getZ() - getBoundingBoxSize(),
+                summon.getX() + getBoundingBoxSize(), summon.getY() + getBoundingBoxSize(), summon.getZ() + getBoundingBoxSize()
             ));
 
             if(!summon.level().isClientSide()) {
@@ -306,7 +411,7 @@ public class FirstFractal extends SwordItem {
                             FilterUtil.createTargetFilter(summon, summon.getOwner())
                     );
                     for(Entity target : targets) {
-                        if(DamageUtil.attack(player, target, (float) Config.firstFractalProjectileDamage)) {
+                        if(DamageUtil.attack(player, target, (float) getProjectileDamage())) {
                             target.invulnerableTime = 10;
                         }
                     }
@@ -320,7 +425,7 @@ public class FirstFractal extends SwordItem {
                 Vector3f[] dirs = MathUtil.computeCoordinateSystem(summon.getLookAngle().toVector3f(), 0);
                 ZenithTrailParticleOptions options = new ZenithTrailParticleOptions(0.05f, 40, true, color, dirs[1], dirs[2], 90);
                 Vec3 pos = MathUtil.toVec3(dirs[1]).scale(Math.random() * 2).add(summon.position());
-                Vec3 speed = MathUtil.toVec3(dirs[0]).scale(Config.firstFractalProjectileSpeed);
+                Vec3 speed = MathUtil.toVec3(dirs[0]).scale(getProjectileSpeed());
                 ParticleUtil.addParticle(
                     summon.level(), options,
                     pos, 0,
@@ -333,19 +438,19 @@ public class FirstFractal extends SwordItem {
     public static void summon(Player player, double deltaDist) {
         if(!player.level().isClientSide()) {
             Vec3 targetPos;
-            if(Config.firstFractalDistanceMode) {
-                Vec3 origin = MathUtil.getCrosshairPos(player, player.level(), Config.firstFractalMaxRange);
+            if(isDistanceMode()) {
+                Vec3 origin = MathUtil.getCrosshairPos(player, player.level(), getMaxRange());
                 double dist = origin.subtract(player.getEyePosition()).length();
-                double maxScale = Config.firstFractalMaxRange - dist;
+                double maxScale = getMaxRange() - dist;
                 double minScale = -dist;
                 double scale = Math.min(deltaDist, maxScale);
                 if(deltaDist < minScale) scale = -minScale;
                 targetPos = origin.add(player.getLookAngle().normalize().scale(scale));
             }else {
-                targetPos = player.getEyePosition().add(player.getLookAngle().normalize().scale(Math.min(deltaDist, Config.firstFractalMaxRange)));
+                targetPos = player.getEyePosition().add(player.getLookAngle().normalize().scale(Math.min(deltaDist, getMaxRange())));
             }
 
-            Vec3 summonPos = MathUtil.getRandomPosInRadius(targetPos, Config.firstFractalSpawnRange);
+            Vec3 summonPos = MathUtil.getRandomPosInRadius(targetPos, getSpawnRange());
             Vector3f color = COLORS[player.getRandom().nextInt(COLORS.length)];
 
             StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), player.level());
@@ -358,7 +463,7 @@ public class FirstFractal extends SwordItem {
             summon.getEntityData().set(StaticSummon.COLOR_G, color.y);
             summon.getEntityData().set(StaticSummon.COLOR_B, color.z);
             summon.getEntityData().set(StaticSummon.GLOW, true);
-            summon.getEntityData().set(StaticSummon.LIFETIME, Config.firstFractalProjectileLifetime);
+            summon.getEntityData().set(StaticSummon.LIFETIME, getProjectileLifetime());
 
             Vector3f[] dirs = MathUtil.computeCoordinateSystem(targetPos.subtract(summonPos).toVector3f(), 0);
             float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);

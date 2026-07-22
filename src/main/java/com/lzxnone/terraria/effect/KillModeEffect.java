@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.effect;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.particle.CircleParticleOptions;
@@ -44,7 +43,7 @@ public class KillModeEffect extends MobEffect {
                     );
                 }
             }else {
-                MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, Config.devilsDevastationKillModeCooldownTime, 0);
+                MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, DevilsDevastation.getKillModeCooldownTime(), 0);
                 entity.addEffect(effectInstance);
 
                 MobEffectInstance effectInstance2 = entity.getEffect(ModEffects.KILL_MODE);

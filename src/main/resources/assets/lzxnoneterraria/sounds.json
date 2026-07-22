@@ -52,5 +52,11 @@
   },
   "demon_sword_kill_mode": {
     "sounds": ["lzxnoneterraria:demon_sword_kill_mode"]
+  },
+  "demon_sword_kill_mode_off_cooldown": {
+    "sounds": ["lzxnoneterraria:demon_sword_kill_mode_off_cooldown"]
+  },
+  "demon_sword_final_strike": {
+    "sounds": ["lzxnoneterraria:demon_sword_final_strike"]
   }
 }

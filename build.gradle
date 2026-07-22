@@ -31,6 +31,10 @@ repositories {
         name = "Gegy"
         url = "https://maven.gegy.dev"
     }
+    maven {
+        name = "FirstDark"
+        url = "https://maven.firstdark.dev/snapshots"
+    }
 }
 
 base {
@@ -126,6 +130,7 @@ dependencies {
     implementation 'net.objecthunter:exp4j:0.4.8'
     jarJar('net.objecthunter:exp4j:0.4.8')
     additionalRuntimeClasspath 'net.objecthunter:exp4j:0.4.8'
+    implementation("com.lowdragmc.ldlib2:ldlib2-neoforge-${minecraft_version}:${ldlib2_version}:all")
     attributesSchema {
         attribute(mappingsAttribute)
     }

@@ -1,8 +1,9 @@
 package com.lzxnone.terraria.effect;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
+import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.core.Holder;
 import net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
@@ -26,7 +27,7 @@ public class EffectLogicHandler {
             currentEffect = instance.getEffect();
         }
         if(checkEffect(currentEffect)) {
-            if(!entity.level().isClientSide() && entity.level() instanceof ServerLevel serverLevel) {
+            if(entity.level() instanceof ServerLevel serverLevel) {
                 serverLevel.getChunkSource().broadcast(entity,
                         new ClientboundUpdateMobEffectPacket(entity.getId(), instance, false));
             }
@@ -41,15 +42,17 @@ public class EffectLogicHandler {
         if(instance != null) {
             currentEffect = instance.getEffect();
         }
-        if(checkEffect(currentEffect) && !entity.level().isClientSide()) {
+        if(checkEffect(currentEffect)) {
             if(entity.level() instanceof ServerLevel serverLevel) {
                 if(event.getEffectInstance() != null) {
                     serverLevel.getChunkSource().broadcast(entity,
                             new ClientboundRemoveMobEffectPacket(entity.getId(), currentEffect));
                 }
                 if(currentEffect == ModEffects.KILL_MODE) {
-                    MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, Config.devilsDevastationKillModeCooldownTime, 0);
+                    MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, DevilsDevastation.getKillModeCooldownTime(), 0);
                     entity.addEffect(effectInstance);
+                }else if(currentEffect == ModEffects.KILL_MODE_COOLDOWN) {
+                    SoundUtil.playServerSound(entity, ModSounds.DEMON_SWORD_KILL_MODE_OFF_COOLDOWN.get(), 0.5f, 1.0f);
                 }
             }
         }
@@ -63,15 +66,17 @@ public class EffectLogicHandler {
         if(instance != null) {
             currentEffect = instance.getEffect();
         }
-        if(checkEffect(currentEffect) && !entity.level().isClientSide()) {
+        if(checkEffect(currentEffect)) {
             if(entity.level() instanceof ServerLevel serverLevel) {
                 if(event.getEffectInstance() != null) {
                     serverLevel.getChunkSource().broadcast(entity,
                             new ClientboundRemoveMobEffectPacket(entity.getId(), currentEffect));
                 }
                 if(currentEffect == ModEffects.KILL_MODE) {
-                    MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, Config.devilsDevastationKillModeCooldownTime, 0);
+                    MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, DevilsDevastation.getKillModeCooldownTime(), 0);
                     entity.addEffect(effectInstance);
+                }else if(currentEffect == ModEffects.KILL_MODE_COOLDOWN) {
+                    SoundUtil.playServerSound(entity, ModSounds.DEMON_SWORD_KILL_MODE_OFF_COOLDOWN.get(), 0.5f, 1.0f);
                 }
             }
         }
@@ -81,6 +86,7 @@ public class EffectLogicHandler {
         if(effect == null) return false;
         return
             effect == ModEffects.CONFUSED
-            || effect == ModEffects.KILL_MODE;
+            || effect == ModEffects.KILL_MODE
+            || effect == ModEffects.KILL_MODE_COOLDOWN;
     }
 }

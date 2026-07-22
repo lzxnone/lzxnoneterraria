@@ -6,12 +6,9 @@ import com.lzxnone.terraria.creative_mode_tab.ModCreativeModeTabs;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.summon.BeeSummon;
-import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.particle.ModParticles;
-import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
-import net.neoforged.neoforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;

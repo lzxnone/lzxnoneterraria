@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.network.handler;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.item.weapon.melee.FirstFractal;
 import com.lzxnone.terraria.network.payload.FirstFractalScrollPayload;
 import net.minecraft.core.component.DataComponents;
@@ -21,13 +20,13 @@ public class FirstFractalScrollHandler {
                 double scrollDelta = payload.scrollDelta();
                 double deltaDist = weapon.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                         .copyTag().getDouble("deltaDist");
-                double finalDelta = deltaDist + scrollDelta * Config.firstFractalScrollSpeed;
+                double finalDelta = deltaDist + scrollDelta * FirstFractal.getScrollSpeed();
 
-                if(Config.firstFractalDistanceMode) {
-                    if(finalDelta > Config.firstFractalMaxRange) finalDelta = Config.firstFractalMaxRange;
-                    else if(finalDelta < -Config.firstFractalMaxRange) finalDelta = -Config.firstFractalMaxRange;
+                if(FirstFractal.isDistanceMode()) {
+                    if(finalDelta > FirstFractal.getMaxRange()) finalDelta = FirstFractal.getMaxRange();
+                    else if(finalDelta < -FirstFractal.getMaxRange()) finalDelta = -FirstFractal.getMaxRange();
                 }else {
-                    if(finalDelta > Config.firstFractalMaxRange) finalDelta = Config.firstFractalMaxRange;
+                    if(finalDelta > FirstFractal.getMaxRange()) finalDelta = FirstFractal.getMaxRange();
                     else if(finalDelta < 0) finalDelta = 0;
                 }
 

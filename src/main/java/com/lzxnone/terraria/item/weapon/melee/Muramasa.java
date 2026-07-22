@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
-import com.lzxnone.terraria.Config;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.ModRenderTypes;
@@ -38,8 +37,46 @@ import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import com.lzxnone.terraria.ui.config.ConfigFactory;
+import com.lzxnone.terraria.ui.config.ConfigListItem;
+import com.lzxnone.terraria.ui.config.ConfigUtil;
+import com.lzxnone.terraria.ui.config.IConfigData;
+import net.minecraft.network.chat.Component;
 
 public class Muramasa extends SwordItem {
+    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
+
+    public static final String BEAM_DAMAGE_PATH = "weapon.muramasa.beam_damage";
+    public static final double BEAM_DAMAGE_DEFAULT = 2.5;
+    public static final double BEAM_DAMAGE_MIN = 0.0;
+    public static final double BEAM_DAMAGE_MAX = 2147483647.0;
+
+    public static final IConfigData CONFIG_DATA = new IConfigData() {
+        @Override
+        public void onConfigLoad() {
+            ConfigFactory.loadDoubleConfig(BEAM_DAMAGE_PATH, configText("muramasa_beam_damage"), configTooltip("muramasa_beam_damage"), BEAM_DAMAGE_DEFAULT, BEAM_DAMAGE_MIN, BEAM_DAMAGE_MAX);
+        }
+    };
+
+    private static Component configText(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
+    }
+
+    private static Component configTooltip(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
+    }
+
+    public static double getBeamDamage() {
+        return Math.clamp(ConfigUtil.readDouble(BEAM_DAMAGE_PATH, BEAM_DAMAGE_DEFAULT), BEAM_DAMAGE_MIN, BEAM_DAMAGE_MAX);
+    }
+
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        "muramasa",
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/muramasa.png"),
+        Component.translatable("item.lzxnoneterraria.muramasa"),
+        CONFIG_DATA
+    );
+
     public Muramasa() {
         super(Tiers.IRON, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
@@ -224,7 +261,7 @@ public class Muramasa extends SwordItem {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.attack(player, target, (float) Config.muramasaBeamDamage)) {
+                if(DamageUtil.attack(player, target, (float) getBeamDamage())) {
 
                 }
             }
