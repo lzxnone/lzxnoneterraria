@@ -38,7 +38,7 @@ public final class ModParticleRenderTypes {
             Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-            RenderSystem.depthMask(false);
+            RenderSystem.depthMask(true);
             RenderSystem.disableCull();
             RenderSystem.enableDepthTest();
             RenderSystem.setShader(GameRenderer::getRendertypeEntityTranslucentEmissiveShader);

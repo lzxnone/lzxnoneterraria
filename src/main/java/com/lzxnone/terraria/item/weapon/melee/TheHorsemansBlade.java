@@ -64,9 +64,9 @@ public class TheHorsemansBlade extends SwordItem {
     public static final int BLADE_MAX_HIT_COUNT_MAX = 100;
 
     public static final String BLADE_DAMAGE_PATH = "weapon.the_horsemans_blade.blade_damage";
-    public static final double BLADE_DAMAGE_DEFAULT = 15.0;
-    public static final double BLADE_DAMAGE_MIN = 0.0;
-    public static final double BLADE_DAMAGE_MAX = 2147483647.0;
+    public static final float BLADE_DAMAGE_DEFAULT = 15.0f;
+    public static final float BLADE_DAMAGE_MIN = 0.0f;
+    public static final float BLADE_DAMAGE_MAX = 8388600.0f;
 
     public static final String PUMPKIN_SPAWN_RANGE_PATH = "weapon.the_horsemans_blade.pumpkin_spawn_range";
     public static final double PUMPKIN_SPAWN_RANGE_DEFAULT = 16.0;
@@ -79,9 +79,9 @@ public class TheHorsemansBlade extends SwordItem {
     public static final double PUMPKIN_SPEED_MAX = 10.0;
 
     public static final String PUMPKIN_DAMAGE_PATH = "weapon.the_horsemans_blade.pumpkin_damage";
-    public static final double PUMPKIN_DAMAGE_DEFAULT = 15.0;
-    public static final double PUMPKIN_DAMAGE_MIN = 0.0;
-    public static final double PUMPKIN_DAMAGE_MAX = 2147483647.0;
+    public static final float PUMPKIN_DAMAGE_DEFAULT = 15.0f;
+    public static final float PUMPKIN_DAMAGE_MIN = 0.0f;
+    public static final float PUMPKIN_DAMAGE_MAX = 8388600.0f;
 
     public static final String PUMPKIN_MAX_TARGET_RANGE_PATH = "weapon.the_horsemans_blade.pumpkin_max_target_range";
     public static final double PUMPKIN_MAX_TARGET_RANGE_DEFAULT = 32.0;
@@ -93,10 +93,10 @@ public class TheHorsemansBlade extends SwordItem {
         public void onConfigLoad() {
             ConfigFactory.loadIntConfig(BLADE_ROTATE_RANGE_PATH, configText("horsemans_blade_rotate_range"), configTooltip("horsemans_blade_rotate_range"), BLADE_ROTATE_RANGE_DEFAULT, BLADE_ROTATE_RANGE_MIN, BLADE_ROTATE_RANGE_MAX);
             ConfigFactory.loadIntConfig(BLADE_MAX_HIT_COUNT_PATH, configText("horsemans_blade_max_hit_count"), configTooltip("horsemans_blade_max_hit_count"), BLADE_MAX_HIT_COUNT_DEFAULT, BLADE_MAX_HIT_COUNT_MIN, BLADE_MAX_HIT_COUNT_MAX);
-            ConfigFactory.loadDoubleConfig(BLADE_DAMAGE_PATH, configText("horsemans_blade_damage"), configTooltip("horsemans_blade_damage"), BLADE_DAMAGE_DEFAULT, BLADE_DAMAGE_MIN, BLADE_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(BLADE_DAMAGE_PATH, configText("horsemans_blade_damage"), configTooltip("horsemans_blade_damage"), BLADE_DAMAGE_DEFAULT, BLADE_DAMAGE_MIN, BLADE_DAMAGE_MAX);
             ConfigFactory.loadDoubleConfig(PUMPKIN_SPAWN_RANGE_PATH, configText("horsemans_pumpkin_spawn_range"), configTooltip("horsemans_pumpkin_spawn_range"), PUMPKIN_SPAWN_RANGE_DEFAULT, PUMPKIN_SPAWN_RANGE_MIN, PUMPKIN_SPAWN_RANGE_MAX);
             ConfigFactory.loadDoubleConfig(PUMPKIN_SPEED_PATH, configText("horsemans_pumpkin_speed"), configTooltip("horsemans_pumpkin_speed"), PUMPKIN_SPEED_DEFAULT, PUMPKIN_SPEED_MIN, PUMPKIN_SPEED_MAX);
-            ConfigFactory.loadDoubleConfig(PUMPKIN_DAMAGE_PATH, configText("horsemans_pumpkin_damage"), configTooltip("horsemans_pumpkin_damage"), PUMPKIN_DAMAGE_DEFAULT, PUMPKIN_DAMAGE_MIN, PUMPKIN_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(PUMPKIN_DAMAGE_PATH, configText("horsemans_pumpkin_damage"), configTooltip("horsemans_pumpkin_damage"), PUMPKIN_DAMAGE_DEFAULT, PUMPKIN_DAMAGE_MIN, PUMPKIN_DAMAGE_MAX);
             ConfigFactory.loadDoubleConfig(PUMPKIN_MAX_TARGET_RANGE_PATH, configText("horsemans_pumpkin_max_target_range"), configTooltip("horsemans_pumpkin_max_target_range"), PUMPKIN_MAX_TARGET_RANGE_DEFAULT, PUMPKIN_MAX_TARGET_RANGE_MIN, PUMPKIN_MAX_TARGET_RANGE_MAX);
         }
     };
@@ -117,8 +117,8 @@ public class TheHorsemansBlade extends SwordItem {
         return Math.clamp(ConfigUtil.readInt(BLADE_MAX_HIT_COUNT_PATH, BLADE_MAX_HIT_COUNT_DEFAULT), BLADE_MAX_HIT_COUNT_MIN, BLADE_MAX_HIT_COUNT_MAX);
     }
 
-    public static double getBladeDamage() {
-        return Math.clamp(ConfigUtil.readDouble(BLADE_DAMAGE_PATH, BLADE_DAMAGE_DEFAULT), BLADE_DAMAGE_MIN, BLADE_DAMAGE_MAX);
+    public static float getBladeDamage() {
+        return Math.clamp(ConfigUtil.readFloat(BLADE_DAMAGE_PATH, BLADE_DAMAGE_DEFAULT), BLADE_DAMAGE_MIN, BLADE_DAMAGE_MAX);
     }
 
     public static double getPumpkinSpawnRange() {
@@ -129,8 +129,8 @@ public class TheHorsemansBlade extends SwordItem {
         return Math.clamp(ConfigUtil.readDouble(PUMPKIN_SPEED_PATH, PUMPKIN_SPEED_DEFAULT), PUMPKIN_SPEED_MIN, PUMPKIN_SPEED_MAX);
     }
 
-    public static double getPumpkinDamage() {
-        return Math.clamp(ConfigUtil.readDouble(PUMPKIN_DAMAGE_PATH, PUMPKIN_DAMAGE_DEFAULT), PUMPKIN_DAMAGE_MIN, PUMPKIN_DAMAGE_MAX);
+    public static float getPumpkinDamage() {
+        return Math.clamp(ConfigUtil.readFloat(PUMPKIN_DAMAGE_PATH, PUMPKIN_DAMAGE_DEFAULT), PUMPKIN_DAMAGE_MIN, PUMPKIN_DAMAGE_MAX);
     }
 
     public static double getPumpkinMaxTargetRange() {
@@ -388,3 +388,4 @@ public class TheHorsemansBlade extends SwordItem {
         }
     };
 }
+

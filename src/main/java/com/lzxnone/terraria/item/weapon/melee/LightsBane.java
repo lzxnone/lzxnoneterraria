@@ -54,14 +54,14 @@ public class LightsBane extends SwordItem {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String BIG_DAMAGE_PATH = "weapon.lights_bane.big_damage";
-    public static final double BIG_DAMAGE_DEFAULT = 4.0;
-    public static final double BIG_DAMAGE_MIN = 0.0;
-    public static final double BIG_DAMAGE_MAX = 2147483647.0;
+    public static final float BIG_DAMAGE_DEFAULT = 4.0f;
+    public static final float BIG_DAMAGE_MIN = 0.0f;
+    public static final float BIG_DAMAGE_MAX = 8388600.0f;
 
     public static final String SMALL_DAMAGE_PATH = "weapon.lights_bane.small_damage";
-    public static final double SMALL_DAMAGE_DEFAULT = 2.0;
-    public static final double SMALL_DAMAGE_MIN = 0.0;
-    public static final double SMALL_DAMAGE_MAX = 2147483647.0;
+    public static final float SMALL_DAMAGE_DEFAULT = 2.0f;
+    public static final float SMALL_DAMAGE_MIN = 0.0f;
+    public static final float SMALL_DAMAGE_MAX = 8388600.0f;
 
     public static final String TARGET_RANGE_PATH = "weapon.lights_bane.target_range";
     public static final double TARGET_RANGE_DEFAULT = 2.0;
@@ -83,8 +83,8 @@ public class LightsBane extends SwordItem {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadDoubleConfig(BIG_DAMAGE_PATH, configText("lights_bane_big_damage"), configTooltip("lights_bane_big_damage"), BIG_DAMAGE_DEFAULT, BIG_DAMAGE_MIN, BIG_DAMAGE_MAX);
-            ConfigFactory.loadDoubleConfig(SMALL_DAMAGE_PATH, configText("lights_bane_small_damage"), configTooltip("lights_bane_small_damage"), SMALL_DAMAGE_DEFAULT, SMALL_DAMAGE_MIN, SMALL_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(BIG_DAMAGE_PATH, configText("lights_bane_big_damage"), configTooltip("lights_bane_big_damage"), BIG_DAMAGE_DEFAULT, BIG_DAMAGE_MIN, BIG_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(SMALL_DAMAGE_PATH, configText("lights_bane_small_damage"), configTooltip("lights_bane_small_damage"), SMALL_DAMAGE_DEFAULT, SMALL_DAMAGE_MIN, SMALL_DAMAGE_MAX);
             ConfigFactory.loadDoubleConfig(TARGET_RANGE_PATH, configText("lights_bane_target_range"), configTooltip("lights_bane_target_range"), TARGET_RANGE_DEFAULT, TARGET_RANGE_MIN, TARGET_RANGE_MAX);
         }
     };
@@ -97,12 +97,12 @@ public class LightsBane extends SwordItem {
         return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
     }
 
-    public static double getBigDamage() {
-        return Math.clamp(ConfigUtil.readDouble(BIG_DAMAGE_PATH, BIG_DAMAGE_DEFAULT), BIG_DAMAGE_MIN, BIG_DAMAGE_MAX);
+    public static float getBigDamage() {
+        return Math.clamp(ConfigUtil.readFloat(BIG_DAMAGE_PATH, BIG_DAMAGE_DEFAULT), BIG_DAMAGE_MIN, BIG_DAMAGE_MAX);
     }
 
-    public static double getSmallDamage() {
-        return Math.clamp(ConfigUtil.readDouble(SMALL_DAMAGE_PATH, SMALL_DAMAGE_DEFAULT), SMALL_DAMAGE_MIN, SMALL_DAMAGE_MAX);
+    public static float getSmallDamage() {
+        return Math.clamp(ConfigUtil.readFloat(SMALL_DAMAGE_PATH, SMALL_DAMAGE_DEFAULT), SMALL_DAMAGE_MIN, SMALL_DAMAGE_MAX);
     }
 
     public static double getTargetRange() {
@@ -270,3 +270,4 @@ public class LightsBane extends SwordItem {
         }
     };
 }
+

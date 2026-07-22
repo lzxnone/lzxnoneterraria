@@ -77,14 +77,14 @@ public class NightsEdge extends SwordItem {
     public static final int PROJECTILE_MAX_HIT_COUNT_MAX = 100;
 
     public static final String DAMAGE_PATH = "weapon.nights_edge.damage";
-    public static final double DAMAGE_DEFAULT = 7.0;
-    public static final double DAMAGE_MIN = 0.0;
-    public static final double DAMAGE_MAX = 2147483647.0;
+    public static final float DAMAGE_DEFAULT = 7.0f;
+    public static final float DAMAGE_MIN = 0.0f;
+    public static final float DAMAGE_MAX = 8388600.0f;
 
     public static final String PROJECTILE_DAMAGE_PATH = "weapon.nights_edge.projectile_damage";
-    public static final double PROJECTILE_DAMAGE_DEFAULT = 7.0;
-    public static final double PROJECTILE_DAMAGE_MIN = 0.0;
-    public static final double PROJECTILE_DAMAGE_MAX = 2147483647.0;
+    public static final float PROJECTILE_DAMAGE_DEFAULT = 7.0f;
+    public static final float PROJECTILE_DAMAGE_MIN = 0.0f;
+    public static final float PROJECTILE_DAMAGE_MAX = 8388600.0f;
 
     public static final String PROJECTILE_SPEED_PATH = "weapon.nights_edge.projectile_speed";
     public static final double PROJECTILE_SPEED_DEFAULT = 0.25;
@@ -109,8 +109,8 @@ public class NightsEdge extends SwordItem {
             ConfigFactory.loadIntConfig(PROJECTILE_ROTATE_RANGE_PATH, configText("nights_edge_projectile_rotate_range"), configTooltip("nights_edge_projectile_rotate_range"), PROJECTILE_ROTATE_RANGE_DEFAULT, PROJECTILE_ROTATE_RANGE_MIN, PROJECTILE_ROTATE_RANGE_MAX);
             ConfigFactory.loadIntConfig(MAX_HIT_COUNT_PATH, configText("nights_edge_max_hit_count"), configTooltip("nights_edge_max_hit_count"), MAX_HIT_COUNT_DEFAULT, MAX_HIT_COUNT_MIN, MAX_HIT_COUNT_MAX);
             ConfigFactory.loadIntConfig(PROJECTILE_MAX_HIT_COUNT_PATH, configText("nights_edge_projectile_max_hit_count"), configTooltip("nights_edge_projectile_max_hit_count"), PROJECTILE_MAX_HIT_COUNT_DEFAULT, PROJECTILE_MAX_HIT_COUNT_MIN, PROJECTILE_MAX_HIT_COUNT_MAX);
-            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("nights_edge_damage"), configTooltip("nights_edge_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
-            ConfigFactory.loadDoubleConfig(PROJECTILE_DAMAGE_PATH, configText("nights_edge_projectile_damage"), configTooltip("nights_edge_projectile_damage"), PROJECTILE_DAMAGE_DEFAULT, PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("nights_edge_damage"), configTooltip("nights_edge_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(PROJECTILE_DAMAGE_PATH, configText("nights_edge_projectile_damage"), configTooltip("nights_edge_projectile_damage"), PROJECTILE_DAMAGE_DEFAULT, PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
             ConfigFactory.loadDoubleConfig(PROJECTILE_SPEED_PATH, configText("nights_edge_projectile_speed"), configTooltip("nights_edge_projectile_speed"), PROJECTILE_SPEED_DEFAULT, PROJECTILE_SPEED_MIN, PROJECTILE_SPEED_MAX);
             ConfigFactory.loadIntConfig(PROJECTILE_LIFETIME_PATH, configText("nights_edge_projectile_lifetime"), configTooltip("nights_edge_projectile_lifetime"), PROJECTILE_LIFETIME_DEFAULT, PROJECTILE_LIFETIME_MIN, PROJECTILE_LIFETIME_MAX);
             ConfigFactory.loadIntConfig(PROJECTILE_ROTATION_SPEED_PATH, configText("nights_edge_projectile_rotation_speed"), configTooltip("nights_edge_projectile_rotation_speed"), PROJECTILE_ROTATION_SPEED_DEFAULT, PROJECTILE_ROTATION_SPEED_MIN, PROJECTILE_ROTATION_SPEED_MAX);
@@ -145,12 +145,12 @@ public class NightsEdge extends SwordItem {
         return Math.clamp(ConfigUtil.readInt(PROJECTILE_MAX_HIT_COUNT_PATH, PROJECTILE_MAX_HIT_COUNT_DEFAULT), PROJECTILE_MAX_HIT_COUNT_MIN, PROJECTILE_MAX_HIT_COUNT_MAX);
     }
 
-    public static double getDamage() {
-        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    public static float getDamage() {
+        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
     }
 
-    public static double getProjectileDamage() {
-        return Math.clamp(ConfigUtil.readDouble(PROJECTILE_DAMAGE_PATH, PROJECTILE_DAMAGE_DEFAULT), PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
+    public static float getProjectileDamage() {
+        return Math.clamp(ConfigUtil.readFloat(PROJECTILE_DAMAGE_PATH, PROJECTILE_DAMAGE_DEFAULT), PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
     }
 
     public static double getProjectileSpeed() {
@@ -597,3 +597,4 @@ public class NightsEdge extends SwordItem {
     }
 
 }
+

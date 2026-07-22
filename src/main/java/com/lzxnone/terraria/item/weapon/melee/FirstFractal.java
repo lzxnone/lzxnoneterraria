@@ -55,9 +55,9 @@ public class FirstFractal extends SwordItem {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String PROJECTILE_DAMAGE_PATH = "weapon.first_fractal.projectile_damage";
-    public static final double PROJECTILE_DAMAGE_DEFAULT = 10.0;
-    public static final double PROJECTILE_DAMAGE_MIN = 0.0;
-    public static final double PROJECTILE_DAMAGE_MAX = 2147483647.0;
+    public static final float PROJECTILE_DAMAGE_DEFAULT = 10.0f;
+    public static final float PROJECTILE_DAMAGE_MIN = 0.0f;
+    public static final float PROJECTILE_DAMAGE_MAX = 8388600.0f;
 
     public static final String BOUNDING_BOX_SIZE_PATH = "weapon.first_fractal.bounding_box_size";
     public static final double BOUNDING_BOX_SIZE_DEFAULT = 1.5;
@@ -95,7 +95,7 @@ public class FirstFractal extends SwordItem {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadDoubleConfig(PROJECTILE_DAMAGE_PATH, configText("first_fractal_projectile_damage"), configTooltip("first_fractal_projectile_damage"), PROJECTILE_DAMAGE_DEFAULT, PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(PROJECTILE_DAMAGE_PATH, configText("first_fractal_projectile_damage"), configTooltip("first_fractal_projectile_damage"), PROJECTILE_DAMAGE_DEFAULT, PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
             ConfigFactory.loadDoubleConfig(BOUNDING_BOX_SIZE_PATH, configText("first_fractal_bounding_box_size"), configTooltip("first_fractal_bounding_box_size"), BOUNDING_BOX_SIZE_DEFAULT, BOUNDING_BOX_SIZE_MIN, BOUNDING_BOX_SIZE_MAX);
             ConfigFactory.loadDoubleConfig(PROJECTILE_SPEED_PATH, configText("first_fractal_projectile_speed"), configTooltip("first_fractal_projectile_speed"), PROJECTILE_SPEED_DEFAULT, PROJECTILE_SPEED_MIN, PROJECTILE_SPEED_MAX);
             ConfigFactory.loadIntConfig(PROJECTILE_LIFETIME_PATH, configText("first_fractal_projectile_lifetime"), configTooltip("first_fractal_projectile_lifetime"), PROJECTILE_LIFETIME_DEFAULT, PROJECTILE_LIFETIME_MIN, PROJECTILE_LIFETIME_MAX);
@@ -114,8 +114,8 @@ public class FirstFractal extends SwordItem {
         return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
     }
 
-    public static double getProjectileDamage() {
-        return Math.clamp(ConfigUtil.readDouble(PROJECTILE_DAMAGE_PATH, PROJECTILE_DAMAGE_DEFAULT), PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
+    public static float getProjectileDamage() {
+        return Math.clamp(ConfigUtil.readFloat(PROJECTILE_DAMAGE_PATH, PROJECTILE_DAMAGE_DEFAULT), PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
     }
 
     public static double getBoundingBoxSize() {
@@ -507,3 +507,4 @@ public class FirstFractal extends SwordItem {
         return UseAnim.BLOCK;
     }
 }
+

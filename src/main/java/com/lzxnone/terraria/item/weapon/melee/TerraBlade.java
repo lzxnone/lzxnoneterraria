@@ -70,14 +70,14 @@ public class TerraBlade extends SwordItem {
     public static final int SWORD_BEAM_MAX_HIT_COUNT_MAX = 100;
 
     public static final String SWORD_BEAM_DAMAGE_PATH = "weapon.terra_blade.sword_beam_damage";
-    public static final double SWORD_BEAM_DAMAGE_DEFAULT = 11.0;
-    public static final double SWORD_BEAM_DAMAGE_MIN = 0.0;
-    public static final double SWORD_BEAM_DAMAGE_MAX = 2147483647.0;
+    public static final float SWORD_BEAM_DAMAGE_DEFAULT = 11.0f;
+    public static final float SWORD_BEAM_DAMAGE_MIN = 0.0f;
+    public static final float SWORD_BEAM_DAMAGE_MAX = 8388600.0f;
 
     public static final String PROJECTILE_DAMAGE_PATH = "weapon.terra_blade.projectile_damage";
-    public static final double PROJECTILE_DAMAGE_DEFAULT = 11.0;
-    public static final double PROJECTILE_DAMAGE_MIN = 0.0;
-    public static final double PROJECTILE_DAMAGE_MAX = 2147483647.0;
+    public static final float PROJECTILE_DAMAGE_DEFAULT = 11.0f;
+    public static final float PROJECTILE_DAMAGE_MIN = 0.0f;
+    public static final float PROJECTILE_DAMAGE_MAX = 8388600.0f;
 
     public static final String PROJECTILE_SPEED_PATH = "weapon.terra_blade.projectile_speed";
     public static final double PROJECTILE_SPEED_DEFAULT = 2.0;
@@ -90,9 +90,9 @@ public class TerraBlade extends SwordItem {
     public static final int PROJECTILE_LIFETIME_MAX = 1200;
 
     public static final String PROJECTILE_DAMAGE_DECAY_PATH = "weapon.terra_blade.projectile_damage_decay";
-    public static final double PROJECTILE_DAMAGE_DECAY_DEFAULT = 0.75;
-    public static final double PROJECTILE_DAMAGE_DECAY_MIN = 0.0;
-    public static final double PROJECTILE_DAMAGE_DECAY_MAX = 1.0;
+    public static final float PROJECTILE_DAMAGE_DECAY_DEFAULT = 0.75f;
+    public static final float PROJECTILE_DAMAGE_DECAY_MIN = 0.0f;
+    public static final float PROJECTILE_DAMAGE_DECAY_MAX = 1.0f;
 
     public TerraBlade() {
         super(Tiers.DIAMOND, new Item.Properties().attributes(ItemAttributeModifiers.builder()
@@ -113,11 +113,11 @@ public class TerraBlade extends SwordItem {
             ConfigFactory.loadIntConfig(SWORD_BEAM_ROTATE_RANGE_PATH, configText("terra_blade_rotate_range"), configTooltip("terra_blade_rotate_range"), SWORD_BEAM_ROTATE_RANGE_DEFAULT, SWORD_BEAM_ROTATE_RANGE_MIN, SWORD_BEAM_ROTATE_RANGE_MAX);
             ConfigFactory.loadIntConfig(PROJECTILE_ROTATE_RANGE_PATH, configText("terra_projectile_rotate_range"), configTooltip("terra_projectile_rotate_range"), PROJECTILE_ROTATE_RANGE_DEFAULT, PROJECTILE_ROTATE_RANGE_MIN, PROJECTILE_ROTATE_RANGE_MAX);
             ConfigFactory.loadIntConfig(SWORD_BEAM_MAX_HIT_COUNT_PATH, configText("terra_blade_max_hit_count"), configTooltip("terra_blade_max_hit_count"), SWORD_BEAM_MAX_HIT_COUNT_DEFAULT, SWORD_BEAM_MAX_HIT_COUNT_MIN, SWORD_BEAM_MAX_HIT_COUNT_MAX);
-            ConfigFactory.loadDoubleConfig(SWORD_BEAM_DAMAGE_PATH, configText("terra_blade_damage"), configTooltip("terra_blade_damage"), SWORD_BEAM_DAMAGE_DEFAULT, SWORD_BEAM_DAMAGE_MIN, SWORD_BEAM_DAMAGE_MAX);
-            ConfigFactory.loadDoubleConfig(PROJECTILE_DAMAGE_PATH, configText("terra_projectile_damage"), configTooltip("terra_projectile_damage"), PROJECTILE_DAMAGE_DEFAULT, PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(SWORD_BEAM_DAMAGE_PATH, configText("terra_blade_damage"), configTooltip("terra_blade_damage"), SWORD_BEAM_DAMAGE_DEFAULT, SWORD_BEAM_DAMAGE_MIN, SWORD_BEAM_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(PROJECTILE_DAMAGE_PATH, configText("terra_projectile_damage"), configTooltip("terra_projectile_damage"), PROJECTILE_DAMAGE_DEFAULT, PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
             ConfigFactory.loadDoubleConfig(PROJECTILE_SPEED_PATH, configText("terra_projectile_speed"), configTooltip("terra_projectile_speed"), PROJECTILE_SPEED_DEFAULT, PROJECTILE_SPEED_MIN, PROJECTILE_SPEED_MAX);
             ConfigFactory.loadIntConfig(PROJECTILE_LIFETIME_PATH, configText("terra_projectile_lifetime"), configTooltip("terra_projectile_lifetime"), PROJECTILE_LIFETIME_DEFAULT, PROJECTILE_LIFETIME_MIN, PROJECTILE_LIFETIME_MAX);
-            ConfigFactory.loadDoubleConfig(PROJECTILE_DAMAGE_DECAY_PATH, configText("terra_projectile_damage_decay"), configTooltip("terra_projectile_damage_decay"), PROJECTILE_DAMAGE_DECAY_DEFAULT, PROJECTILE_DAMAGE_DECAY_MIN, PROJECTILE_DAMAGE_DECAY_MAX);
+            ConfigFactory.loadFloatConfig(PROJECTILE_DAMAGE_DECAY_PATH, configText("terra_projectile_damage_decay"), configTooltip("terra_projectile_damage_decay"), PROJECTILE_DAMAGE_DECAY_DEFAULT, PROJECTILE_DAMAGE_DECAY_MIN, PROJECTILE_DAMAGE_DECAY_MAX);
         }
     };
 
@@ -145,12 +145,12 @@ public class TerraBlade extends SwordItem {
         return Math.clamp(ConfigUtil.readInt(SWORD_BEAM_MAX_HIT_COUNT_PATH, SWORD_BEAM_MAX_HIT_COUNT_DEFAULT), SWORD_BEAM_MAX_HIT_COUNT_MIN, SWORD_BEAM_MAX_HIT_COUNT_MAX);
     }
 
-    public static double getSwordBeamDamage() {
-        return Math.clamp(ConfigUtil.readDouble(SWORD_BEAM_DAMAGE_PATH, SWORD_BEAM_DAMAGE_DEFAULT), SWORD_BEAM_DAMAGE_MIN, SWORD_BEAM_DAMAGE_MAX);
+    public static float getSwordBeamDamage() {
+        return Math.clamp(ConfigUtil.readFloat(SWORD_BEAM_DAMAGE_PATH, SWORD_BEAM_DAMAGE_DEFAULT), SWORD_BEAM_DAMAGE_MIN, SWORD_BEAM_DAMAGE_MAX);
     }
 
-    public static double getProjectileDamage() {
-        return Math.clamp(ConfigUtil.readDouble(PROJECTILE_DAMAGE_PATH, PROJECTILE_DAMAGE_DEFAULT), PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
+    public static float getProjectileDamage() {
+        return Math.clamp(ConfigUtil.readFloat(PROJECTILE_DAMAGE_PATH, PROJECTILE_DAMAGE_DEFAULT), PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
     }
 
     public static double getProjectileSpeed() {
@@ -161,8 +161,8 @@ public class TerraBlade extends SwordItem {
         return Math.clamp(ConfigUtil.readInt(PROJECTILE_LIFETIME_PATH, PROJECTILE_LIFETIME_DEFAULT), PROJECTILE_LIFETIME_MIN, PROJECTILE_LIFETIME_MAX);
     }
 
-    public static double getProjectileDamageDecay() {
-        return Math.clamp(ConfigUtil.readDouble(PROJECTILE_DAMAGE_DECAY_PATH, PROJECTILE_DAMAGE_DECAY_DEFAULT), PROJECTILE_DAMAGE_DECAY_MIN, PROJECTILE_DAMAGE_DECAY_MAX);
+    public static float getProjectileDamageDecay() {
+        return Math.clamp(ConfigUtil.readFloat(PROJECTILE_DAMAGE_DECAY_PATH, PROJECTILE_DAMAGE_DECAY_DEFAULT), PROJECTILE_DAMAGE_DECAY_MIN, PROJECTILE_DAMAGE_DECAY_MAX);
     }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
@@ -635,3 +635,4 @@ public class TerraBlade extends SwordItem {
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 }
+

@@ -43,9 +43,9 @@ public class EnchantedSword extends SwordItem {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String DAMAGE_PATH = "weapon.enchanted_sword.damage";
-    public static final double DAMAGE_DEFAULT = 4.0;
-    public static final double DAMAGE_MIN = 0.0;
-    public static final double DAMAGE_MAX = 2147483647.0;
+    public static final float DAMAGE_DEFAULT = 4.0f;
+    public static final float DAMAGE_MIN = 0.0f;
+    public static final float DAMAGE_MAX = 8388600.0f;
 
     public static final String LIFETIME_PATH = "weapon.enchanted_sword.lifetime";
     public static final int LIFETIME_DEFAULT = 60;
@@ -74,7 +74,7 @@ public class EnchantedSword extends SwordItem {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("enchanted_sword_damage"), configTooltip("enchanted_sword_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("enchanted_sword_damage"), configTooltip("enchanted_sword_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
             ConfigFactory.loadIntConfig(LIFETIME_PATH, configText("enchanted_sword_lifetime"), configTooltip("enchanted_sword_lifetime"), LIFETIME_DEFAULT, LIFETIME_MIN, LIFETIME_MAX);
             ConfigFactory.loadDoubleConfig(SPEED_PATH, configText("enchanted_sword_speed"), configTooltip("enchanted_sword_speed"), SPEED_DEFAULT, SPEED_MIN, SPEED_MAX);
         }
@@ -88,8 +88,8 @@ public class EnchantedSword extends SwordItem {
         return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
     }
 
-    public static double getDamage() {
-        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    public static float getDamage() {
+        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
     }
 
     public static int getLifetime() {
@@ -213,3 +213,4 @@ public class EnchantedSword extends SwordItem {
         }
     }
 }
+

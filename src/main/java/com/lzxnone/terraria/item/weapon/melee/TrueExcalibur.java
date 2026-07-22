@@ -56,16 +56,16 @@ public class TrueExcalibur extends SwordItem {
     public static final int MAX_HIT_COUNT_MAX = 100;
 
     public static final String DAMAGE_PATH = "weapon.true_excalibur.damage";
-    public static final double DAMAGE_DEFAULT = 8.0;
-    public static final double DAMAGE_MIN = 0.0;
-    public static final double DAMAGE_MAX = 2147483647.0;
+    public static final float DAMAGE_DEFAULT = 8.0f;
+    public static final float DAMAGE_MIN = 0.0f;
+    public static final float DAMAGE_MAX = 8388600.0f;
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
             ConfigFactory.loadIntConfig(ROTATE_RANGE_PATH, configText("true_excalibur_rotate_range"), configTooltip("true_excalibur_rotate_range"), ROTATE_RANGE_DEFAULT, ROTATE_RANGE_MIN, ROTATE_RANGE_MAX);
             ConfigFactory.loadIntConfig(MAX_HIT_COUNT_PATH, configText("true_excalibur_max_hit_count"), configTooltip("true_excalibur_max_hit_count"), MAX_HIT_COUNT_DEFAULT, MAX_HIT_COUNT_MIN, MAX_HIT_COUNT_MAX);
-            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("true_excalibur_damage"), configTooltip("true_excalibur_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("true_excalibur_damage"), configTooltip("true_excalibur_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
         }
     };
 
@@ -85,8 +85,8 @@ public class TrueExcalibur extends SwordItem {
         return Math.clamp(ConfigUtil.readInt(MAX_HIT_COUNT_PATH, MAX_HIT_COUNT_DEFAULT), MAX_HIT_COUNT_MIN, MAX_HIT_COUNT_MAX);
     }
 
-    public static double getDamage() {
-        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    public static float getDamage() {
+        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
     }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
@@ -344,3 +344,4 @@ public class TrueExcalibur extends SwordItem {
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 }
+

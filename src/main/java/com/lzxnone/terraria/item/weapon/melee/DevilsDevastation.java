@@ -79,9 +79,9 @@ public class DevilsDevastation extends SwordItem {
     public static final int KILL_MODE_COOLDOWN_TIME_MAX = 72000;
 
     public static final String PROJECTILE_DAMAGE_PATH = "weapon.devils_devastation.projectile_damage";
-    public static final double PROJECTILE_DAMAGE_DEFAULT = 30.0;
-    public static final double PROJECTILE_DAMAGE_MIN = 0.0;
-    public static final double PROJECTILE_DAMAGE_MAX = 2147483647.0;
+    public static final float PROJECTILE_DAMAGE_DEFAULT = 30.0f;
+    public static final float PROJECTILE_DAMAGE_MIN = 0.0f;
+    public static final float PROJECTILE_DAMAGE_MAX = 8388600.0f;
 
     public static final String PROJECTILE_LIFETIME_PATH = "weapon.devils_devastation.projectile_lifetime";
     public static final int PROJECTILE_LIFETIME_DEFAULT = 40;
@@ -94,9 +94,9 @@ public class DevilsDevastation extends SwordItem {
     public static final double PROJECTILE_SPEED_MAX = 10.0;
 
     public static final String STUCK_PROJECTILE_DAMAGE_PATH = "weapon.devils_devastation.stuck_projectile_damage";
-    public static final double STUCK_PROJECTILE_DAMAGE_DEFAULT = 30.0;
-    public static final double STUCK_PROJECTILE_DAMAGE_MIN = 0.0;
-    public static final double STUCK_PROJECTILE_DAMAGE_MAX = 2147483647.0;
+    public static final float STUCK_PROJECTILE_DAMAGE_DEFAULT = 30.0f;
+    public static final float STUCK_PROJECTILE_DAMAGE_MIN = 0.0f;
+    public static final float STUCK_PROJECTILE_DAMAGE_MAX = 8388600.0f;
 
     public static final String STUCK_PROJECTILE_LIFETIME_PATH = "weapon.devils_devastation.stuck_projectile_lifetime";
     public static final int STUCK_PROJECTILE_LIFETIME_DEFAULT = 40;
@@ -114,9 +114,9 @@ public class DevilsDevastation extends SwordItem {
     public static final int KILL_MODE_PROJECTILE_CYCLE_MAX = 200;
 
     public static final String KILL_MODE_PROJECTILE_DAMAGE_PATH = "weapon.devils_devastation.kill_mode_projectile_damage";
-    public static final double KILL_MODE_PROJECTILE_DAMAGE_DEFAULT = 200.0;
-    public static final double KILL_MODE_PROJECTILE_DAMAGE_MIN = 0.0;
-    public static final double KILL_MODE_PROJECTILE_DAMAGE_MAX = 2147483647.0;
+    public static final float KILL_MODE_PROJECTILE_DAMAGE_DEFAULT = 200.0f;
+    public static final float KILL_MODE_PROJECTILE_DAMAGE_MIN = 0.0f;
+    public static final float KILL_MODE_PROJECTILE_DAMAGE_MAX = 8388600.0f;
 
     public static final String KILL_MODE_PROJECTILE_ROTATE_PATH = "weapon.devils_devastation.kill_mode_projectile_rotate";
     public static final int KILL_MODE_PROJECTILE_ROTATE_DEFAULT = 30;
@@ -134,9 +134,9 @@ public class DevilsDevastation extends SwordItem {
     public static final int MAX_STUCK_COUNT_MAX = 50;
 
     public static final String MARK_LIGHTNING_DAMAGE_PATH = "weapon.devils_devastation.mark_lightning_damage";
-    public static final double MARK_LIGHTNING_DAMAGE_DEFAULT = 100.0;
-    public static final double MARK_LIGHTNING_DAMAGE_MIN = 0.0;
-    public static final double MARK_LIGHTNING_DAMAGE_MAX = 2147483647.0;
+    public static final float MARK_LIGHTNING_DAMAGE_DEFAULT = 100.0f;
+    public static final float MARK_LIGHTNING_DAMAGE_MIN = 0.0f;
+    public static final float MARK_LIGHTNING_DAMAGE_MAX = 8388600.0f;
 
     public static final String PROJECTILE_EFFECT_DURATION_PATH = "weapon.devils_devastation.projectile_effect_duration";
     public static final int PROJECTILE_EFFECT_DURATION_DEFAULT = 40;
@@ -158,18 +158,18 @@ public class DevilsDevastation extends SwordItem {
         public void onConfigLoad() {
             ConfigFactory.loadIntConfig(KILL_MODE_TIME_PATH, configText("devils_devastation_kill_mode_time"), configTooltip("devils_devastation_kill_mode_time"), KILL_MODE_TIME_DEFAULT, KILL_MODE_TIME_MIN, KILL_MODE_TIME_MAX);
             ConfigFactory.loadIntConfig(KILL_MODE_COOLDOWN_TIME_PATH, configText("devils_devastation_kill_mode_cooldown_time"), configTooltip("devils_devastation_kill_mode_cooldown_time"), KILL_MODE_COOLDOWN_TIME_DEFAULT, KILL_MODE_COOLDOWN_TIME_MIN, KILL_MODE_COOLDOWN_TIME_MAX);
-            ConfigFactory.loadDoubleConfig(PROJECTILE_DAMAGE_PATH, configText("devils_devastation_projectile_damage"), configTooltip("devils_devastation_projectile_damage"), PROJECTILE_DAMAGE_DEFAULT, PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(PROJECTILE_DAMAGE_PATH, configText("devils_devastation_projectile_damage"), configTooltip("devils_devastation_projectile_damage"), PROJECTILE_DAMAGE_DEFAULT, PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
             ConfigFactory.loadIntConfig(PROJECTILE_LIFETIME_PATH, configText("devils_devastation_projectile_lifetime"), configTooltip("devils_devastation_projectile_lifetime"), PROJECTILE_LIFETIME_DEFAULT, PROJECTILE_LIFETIME_MIN, PROJECTILE_LIFETIME_MAX);
             ConfigFactory.loadDoubleConfig(PROJECTILE_SPEED_PATH, configText("devils_devastation_projectile_speed"), configTooltip("devils_devastation_projectile_speed"), PROJECTILE_SPEED_DEFAULT, PROJECTILE_SPEED_MIN, PROJECTILE_SPEED_MAX);
-            ConfigFactory.loadDoubleConfig(STUCK_PROJECTILE_DAMAGE_PATH, configText("devils_devastation_stuck_projectile_damage"), configTooltip("devils_devastation_stuck_projectile_damage"), STUCK_PROJECTILE_DAMAGE_DEFAULT, STUCK_PROJECTILE_DAMAGE_MIN, STUCK_PROJECTILE_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(STUCK_PROJECTILE_DAMAGE_PATH, configText("devils_devastation_stuck_projectile_damage"), configTooltip("devils_devastation_stuck_projectile_damage"), STUCK_PROJECTILE_DAMAGE_DEFAULT, STUCK_PROJECTILE_DAMAGE_MIN, STUCK_PROJECTILE_DAMAGE_MAX);
             ConfigFactory.loadIntConfig(STUCK_PROJECTILE_LIFETIME_PATH, configText("devils_devastation_stuck_projectile_lifetime"), configTooltip("devils_devastation_stuck_projectile_lifetime"), STUCK_PROJECTILE_LIFETIME_DEFAULT, STUCK_PROJECTILE_LIFETIME_MIN, STUCK_PROJECTILE_LIFETIME_MAX);
             ConfigFactory.loadDoubleConfig(STUCK_PROJECTILE_SPEED_PATH, configText("devils_devastation_stuck_projectile_speed"), configTooltip("devils_devastation_stuck_projectile_speed"), STUCK_PROJECTILE_SPEED_DEFAULT, STUCK_PROJECTILE_SPEED_MIN, STUCK_PROJECTILE_SPEED_MAX);
             ConfigFactory.loadIntConfig(KILL_MODE_PROJECTILE_CYCLE_PATH, configText("devils_devastation_kill_mode_projectile_cycle"), configTooltip("devils_devastation_kill_mode_projectile_cycle"), KILL_MODE_PROJECTILE_CYCLE_DEFAULT, KILL_MODE_PROJECTILE_CYCLE_MIN, KILL_MODE_PROJECTILE_CYCLE_MAX);
-            ConfigFactory.loadDoubleConfig(KILL_MODE_PROJECTILE_DAMAGE_PATH, configText("devils_devastation_kill_mode_projectile_damage"), configTooltip("devils_devastation_kill_mode_projectile_damage"), KILL_MODE_PROJECTILE_DAMAGE_DEFAULT, KILL_MODE_PROJECTILE_DAMAGE_MIN, KILL_MODE_PROJECTILE_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(KILL_MODE_PROJECTILE_DAMAGE_PATH, configText("devils_devastation_kill_mode_projectile_damage"), configTooltip("devils_devastation_kill_mode_projectile_damage"), KILL_MODE_PROJECTILE_DAMAGE_DEFAULT, KILL_MODE_PROJECTILE_DAMAGE_MIN, KILL_MODE_PROJECTILE_DAMAGE_MAX);
             ConfigFactory.loadIntConfig(KILL_MODE_PROJECTILE_ROTATE_PATH, configText("devils_devastation_kill_mode_projectile_rotate"), configTooltip("devils_devastation_kill_mode_projectile_rotate"), KILL_MODE_PROJECTILE_ROTATE_DEFAULT, KILL_MODE_PROJECTILE_ROTATE_MIN, KILL_MODE_PROJECTILE_ROTATE_MAX);
             ConfigFactory.loadIntConfig(STUCK_LIFETIME_PATH, configText("devils_devastation_stuck_lifetime"), configTooltip("devils_devastation_stuck_lifetime"), STUCK_LIFETIME_DEFAULT, STUCK_LIFETIME_MIN, STUCK_LIFETIME_MAX);
             ConfigFactory.loadIntConfig(MAX_STUCK_COUNT_PATH, configText("devils_devastation_max_stuck_count"), configTooltip("devils_devastation_max_stuck_count"), MAX_STUCK_COUNT_DEFAULT, MAX_STUCK_COUNT_MIN, MAX_STUCK_COUNT_MAX);
-            ConfigFactory.loadDoubleConfig(MARK_LIGHTNING_DAMAGE_PATH, configText("devils_devastation_mark_lightning_damage"), configTooltip("devils_devastation_mark_lightning_damage"), MARK_LIGHTNING_DAMAGE_DEFAULT, MARK_LIGHTNING_DAMAGE_MIN, MARK_LIGHTNING_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(MARK_LIGHTNING_DAMAGE_PATH, configText("devils_devastation_mark_lightning_damage"), configTooltip("devils_devastation_mark_lightning_damage"), MARK_LIGHTNING_DAMAGE_DEFAULT, MARK_LIGHTNING_DAMAGE_MIN, MARK_LIGHTNING_DAMAGE_MAX);
             ConfigFactory.loadIntConfig(PROJECTILE_EFFECT_DURATION_PATH, configText("devils_devastation_projectile_effect_duration"), configTooltip("devils_devastation_projectile_effect_duration"), PROJECTILE_EFFECT_DURATION_DEFAULT, PROJECTILE_EFFECT_DURATION_MIN, PROJECTILE_EFFECT_DURATION_MAX);
             ConfigFactory.loadIntConfig(STUCK_PROJECTILE_EFFECT_DURATION_PATH, configText("devils_devastation_stuck_projectile_effect_duration"), configTooltip("devils_devastation_stuck_projectile_effect_duration"), STUCK_PROJECTILE_EFFECT_DURATION_DEFAULT, STUCK_PROJECTILE_EFFECT_DURATION_MIN, STUCK_PROJECTILE_EFFECT_DURATION_MAX);
             ConfigFactory.loadIntConfig(KILL_MODE_PROJECTILE_EFFECT_DURATION_PATH, configText("devils_devastation_kill_mode_projectile_effect_duration"), configTooltip("devils_devastation_kill_mode_projectile_effect_duration"), KILL_MODE_PROJECTILE_EFFECT_DURATION_DEFAULT, KILL_MODE_PROJECTILE_EFFECT_DURATION_MIN, KILL_MODE_PROJECTILE_EFFECT_DURATION_MAX);
@@ -192,8 +192,8 @@ public class DevilsDevastation extends SwordItem {
         return Math.clamp(ConfigUtil.readInt(KILL_MODE_COOLDOWN_TIME_PATH, KILL_MODE_COOLDOWN_TIME_DEFAULT), KILL_MODE_COOLDOWN_TIME_MIN, KILL_MODE_COOLDOWN_TIME_MAX);
     }
 
-    public static double getProjectileDamage() {
-        return Math.clamp(ConfigUtil.readDouble(PROJECTILE_DAMAGE_PATH, PROJECTILE_DAMAGE_DEFAULT), PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
+    public static float getProjectileDamage() {
+        return Math.clamp(ConfigUtil.readFloat(PROJECTILE_DAMAGE_PATH, PROJECTILE_DAMAGE_DEFAULT), PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
     }
 
     public static int getProjectileLifetime() {
@@ -204,8 +204,8 @@ public class DevilsDevastation extends SwordItem {
         return Math.clamp(ConfigUtil.readDouble(PROJECTILE_SPEED_PATH, PROJECTILE_SPEED_DEFAULT), PROJECTILE_SPEED_MIN, PROJECTILE_SPEED_MAX);
     }
 
-    public static double getStuckProjectileDamage() {
-        return Math.clamp(ConfigUtil.readDouble(STUCK_PROJECTILE_DAMAGE_PATH, STUCK_PROJECTILE_DAMAGE_DEFAULT), STUCK_PROJECTILE_DAMAGE_MIN, STUCK_PROJECTILE_DAMAGE_MAX);
+    public static float getStuckProjectileDamage() {
+        return Math.clamp(ConfigUtil.readFloat(STUCK_PROJECTILE_DAMAGE_PATH, STUCK_PROJECTILE_DAMAGE_DEFAULT), STUCK_PROJECTILE_DAMAGE_MIN, STUCK_PROJECTILE_DAMAGE_MAX);
     }
 
     public static int getStuckProjectileLifetime() {
@@ -220,8 +220,8 @@ public class DevilsDevastation extends SwordItem {
         return Math.clamp(ConfigUtil.readInt(KILL_MODE_PROJECTILE_CYCLE_PATH, KILL_MODE_PROJECTILE_CYCLE_DEFAULT), KILL_MODE_PROJECTILE_CYCLE_MIN, KILL_MODE_PROJECTILE_CYCLE_MAX);
     }
 
-    public static double getKillModeProjectileDamage() {
-        return Math.clamp(ConfigUtil.readDouble(KILL_MODE_PROJECTILE_DAMAGE_PATH, KILL_MODE_PROJECTILE_DAMAGE_DEFAULT), KILL_MODE_PROJECTILE_DAMAGE_MIN, KILL_MODE_PROJECTILE_DAMAGE_MAX);
+    public static float getKillModeProjectileDamage() {
+        return Math.clamp(ConfigUtil.readFloat(KILL_MODE_PROJECTILE_DAMAGE_PATH, KILL_MODE_PROJECTILE_DAMAGE_DEFAULT), KILL_MODE_PROJECTILE_DAMAGE_MIN, KILL_MODE_PROJECTILE_DAMAGE_MAX);
     }
 
     public static int getKillModeProjectileRotate() {
@@ -236,8 +236,8 @@ public class DevilsDevastation extends SwordItem {
         return Math.clamp(ConfigUtil.readInt(MAX_STUCK_COUNT_PATH, MAX_STUCK_COUNT_DEFAULT), MAX_STUCK_COUNT_MIN, MAX_STUCK_COUNT_MAX);
     }
 
-    public static double getMarkLightningDamage() {
-        return Math.clamp(ConfigUtil.readDouble(MARK_LIGHTNING_DAMAGE_PATH, MARK_LIGHTNING_DAMAGE_DEFAULT), MARK_LIGHTNING_DAMAGE_MIN, MARK_LIGHTNING_DAMAGE_MAX);
+    public static float getMarkLightningDamage() {
+        return Math.clamp(ConfigUtil.readFloat(MARK_LIGHTNING_DAMAGE_PATH, MARK_LIGHTNING_DAMAGE_DEFAULT), MARK_LIGHTNING_DAMAGE_MIN, MARK_LIGHTNING_DAMAGE_MAX);
     }
 
     public static int getProjectileEffectDuration() {
@@ -870,7 +870,7 @@ public class DevilsDevastation extends SwordItem {
                     summon.setPos(pos);
                     summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.DEVILS_DEVASTATION_MARK);
                     summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-                    summon.getEntityData().set(StaticSummon.LIFETIME, getKillModeTime());
+                    summon.getEntityData().set(StaticSummon.LIFETIME, 100);
                     summon.getEntityData().set(StaticSummon.GLOW, true);
 
                     CompoundTag summonCustomData = new CompoundTag();
@@ -1593,3 +1593,4 @@ public class DevilsDevastation extends SwordItem {
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 }
+

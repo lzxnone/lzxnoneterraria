@@ -49,9 +49,9 @@ public class InfluxWaver extends SwordItem {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String DAMAGE_PATH = "weapon.influx_waver.damage";
-    public static final double DAMAGE_DEFAULT = 12.0;
-    public static final double DAMAGE_MIN = 0.0;
-    public static final double DAMAGE_MAX = 2147483647.0;
+    public static final float DAMAGE_DEFAULT = 12.0f;
+    public static final float DAMAGE_MIN = 0.0f;
+    public static final float DAMAGE_MAX = 8388600.0f;
 
     public static final String MAX_COUNT_PATH = "weapon.influx_waver.max_count";
     public static final int MAX_COUNT_DEFAULT = 2;
@@ -76,7 +76,7 @@ public class InfluxWaver extends SwordItem {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("influx_waver_damage"), configTooltip("influx_waver_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("influx_waver_damage"), configTooltip("influx_waver_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
             ConfigFactory.loadIntConfig(MAX_COUNT_PATH, configText("influx_waver_max_count"), configTooltip("influx_waver_max_count"), MAX_COUNT_DEFAULT, MAX_COUNT_MIN, MAX_COUNT_MAX);
             ConfigFactory.loadDoubleConfig(SPEED_PATH, configText("influx_waver_speed"), configTooltip("influx_waver_speed"), SPEED_DEFAULT, SPEED_MIN, SPEED_MAX);
             ConfigFactory.loadDoubleConfig(SPAWN_RANGE_PATH, configText("influx_waver_spawn_range"), configTooltip("influx_waver_spawn_range"), SPAWN_RANGE_DEFAULT, SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
@@ -92,8 +92,8 @@ public class InfluxWaver extends SwordItem {
         return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
     }
 
-    public static double getDamage() {
-        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    public static float getDamage() {
+        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
     }
 
     public static int getMaxCount() {
@@ -324,3 +324,4 @@ public class InfluxWaver extends SwordItem {
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 }
+

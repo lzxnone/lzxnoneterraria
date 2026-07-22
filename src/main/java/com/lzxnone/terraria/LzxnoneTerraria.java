@@ -15,15 +15,13 @@ import com.mojang.logging.LogUtils;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.ModContainer;
 
 @Mod(LzxnoneTerraria.MODID)
 public class LzxnoneTerraria {
     public static final String MODID = "lzxnoneterraria";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public LzxnoneTerraria(IEventBus modEventBus, ModContainer modContainer) {
+    public LzxnoneTerraria(IEventBus modEventBus) {
         //注册
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
@@ -36,9 +34,6 @@ public class LzxnoneTerraria {
 
         //实体属性创建
         modEventBus.addListener(this::onEntityAttributeCreation);
-
-        //配置
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
     public void onEntityAttributeCreation(EntityAttributeCreationEvent event) {

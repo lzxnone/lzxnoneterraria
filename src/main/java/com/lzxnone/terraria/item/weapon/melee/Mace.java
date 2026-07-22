@@ -63,9 +63,9 @@ public class Mace extends SwordItem {
     public static final double GRAVITY_MAX = 5.0;
 
     public static final String DAMAGE_PATH = "weapon.mace.damage";
-    public static final double DAMAGE_DEFAULT = 4.0;
-    public static final double DAMAGE_MIN = 0.0;
-    public static final double DAMAGE_MAX = 2147483647.0;
+    public static final float DAMAGE_DEFAULT = 4.0f;
+    public static final float DAMAGE_MIN = 0.0f;
+    public static final float DAMAGE_MAX = 8388600.0f;
 
     public static final String FLY_TIME_PATH = "weapon.mace.fly_time";
     public static final int FLY_TIME_DEFAULT = 10;
@@ -82,7 +82,7 @@ public class Mace extends SwordItem {
         public void onConfigLoad() {
             ConfigFactory.loadDoubleConfig(PROJECTILE_SPEED_PATH, configText("mace_projectile_speed"), configTooltip("mace_projectile_speed"), PROJECTILE_SPEED_DEFAULT, PROJECTILE_SPEED_MIN, PROJECTILE_SPEED_MAX);
             ConfigFactory.loadDoubleConfig(GRAVITY_PATH, configText("mace_gravity"), configTooltip("mace_gravity"), GRAVITY_DEFAULT, GRAVITY_MIN, GRAVITY_MAX);
-            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("mace_damage"), configTooltip("mace_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("mace_damage"), configTooltip("mace_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
             ConfigFactory.loadIntConfig(FLY_TIME_PATH, configText("mace_fly_time"), configTooltip("mace_fly_time"), FLY_TIME_DEFAULT, FLY_TIME_MIN, FLY_TIME_MAX);
             ConfigFactory.loadDoubleConfig(MAX_RANGE_PATH, configText("mace_max_range"), configTooltip("mace_max_range"), MAX_RANGE_DEFAULT, MAX_RANGE_MIN, MAX_RANGE_MAX);
         }
@@ -104,8 +104,8 @@ public class Mace extends SwordItem {
         return Math.clamp(ConfigUtil.readDouble(GRAVITY_PATH, GRAVITY_DEFAULT), GRAVITY_MIN, GRAVITY_MAX);
     }
 
-    public static double getDamage() {
-        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    public static float getDamage() {
+        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
     }
 
     public static int getFlyTime() {
@@ -666,3 +666,4 @@ public class Mace extends SwordItem {
         }
     }
 }
+

@@ -57,9 +57,9 @@ public class Seedler extends SwordItem {
     public static final double NUT_INITIAL_SPEED_MAX = 10.0;
 
     public static final String THORN_DAMAGE_PATH = "weapon.seedler.thorn_damage";
-    public static final double THORN_DAMAGE_DEFAULT = 2.0;
-    public static final double THORN_DAMAGE_MIN = 0.0;
-    public static final double THORN_DAMAGE_MAX = 2147483647.0;
+    public static final float THORN_DAMAGE_DEFAULT = 2.0f;
+    public static final float THORN_DAMAGE_MIN = 0.0f;
+    public static final float THORN_DAMAGE_MAX = 8388600.0f;
 
     public static final String THORN_LIFETIME_PATH = "weapon.seedler.thorn_lifetime";
     public static final int THORN_LIFETIME_DEFAULT = 30;
@@ -89,7 +89,7 @@ public class Seedler extends SwordItem {
             ConfigFactory.loadDoubleConfig(NUT_GRAVITY_PATH, configText("seedler_nut_gravity"), configTooltip("seedler_nut_gravity"), NUT_GRAVITY_DEFAULT, NUT_GRAVITY_MIN, NUT_GRAVITY_MAX);
             ConfigFactory.loadDoubleConfig(NUT_BOUNCE_PATH, configText("seedler_nut_bounce"), configTooltip("seedler_nut_bounce"), NUT_BOUNCE_DEFAULT, NUT_BOUNCE_MIN, NUT_BOUNCE_MAX);
             ConfigFactory.loadDoubleConfig(NUT_INITIAL_SPEED_PATH, configText("seedler_nut_initial_speed"), configTooltip("seedler_nut_initial_speed"), NUT_INITIAL_SPEED_DEFAULT, NUT_INITIAL_SPEED_MIN, NUT_INITIAL_SPEED_MAX);
-            ConfigFactory.loadDoubleConfig(THORN_DAMAGE_PATH, configText("seedler_thorn_damage"), configTooltip("seedler_thorn_damage"), THORN_DAMAGE_DEFAULT, THORN_DAMAGE_MIN, THORN_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(THORN_DAMAGE_PATH, configText("seedler_thorn_damage"), configTooltip("seedler_thorn_damage"), THORN_DAMAGE_DEFAULT, THORN_DAMAGE_MIN, THORN_DAMAGE_MAX);
             ConfigFactory.loadIntConfig(THORN_LIFETIME_PATH, configText("seedler_thorn_lifetime"), configTooltip("seedler_thorn_lifetime"), THORN_LIFETIME_DEFAULT, THORN_LIFETIME_MIN, THORN_LIFETIME_MAX);
             ConfigFactory.loadDoubleConfig(THORN_SPEED_PATH, configText("seedler_thorn_speed"), configTooltip("seedler_thorn_speed"), THORN_SPEED_DEFAULT, THORN_SPEED_MIN, THORN_SPEED_MAX);
         }
@@ -115,8 +115,8 @@ public class Seedler extends SwordItem {
         return Math.clamp(ConfigUtil.readDouble(NUT_INITIAL_SPEED_PATH, NUT_INITIAL_SPEED_DEFAULT), NUT_INITIAL_SPEED_MIN, NUT_INITIAL_SPEED_MAX);
     }
 
-    public static double getThornDamage() {
-        return Math.clamp(ConfigUtil.readDouble(THORN_DAMAGE_PATH, THORN_DAMAGE_DEFAULT), THORN_DAMAGE_MIN, THORN_DAMAGE_MAX);
+    public static float getThornDamage() {
+        return Math.clamp(ConfigUtil.readFloat(THORN_DAMAGE_PATH, THORN_DAMAGE_DEFAULT), THORN_DAMAGE_MIN, THORN_DAMAGE_MAX);
     }
 
     public static int getThornLifetime() {
@@ -308,3 +308,4 @@ public class Seedler extends SwordItem {
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 }
+

@@ -41,9 +41,9 @@ public class Starfury extends SwordItem {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String DAMAGE_PATH = "weapon.starfury.damage";
-    public static final double DAMAGE_DEFAULT = 6.0;
-    public static final double DAMAGE_MIN = 0.0;
-    public static final double DAMAGE_MAX = 2147483647.0;
+    public static final float DAMAGE_DEFAULT = 6.0f;
+    public static final float DAMAGE_MIN = 0.0f;
+    public static final float DAMAGE_MAX = 8388600.0f;
 
     public static final String MAX_RANGE_PATH = "weapon.starfury.max_range";
     public static final double MAX_RANGE_DEFAULT = 24.0;
@@ -70,7 +70,7 @@ public class Starfury extends SwordItem {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("starfury_damage"), configTooltip("starfury_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("starfury_damage"), configTooltip("starfury_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
             ConfigFactory.loadDoubleConfig(MAX_RANGE_PATH, configText("starfury_max_range"), configTooltip("starfury_max_range"), MAX_RANGE_DEFAULT, MAX_RANGE_MIN, MAX_RANGE_MAX);
             ConfigFactory.loadDoubleConfig(SPEED_PATH, configText("starfury_speed"), configTooltip("starfury_speed"), SPEED_DEFAULT, SPEED_MIN, SPEED_MAX);
         }
@@ -84,8 +84,8 @@ public class Starfury extends SwordItem {
         return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
     }
 
-    public static double getDamage() {
-        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    public static float getDamage() {
+        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
     }
 
     public static double getMaxRange() {
@@ -242,3 +242,4 @@ public class Starfury extends SwordItem {
         }
     }
 }
+

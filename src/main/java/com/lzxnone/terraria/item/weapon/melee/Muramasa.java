@@ -47,14 +47,14 @@ public class Muramasa extends SwordItem {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String BEAM_DAMAGE_PATH = "weapon.muramasa.beam_damage";
-    public static final double BEAM_DAMAGE_DEFAULT = 2.5;
-    public static final double BEAM_DAMAGE_MIN = 0.0;
-    public static final double BEAM_DAMAGE_MAX = 2147483647.0;
+    public static final float BEAM_DAMAGE_DEFAULT = 2.5f;
+    public static final float BEAM_DAMAGE_MIN = 0.0f;
+    public static final float BEAM_DAMAGE_MAX = 8388600.0f;
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadDoubleConfig(BEAM_DAMAGE_PATH, configText("muramasa_beam_damage"), configTooltip("muramasa_beam_damage"), BEAM_DAMAGE_DEFAULT, BEAM_DAMAGE_MIN, BEAM_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(BEAM_DAMAGE_PATH, configText("muramasa_beam_damage"), configTooltip("muramasa_beam_damage"), BEAM_DAMAGE_DEFAULT, BEAM_DAMAGE_MIN, BEAM_DAMAGE_MAX);
         }
     };
 
@@ -66,8 +66,8 @@ public class Muramasa extends SwordItem {
         return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
     }
 
-    public static double getBeamDamage() {
-        return Math.clamp(ConfigUtil.readDouble(BEAM_DAMAGE_PATH, BEAM_DAMAGE_DEFAULT), BEAM_DAMAGE_MIN, BEAM_DAMAGE_MAX);
+    public static float getBeamDamage() {
+        return Math.clamp(ConfigUtil.readFloat(BEAM_DAMAGE_PATH, BEAM_DAMAGE_DEFAULT), BEAM_DAMAGE_MIN, BEAM_DAMAGE_MAX);
     }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
@@ -268,3 +268,4 @@ public class Muramasa extends SwordItem {
         }
     };
 }
+

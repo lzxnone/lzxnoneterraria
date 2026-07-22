@@ -62,9 +62,9 @@ public class BladeOfGrass extends SwordItem {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String PROJECTILE_DAMAGE_PATH = "weapon.blade_of_grass.projectile_damage";
-    public static final double PROJECTILE_DAMAGE_DEFAULT = 2.0;
-    public static final double PROJECTILE_DAMAGE_MIN = 0.0;
-    public static final double PROJECTILE_DAMAGE_MAX = 2147483647.0;
+    public static final float PROJECTILE_DAMAGE_DEFAULT = 2.0f;
+    public static final float PROJECTILE_DAMAGE_MIN = 0.0f;
+    public static final float PROJECTILE_DAMAGE_MAX = 8388600.0f;
 
     public static final String EFFECT_DURATION_PATH = "weapon.blade_of_grass.effect_duration";
     public static final int EFFECT_DURATION_DEFAULT = 140;
@@ -99,7 +99,7 @@ public class BladeOfGrass extends SwordItem {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadDoubleConfig(PROJECTILE_DAMAGE_PATH, configText("blade_of_grass_projectile_damage"), configTooltip("blade_of_grass_projectile_damage"), PROJECTILE_DAMAGE_DEFAULT, PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(PROJECTILE_DAMAGE_PATH, configText("blade_of_grass_projectile_damage"), configTooltip("blade_of_grass_projectile_damage"), PROJECTILE_DAMAGE_DEFAULT, PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
             ConfigFactory.loadIntConfig(EFFECT_DURATION_PATH, configText("blade_of_grass_effect_duration"), configTooltip("blade_of_grass_effect_duration"), EFFECT_DURATION_DEFAULT, EFFECT_DURATION_MIN, EFFECT_DURATION_MAX);
             ConfigFactory.loadDoubleConfig(TARGET_RANGE_PATH, configText("blade_of_grass_target_range"), configTooltip("blade_of_grass_target_range"), TARGET_RANGE_DEFAULT, TARGET_RANGE_MIN, TARGET_RANGE_MAX);
             ConfigFactory.loadIntConfig(PROJECTILE_LIFETIME_PATH, configText("blade_of_grass_projectile_lifetime"), configTooltip("blade_of_grass_projectile_lifetime"), PROJECTILE_LIFETIME_DEFAULT, PROJECTILE_LIFETIME_MIN, PROJECTILE_LIFETIME_MAX);
@@ -117,8 +117,8 @@ public class BladeOfGrass extends SwordItem {
         return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
     }
 
-    public static double getProjectileDamage() {
-        return Math.clamp(ConfigUtil.readDouble(PROJECTILE_DAMAGE_PATH, PROJECTILE_DAMAGE_DEFAULT), PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
+    public static float getProjectileDamage() {
+        return Math.clamp(ConfigUtil.readFloat(PROJECTILE_DAMAGE_PATH, PROJECTILE_DAMAGE_DEFAULT), PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
     }
 
     public static int getEffectDuration() {
@@ -337,3 +337,4 @@ public class BladeOfGrass extends SwordItem {
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 }
+

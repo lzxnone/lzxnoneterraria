@@ -50,9 +50,9 @@ public class Volcano extends SwordItem {
     public static final double EXPLOSION_RANGE_MAX = 64.0;
 
     public static final String EXPLOSION_DAMAGE_PATH = "weapon.volcano.explosion_damage";
-    public static final double EXPLOSION_DAMAGE_DEFAULT = 6.0;
-    public static final double EXPLOSION_DAMAGE_MIN = 0.0;
-    public static final double EXPLOSION_DAMAGE_MAX = 2147483647.0;
+    public static final float EXPLOSION_DAMAGE_DEFAULT = 6.0f;
+    public static final float EXPLOSION_DAMAGE_MIN = 0.0f;
+    public static final float EXPLOSION_DAMAGE_MAX = 8388600.0f;
 
     public static final String EXPLOSION_MAX_HIT_COUNT_PATH = "weapon.volcano.explosion_max_hit_count";
     public static final int EXPLOSION_MAX_HIT_COUNT_DEFAULT = 2;
@@ -80,7 +80,7 @@ public class Volcano extends SwordItem {
         @Override
         public void onConfigLoad() {
             ConfigFactory.loadDoubleConfig(EXPLOSION_RANGE_PATH, configText("volcano_explosion_range"), configTooltip("volcano_explosion_range"), EXPLOSION_RANGE_DEFAULT, EXPLOSION_RANGE_MIN, EXPLOSION_RANGE_MAX);
-            ConfigFactory.loadDoubleConfig(EXPLOSION_DAMAGE_PATH, configText("volcano_explosion_damage"), configTooltip("volcano_explosion_damage"), EXPLOSION_DAMAGE_DEFAULT, EXPLOSION_DAMAGE_MIN, EXPLOSION_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(EXPLOSION_DAMAGE_PATH, configText("volcano_explosion_damage"), configTooltip("volcano_explosion_damage"), EXPLOSION_DAMAGE_DEFAULT, EXPLOSION_DAMAGE_MIN, EXPLOSION_DAMAGE_MAX);
             ConfigFactory.loadIntConfig(EXPLOSION_MAX_HIT_COUNT_PATH, configText("volcano_explosion_max_hit_count"), configTooltip("volcano_explosion_max_hit_count"), EXPLOSION_MAX_HIT_COUNT_DEFAULT, EXPLOSION_MAX_HIT_COUNT_MIN, EXPLOSION_MAX_HIT_COUNT_MAX);
             ConfigFactory.loadIntConfig(IGNITE_SECONDS_PATH, configText("volcano_ignite_seconds"), configTooltip("volcano_ignite_seconds"), IGNITE_SECONDS_DEFAULT, IGNITE_SECONDS_MIN, IGNITE_SECONDS_MAX);
         }
@@ -98,8 +98,8 @@ public class Volcano extends SwordItem {
         return Math.clamp(ConfigUtil.readDouble(EXPLOSION_RANGE_PATH, EXPLOSION_RANGE_DEFAULT), EXPLOSION_RANGE_MIN, EXPLOSION_RANGE_MAX);
     }
 
-    public static double getExplosionDamage() {
-        return Math.clamp(ConfigUtil.readDouble(EXPLOSION_DAMAGE_PATH, EXPLOSION_DAMAGE_DEFAULT), EXPLOSION_DAMAGE_MIN, EXPLOSION_DAMAGE_MAX);
+    public static float getExplosionDamage() {
+        return Math.clamp(ConfigUtil.readFloat(EXPLOSION_DAMAGE_PATH, EXPLOSION_DAMAGE_DEFAULT), EXPLOSION_DAMAGE_MIN, EXPLOSION_DAMAGE_MAX);
     }
 
     public static int getExplosionMaxHitCount() {
@@ -241,3 +241,4 @@ public class Volcano extends SwordItem {
         }
     };
 }
+

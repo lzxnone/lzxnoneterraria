@@ -38,9 +38,9 @@ public class StarWrath extends SwordItem {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String DAMAGE_PATH = "weapon.star_wrath.damage";
-    public static final double DAMAGE_DEFAULT = 16.0;
-    public static final double DAMAGE_MIN = 0.0;
-    public static final double DAMAGE_MAX = 2147483647.0;
+    public static final float DAMAGE_DEFAULT = 16.0f;
+    public static final float DAMAGE_MIN = 0.0f;
+    public static final float DAMAGE_MAX = 8388600.0f;
 
     public static final String SPEED_PATH = "weapon.star_wrath.speed";
     public static final double SPEED_DEFAULT = 2.0;
@@ -67,7 +67,7 @@ public class StarWrath extends SwordItem {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("star_wrath_damage"), configTooltip("star_wrath_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("star_wrath_damage"), configTooltip("star_wrath_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
             ConfigFactory.loadDoubleConfig(SPEED_PATH, configText("star_wrath_speed"), configTooltip("star_wrath_speed"), SPEED_DEFAULT, SPEED_MIN, SPEED_MAX);
             ConfigFactory.loadDoubleConfig(MAX_RANGE_PATH, configText("star_wrath_max_range"), configTooltip("star_wrath_max_range"), MAX_RANGE_DEFAULT, MAX_RANGE_MIN, MAX_RANGE_MAX);
         }
@@ -81,8 +81,8 @@ public class StarWrath extends SwordItem {
         return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
     }
 
-    public static double getDamage() {
-        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    public static float getDamage() {
+        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
     }
 
     public static double getSpeed() {
@@ -290,3 +290,4 @@ public class StarWrath extends SwordItem {
         }
     }
 }
+

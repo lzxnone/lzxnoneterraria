@@ -46,9 +46,9 @@ public class Meowmere extends SwordItem {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String DAMAGE_PATH = "weapon.meowmere.damage";
-    public static final double DAMAGE_DEFAULT = 20.0;
-    public static final double DAMAGE_MIN = 0.0;
-    public static final double DAMAGE_MAX = 2147483647.0;
+    public static final float DAMAGE_DEFAULT = 20.0f;
+    public static final float DAMAGE_MIN = 0.0f;
+    public static final float DAMAGE_MAX = 8388600.0f;
 
     public static final String GRAVITY_PATH = "weapon.meowmere.gravity";
     public static final double GRAVITY_DEFAULT = 0.025;
@@ -75,7 +75,7 @@ public class Meowmere extends SwordItem {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("meowmere_damage"), configTooltip("meowmere_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("meowmere_damage"), configTooltip("meowmere_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
             ConfigFactory.loadDoubleConfig(GRAVITY_PATH, configText("meowmere_gravity"), configTooltip("meowmere_gravity"), GRAVITY_DEFAULT, GRAVITY_MIN, GRAVITY_MAX);
             ConfigFactory.loadDoubleConfig(INITIAL_SPEED_PATH, configText("meowmere_initial_speed"), configTooltip("meowmere_initial_speed"), INITIAL_SPEED_DEFAULT, INITIAL_SPEED_MIN, INITIAL_SPEED_MAX);
         }
@@ -89,8 +89,8 @@ public class Meowmere extends SwordItem {
         return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
     }
 
-    public static double getDamage() {
-        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    public static float getDamage() {
+        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
     }
 
     public static double getGravity() {
@@ -331,7 +331,7 @@ public class Meowmere extends SwordItem {
         if(!level.isClientSide()) {
             StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), level);
             summon.setOwner(player);
-            Vec3 pos = new Vec3(player.getX(), player.getEyeY() - 0.1, player.getZ());
+            Vec3 pos = player.getBoundingBox().getCenter();
             summon.setPos(pos);
             summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.MEOWMERE_PROJECTILE);
             summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
@@ -368,3 +368,4 @@ public class Meowmere extends SwordItem {
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 }
+

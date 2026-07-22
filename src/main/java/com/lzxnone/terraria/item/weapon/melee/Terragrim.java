@@ -55,9 +55,9 @@ public class Terragrim extends SwordItem {
     public static final double HIT_RANGE_MAX = 10.0;
 
     public static final String DAMAGE_PATH = "weapon.terragrim.damage";
-    public static final double DAMAGE_DEFAULT = 0.25;
-    public static final double DAMAGE_MIN = 0.0;
-    public static final double DAMAGE_MAX = 2147483647.0;
+    public static final float DAMAGE_DEFAULT = 0.25f;
+    public static final float DAMAGE_MIN = 0.0f;
+    public static final float DAMAGE_MAX = 8388600.0f;
 
     public static final String ROTATE_RANGE_PATH = "weapon.terragrim.rotate_range";
     public static final int ROTATE_RANGE_DEFAULT = 45;
@@ -80,7 +80,7 @@ public class Terragrim extends SwordItem {
         @Override
         public void onConfigLoad() {
             ConfigFactory.loadDoubleConfig(HIT_RANGE_PATH, configText("terragrim_hit_range"), configTooltip("terragrim_hit_range"), HIT_RANGE_DEFAULT, HIT_RANGE_MIN, HIT_RANGE_MAX);
-            ConfigFactory.loadDoubleConfig(DAMAGE_PATH, configText("terragrim_damage"), configTooltip("terragrim_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("terragrim_damage"), configTooltip("terragrim_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
             ConfigFactory.loadIntConfig(ROTATE_RANGE_PATH, configText("terragrim_rotate_range"), configTooltip("terragrim_rotate_range"), ROTATE_RANGE_DEFAULT, ROTATE_RANGE_MIN, ROTATE_RANGE_MAX);
         }
     };
@@ -97,8 +97,8 @@ public class Terragrim extends SwordItem {
         return Math.clamp(ConfigUtil.readDouble(HIT_RANGE_PATH, HIT_RANGE_DEFAULT), HIT_RANGE_MIN, HIT_RANGE_MAX);
     }
 
-    public static double getDamage() {
-        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    public static float getDamage() {
+        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
     }
 
     public static int getRotateRange() {
@@ -287,3 +287,4 @@ public class Terragrim extends SwordItem {
         return UseAnim.BLOCK;
     }
 }
+

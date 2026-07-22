@@ -42,9 +42,9 @@ public class BeeKeeper extends SwordItem {
     public static final int CONFUSION_DURATION_MAX = 1200;
 
     public static final String BEE_DAMAGE_PATH = "weapon.bee_keeper.bee_damage";
-    public static final double BEE_DAMAGE_DEFAULT = 2.0;
-    public static final double BEE_DAMAGE_MIN = 0.0;
-    public static final double BEE_DAMAGE_MAX = 2147483647.0;
+    public static final float BEE_DAMAGE_DEFAULT = 2.0f;
+    public static final float BEE_DAMAGE_MIN = 0.0f;
+    public static final float BEE_DAMAGE_MAX = 8388600.0f;
 
     public BeeKeeper() {
         super(Tiers.IRON, new Item.Properties().attributes(ItemAttributeModifiers.builder()
@@ -63,7 +63,7 @@ public class BeeKeeper extends SwordItem {
         public void onConfigLoad() {
             ConfigFactory.loadIntConfig(MAX_BEES_PATH, configText("bee_keeper_max_bees"), configTooltip("bee_keeper_max_bees"), MAX_BEES_DEFAULT, MAX_BEES_MIN, MAX_BEES_MAX);
             ConfigFactory.loadIntConfig(CONFUSION_DURATION_PATH, configText("bee_keeper_confusion_duration"), configTooltip("bee_keeper_confusion_duration"), CONFUSION_DURATION_DEFAULT, CONFUSION_DURATION_MIN, CONFUSION_DURATION_MAX);
-            ConfigFactory.loadDoubleConfig(BEE_DAMAGE_PATH, configText("bee_keeper_bee_damage"), configTooltip("bee_keeper_bee_damage"), BEE_DAMAGE_DEFAULT, BEE_DAMAGE_MIN, BEE_DAMAGE_MAX);
+            ConfigFactory.loadFloatConfig(BEE_DAMAGE_PATH, configText("bee_keeper_bee_damage"), configTooltip("bee_keeper_bee_damage"), BEE_DAMAGE_DEFAULT, BEE_DAMAGE_MIN, BEE_DAMAGE_MAX);
         }
     };
 
@@ -83,8 +83,8 @@ public class BeeKeeper extends SwordItem {
         return Math.clamp(ConfigUtil.readInt(CONFUSION_DURATION_PATH, CONFUSION_DURATION_DEFAULT), CONFUSION_DURATION_MIN, CONFUSION_DURATION_MAX);
     }
 
-    public static double getBeeDamage() {
-        return Math.clamp(ConfigUtil.readDouble(BEE_DAMAGE_PATH, BEE_DAMAGE_DEFAULT), BEE_DAMAGE_MIN, BEE_DAMAGE_MAX);
+    public static float getBeeDamage() {
+        return Math.clamp(ConfigUtil.readFloat(BEE_DAMAGE_PATH, BEE_DAMAGE_DEFAULT), BEE_DAMAGE_MIN, BEE_DAMAGE_MAX);
     }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
@@ -128,3 +128,4 @@ public class BeeKeeper extends SwordItem {
         }
     };
 }
+

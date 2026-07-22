@@ -22,9 +22,9 @@ public class BloodButcheredEffect extends MobEffect {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String DAMAGE_PER_LEVEL_PATH = "effect.blood_butchered.damage_per_level";
-    public static final double DAMAGE_PER_LEVEL_DEFAULT = 0.5;
-    public static final double DAMAGE_PER_LEVEL_MIN = 0.0;
-    public static final double DAMAGE_PER_LEVEL_MAX = 8388600.0;
+    public static final float DAMAGE_PER_LEVEL_DEFAULT = 0.5f;
+    public static final float DAMAGE_PER_LEVEL_MIN = 0.0f;
+    public static final float DAMAGE_PER_LEVEL_MAX = 8388600.0f;
 
     public BloodButcheredEffect() {
         super(MobEffectCategory.HARMFUL, 0xFF0000);
@@ -33,7 +33,7 @@ public class BloodButcheredEffect extends MobEffect {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadDoubleConfig(DAMAGE_PER_LEVEL_PATH, configText("blood_butcherer_damage_per_level"), configTooltip("blood_butcherer_damage_per_level"), DAMAGE_PER_LEVEL_DEFAULT, DAMAGE_PER_LEVEL_MIN, DAMAGE_PER_LEVEL_MAX);
+            ConfigFactory.loadFloatConfig(DAMAGE_PER_LEVEL_PATH, configText("blood_butcherer_damage_per_level"), configTooltip("blood_butcherer_damage_per_level"), DAMAGE_PER_LEVEL_DEFAULT, DAMAGE_PER_LEVEL_MIN, DAMAGE_PER_LEVEL_MAX);
         }
     };
 
@@ -45,8 +45,8 @@ public class BloodButcheredEffect extends MobEffect {
         return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
     }
 
-    public static double getDamagePerLevel() {
-        return Math.clamp(ConfigUtil.readDouble(DAMAGE_PER_LEVEL_PATH, DAMAGE_PER_LEVEL_DEFAULT), DAMAGE_PER_LEVEL_MIN, DAMAGE_PER_LEVEL_MAX);
+    public static float getDamagePerLevel() {
+        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PER_LEVEL_PATH, DAMAGE_PER_LEVEL_DEFAULT), DAMAGE_PER_LEVEL_MIN, DAMAGE_PER_LEVEL_MAX);
     }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
@@ -80,3 +80,4 @@ public class BloodButcheredEffect extends MobEffect {
         return true;
     }
 }
+
