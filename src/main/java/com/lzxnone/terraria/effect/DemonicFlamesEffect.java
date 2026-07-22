@@ -78,8 +78,6 @@ public class DemonicFlamesEffect extends MobEffect {
                 entity.getBoundingBox().getCenter(), new Vec3(0, 0, 0),
                 0.2, 1
             );
-        }else {
-            LzxnoneTerraria.LOGGER.info("11");
         }
         return true;
     }
