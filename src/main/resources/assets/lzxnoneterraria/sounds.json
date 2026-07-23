@@ -58,5 +58,8 @@
   },
   "demon_sword_final_strike": {
     "sounds": ["lzxnoneterraria:demon_sword_final_strike"]
+  },
+  "demon_sword_strong_impact": {
+    "sounds": ["lzxnoneterraria:demon_sword_strong_impact"]
   }
 }

@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.LzxnoneTerrariaClient;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.effect.ModEffects;
@@ -12,6 +13,7 @@ import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
+import com.lzxnone.terraria.event.ScreenShakeHandler;
 import com.lzxnone.terraria.item.IItemWaveBehavior;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.network.payload.DevilsDevastationLeftClickPayload;
@@ -109,7 +111,7 @@ public class DevilsDevastation extends SwordItem {
     public static final double STUCK_PROJECTILE_SPEED_MAX = 10.0;
 
     public static final String KILL_MODE_PROJECTILE_CYCLE_PATH = "weapon.devils_devastation.kill_mode_projectile_cycle";
-    public static final int KILL_MODE_PROJECTILE_CYCLE_DEFAULT = 10;
+    public static final int KILL_MODE_PROJECTILE_CYCLE_DEFAULT = 8;
     public static final int KILL_MODE_PROJECTILE_CYCLE_MIN = 1;
     public static final int KILL_MODE_PROJECTILE_CYCLE_MAX = 200;
 
@@ -851,16 +853,12 @@ public class DevilsDevastation extends SwordItem {
                         le.addEffect(effectInstance);
                     }
 
-                    ItemStack stack = player.getMainHandItem();
-                    if(stack.is(ModItems.DEVILS_DEVASTATION.get())) {
-                        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                            .copyTag();
-                        if(tag.hasUUID("mark")) {
-                            UUID uuid = tag.getUUID("mark");
-                            Entity entityMark = serverLevel.getEntity(uuid);
-                            if(entityMark instanceof StaticSummon summon && summon.isAlive()) {
-                                summon.discard();
-                            }
+                    Optional<UUID> oldMarkUUID = player.getData(ModAttachments.DEVILS_DEVASTATION_MARK);
+                    if(oldMarkUUID.isPresent()) {
+                        UUID uuid = oldMarkUUID.get();
+                        Entity entityMark = serverLevel.getEntity(uuid);
+                        if(entityMark instanceof StaticSummon summon && summon.isAlive()) {
+                            summon.discard();
                         }
                     }
 
@@ -870,7 +868,7 @@ public class DevilsDevastation extends SwordItem {
                     summon.setPos(pos);
                     summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.DEVILS_DEVASTATION_MARK);
                     summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-                    summon.getEntityData().set(StaticSummon.LIFETIME, 100);
+                    summon.getEntityData().set(StaticSummon.LIFETIME, getKillModeProjectileCycle() + 20);
                     summon.getEntityData().set(StaticSummon.GLOW, true);
 
                     CompoundTag summonCustomData = new CompoundTag();
@@ -879,14 +877,16 @@ public class DevilsDevastation extends SwordItem {
 
                     serverLevel.addFreshEntity(summon);
 
-                    CustomData.update(DataComponents.CUSTOM_DATA, stack,
-                            tag -> tag.putUUID("mark", summon.getUUID()));
+                    player.setData(ModAttachments.DEVILS_DEVASTATION_MARK, Optional.of(summon.getUUID()));
 
                     CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
                     if(customData.contains("hit") && !customData.getBoolean("hit")) {
-                        SoundUtil.playServerSound(projectile.level(), ModSounds.DEMON_SWORD_INSANE_IMPACT.get(), target.position(), 16.0f, 1.0f);
+                        float pitch = Math.min(1.0f + (player.getData(ModAttachments.DEVILS_DEVASTATION_HIT_COUNT) - 1) * 0.02f, 1.2f);
+                        if(projectile.getRandom().nextInt(1) == 0) SoundUtil.playServerSound(projectile.level(), ModSounds.DEMON_SWORD_INSANE_IMPACT.get(), target.position(), 16.0f, pitch);
+                        else SoundUtil.playServerSound(projectile.level(), ModSounds.DEMON_SWORD_STRONG_IMPACT.get(), target.position(), 16.0f, pitch);
                         customData.putBoolean("hit", true);
                         projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
+                        ScreenShakeHandler.startShake(10, 2f);
                     }
                     List<UUID> stuckList = new ArrayList<>(target.getData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE));
                     if(!customData.contains("validHit") && valid) {
@@ -921,7 +921,7 @@ public class DevilsDevastation extends SwordItem {
 
         @Override
         public void onDied(StaticProjectile projectile) {
-            if(!projectile.level().isClientSide()) {
+            if(projectile.level() instanceof ServerLevel serverLevel) {
                 CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
                 if(projectile.getOwner() instanceof LivingEntity livingEntity) {
                     if(customData.contains("validHit")) {
@@ -936,6 +936,19 @@ public class DevilsDevastation extends SwordItem {
 
                         MobEffectInstance effectInstance2 = livingEntity.getEffect(ModEffects.KILL_MODE);
                         if(effectInstance2 != null) livingEntity.removeEffect(effectInstance2.getEffect());
+
+                        /*Optional<UUID> markUUID = livingEntity.getData(ModAttachments.DEVILS_DEVASTATION_MARK);
+                        if(markUUID.isPresent()) {
+                            UUID uuid = markUUID.get();
+                            Entity entityMark = serverLevel.getEntity(uuid);
+                            if(entityMark instanceof StaticSummon summon && summon.isAlive()) {
+                                CompoundTag markData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+                                markData.putBoolean("dead", true);
+                                summon.getEntityData().set(StaticSummon.CUSTOM_DATA, markData);
+                                summon.getEntityData().set(StaticSummon.AGE, summon.getEntityData().get(StaticSummon.LIFETIME) - 20);
+                                SoundUtil.playServerSound(summon.level(), ModSounds.DEMON_SWORD_FINAL_STRIKE.get(), summon.position(),16.0f, 1.0f);
+                            }
+                        }*/
                     }
                 }
                 projectile.discard();
@@ -1080,15 +1093,47 @@ public class DevilsDevastation extends SwordItem {
             if(entity != null) {
                 summon.setPos(entity.getBoundingBox().getCenter());
             }
-            if(!summon.level().isClientSide()) {
+            if(summon.level() instanceof ServerLevel serverLevel) {
                 CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-                int left = summon.getEntityData().get(StaticSummon.LIFETIME) - summon.getEntityData().get(StaticSummon.AGE);
-                if(left < 20 && !customData.contains("sound")) {
-                    customData.putBoolean("sound", true);
-                    summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
-                    SoundUtil.playServerSound(summon.level(), ModSounds.DEMON_SWORD_FINAL_STRIKE.get(), summon.position(),16.0f, 1.0f);
+                if(!customData.contains("dead")) summon.getEntityData().set(StaticSummon.AGE, 0);
+                if(customData.contains("uuid")) {
+                    Entity owenrEntity = serverLevel.getEntity(customData.getUUID("uuid"));
+                    boolean dead = owenrEntity == null || !owenrEntity.isAlive();
+                    if(owenrEntity instanceof LivingEntity le) {
+                        MobEffectInstance effectInstance = le.getEffect(ModEffects.KILL_MODE);
+                        if(effectInstance == null) dead = true;
+                    }
+
+                    if(dead && !customData.contains("dead")) {
+                        customData.putBoolean("dead", true);
+                        summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+                        summon.getEntityData().set(StaticSummon.AGE, summon.getEntityData().get(StaticSummon.LIFETIME) - 20);
+                        SoundUtil.playServerSound(summon.level(), ModSounds.DEMON_SWORD_FINAL_STRIKE.get(), summon.position(),16.0f, 1.0f);
+                    }
                 }
             }
+
+            /*if(summon.level() instanceof ServerLevel serverLevel) {
+                CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+                boolean toDie = true;
+                if(customData.contains("uuid")) {
+                    Entity owenrEntity = serverLevel.getEntity(customData.getUUID("uuid"));
+                    if(owenrEntity instanceof Player player) {
+                        MobEffectInstance effectInstance = player.getEffect(ModEffects.KILL_MODE);
+                        if(effectInstance != null) toDie = false;
+                    }
+                }
+                if(toDie) {
+                    if(!customData.contains("dead")) {
+                        customData.putBoolean("dead", true);
+                        summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+                        SoundUtil.playServerSound(summon.level(), ModSounds.DEMON_SWORD_FINAL_STRIKE.get(), summon.position(),16.0f, 1.0f);
+                        summon.getEntityData().set(StaticSummon.AGE, 50);
+                    }
+                }else {
+                    summon.getEntityData().set(StaticSummon.AGE, 100);
+                }
+            }*/
         }
 
         @Override
@@ -1234,7 +1279,7 @@ public class DevilsDevastation extends SwordItem {
         ItemStack itemStack = player.getMainHandItem();
         if(!itemStack.is(ModItems.DEVILS_DEVASTATION.get())) return;
         if(player.getCooldowns().isOnCooldown(itemStack.getItem())) return;
-        player.getCooldowns().addCooldown(itemStack.getItem(), getKillModeProjectileCycle() + 10);
+        player.getCooldowns().addCooldown(itemStack.getItem(), getKillModeProjectileCycle() + 5);
         if(!player.level().isClientSide()) {
             float radius = 4.0f;
             float w = (float) Math.PI * 1.5f / getKillModeProjectileCycle();
@@ -1271,8 +1316,13 @@ public class DevilsDevastation extends SwordItem {
     }
 
     public static void enterIntoKillMode(Player player) {
-        if(!player.level().isClientSide()) return;
+        if(!player.level().isClientSide()) {
+            player.setData(ModAttachments.DEVILS_DEVASTATION_HIT_COUNT, 0);
+            return;
+        }
+
         SoundUtil.playClientSound(player, ModSounds.DEMON_SWORD_KILL_MODE.get());
+
 
         Vec3 pos = player.getBoundingBox().getCenter();
         Vector3f color = new Vector3f(0.8f, 0.176f, 0.78f);
@@ -1554,6 +1604,12 @@ public class DevilsDevastation extends SwordItem {
                 if(!player.getCooldowns().isOnCooldown(itemStack.getItem())) {
                     SoundUtil.playClientSound(player, ModSounds.DEMON_SWORD_SWING.get());
                     summonKilModeProjectile(player);
+                    player.setData(ModAttachments.DEVILS_DEVASTATION_HIT_COUNT, player.getData(ModAttachments.DEVILS_DEVASTATION_HIT_COUNT) + 1);
+                    MobEffectInstance instance = player.getEffect(ModEffects.KILL_MODE);
+                    if(instance != null && instance.getDuration() < DevilsDevastation.getKillModeProjectileCycle()) {
+                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE, DevilsDevastation.getKillModeProjectileCycle(), 0);
+                        player.addEffect(effectInstance);
+                    }
                     event.setCanceled(true);
                 }
             }
