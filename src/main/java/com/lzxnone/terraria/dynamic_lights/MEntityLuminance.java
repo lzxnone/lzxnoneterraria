@@ -27,7 +27,14 @@ public class MEntityLuminance implements EntityLuminance {
 	public @Range(from = 0, to = 15) int getLuminance(@NonNull ItemLightSourceManager itemLightSourceManager, @NonNull Entity entity) {
 		if(entity instanceof StaticProjectile projectile) {
 			switch(projectile.getEntityData().get(StaticProjectile.BEHAVIOR)) {
-				case StaticProjectileBehaviors.ENCHANTED_SWORD_BEAM, StaticProjectileBehaviors.STARFURY_STAR, StaticProjectileBehaviors.STAR_WRATH_STAR, StaticProjectileBehaviors.ZENITH_PROJECTILE, StaticProjectileBehaviors.MURAMASA_PROJECTILE, StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE -> {
+				case StaticProjectileBehaviors.ENCHANTED_SWORD_BEAM,
+					 StaticProjectileBehaviors.STARFURY_STAR,
+					 StaticProjectileBehaviors.STAR_WRATH_STAR,
+					 StaticProjectileBehaviors.ZENITH_PROJECTILE,
+					 StaticProjectileBehaviors.MURAMASA_PROJECTILE,
+					 StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE,
+					 StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE2,
+					 StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE3 -> {
 					return 15;
 				}
 				default -> {
@@ -35,8 +42,21 @@ public class MEntityLuminance implements EntityLuminance {
 				}
 			}
 		}else if(entity instanceof StaticSummon summon) {
-			switch(summon.getEntityData().get(StaticProjectile.BEHAVIOR)) {
-				case StaticSummonBehaviors.THE_HORSEMANS_BLADE_JACK, StaticSummonBehaviors.INFLUX_WAVER_BEAM, StaticSummonBehaviors.MEOWMERE_PROJECTILE, StaticSummonBehaviors.TERRA_BLADE_BEAM, StaticSummonBehaviors.TRUE_NIGHTS_EDGE_BEAM, StaticSummonBehaviors.NIGHTS_EDGE_BEAM, StaticSummonBehaviors.LIGHTS_BANE_SLASH, StaticSummonBehaviors.VOLCANO_LIGHT, StaticSummonBehaviors.TERRAGRIM_BEAM, StaticSummonBehaviors.FIRST_FRACTAL_PROJECTILE -> {
+			switch(summon.getEntityData().get(StaticSummon.BEHAVIOR)) {
+				case StaticSummonBehaviors.THE_HORSEMANS_BLADE_JACK,
+					 StaticSummonBehaviors.INFLUX_WAVER_BEAM,
+					 StaticSummonBehaviors.MEOWMERE_PROJECTILE,
+					 StaticSummonBehaviors.TERRA_BLADE_BEAM,
+					 StaticSummonBehaviors.TRUE_NIGHTS_EDGE_BEAM,
+					 StaticSummonBehaviors.NIGHTS_EDGE_BEAM,
+					 StaticSummonBehaviors.LIGHTS_BANE_SLASH,
+					 StaticSummonBehaviors.VOLCANO_LIGHT,
+					 StaticSummonBehaviors.TERRAGRIM_BEAM,
+					 StaticSummonBehaviors.FIRST_FRACTAL_PROJECTILE,
+					 StaticSummonBehaviors.DEVILS_DEVASTATION_STUCK_PROJECTILE,
+					 StaticSummonBehaviors.DEVILS_DEVASTATION_LIGHTNING,
+					 StaticSummonBehaviors.DEVILS_DEVASTATION_MARK,
+					 StaticSummonBehaviors.DEVILS_DEVASTATION_MARK_LIGHTNING -> {
 					return 15;
 				}
 				default -> {
