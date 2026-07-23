@@ -42,6 +42,8 @@ public class SwordBeam extends Entity {
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Float> INFLATE =
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Boolean> OUTLINE =
+            SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Integer> AGE =
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> LIFETIME =
@@ -194,6 +196,7 @@ public class SwordBeam extends Entity {
         builder.define(ROTATE, 0);
         builder.define(RIGHT, false);
         builder.define(INFLATE, 0.0f);
+        builder.define(OUTLINE, false);
         builder.define(COLOR0, new Vector3f(1.0f, 1.0f, 1.0f));
         builder.define(COLOR1, new Vector3f(1.0f, 1.0f, 1.0f));
         builder.define(COLOR2, new Vector3f(1.0f, 1.0f, 1.0f));
@@ -210,6 +213,7 @@ public class SwordBeam extends Entity {
         tag.putInt("rotate", this.entityData.get(ROTATE));
         tag.putBoolean("right", this.entityData.get(RIGHT));
         tag.putFloat("inflate", this.entityData.get(INFLATE));
+        tag.putBoolean("outline", this.entityData.get(OUTLINE));
         Vector3f c0 = this.entityData.get(COLOR0);
         tag.putFloat("color0R", c0.x);
         tag.putFloat("color0G", c0.y);
@@ -238,6 +242,7 @@ public class SwordBeam extends Entity {
         if(tag.contains("rotate")) this.entityData.set(ROTATE, tag.getInt("rotate"));
         if(tag.contains("right")) this.entityData.set(RIGHT, tag.getBoolean("right"));
         if(tag.contains("inflate")) this.entityData.set(INFLATE, tag.getFloat("inflate"));
+        if(tag.contains("outline")) this.entityData.set(OUTLINE, tag.getBoolean("outline"));
         if(tag.contains("color0R")) {
             this.entityData.set(COLOR0, new Vector3f(
                 tag.getFloat("color0R"), tag.getFloat("color0G"), tag.getFloat("color0B")

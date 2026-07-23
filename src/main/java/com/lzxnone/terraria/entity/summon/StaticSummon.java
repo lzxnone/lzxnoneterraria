@@ -57,6 +57,8 @@ public class StaticSummon extends Entity {
             SynchedEntityData.defineId(StaticSummon.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Boolean> GLOW =
             SynchedEntityData.defineId(StaticSummon.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> OUTLINE =
+            SynchedEntityData.defineId(StaticSummon.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Integer> AGE =
             SynchedEntityData.defineId(StaticSummon.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> LIFETIME =
@@ -121,6 +123,7 @@ public class StaticSummon extends Entity {
         builder.define(COLOR_B, 1.0f);
         builder.define(COLOR_A, 1.0f);
         builder.define(GLOW, false);
+        builder.define(OUTLINE, false);
         builder.define(AGE, 0);
         builder.define(LIFETIME, 100);
         builder.define(OWNER, Optional.empty());
@@ -156,6 +159,7 @@ public class StaticSummon extends Entity {
         tag.putFloat("colorB", this.entityData.get(COLOR_B));
         tag.putFloat("colorA", this.entityData.get(COLOR_A));
         tag.putBoolean("glow", this.entityData.get(GLOW));
+        tag.putBoolean("outline", this.entityData.get(OUTLINE));
         tag.putInt("age", this.entityData.get(AGE));
         tag.putInt("lifetime", this.entityData.get(LIFETIME));
         if(getOwner() != null) tag.putUUID("owner", getOwner().getUUID());
@@ -191,6 +195,7 @@ public class StaticSummon extends Entity {
         if(tag.contains("colorB")) this.entityData.set(COLOR_B, tag.getFloat("colorB"));
         if(tag.contains("colorA")) this.entityData.set(COLOR_A, tag.getFloat("colorA"));
         if(tag.contains("glow")) this.entityData.set(GLOW, tag.getBoolean("glow"));
+        if(tag.contains("outline")) this.entityData.set(OUTLINE, tag.getBoolean("outline"));
         if(tag.contains("age")) this.entityData.set(AGE, tag.getInt("age"));
         if(tag.contains("lifetime")) this.entityData.set(LIFETIME, tag.getInt("lifetime"));
         if(tag.contains("owner")) {

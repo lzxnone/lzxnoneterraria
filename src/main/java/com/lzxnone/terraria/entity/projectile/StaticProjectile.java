@@ -66,6 +66,8 @@ public class StaticProjectile extends Projectile {
             SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Boolean> GLOW =
             SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> OUTLINE =
+            SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Integer> AGE =
             SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> LIFETIME =
@@ -126,6 +128,7 @@ public class StaticProjectile extends Projectile {
         builder.define(COLOR_B, 1.0f);
         builder.define(COLOR_A, 1.0f);
         builder.define(GLOW, false);
+        builder.define(OUTLINE, false);
         builder.define(AGE, 0);
         builder.define(LIFETIME, 60);
         builder.define(EXPRESSION_X, "0");
@@ -224,6 +227,7 @@ public class StaticProjectile extends Projectile {
         tag.putFloat("colorB", this.entityData.get(COLOR_B));
         tag.putFloat("colorA", this.entityData.get(COLOR_A));
         tag.putBoolean("glow", this.entityData.get(GLOW));
+        tag.putBoolean("outline", this.entityData.get(OUTLINE));
         tag.putInt("age", this.entityData.get(AGE));
         tag.putInt("lifetime", this.entityData.get(LIFETIME));
         tag.putString("expressionX", this.entityData.get(EXPRESSION_X));
@@ -281,6 +285,7 @@ public class StaticProjectile extends Projectile {
         if(tag.contains("colorB")) this.entityData.set(COLOR_B, tag.getFloat("colorB"));
         if(tag.contains("colorA")) this.entityData.set(COLOR_A, tag.getFloat("colorA"));
         if(tag.contains("glow")) this.entityData.set(GLOW, tag.getBoolean("glow"));
+        if(tag.contains("outline")) this.entityData.set(OUTLINE, tag.getBoolean("outline"));
         if(tag.contains("age")) this.entityData.set(AGE, tag.getInt("age"));
         if(tag.contains("lifetime")) this.entityData.set(LIFETIME, tag.getInt("lifetime"));
         if(tag.contains("expressionX")) this.entityData.set(EXPRESSION_X, tag.getString("expressionX"));

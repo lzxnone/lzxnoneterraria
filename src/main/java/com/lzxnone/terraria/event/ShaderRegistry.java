@@ -15,6 +15,7 @@ import java.io.IOException;
 public class ShaderRegistry {
     private static ShaderInstance blur;
     private static ShaderInstance composite;
+    private static ShaderInstance outline;
 
     public static ShaderInstance getBlur() {
         return blur;
@@ -22,6 +23,10 @@ public class ShaderRegistry {
 
     public static ShaderInstance getComposite() {
         return composite;
+    }
+
+    public static ShaderInstance getOutline() {
+        return outline;
     }
 
     @SubscribeEvent
@@ -42,6 +47,14 @@ public class ShaderRegistry {
                     DefaultVertexFormat.POSITION_TEX
                 ),
                 shader -> composite = shader
+            );
+            event.registerShader(
+                new ShaderInstance(
+                    event.getResourceProvider(),
+                    ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "outline"),
+                    DefaultVertexFormat.POSITION_TEX
+                ),
+                shader -> outline = shader
             );
         } catch (IOException e) {
             throw new RuntimeException("Shader load error", e);
