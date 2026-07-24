@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.network.handler;
 
+import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
@@ -23,6 +24,7 @@ public class DevilsDevastationKillModeHandler {
                 if(instance == null && instance2 == null) {
                     MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE, DevilsDevastation.getKillModeTime(), 0);
                     player.addEffect(effectInstance);
+                    player.setData(ModAttachments.DEVILS_DEVASTATION_HIT_COUNT, 0);
                 }
             }
         });

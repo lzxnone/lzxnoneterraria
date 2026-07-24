@@ -304,6 +304,12 @@ public class Meowmere extends SwordItem {
         }
 
         @Override
+        public AABB getBoundingBoxForCulling(StaticSummon summon) {
+            if(summon.trailPositions.isEmpty()) return summon.getBoundingBox();
+            return new AABB(summon.position(), summon.trailPositions.getLast());
+        }
+
+        @Override
         public void onDied(StaticSummon summon) {
             if(!summon.level().isClientSide()) {
                 for(int i = 0;i < summon.trailPositions.size();i += 2) {

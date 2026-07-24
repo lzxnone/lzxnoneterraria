@@ -7,7 +7,7 @@ import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.LightTexture;
 import org.joml.Vector3f;
 
-public class DustParticle extends TextureSheetParticle {
+public class DustParticle extends EmissiveBloomParticle {
 
     private final SpriteSet sprites;
     private final float rotSpeed;
@@ -102,7 +102,7 @@ public class DustParticle extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return ModParticleRenderTypes.TRANSLUCENT_EMISSIVE;
+        return ModParticleRenderTypes.EMISSIVE_BLOOM;
     }
 
     public static class Provider implements ParticleProvider<DustParticleOptions> {

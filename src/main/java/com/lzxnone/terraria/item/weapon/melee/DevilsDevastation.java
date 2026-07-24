@@ -123,7 +123,7 @@ public class DevilsDevastation extends SwordItem {
     public static final String KILL_MODE_PROJECTILE_ROTATE_PATH = "weapon.devils_devastation.kill_mode_projectile_rotate";
     public static final int KILL_MODE_PROJECTILE_ROTATE_DEFAULT = 30;
     public static final int KILL_MODE_PROJECTILE_ROTATE_MIN = 0;
-    public static final int KILL_MODE_PROJECTILE_ROTATE_MAX = 360;
+    public static final int KILL_MODE_PROJECTILE_ROTATE_MAX = 90;
 
     public static final String STUCK_LIFETIME_PATH = "weapon.devils_devastation.stuck_lifetime";
     public static final int STUCK_LIFETIME_DEFAULT = 200;
@@ -881,7 +881,7 @@ public class DevilsDevastation extends SwordItem {
 
                     CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
                     if(customData.contains("hit") && !customData.getBoolean("hit")) {
-                        float pitch = Math.min(1.0f + (player.getData(ModAttachments.DEVILS_DEVASTATION_HIT_COUNT) - 1) * 0.02f, 1.2f);
+                        float pitch = Math.min(1.0f + (player.getData(ModAttachments.DEVILS_DEVASTATION_HIT_COUNT) - 1) * 0.025f, 1.25f);
                         if(projectile.getRandom().nextInt(1) == 0) SoundUtil.playServerSound(projectile.level(), ModSounds.DEMON_SWORD_INSANE_IMPACT.get(), target.position(), 16.0f, pitch);
                         else SoundUtil.playServerSound(projectile.level(), ModSounds.DEMON_SWORD_STRONG_IMPACT.get(), target.position(), 16.0f, pitch);
                         customData.putBoolean("hit", true);
@@ -921,7 +921,7 @@ public class DevilsDevastation extends SwordItem {
 
         @Override
         public void onDied(StaticProjectile projectile) {
-            if(projectile.level() instanceof ServerLevel serverLevel) {
+            if(projectile.level() instanceof ServerLevel) {
                 CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
                 if(projectile.getOwner() instanceof LivingEntity livingEntity) {
                     if(customData.contains("validHit")) {
@@ -936,19 +936,6 @@ public class DevilsDevastation extends SwordItem {
 
                         MobEffectInstance effectInstance2 = livingEntity.getEffect(ModEffects.KILL_MODE);
                         if(effectInstance2 != null) livingEntity.removeEffect(effectInstance2.getEffect());
-
-                        /*Optional<UUID> markUUID = livingEntity.getData(ModAttachments.DEVILS_DEVASTATION_MARK);
-                        if(markUUID.isPresent()) {
-                            UUID uuid = markUUID.get();
-                            Entity entityMark = serverLevel.getEntity(uuid);
-                            if(entityMark instanceof StaticSummon summon && summon.isAlive()) {
-                                CompoundTag markData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-                                markData.putBoolean("dead", true);
-                                summon.getEntityData().set(StaticSummon.CUSTOM_DATA, markData);
-                                summon.getEntityData().set(StaticSummon.AGE, summon.getEntityData().get(StaticSummon.LIFETIME) - 20);
-                                SoundUtil.playServerSound(summon.level(), ModSounds.DEMON_SWORD_FINAL_STRIKE.get(), summon.position(),16.0f, 1.0f);
-                            }
-                        }*/
                     }
                 }
                 projectile.discard();
@@ -1112,28 +1099,6 @@ public class DevilsDevastation extends SwordItem {
                     }
                 }
             }
-
-            /*if(summon.level() instanceof ServerLevel serverLevel) {
-                CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-                boolean toDie = true;
-                if(customData.contains("uuid")) {
-                    Entity owenrEntity = serverLevel.getEntity(customData.getUUID("uuid"));
-                    if(owenrEntity instanceof Player player) {
-                        MobEffectInstance effectInstance = player.getEffect(ModEffects.KILL_MODE);
-                        if(effectInstance != null) toDie = false;
-                    }
-                }
-                if(toDie) {
-                    if(!customData.contains("dead")) {
-                        customData.putBoolean("dead", true);
-                        summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
-                        SoundUtil.playServerSound(summon.level(), ModSounds.DEMON_SWORD_FINAL_STRIKE.get(), summon.position(),16.0f, 1.0f);
-                        summon.getEntityData().set(StaticSummon.AGE, 50);
-                    }
-                }else {
-                    summon.getEntityData().set(StaticSummon.AGE, 100);
-                }
-            }*/
         }
 
         @Override
@@ -1316,13 +1281,9 @@ public class DevilsDevastation extends SwordItem {
     }
 
     public static void enterIntoKillMode(Player player) {
-        if(!player.level().isClientSide()) {
-            player.setData(ModAttachments.DEVILS_DEVASTATION_HIT_COUNT, 0);
-            return;
-        }
+        if(!player.level().isClientSide()) return;
 
         SoundUtil.playClientSound(player, ModSounds.DEMON_SWORD_KILL_MODE.get());
-
 
         Vec3 pos = player.getBoundingBox().getCenter();
         Vector3f color = new Vector3f(0.8f, 0.176f, 0.78f);

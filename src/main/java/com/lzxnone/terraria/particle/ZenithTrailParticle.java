@@ -143,7 +143,7 @@ public class ZenithTrailParticle extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return ModParticleRenderTypes.TRANSLUCENT_EMISSIVE;
+        return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
     }
 
     public static class Provider implements ParticleProvider<ZenithTrailParticleOptions> {
