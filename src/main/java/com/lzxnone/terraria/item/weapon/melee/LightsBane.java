@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.ModRenderTypes;
@@ -38,7 +39,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.phys.AABB;
@@ -50,7 +50,7 @@ import org.joml.Vector3f;
 import java.util.Comparator;
 import java.util.List;
 
-public class LightsBane extends SwordItem {
+public class LightsBane extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String BIG_DAMAGE_PATH = "weapon.lights_bane.big_damage";
@@ -204,7 +204,7 @@ public class LightsBane extends SwordItem {
                 List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                 for(Entity target : targets) {
                     float damage = customData.contains("big") && customData.getBoolean("big") ? (float) getBigDamage() : (float) getSmallDamage();
-                    if(DamageUtil.attack(player, target, damage)) {
+                    if(DamageUtil.normalAttack(summon, target, damage, 1.0f)) {
 
                     }
                 }

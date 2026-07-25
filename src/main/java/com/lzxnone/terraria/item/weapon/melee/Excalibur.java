@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.beam.ISwordBeamBehavior;
@@ -39,7 +40,7 @@ import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import net.minecraft.network.chat.Component;
 
-public class Excalibur extends SwordItem {
+public class Excalibur extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String ROTATE_RANGE_PATH = "weapon.excalibur.rotate_range";
@@ -151,7 +152,7 @@ public class Excalibur extends SwordItem {
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < getMaxHitCount()) {
-                            if(DamageUtil.attack(player, target, (float) getDamage())) {
+                            if(DamageUtil.normalAttack(beam, target, (float) getDamage(), 1.0f)) {
                                 target.invulnerableTime = 20;
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);

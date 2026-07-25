@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.LzxnoneTerrariaClient;
 import com.lzxnone.terraria.ModSounds;
@@ -67,7 +68,7 @@ import com.lzxnone.terraria.ui.config.IConfigData;
 import java.util.*;
 
 
-public class DevilsDevastation extends SwordItem {
+public class DevilsDevastation extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String KILL_MODE_TIME_PATH = "weapon.devils_devastation.kill_mode_time";
@@ -382,7 +383,7 @@ public class DevilsDevastation extends SwordItem {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.attack(player, target, (float) getProjectileDamage())) {
+                if(DamageUtil.normalAttack(projectile, target, (float) getProjectileDamage(), 1.0f)) {
                     if(target instanceof LivingEntity le) {
                         MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.DEMONIC_FLAMES, getProjectileEffectDuration(), 0);
                         le.addEffect(effectInstance);
@@ -614,7 +615,7 @@ public class DevilsDevastation extends SwordItem {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.attack(player, target, (float) getStuckProjectileDamage())) {
+                if(DamageUtil.normalAttack(projectile, target, (float) getStuckProjectileDamage(), 1.0f)) {
                     if(target instanceof LivingEntity le) {
                         MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.DEMONIC_FLAMES, getStuckProjectileEffectDuration(), 0);
                         le.addEffect(effectInstance);
@@ -847,7 +848,7 @@ public class DevilsDevastation extends SwordItem {
                 Entity target = result.getEntity();
                 List<UUID> tempStuckList = target.getData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE);
                 boolean valid = !tempStuckList.isEmpty();
-                if(projectile.getOwner() instanceof Player player && DamageUtil.attack(player, target, (float) getKillModeProjectileDamage())) {
+                if(projectile.getOwner() instanceof Player player && DamageUtil.normalAttack(projectile, target, (float) getKillModeProjectileDamage(), 1.0f)) {
                     if(target instanceof LivingEntity le) {
                         MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.DEMONIC_FLAMES, getKillModeProjectileEffectDuration(), 1);
                         le.addEffect(effectInstance);
@@ -1117,7 +1118,7 @@ public class DevilsDevastation extends SwordItem {
                         UUID uuid = customData.getUUID("uuid");
                         Entity entity = serverLevel.getEntity(uuid);
                         if(entity instanceof Player player) {
-                            DamageUtil.attack(player, owner, (float) getMarkLightningDamage());
+                            DamageUtil.normalAttack(player, owner, (float) getMarkLightningDamage(), 1.0f);
                             StaticSummon newSummon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), serverLevel);
                             newSummon.setOwner(player);
                             Vec3 pos = owner.getBoundingBox().getCenter();

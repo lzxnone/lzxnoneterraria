@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -42,7 +43,7 @@ import org.joml.Vector3f;
 
 import java.util.List;
 
-public class Meowmere extends SwordItem {
+public class Meowmere extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String DAMAGE_PATH = "weapon.meowmere.damage";
@@ -206,7 +207,7 @@ public class Meowmere extends SwordItem {
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
                 if(summon.getOwner() instanceof Player player) {
-                    if(DamageUtil.attack(player, target, (float) getDamage())) {
+                    if(DamageUtil.normalAttack(summon, target, (float) getDamage(), 1.0f)) {
                         if(customData.contains("hitEntity") && customData.getInt("hitEntity") < 4) {
                             customData.putInt("hitEntity", customData.getInt("hitEntity") + 1);
                             summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);

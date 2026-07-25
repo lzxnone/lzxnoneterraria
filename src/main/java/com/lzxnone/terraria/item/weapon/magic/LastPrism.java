@@ -8,6 +8,7 @@ import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.item.weapon.MagicWeapon;
 import com.lzxnone.terraria.item.weapon.melee.Mace;
 import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.ui.config.ConfigFactory;
@@ -38,6 +39,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -53,11 +55,11 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 import java.util.Optional;
 
-public class LastPrism extends Item {
+public class LastPrism extends MagicWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String DAMAGE_PATH = "weapon.last_prism.damage";
-    public static final float DAMAGE_DEFAULT = 100.0f;
+    public static final float DAMAGE_DEFAULT = 1.0f;
     public static final float DAMAGE_MIN = 0.0f;
     public static final float DAMAGE_MAX = 8388600.0f;
 
@@ -67,7 +69,7 @@ public class LastPrism extends Item {
     public static final int CHARGE_TIME_MAX = 72000;
 
     public static final String MAX_USE_TIME_PATH = "weapon.last_prism.max_use_time";
-    public static final int MAX_USE_TIME_DEFAULT = 60 * 20;
+    public static final int MAX_USE_TIME_DEFAULT = 1200;
     public static final int MAX_USE_TIME_MIN = 1;
     public static final int MAX_USE_TIME_MAX = 72000;
 
@@ -76,8 +78,23 @@ public class LastPrism extends Item {
     public static final double MAX_RANGE_MIN = 1.0;
     public static final double MAX_RANGE_MAX = 512.0;
 
+    public static final String MANA_CONSUME_RATE_PATH = "weapon.last_prism.mana_consume_rate";
+    public static final int MANA_CONSUME_RATE_DEFAULT = 20;
+    public static final int MANA_CONSUME_RATE_MIN = 0;
+    public static final int MANA_CONSUME_RATE_MAX = 72000;
+
+    public static final String MANA_RECOVER_RATE_PATH = "weapon.last_prism.mana_recover_rate";
+    public static final int MANA_RECOVER_RATE_DEFAULT = 20;
+    public static final int MANA_RECOVER_RATE_MIN = 0;
+    public static final int MANA_RECOVER_RATE_MAX = 72000;
+
     public LastPrism() {
-        super(new Properties().stacksTo(1).rarity(Rarity.EPIC));
+        super(
+            Tiers.NETHERITE,
+            new Item.Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC),
+            LastPrism::getManaConsumeRate,
+            LastPrism::getManaRecoverRate
+        );
     }
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
@@ -87,6 +104,8 @@ public class LastPrism extends Item {
             ConfigFactory.loadIntConfig(CHARGE_TIME_PATH, configText("last_prism_charge_time"), configTooltip("last_prism_charge_time"), CHARGE_TIME_DEFAULT, CHARGE_TIME_MIN, CHARGE_TIME_MAX);
             ConfigFactory.loadIntConfig(MAX_USE_TIME_PATH, configText("last_prism_max_use_time"), configTooltip("last_prism_max_use_time"), MAX_USE_TIME_DEFAULT, MAX_USE_TIME_MIN, MAX_USE_TIME_MAX);
             ConfigFactory.loadDoubleConfig(MAX_RANGE_PATH, configText("last_prism_max_range"), configTooltip("last_prism_max_range"), MAX_RANGE_DEFAULT, MAX_RANGE_MIN, MAX_RANGE_MAX);
+            ConfigFactory.loadIntConfig(MANA_CONSUME_RATE_PATH, configText("last_prism_mana_consume_rate"), configTooltip("last_prism_mana_consume_rate"), MANA_CONSUME_RATE_DEFAULT, MANA_CONSUME_RATE_MIN, MANA_CONSUME_RATE_MAX);
+            ConfigFactory.loadIntConfig(MANA_RECOVER_RATE_PATH, configText("last_prism_mana_recover_rate"), configTooltip("last_prism_mana_recover_rate"), MANA_RECOVER_RATE_DEFAULT, MANA_RECOVER_RATE_MIN, MANA_RECOVER_RATE_MAX);
         }
     };
 
@@ -112,6 +131,14 @@ public class LastPrism extends Item {
 
     public static double getMaxRange() {
         return Math.clamp(ConfigUtil.readDouble(MAX_RANGE_PATH, MAX_RANGE_DEFAULT), MAX_RANGE_MIN, MAX_RANGE_MAX);
+    }
+
+    public static int getManaConsumeRate() {
+        return Math.clamp(ConfigUtil.readInt(MANA_CONSUME_RATE_PATH, MANA_CONSUME_RATE_DEFAULT), MANA_CONSUME_RATE_MIN, MANA_CONSUME_RATE_MAX);
+    }
+
+    public static int getManaRecoverRate() {
+        return Math.clamp(ConfigUtil.readInt(MANA_RECOVER_RATE_PATH, MANA_RECOVER_RATE_DEFAULT), MANA_RECOVER_RATE_MIN, MANA_RECOVER_RATE_MAX);
     }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
@@ -288,7 +315,8 @@ public class LastPrism extends Item {
                 AABB entityBox = hitEntity.getBoundingBox().inflate(beamData.radius());
                 Optional<Vec3> clipResult = entityBox.clip(beamData.start(), beamData.end());
                 if(entityBox.contains(beamData.start()) || clipResult.isPresent()) {
-                    if(DamageUtil.attack(player, hitEntity, getDamage() * beamData.ratio())) {
+                    float damage = MagicWeapon.applyMagicDamageBonus(stack, player, getDamage() * beamData.ratio());
+                    if(DamageUtil.normalAttack(beam, hitEntity, damage, 0.1f)) {
                         hitEntity.invulnerableTime = 5;
                     }
                 }
@@ -365,6 +393,8 @@ public class LastPrism extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        if(!canUseMagic(stack, player)) return InteractionResultHolder.fail(stack);
+
         if(stack.is(ModItems.LAST_PRISM.get()) && !player.level().isClientSide()) {
             Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
 
@@ -422,17 +452,16 @@ public class LastPrism extends Item {
     }
 
     @Override
-    public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int count) {
+    protected void onMagicUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int count) {
         if(!(livingEntity instanceof Player player)) return;
-        if(level.isClientSide()) return;
-        if(player.tickCount % 20 == 0) {
+        if(player.tickCount % 10 == 0) {
             SoundUtil.playClientSound(player, ModSounds.BEAM2.get());
         }
     }
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        return getMaxUseTime();
+        return 72000;
     }
 
     private static void renderTetrahedronFace(

@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -51,7 +52,7 @@ import net.minecraft.network.chat.Component;
 import java.util.List;
 import java.util.UUID;
 
-public class FirstFractal extends SwordItem {
+public class FirstFractal extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String PROJECTILE_DAMAGE_PATH = "weapon.first_fractal.projectile_damage";
@@ -411,7 +412,7 @@ public class FirstFractal extends SwordItem {
                             FilterUtil.createTargetFilter(summon, summon.getOwner())
                     );
                     for(Entity target : targets) {
-                        if(DamageUtil.attack(player, target, (float) getProjectileDamage())) {
+                        if(DamageUtil.normalAttack(summon, target, (float) getProjectileDamage(), 0.25f)) {
                             target.invulnerableTime = 10;
                         }
                     }

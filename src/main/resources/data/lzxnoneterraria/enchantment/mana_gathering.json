@@ -1,0 +1,22 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.lzxnoneterraria.mana_gathering"
+  },
+  "exclusive_set": "#lzxnoneterraria:exclusive_set/mana_recover",
+  "max_cost": {
+    "base": 45,
+    "per_level_above_first": 10
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 5,
+    "per_level_above_first": 10
+  },
+  "primary_items": "#lzxnoneterraria:magic_weapons",
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#lzxnoneterraria:magic_weapons",
+  "weight": 5
+}

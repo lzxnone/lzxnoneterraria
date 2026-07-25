@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -38,7 +39,7 @@ import org.joml.Vector3f;
 import java.util.Comparator;
 import java.util.List;
 
-public class Seedler extends SwordItem {
+public class Seedler extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String NUT_GRAVITY_PATH = "weapon.seedler.nut_gravity";
@@ -145,7 +146,7 @@ public class Seedler extends SwordItem {
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
                 if(summon.getOwner() instanceof Player player) {
-                    if(DamageUtil.attack(player, target, (float) getThornDamage())) {
+                    if(DamageUtil.normalAttack(summon, target, (float) getThornDamage(), 1.0f)) {
                         target.invulnerableTime = 2;
                     }
                 }
@@ -261,7 +262,7 @@ public class Seedler extends SwordItem {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.attack(player, target, (float) getThornDamage())) {
+                if(DamageUtil.normalAttack(projectile, target, (float) getThornDamage(), 1.0f)) {
                     target.invulnerableTime = 2;
                     onDied(projectile);
                 }

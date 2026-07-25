@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -29,7 +30,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.phys.AABB;
@@ -41,7 +41,7 @@ import org.joml.Vector3f;
 import java.util.Comparator;
 import java.util.List;
 
-public class Volcano extends SwordItem {
+public class Volcano extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String EXPLOSION_RANGE_PATH = "weapon.volcano.explosion_range";
@@ -185,7 +185,7 @@ public class Volcano extends SwordItem {
                             for(LivingEntity livingEntity : targets) {
                                 if(livingEntity.getUUID() == target.getUUID()) continue;
                                 if(hitCount >= getExplosionMaxHitCount()) break;
-                                if(DamageUtil.attack(player, livingEntity, (float) getExplosionDamage())) {
+                                if(DamageUtil.normalAttack(player, livingEntity, (float) getExplosionDamage(), 1.0f)) {
                                     livingTarget.igniteForSeconds(getIgniteSeconds());
                                     hitCount++;
                                 }

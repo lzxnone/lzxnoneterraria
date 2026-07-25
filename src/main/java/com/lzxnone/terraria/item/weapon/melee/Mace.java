@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -49,7 +50,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
-public class Mace extends SwordItem {
+public class Mace extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String PROJECTILE_SPEED_PATH = "weapon.mace.projectile_speed";
@@ -294,7 +295,7 @@ public class Mace extends SwordItem {
                         FilterUtil.createTargetFilter(projectile, player)
                     );
                     for(Entity target : targets) {
-                        if(DamageUtil.attack(player, target, (float) getDamage())) {
+                        if(DamageUtil.normalAttack(projectile, target, (float) getDamage(), 1.0f)) {
                             target.invulnerableTime = 15;
                         }
                     }
@@ -508,7 +509,7 @@ public class Mace extends SwordItem {
                     EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(summon.getDeltaMovement()));
                     if(entityHitResult != null) {
                         Entity target = entityHitResult.getEntity();
-                        if(DamageUtil.attack(player, target, (float) getDamage())) {
+                        if(DamageUtil.normalAttack(summon, target, (float) getDamage(), 1.0f)) {
                             target.invulnerableTime = 10;
                         }
                     }
@@ -527,7 +528,7 @@ public class Mace extends SwordItem {
                     FilterUtil.createTargetFilter(summon, summon.getOwner())
                 );
                 for(Entity target : targets) {
-                    DamageUtil.attack(player, target, (float) getDamage());
+                    DamageUtil.normalAttack(summon, target, (float) getDamage(), 1.0f);
                 }
             }else if(state == State.THROWING_BACK.ordinal()){
                 Vec3 moveDir = player.getEyePosition().subtract(summon.position());
@@ -536,7 +537,7 @@ public class Mace extends SwordItem {
                 EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(summon.getDeltaMovement()));
                 if(entityHitResult != null) {
                     Entity target = entityHitResult.getEntity();
-                    if(DamageUtil.attack(player, target, (float) getDamage())) {
+                    if(DamageUtil.normalAttack(summon, target, (float) getDamage(), 1.0f)) {
                         target.invulnerableTime = 10;
                     }
                 }

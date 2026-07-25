@@ -1,0 +1,21 @@
+{
+  "anvil_cost": 6,
+  "description": {
+    "translate": "enchantment.lzxnoneterraria.arcane_amplification"
+  },
+  "max_cost": {
+    "base": 60,
+    "per_level_above_first": 15
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 15,
+    "per_level_above_first": 15
+  },
+  "primary_items": "#lzxnoneterraria:magic_weapons",
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#lzxnoneterraria:magic_weapons",
+  "weight": 3
+}

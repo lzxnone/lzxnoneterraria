@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -49,7 +50,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
-public class Zenith extends SwordItem {
+public class Zenith extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String DAMAGE_PATH = "weapon.zenith.damage";
@@ -507,7 +508,7 @@ public class Zenith extends SwordItem {
             if(!projectile.level().isClientSide()) {
                 Entity target = result.getEntity();
                 if(projectile.getOwner() instanceof Player player && FilterUtil.createTargetFilter(projectile, projectile.getOwner()).test(target)) {
-                    if(DamageUtil.attack(player, target, (float) (getDamage() + Math.random() * getDamage()))) {
+                    if(DamageUtil.normalAttack(projectile, target, (float) (getDamage() + Math.random() * getDamage()), 0.25f)) {
                         target.invulnerableTime = 2;
                     }
                 }

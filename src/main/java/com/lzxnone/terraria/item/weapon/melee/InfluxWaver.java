@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -45,7 +46,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-public class InfluxWaver extends SwordItem {
+public class InfluxWaver extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String DAMAGE_PATH = "weapon.influx_waver.damage";
@@ -224,7 +225,7 @@ public class InfluxWaver extends SwordItem {
                         Entity target = customData.contains("target") ? summon.level().getEntity(customData.getInt("target")) : null;
                         if(target != null && !hitTarget.getUUID().equals(target.getUUID())) return;
                         if(summon.getOwner() instanceof Player player && FilterUtil.createTargetFilter(player).test(hitTarget)) {
-                            if(DamageUtil.attack(player, hitTarget, (float) getDamage())) {
+                            if(DamageUtil.normalAttack(summon, hitTarget, (float) getDamage(), 1.0f)) {
                                 hitTarget.invulnerableTime = 2;
                             }
                             customData.putBoolean("dead", false);

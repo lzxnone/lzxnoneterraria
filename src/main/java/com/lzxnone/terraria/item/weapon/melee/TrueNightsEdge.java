@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -50,7 +51,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
-public class TrueNightsEdge extends SwordItem {
+public class TrueNightsEdge extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String PROJECTILE_ALIGN_TO_BLADE_PATH = "weapon.true_nights_edge.projectile_align_to_blade";
@@ -333,7 +334,7 @@ public class TrueNightsEdge extends SwordItem {
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < getMaxHitCount()) {
-                            if(DamageUtil.attack(player, target, (float) getDamage())) {
+                            if(DamageUtil.normalAttack(beam, target, (float) getDamage(), 1.0f)) {
                                 ParticleUtil.addParticles(
                                     (ServerLevel) target.level(), ModParticles.NIGHTS_EDGE_HIT_PARTICLE.get(),
                                     new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2.0, target.getZ()), new Vec3(0, 0, 0),
@@ -571,7 +572,7 @@ public class TrueNightsEdge extends SwordItem {
                     List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                     for(Entity target : targets) {
                         if(count >= getProjectileMaxHitCount()) break;
-                        if(DamageUtil.attack(player, target, (float) getProjectileDamage())) {
+                        if(DamageUtil.normalAttack(summon, target, (float) getProjectileDamage(), 1.0f)) {
                             count++;
                             ParticleUtil.addParticles(
                                 (ServerLevel) target.level(), ModParticles.TRUE_NIGHTS_EDGE_HIT_PARTICLE.get(),

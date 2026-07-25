@@ -31,6 +31,17 @@
   "item.lzxnoneterraria.devils_devastation": "Devil's Devastation",
   "item.lzxnoneterraria.last_prism": "Last Prism",
 
+  "enchantment.lzxnoneterraria.mana_leak": "Mana Leak",
+  "enchantment.lzxnoneterraria.mana_efficiency": "Mana Efficiency",
+  "enchantment.lzxnoneterraria.mana_gathering": "Mana Gathering",
+  "enchantment.lzxnoneterraria.mana_gathering_curse": "Mana Gathering Curse",
+  "enchantment.lzxnoneterraria.arcane_amplification": "Arcane Amplification",
+
+  "death.attack.lzxnoneterraria.player_normal": "%1$s was slain by %2$s",
+  "death.attack.lzxnoneterraria.player_normal.item": "%1$s was slain by %2$s using %3$s",
+  "death.attack.lzxnoneterraria.player_real": "%1$s was slain by %2$s's true damage",
+  "death.attack.lzxnoneterraria.player_real.item": "%1$s was slain by %2$s's true damage using %3$s",
+
   "tooltip.lzxnoneterraria.relative_distance": "Relative Distance",
   "tooltip.lzxnoneterraria.absolute_distance": "Absolute Distance",
   "tooltip.lzxnoneterraria.devils_devastation_kill_mode": "Kill Mode",
@@ -320,6 +331,10 @@
   "lzxnoneterraria.configuration.last_prism_max_use_time.tooltip": "Maximum duration of one continuous use in ticks",
   "lzxnoneterraria.configuration.last_prism_max_range": "Max Range",
   "lzxnoneterraria.configuration.last_prism_max_range.tooltip": "Maximum beam range",
+  "lzxnoneterraria.configuration.last_prism_mana_consume_rate": "Mana Consume Rate",
+  "lzxnoneterraria.configuration.last_prism_mana_consume_rate.tooltip": "Mana consumed per tick while using",
+  "lzxnoneterraria.configuration.last_prism_mana_recover_rate": "Mana Recover Rate",
+  "lzxnoneterraria.configuration.last_prism_mana_recover_rate.tooltip": "Mana recovered per tick while not using",
   "lzxnoneterraria.configuration.devils_devastation_settings": "Devil's Devastation Settings",
   "lzxnoneterraria.configuration.devils_devastation_kill_mode_time": "Kill Mode Duration",
   "lzxnoneterraria.configuration.devils_devastation_kill_mode_time.tooltip": "Kill Mode duration in ticks",

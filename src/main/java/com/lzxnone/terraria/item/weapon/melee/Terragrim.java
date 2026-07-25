@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -46,7 +47,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
-public class Terragrim extends SwordItem {
+public class Terragrim extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String HIT_RANGE_PATH = "weapon.terragrim.hit_range";
@@ -214,7 +215,7 @@ public class Terragrim extends SwordItem {
                                 knockbackResist.setBaseValue(Math.max(0.9, originalResist));
                             }
 
-                            if(DamageUtil.attack(player, target, (float) getDamage())) {
+                            if(DamageUtil.normalAttack(summon, target, (float) getDamage(), 1.0f)) {
                                 target.invulnerableTime = 0;
                             }
 
@@ -222,7 +223,7 @@ public class Terragrim extends SwordItem {
                                 knockbackResist.setBaseValue(originalResist);
                             }
                         }else {
-                            if(DamageUtil.attack(player, target, (float) getDamage())) {
+                            if(DamageUtil.normalAttack(summon, target, (float) getDamage(), 1.0f)) {
                                 target.invulnerableTime = 0;
                             }
                         }

@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -34,7 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
 import org.joml.Vector3f;
 
-public class StarWrath extends SwordItem {
+public class StarWrath extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String DAMAGE_PATH = "weapon.star_wrath.damage";
@@ -139,7 +140,7 @@ public class StarWrath extends SwordItem {
                 Entity target = result.getEntity();
                 Entity owner = projectile.getOwner();
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.attack(player, target, (float) getDamage())) {
+                if(DamageUtil.normalAttack(projectile, target, (float) getDamage(), 1.0f)) {
                     target.invulnerableTime = 2;
                 }
             }

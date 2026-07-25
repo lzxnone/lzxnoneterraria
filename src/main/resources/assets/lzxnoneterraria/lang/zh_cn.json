@@ -31,6 +31,17 @@
   "item.lzxnoneterraria.devils_devastation": "破灭魔王剑",
   "item.lzxnoneterraria.last_prism": "终极棱镜",
 
+  "enchantment.lzxnoneterraria.mana_leak": "魔力泄漏",
+  "enchantment.lzxnoneterraria.mana_efficiency": "魔力效率",
+  "enchantment.lzxnoneterraria.mana_gathering": "魔力聚集",
+  "enchantment.lzxnoneterraria.mana_gathering_curse": "聚魔诅咒",
+  "enchantment.lzxnoneterraria.arcane_amplification": "奥术增幅",
+
+  "death.attack.lzxnoneterraria.player_normal": "%1$s 被 %2$s 击杀",
+  "death.attack.lzxnoneterraria.player_normal.item": "%1$s 被 %2$s 用 %3$s 击杀",
+  "death.attack.lzxnoneterraria.player_real": "%1$s 被 %2$s 的真实伤害击杀",
+  "death.attack.lzxnoneterraria.player_real.item": "%1$s 被 %2$s 用 %3$s 的真实伤害击杀",
+
   "tooltip.lzxnoneterraria.relative_distance": "相对距离",
   "tooltip.lzxnoneterraria.absolute_distance": "绝对距离",
   "tooltip.lzxnoneterraria.devils_devastation_kill_mode": "杀戮模式",
@@ -319,6 +330,10 @@
   "lzxnoneterraria.configuration.last_prism_max_use_time.tooltip": "单次持续使用的最大时间（刻）",
   "lzxnoneterraria.configuration.last_prism_max_range": "最大范围",
   "lzxnoneterraria.configuration.last_prism_max_range.tooltip": "激光最大射程",
+  "lzxnoneterraria.configuration.last_prism_mana_consume_rate": "魔力消耗速率",
+  "lzxnoneterraria.configuration.last_prism_mana_consume_rate.tooltip": "使用时每刻消耗的魔力值",
+  "lzxnoneterraria.configuration.last_prism_mana_recover_rate": "魔力恢复速率",
+  "lzxnoneterraria.configuration.last_prism_mana_recover_rate.tooltip": "未使用时每刻恢复的魔力值",
   "lzxnoneterraria.configuration.devils_devastation_settings": "破灭魔王剑 设置",
   "lzxnoneterraria.configuration.devils_devastation_kill_mode_time": "杀戮模式持续时间",
   "lzxnoneterraria.configuration.devils_devastation_kill_mode_time.tooltip": "杀戮模式持续时间（刻）",

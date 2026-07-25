@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -50,7 +51,7 @@ import net.minecraft.network.chat.Component;
 import java.util.Comparator;
 import java.util.List;
 
-public class TheHorsemansBlade extends SwordItem {
+public class TheHorsemansBlade extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String BLADE_ROTATE_RANGE_PATH = "weapon.the_horsemans_blade.blade_rotate_range";
@@ -202,7 +203,7 @@ public class TheHorsemansBlade extends SwordItem {
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < getBladeMaxHitCount()) {
-                            if(DamageUtil.attack(player, target, (float) getBladeDamage())) {
+                            if(DamageUtil.normalAttack(beam, target, (float) getBladeDamage(), 1.0f)) {
                                 target.invulnerableTime = 20;
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
@@ -334,7 +335,7 @@ public class TheHorsemansBlade extends SwordItem {
                 summon.setYRot(xyRot[1]);
 
                 if(selfPos.distanceToSqr(targetPos) < 2.0D) {
-                    if(summon.getOwner() instanceof Player player && FilterUtil.createLivingTargetFilter(player).test(target) && DamageUtil.attack(player, target, (float) getPumpkinDamage())) onDied(summon);
+                    if(summon.getOwner() instanceof Player player && FilterUtil.createLivingTargetFilter(player).test(target) && DamageUtil.normalAttack(summon, target, (float) getPumpkinDamage(), 1.0f)) onDied(summon);
                 }
             }else {
                 Vec3 dir = summon.getLookAngle().normalize();
@@ -359,7 +360,7 @@ public class TheHorsemansBlade extends SwordItem {
                     for(Entity hitEntity : hitEntities) {
                         if(target != null && hitEntity.getUUID() == target.getUUID()) continue;
                         if(summon.getOwner() instanceof Player player) {
-                            if(DamageUtil.attack(player, target, (float) getPumpkinDamage())) {
+                            if(DamageUtil.normalAttack(summon, hitEntity, (float) getPumpkinDamage(), 1.0f)) {
                                 hitEntity.invulnerableTime = 2;
                             }
                         }

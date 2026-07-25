@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -48,7 +49,7 @@ import org.joml.Vector3f;
 
 import java.util.List;
 
-public class TerraBlade extends SwordItem {
+public class TerraBlade extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String PROJECTILE_ALIGN_TO_SWORD_BEAM_PATH = "weapon.terra_blade.projectile_align_to_sword_beam";
@@ -219,7 +220,7 @@ public class TerraBlade extends SwordItem {
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < getSwordBeamMaxHitCount()) {
-                            if(DamageUtil.attack(player, target, (float)getSwordBeamDamage())) {
+                            if(DamageUtil.normalAttack(beam, target, (float)getSwordBeamDamage(), 0.1f)) {
                                 target.invulnerableTime = 20;
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
@@ -487,7 +488,7 @@ public class TerraBlade extends SwordItem {
                 int count = customData.getInt("hitCount");
                 List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                 for(Entity target : targets) {
-                    if(DamageUtil.attack(player, target, (float)getProjectileDamage() * (float)Math.pow(getProjectileDamageDecay(), count))) {
+                    if(DamageUtil.normalAttack(summon, target, (float)getProjectileDamage() * (float)Math.pow(getProjectileDamageDecay(), count), 0.1f)) {
                         count++;
                         ParticleUtil.addParticles(
                             (ServerLevel) summon.level(), ModParticles.TERRA_BEAM_HIT_PARTICLE.get(),

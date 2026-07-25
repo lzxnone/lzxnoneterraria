@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.effect.ModEffects;
@@ -37,7 +38,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
@@ -58,7 +58,7 @@ import net.minecraft.network.chat.Component;
 import java.util.Comparator;
 import java.util.List;
 
-public class BladeOfGrass extends SwordItem {
+public class BladeOfGrass extends MeleeWeapon {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String PROJECTILE_DAMAGE_PATH = "weapon.blade_of_grass.projectile_damage";
@@ -243,7 +243,7 @@ public class BladeOfGrass extends SwordItem {
                 CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
                 if(!customData.contains("hitCount") || customData.getInt("hitCount") >= getProjectileMaxHitCount()) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.attack(player, target, (float) getProjectileDamage())) {
+                if(DamageUtil.normalAttack(projectile, target, (float) getProjectileDamage(), 1.0f)) {
                     int count = customData.getInt("hitCount");
                     count++;
                     if(target instanceof LivingEntity livingEntity && projectile.getRandom().nextInt(4) == 0) {
