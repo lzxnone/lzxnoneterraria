@@ -2,6 +2,7 @@ package com.lzxnone.terraria.ui.config;
 
 import com.lzxnone.terraria.effect.BloodButcheredEffect;
 import com.lzxnone.terraria.effect.DemonicFlamesEffect;
+import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.item.weapon.melee.BladeOfGrass;
 import com.lzxnone.terraria.item.weapon.melee.BloodButcherer;
@@ -59,7 +60,8 @@ public class ConfigList {
             Terragrim.CONFIG_LIST_ITEM,
             FirstFractal.CONFIG_LIST_ITEM,
             Mace.CONFIG_LIST_ITEM,
-            DevilsDevastation.CONFIG_LIST_ITEM
+            DevilsDevastation.CONFIG_LIST_ITEM,
+            LastPrism.CONFIG_LIST_ITEM
         });
         ITEMS.put(EFFECT, new ConfigListItem[]{
             BloodButcheredEffect.CONFIG_LIST_ITEM,

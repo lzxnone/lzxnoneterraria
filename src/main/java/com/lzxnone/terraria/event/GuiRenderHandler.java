@@ -25,7 +25,7 @@ public class GuiRenderHandler {
 
         ItemStack stack = player.getMainHandItem();
         if(stack.is(ModItems.DEVILS_DEVASTATION.get()) && player.getEffect(ModEffects.KILL_MODE) != null) {
-            Component text = Component.translatable("effect.lzxnoneterraria.kill_mode");
+            Component text = Component.translatable("tooltip.lzxnoneterraria.devils_devastation_kill_mode");
             Font font = minecraft.font;
             String plainText = text.getString();
             int yShift = Math.max(minecraft.gui.leftHeight, minecraft.gui.rightHeight) + (68 - 59);

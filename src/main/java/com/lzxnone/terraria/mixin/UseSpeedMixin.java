@@ -18,7 +18,8 @@ public abstract class UseSpeedMixin {
                 || usingItem.is(ModItems.TRUE_COPPER_SHORTSWORD.get())
                 || usingItem.is(ModItems.FIRST_FRACTAL.get())
                 || usingItem.is(ModItems.TERRAGRIM.get())
-                || usingItem.is(ModItems.MACE.get());
+                || usingItem.is(ModItems.MACE.get())
+                || usingItem.is(ModItems.LAST_PRISM.get());
     }
 
     @WrapOperation(

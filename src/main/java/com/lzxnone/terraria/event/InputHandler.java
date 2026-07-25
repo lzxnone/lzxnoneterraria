@@ -56,8 +56,9 @@ public class InputHandler {
                     }
 
                     MutableComponent displayText = Component.empty();
-                    displayText.append(Component.literal(String.format("%s", Zenith.isDistanceMode() ? "相对距离: " : "绝对距离: ")).withStyle(ChatFormatting.WHITE))
-                         .append(Component.literal(String.format("%.1f", finalDelta)).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
+                    displayText.append(Component.translatable(Zenith.isDistanceMode() ? "tooltip.lzxnoneterraria.relative_distance" : "tooltip.lzxnoneterraria.absolute_distance").withStyle(ChatFormatting.WHITE))
+                         .append(Component.literal(": ").withStyle(ChatFormatting.WHITE))
+                         .append(Component.literal(String.format("%.2f", finalDelta)).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
                     player.displayClientMessage(displayText, true);
 
                     PacketDistributor.sendToServer(new ZenithScrollPayload(scrollDelta));
@@ -81,8 +82,9 @@ public class InputHandler {
                         else if(finalDelta < 0) finalDelta = 0;
                     }
                     MutableComponent displayText = Component.empty();
-                    displayText.append(Component.literal(String.format("%s", FirstFractal.isDistanceMode() ? "相对距离: " : "绝对距离: ")).withStyle(ChatFormatting.WHITE))
-                         .append(Component.literal(String.format("%.1f", finalDelta)).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
+                    displayText.append(Component.translatable(FirstFractal.isDistanceMode() ? "tooltip.lzxnoneterraria.relative_distance" : "tooltip.lzxnoneterraria.absolute_distance").withStyle(ChatFormatting.WHITE))
+                         .append(Component.literal(": ").withStyle(ChatFormatting.WHITE))
+                         .append(Component.literal(String.format("%.2f", finalDelta)).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
                     player.displayClientMessage(displayText, true);
 
                     PacketDistributor.sendToServer(new FirstFractalScrollPayload(scrollDelta));

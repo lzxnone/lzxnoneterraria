@@ -40,11 +40,74 @@ public class ModRenderTypes {
         );
     }
 
+    public static RenderType entityTranslucentEmissiveTriangles(ResourceLocation texture) {
+        return RenderType.create(
+            "m_entity_translucent_emissive_triangles",
+            DefaultVertexFormat.NEW_ENTITY,
+            VertexFormat.Mode.TRIANGLES,
+            1536,
+            false,
+            false,
+            RenderType.CompositeState.builder()
+                .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
+                .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+                .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+                .setCullState(RenderStateShard.NO_CULL)
+                .setLightmapState(RenderStateShard.NO_LIGHTMAP)
+                .setOverlayState(RenderStateShard.OVERLAY)
+                .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
+                .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
+                .createCompositeState(true)
+        );
+    }
+
+    public static RenderType entitySolidEmissiveTriangles(ResourceLocation texture) {
+        return RenderType.create(
+            "m_entity_solid_emissive_triangles",
+            DefaultVertexFormat.NEW_ENTITY,
+            VertexFormat.Mode.TRIANGLES,
+            1536,
+            false,
+            false,
+            RenderType.CompositeState.builder()
+                .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
+                .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+                .setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
+                .setCullState(RenderStateShard.NO_CULL)
+                .setLightmapState(RenderStateShard.NO_LIGHTMAP)
+                .setOverlayState(RenderStateShard.OVERLAY)
+                .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
+                .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
+                .createCompositeState(true)
+        );
+    }
+
     public static RenderType entityAdditiveEmissive(ResourceLocation texture) {
         return RenderType.create(
             "m_entity_additive_emissive",
             DefaultVertexFormat.NEW_ENTITY,
             VertexFormat.Mode.QUADS,
+            1536,
+            false,
+            false,
+            RenderType.CompositeState.builder()
+                .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
+                .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+                .setTransparencyState(ADDITIVE_TRANSPARENCY)
+                .setCullState(RenderStateShard.NO_CULL)
+                .setLightmapState(RenderStateShard.NO_LIGHTMAP)
+                .setOverlayState(RenderStateShard.OVERLAY)
+                .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
+                .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
+                .createCompositeState(true)
+        );
+    }
+
+    public static RenderType entityAdditiveEmissiveTriangles(ResourceLocation texture) {
+        return RenderType.create(
+            "m_entity_additive_emissive_triangles",
+            DefaultVertexFormat.NEW_ENTITY,
+            VertexFormat.Mode.TRIANGLES,
             1536,
             false,
             false,

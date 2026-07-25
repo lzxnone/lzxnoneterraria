@@ -1,7 +1,9 @@
 {
   "itemGroup.lzxnoneterraria.melee": "泰拉瑞亚 近战武器",
+  "itemGroup.lzxnoneterraria.magic": "泰拉瑞亚 魔法武器",
   "itemGroup.lzxnoneterraria.block": "泰拉瑞亚 方块",
   "itemGroup.lzxnoneterraria.calamity_melee": "泰拉瑞亚灾厄 近战武器",
+
   "item.lzxnoneterraria.copper_shortsword": "铜短剑",
   "item.lzxnoneterraria.enchanted_sword": "附魔剑",
   "item.lzxnoneterraria.bee_keeper": "养蜂人",
@@ -27,9 +29,15 @@
   "item.lzxnoneterraria.first_fractal": "第一分形",
   "item.lzxnoneterraria.mace": "链锤",
   "item.lzxnoneterraria.devils_devastation": "破灭魔王剑",
+  "item.lzxnoneterraria.last_prism": "终极棱镜",
+
+  "tooltip.lzxnoneterraria.relative_distance": "相对距离",
+  "tooltip.lzxnoneterraria.absolute_distance": "绝对距离",
+  "tooltip.lzxnoneterraria.devils_devastation_kill_mode": "杀戮模式",
   "tooltip.lzxnoneterraria.devils_devastation.0": "完美的地狱之剑，直接掌握着硫磺火之力。",
   "tooltip.lzxnoneterraria.devils_devastation.1": "人类将这种力量理解为浩劫，即一切秩序在火焰之中的必然毁灭。",
   "tooltip.lzxnoneterraria.devils_devastation.2": "或许这就是硫磺火元素掌握着她的姐妹所不能匹敌之力量的原因。",
+
   "entity.lzxnoneterraria.static_projectile": "弹射物",
   "entity.lzxnoneterraria.static_summon": "召唤物",
   "entity.lzxnoneterraria.bee_summon": "蜜蜂",
@@ -38,8 +46,10 @@
   "effect.lzxnoneterraria.kill_mode": "杀戮模式",
   "effect.lzxnoneterraria.kill_mode_cooldown": "杀戮模式 冷却",
   "effect.lzxnoneterraria.demonic_flames": "恶魔之焰",
-  "key.lzxnoneterraria.kill_mode": "进入杀戮模式",
+
   "key.categories.lzxnoneterraria": "lzxnoneterraria",
+  "key.lzxnoneterraria.kill_mode": "进入杀戮模式",
+
   "lzxnoneterraria.configuration.title": "LzxnoneTerraria 配置",
   "lzxnoneterraria.configuration.nav_weapon": "武器",
   "lzxnoneterraria.configuration.nav_effect": "药水效果",
@@ -300,6 +310,15 @@
   "lzxnoneterraria.configuration.mace_fly_time.tooltip": "弹射物最大飞行时间（刻）",
   "lzxnoneterraria.configuration.mace_max_range": "最大范围",
   "lzxnoneterraria.configuration.mace_max_range.tooltip": "弹射物最大飞行距离",
+  "lzxnoneterraria.configuration.last_prism_settings": "终极棱镜 设置",
+  "lzxnoneterraria.configuration.last_prism_damage": "伤害",
+  "lzxnoneterraria.configuration.last_prism_damage.tooltip": "每次命中伤害",
+  "lzxnoneterraria.configuration.last_prism_charge_time": "蓄力时间",
+  "lzxnoneterraria.configuration.last_prism_charge_time.tooltip": "激光聚合到最大威力所需时间（刻）",
+  "lzxnoneterraria.configuration.last_prism_max_use_time": "最大使用时间",
+  "lzxnoneterraria.configuration.last_prism_max_use_time.tooltip": "单次持续使用的最大时间（刻）",
+  "lzxnoneterraria.configuration.last_prism_max_range": "最大范围",
+  "lzxnoneterraria.configuration.last_prism_max_range.tooltip": "激光最大射程",
   "lzxnoneterraria.configuration.devils_devastation_settings": "破灭魔王剑 设置",
   "lzxnoneterraria.configuration.devils_devastation_kill_mode_time": "杀戮模式持续时间",
   "lzxnoneterraria.configuration.devils_devastation_kill_mode_time.tooltip": "杀戮模式持续时间（刻）",

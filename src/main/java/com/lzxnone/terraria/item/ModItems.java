@@ -3,6 +3,7 @@ package com.lzxnone.terraria.item;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.item.projectile.*;
 import com.lzxnone.terraria.item.projectile.first_fractal.*;
+import com.lzxnone.terraria.item.weapon.magic.*;
 import com.lzxnone.terraria.item.weapon.melee.*;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -36,6 +37,9 @@ public class ModItems {
     public static final DeferredItem<Item> FIRST_FRACTAL = ITEMS.register("first_fractal", FirstFractal::new);
     public static final DeferredItem<Item> MACE = ITEMS.register("mace", Mace::new);
     public static final DeferredItem<Item> DEVILS_DEVASTATION = ITEMS.register("devils_devastation", DevilsDevastation::new);
+
+    //魔法武器
+    public static final DeferredItem<Item> LAST_PRISM = ITEMS.register("last_prism", LastPrism::new);
 
     //弹射物
     public static final DeferredItem<Item> ENCHANTED_SWORD_BEAM = ITEMS.register("enchanted_sword_beam", EnchantedSwordBeam::new);

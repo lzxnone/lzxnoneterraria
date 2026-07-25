@@ -47,4 +47,11 @@ public class ModCreativeModeTabs {
             .displayItems((parameters, output) -> {
                 output.accept(ModItems.DEVILS_DEVASTATION.get());
             }).build());
+
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAGIC_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_magic_0", () -> CreativeModeTab.builder()
+            .title(Component.translatable("itemGroup.lzxnoneterraria.magic"))
+            .icon(() -> ModItems.LAST_PRISM.get().getDefaultInstance())
+            .displayItems((parameters, output) -> {
+                output.accept(ModItems.LAST_PRISM.get());
+            }).build());
 }

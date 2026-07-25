@@ -122,6 +122,13 @@ public class ItemInHandRenderMixin {
             if(player.getCooldowns().isOnCooldown(itemStack.getItem())) {
                 ci.cancel();
             }
+        }else if(itemStack.is(ModItems.LAST_PRISM) && entity instanceof Player player) {
+            if(player.isUsingItem()) {
+                ItemStack usingStack = player.getUseItem();
+                if(usingStack.is(itemStack.getItem())) {
+                    ci.cancel();
+                }
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.entity.summon;
 
+import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.*;
 
 import java.util.HashMap;
@@ -25,6 +26,8 @@ public class StaticSummonBehaviors {
     public static final String DEVILS_DEVASTATION_LIGHTNING = "devils_devastation_lightning";
     public static final String DEVILS_DEVASTATION_MARK = "devils_devastation_mark";
     public static final String DEVILS_DEVASTATION_MARK_LIGHTNING = "devils_devastation_mark_lightning";
+    public static final String LAST_PRISM_TRI = "last_prism_tri";
+    public static final String LAST_PRISM_BEAM = "last_prism_beam";
 
     static {
         BEHAVIORS.put(DEFAULT, new IStaticSummonBehavior() {});
@@ -44,6 +47,8 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(DEVILS_DEVASTATION_LIGHTNING, DevilsDevastation.SUMMON_BEHAVIOR2);
         BEHAVIORS.put(DEVILS_DEVASTATION_MARK, DevilsDevastation.SUMMON_BEHAVIOR3);
         BEHAVIORS.put(DEVILS_DEVASTATION_MARK_LIGHTNING, DevilsDevastation.SUMMON_BEHAVIOR4);
+        BEHAVIORS.put(LAST_PRISM_TRI, LastPrism.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(LAST_PRISM_BEAM, LastPrism.SUMMON_BEHAVIOR2);
     }
 
     public static IStaticSummonBehavior getBehavior(String id) {

@@ -297,153 +297,159 @@ public class TerraBlade extends SwordItem {
             float size = 1.0f -  0.25f * progress;
             poseStack.scale(size, size, size);
 
-            VertexConsumer vertexConsumer0 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES0));
+            float[] dz = {0.1f, 0f, -0.1f};
 
-            //左边
-            poseStack.pushPose();
-            RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90 - 18 * (1.0f - progress), SwordBeam.DIST);
-            RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 18 * (1.0f - progress), rotate);
-            RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer0,
-                    COLOR0.x(), COLOR0.y(), COLOR0.z(), alpha, halfWidth, halfHeight, 0f, 0, -0.01f);
-            poseStack.popPose();
+            for(int x = 0;x < 3;x++) {
 
+                VertexConsumer vertexConsumer0 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES0));
 
-            //中间
-            poseStack.pushPose();
-            RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST);
-            RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
-            RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer0,
-                    COLOR1.x(), COLOR1.y(), COLOR1.z(), alpha, halfWidth, halfHeight, 0f, 0f, 0f);
-            poseStack.popPose();
-
-            //右边
-            poseStack.pushPose();
-            RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 108, SwordBeam.DIST);
-            RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], -9 * (1.0f - progress), rotate);
-            RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer0,
-                    COLOR2.x(), COLOR2.y(), COLOR2.z(), alpha, halfWidth, halfHeight, 0f, 0, 0.01f);
-            poseStack.popPose();
-
-            VertexConsumer vertexConsumer1 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES1));
-
-            //三线
-            poseStack.pushPose();
-            RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST / 1.5f);
-            RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
-            poseStack.scale(0.5f, 0.5f, 0.5f);
-            RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer1,
-                    1.0f, 1.0f, 1.0f, alpha, halfWidth, halfHeight, 0f, 0f, 0.02f);
-            poseStack.popPose();
-
-            poseStack.pushPose();
-            RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST / 1.25f);
-            RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
-            poseStack.scale(0.75f, 0.75f, 0.75f);
-            RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer1,
-                    1.0f, 1.0f, 1.0f, alpha, halfWidth, halfHeight, 0f, 0f, 0.02f);
-            poseStack.popPose();
-
-            poseStack.pushPose();
-            RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST * 1.15f);
-            RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
-            poseStack.scale(0.95f, 0.95f, 0.95f);
-            RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer1,
-                    1.0f, 1.0f, 1.0f, alpha, halfWidth, halfHeight, 0f, 0f, 0.02f);
-            poseStack.popPose();
-
-            VertexConsumer vertexConsumer2 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES2));
-
-            //边缘高光
-            poseStack.pushPose();
-            RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 100, SwordBeam.DIST * 1.15f);
-            RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
-            poseStack.scale(1.0f, 1.0f, 1.0f);
-            for(int i = 0;i < 5;i++) {
-                RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer2,
-                        COLOR2.x(), COLOR2.y(), COLOR2.z(), alpha, halfWidth, halfHeight, 0f, 0f, 0.03f);
-            }
-            poseStack.popPose();
-
-
-            float sparkleAlpha;
-            if(progress < FADE_IN) {
-                sparkleAlpha = 0;
-            }else if(progress > FADE_OUT) {
-                sparkleAlpha = 1.0f - (progress - FADE_OUT) / (1.0f - FADE_OUT);
-            }else {
-                sparkleAlpha = (progress - FADE_IN) / (FADE_OUT - FADE_IN);
-            }
-
-            VertexConsumer vertexConsumer3 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES3));
-
-            //闪烁(外层)
-            poseStack.pushPose();
-            for(int k = 0;k < 2;k++) {
+                //左边
                 poseStack.pushPose();
-                if(k == 0) {
-                    RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90 - 60.0 * progress, SwordBeam.DIST * 2f);
-                    RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 60 * progress, rotate);
-                }else {
-                    RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90 + 60.0 * progress, SwordBeam.DIST * 2f + 0.5f * progress);
-                    RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], -60 * progress, rotate);
-                }
-                for(int j = 0; j < 2; j++) {
-                    poseStack.pushPose();
-                    if(j == 0) poseStack.mulPose(Axis.ZP.rotationDegrees(0.0F));
-                    else poseStack.mulPose(Axis.ZP.rotationDegrees(45.0F));
-                    poseStack.scale(0.5f, 0.5f, 0.5f);
-                    for(int i = 0; i < 5; i++) {
-                        RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer3,
-                                COLOR2.x(), COLOR2.y(), COLOR2.z(), sparkleAlpha, 32 * SwordBeam.SCALE, 32 * SwordBeam.SCALE, 0f, 0f, 0.03f);
-                    }
-                    poseStack.popPose();
-                }
+                RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90 - 18 * (1.0f - progress), SwordBeam.DIST);
+                RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 18 * (1.0f - progress), rotate);
+                RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer0,
+                        COLOR0.x(), COLOR0.y(), COLOR0.z(), alpha, halfWidth, halfHeight, 0f, 0, -0.01f + dz[x]);
                 poseStack.popPose();
-            }
-            poseStack.popPose();
 
-            //闪烁(中层)
-            poseStack.pushPose();
-            for(int k = 0;k < 2;k++) {
+
+                //中间
                 poseStack.pushPose();
-                if(k == 0) {
-                    RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90 - 30.0 * progress, SwordBeam.DIST * 2f);
-                    RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 30 * progress, rotate);
-                }else {
-                    RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90 + 30.0 * progress, SwordBeam.DIST * 2.1f);
-                    RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], -30 * progress, rotate);
-                }
-                for(int j = 0; j < 2; j++) {
-                    poseStack.pushPose();
-                    if(j == 0) poseStack.mulPose(Axis.ZP.rotationDegrees(0.0F));
-                    else poseStack.mulPose(Axis.ZP.rotationDegrees(45.0F));
-                    poseStack.scale(0.75f, 0.75f, 0.75f);
-                    for(int i = 0; i < 5; i++) {
-                        RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer3,
-                                COLOR2.x(), COLOR2.y(), COLOR2.z(), sparkleAlpha, 32 * SwordBeam.SCALE, 32 * SwordBeam.SCALE, 0f, 0f, 0.03f);
-                    }
-                    poseStack.popPose();
-                }
+                RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST);
+                RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
+                RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer0,
+                        COLOR1.x(), COLOR1.y(), COLOR1.z(), alpha, halfWidth, halfHeight, 0f, 0f, 0f + dz[x]);
                 poseStack.popPose();
-            }
-            poseStack.popPose();
 
-            //闪烁(内层)
-            poseStack.pushPose();
-            RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST * 2f);
-            RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
-            for(int j = 0; j < 2; j++) {
+                //右边
                 poseStack.pushPose();
-                if(j == 0) poseStack.mulPose(Axis.ZP.rotationDegrees(0.0F));
-                else poseStack.mulPose(Axis.ZP.rotationDegrees(45.0F));
+                RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 108, SwordBeam.DIST);
+                RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], -9 * (1.0f - progress), rotate);
+                RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer0,
+                        COLOR2.x(), COLOR2.y(), COLOR2.z(), alpha, halfWidth, halfHeight, 0f, 0, 0.01f + dz[x]);
+                poseStack.popPose();
+
+                VertexConsumer vertexConsumer1 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES1));
+
+                //三线
+                poseStack.pushPose();
+                RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST / 1.5f);
+                RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
+                poseStack.scale(0.5f, 0.5f, 0.5f);
+                RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer1,
+                        1.0f, 1.0f, 1.0f, alpha, halfWidth, halfHeight, 0f, 0f, 0.02f + dz[x]);
+                poseStack.popPose();
+
+                poseStack.pushPose();
+                RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST / 1.25f);
+                RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
+                poseStack.scale(0.75f, 0.75f, 0.75f);
+                RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer1,
+                        1.0f, 1.0f, 1.0f, alpha, halfWidth, halfHeight, 0f, 0f, 0.02f + dz[x]);
+                poseStack.popPose();
+
+                poseStack.pushPose();
+                RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST * 1.15f);
+                RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
+                poseStack.scale(0.95f, 0.95f, 0.95f);
+                RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer1,
+                        1.0f, 1.0f, 1.0f, alpha, halfWidth, halfHeight, 0f, 0f, 0.02f + dz[x]);
+                poseStack.popPose();
+
+                VertexConsumer vertexConsumer2 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES2));
+
+                //边缘高光
+                poseStack.pushPose();
+                RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 100, SwordBeam.DIST * 1.15f);
+                RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
                 poseStack.scale(1.0f, 1.0f, 1.0f);
-                for(int i = 0; i < 5; i++) {
-                    RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer3,
-                            COLOR2.x(), COLOR2.y(), COLOR2.z(), sparkleAlpha, 32 * SwordBeam.SCALE, 32 * SwordBeam.SCALE, 0f, 0f, 0.03f);
+                for (int i = 0; i < 5; i++) {
+                    RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer2,
+                            COLOR2.x(), COLOR2.y(), COLOR2.z(), alpha, halfWidth, halfHeight, 0f, 0f, 0.03f + dz[x]);
                 }
                 poseStack.popPose();
+
+
+                float sparkleAlpha;
+                if (progress < FADE_IN) {
+                    sparkleAlpha = 0;
+                } else if (progress > FADE_OUT) {
+                    sparkleAlpha = 1.0f - (progress - FADE_OUT) / (1.0f - FADE_OUT);
+                } else {
+                    sparkleAlpha = (progress - FADE_IN) / (FADE_OUT - FADE_IN);
+                }
+
+                VertexConsumer vertexConsumer3 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES3));
+
+                //闪烁(外层)
+                poseStack.pushPose();
+                for (int k = 0; k < 2; k++) {
+                    poseStack.pushPose();
+                    if (k == 0) {
+                        RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90 - 60.0 * progress, SwordBeam.DIST * 2f);
+                        RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 60 * progress, rotate);
+                    } else {
+                        RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90 + 60.0 * progress, SwordBeam.DIST * 2f + 0.5f * progress);
+                        RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], -60 * progress, rotate);
+                    }
+                    for (int j = 0; j < 2; j++) {
+                        poseStack.pushPose();
+                        if (j == 0) poseStack.mulPose(Axis.ZP.rotationDegrees(0.0F));
+                        else poseStack.mulPose(Axis.ZP.rotationDegrees(45.0F));
+                        poseStack.scale(0.5f, 0.5f, 0.5f);
+                        for (int i = 0; i < 5; i++) {
+                            RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer3,
+                                    COLOR2.x(), COLOR2.y(), COLOR2.z(), sparkleAlpha, 32 * SwordBeam.SCALE, 32 * SwordBeam.SCALE, 0f, 0f, 0.03f + dz[x]);
+                        }
+                        poseStack.popPose();
+                    }
+                    poseStack.popPose();
+                }
+                poseStack.popPose();
+
+                //闪烁(中层)
+                poseStack.pushPose();
+                for (int k = 0; k < 2; k++) {
+                    poseStack.pushPose();
+                    if (k == 0) {
+                        RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90 - 30.0 * progress, SwordBeam.DIST * 2f);
+                        RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 30 * progress, rotate);
+                    } else {
+                        RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90 + 30.0 * progress, SwordBeam.DIST * 2.1f);
+                        RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], -30 * progress, rotate);
+                    }
+                    for (int j = 0; j < 2; j++) {
+                        poseStack.pushPose();
+                        if (j == 0) poseStack.mulPose(Axis.ZP.rotationDegrees(0.0F));
+                        else poseStack.mulPose(Axis.ZP.rotationDegrees(45.0F));
+                        poseStack.scale(0.75f, 0.75f, 0.75f);
+                        for (int i = 0; i < 5; i++) {
+                            RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer3,
+                                    COLOR2.x(), COLOR2.y(), COLOR2.z(), sparkleAlpha, 32 * SwordBeam.SCALE, 32 * SwordBeam.SCALE, 0f, 0f, 0.03f + dz[x]);
+                        }
+                        poseStack.popPose();
+                    }
+                    poseStack.popPose();
+                }
+                poseStack.popPose();
+
+                //闪烁(内层)
+                poseStack.pushPose();
+                RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], 90, SwordBeam.DIST * 2f);
+                RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], 0, rotate);
+                for (int j = 0; j < 2; j++) {
+                    poseStack.pushPose();
+                    if (j == 0) poseStack.mulPose(Axis.ZP.rotationDegrees(0.0F));
+                    else poseStack.mulPose(Axis.ZP.rotationDegrees(45.0F));
+                    poseStack.scale(1.0f, 1.0f, 1.0f);
+                    for (int i = 0; i < 5; i++) {
+                        RenderUtil.renderQuad(poseStack.last().pose(), vertexConsumer3,
+                                COLOR2.x(), COLOR2.y(), COLOR2.z(), sparkleAlpha, 32 * SwordBeam.SCALE, 32 * SwordBeam.SCALE, 0f, 0f, 0.03f + dz[x]);
+                    }
+                    poseStack.popPose();
+                }
+                poseStack.popPose();
+
             }
-            poseStack.popPose();
 
             poseStack.popPose();
         }

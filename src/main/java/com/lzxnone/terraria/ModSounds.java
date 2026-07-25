@@ -15,6 +15,10 @@ public class ModSounds {
             SOUND_EVENTS.register("beam",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "beam")));
+    public static final Supplier<SoundEvent> BEAM2 =
+            SOUND_EVENTS.register("beam2",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "beam2")));
     public static final Supplier<SoundEvent> MAX_MANA =
             SOUND_EVENTS.register("max_mana",
                     () -> SoundEvent.createVariableRangeEvent(
