@@ -39,6 +39,7 @@
   "enchantment.lzxnoneterraria.mana_gathering_curse": "Mana Gathering Curse",
   "enchantment.lzxnoneterraria.arcane_amplification": "Arcane Amplification",
   "enchantment.lzxnoneterraria.summon_amplification": "Summon Amplification",
+  "enchantment.lzxnoneterraria.barren_land": "Barren Land",
 
   "death.attack.lzxnoneterraria.player_normal": "%1$s was slain by %2$s",
   "death.attack.lzxnoneterraria.player_normal.item": "%1$s was slain by %2$s using %3$s",
@@ -71,9 +72,12 @@
   "key.lzxnoneterraria.kill_mode": "Kill Mode",
   "key.lzxnoneterraria.clear_summon": "Clear Selected Summons",
   "key.lzxnoneterraria.clear_all_summons": "Clear All Summons",
+  "key.lzxnoneterraria.toggle_summon_free_targeting": "Toggle Summon Free Targeting",
   "message.lzxnoneterraria.current_summons": "Current summons %s/%s",
   "message.lzxnoneterraria.clear_all_summons": "Cleared all summons",
   "message.lzxnoneterraria.clear_summon": "Cleared %s",
+  "message.lzxnoneterraria.summon_free_targeting_enabled": "Summon free targeting : enabled",
+  "message.lzxnoneterraria.summon_free_targeting_disabled": "Summon free targeting : disabled",
 
   "lzxnoneterraria.configuration.title": "LzxnoneTerraria Config",
   "lzxnoneterraria.configuration.nav_weapon": "Weapon",

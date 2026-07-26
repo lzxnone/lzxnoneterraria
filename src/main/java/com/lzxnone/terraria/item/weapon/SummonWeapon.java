@@ -6,6 +6,7 @@ import com.lzxnone.terraria.effect.SummonEffect;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -76,7 +77,8 @@ public class SummonWeapon extends Weapon {
         summons.add(summon.getUUID());
         player.setData(ModAttachments.SUMMON_WEAPON_SUMMONS, summons);
         player.displayClientMessage(
-            Component.translatable("message.lzxnoneterraria.current_summons", summons.size(), maxSummonCount),
+            Component.translatable("message.lzxnoneterraria.current_summons", summons.size(), maxSummonCount)
+                .withStyle(summons.size() < maxSummonCount ? ChatFormatting.GREEN : ChatFormatting.RED),
             true
         );
     }

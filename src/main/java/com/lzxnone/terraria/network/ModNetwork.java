@@ -43,6 +43,11 @@ public class ModNetwork {
                 ClearSummonPayload.CODEC,
                 ClearSummonHandler::handle
         );
+        registrar.playToServer(
+                ToggleSummonFreeTargetingPayload.TYPE,
+                ToggleSummonFreeTargetingPayload.CODEC,
+                ToggleSummonFreeTargetingHandler::handle
+        );
         registrar.playToClient(
                 ScreenShakePayload.TYPE,
                 ScreenShakePayload.CODEC,

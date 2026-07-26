@@ -12,6 +12,7 @@ import com.lzxnone.terraria.item.weapon.melee.Zenith;
 import com.lzxnone.terraria.network.payload.ClearSummonPayload;
 import com.lzxnone.terraria.network.payload.DevilsDevastationKillModePayload;
 import com.lzxnone.terraria.network.payload.FirstFractalScrollPayload;
+import com.lzxnone.terraria.network.payload.ToggleSummonFreeTargetingPayload;
 import com.lzxnone.terraria.network.payload.ZenithScrollPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -124,6 +125,9 @@ public class InputHandler {
         }
         while(ModKeyBindings.CLEAR_ALL_SUMMONS.consumeClick()) {
             PacketDistributor.sendToServer(new ClearSummonPayload(""));
+        }
+        while(ModKeyBindings.TOGGLE_SUMMON_FREE_TARGETING.consumeClick()) {
+            PacketDistributor.sendToServer(new ToggleSummonFreeTargetingPayload(true));
         }
     }
 }

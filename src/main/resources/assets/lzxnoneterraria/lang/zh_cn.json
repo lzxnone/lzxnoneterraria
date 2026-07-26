@@ -39,6 +39,7 @@
   "enchantment.lzxnoneterraria.mana_gathering_curse": "聚魔诅咒",
   "enchantment.lzxnoneterraria.arcane_amplification": "奥术增幅",
   "enchantment.lzxnoneterraria.summon_amplification": "召唤增幅",
+  "enchantment.lzxnoneterraria.barren_land": "寸草不生",
 
   "death.attack.lzxnoneterraria.player_normal": "%1$s 被 %2$s 击杀",
   "death.attack.lzxnoneterraria.player_normal.item": "%1$s 被 %2$s 用 %3$s 击杀",
@@ -70,9 +71,12 @@
   "key.lzxnoneterraria.kill_mode": "进入杀戮模式",
   "key.lzxnoneterraria.clear_summon": "清除指定召唤物",
   "key.lzxnoneterraria.clear_all_summons": "清除所有召唤物",
+  "key.lzxnoneterraria.toggle_summon_free_targeting": "开关召唤物自由寻敌",
   "message.lzxnoneterraria.current_summons": "当前召唤物 %s/%s",
   "message.lzxnoneterraria.clear_all_summons": "已清除所有召唤物",
   "message.lzxnoneterraria.clear_summon": "已清除%s",
+  "message.lzxnoneterraria.summon_free_targeting_enabled": "召唤物自由寻敌 : 开启",
+  "message.lzxnoneterraria.summon_free_targeting_disabled": "召唤物自由寻敌 : 关闭",
 
   "lzxnoneterraria.configuration.title": "LzxnoneTerraria 配置",
   "lzxnoneterraria.configuration.nav_weapon": "武器",

@@ -5,6 +5,7 @@ import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.weapon.SummonWeapon;
 import com.lzxnone.terraria.network.payload.ClearSummonPayload;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -40,13 +41,20 @@ public class ClearSummonHandler {
 
             player.setData(ModAttachments.SUMMON_WEAPON_SUMMONS, remainingSummons);
             player.displayClientMessage(
-                clearAll
-                    ? Component.translatable("message.lzxnoneterraria.clear_all_summons")
-                    : Component.translatable("message.lzxnoneterraria.clear_summon", getSummonName(id)),
+                getClearMessage(clearAll, id),
                 true
             );
         });
     };
+
+    private static Component getClearMessage(boolean clearAll, String id) {
+        if(clearAll) {
+            return Component.translatable("message.lzxnoneterraria.clear_all_summons")
+                .withStyle(ChatFormatting.GREEN);
+        }
+        return Component.translatable("message.lzxnoneterraria.clear_summon", getSummonName(id).copy().withStyle(ChatFormatting.RED))
+            .withStyle(ChatFormatting.GREEN);
+    }
 
     private static Component getSummonName(String id) {
         if(StaticSummonBehaviors.TERRAPRISMA.equals(id)) {

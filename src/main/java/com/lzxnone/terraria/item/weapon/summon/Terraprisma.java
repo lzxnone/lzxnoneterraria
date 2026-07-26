@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.item.weapon.summon;
 
 import com.lzxnone.terraria.attachment.ModAttachments;
+import com.lzxnone.terraria.enchantment.ModEnchantments;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
@@ -14,9 +15,9 @@ import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
-import com.mojang.math.Axis;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -28,7 +29,10 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -478,10 +482,16 @@ public class Terraprisma extends SummonWeapon {
             return playerAttacker;
         }
 
+        if(!player.getData(ModAttachments.SUMMON_FREE_TARGETING)) {
+            return null;
+        }
+
+        boolean ignoreBlockOcclusion = hasBarrenLand(summon, player);
         List<Monster> monsters = summon.level().getEntitiesOfClass(
             Monster.class,
             AABB.ofSize(summon.position(), getTargetRange() * 2.0D, getTargetRange() * 2.0D, getTargetRange() * 2.0D),
-            FilterUtil.createMonsterFilter(player)
+            monster -> FilterUtil.createMonsterFilter(player).test(monster)
+                && (ignoreBlockOcclusion || hasFreeTargetLineOfSight(player, monster))
         );
         monsters.sort(Comparator.comparingDouble(monster -> monster.distanceToSqr(summon.position())));
         if(!monsters.isEmpty()) {
@@ -496,6 +506,29 @@ public class Terraprisma extends SummonWeapon {
             && target.level() == summon.level()
             && target.distanceToSqr(summon) <= getTargetRange() * getTargetRange()
             && FilterUtil.createLivingTargetFilter(summon, player).test(target);
+    }
+
+    private static boolean hasFreeTargetLineOfSight(Player player, LivingEntity target) {
+        BlockHitResult hitResult = player.level().clip(new ClipContext(
+            player.getEyePosition(),
+            target.getEyePosition(),
+            ClipContext.Block.COLLIDER,
+            ClipContext.Fluid.NONE,
+            player
+        ));
+        return hitResult.getType() == HitResult.Type.MISS;
+    }
+
+    private static boolean hasBarrenLand(StaticSummon summon, Player player) {
+        ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
+        if(sourceStack.isEmpty()) sourceStack = player.getWeaponItem();
+        if(sourceStack.isEmpty()) return false;
+
+        return player.registryAccess()
+            .lookupOrThrow(Registries.ENCHANTMENT)
+            .get(ModEnchantments.BARREN_LAND)
+            .map(sourceStack::getEnchantmentLevel)
+            .orElse(0) > 0;
     }
 
     private static Entity getTarget(StaticSummon summon) {

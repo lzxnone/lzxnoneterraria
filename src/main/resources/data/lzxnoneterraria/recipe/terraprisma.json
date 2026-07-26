@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "ECE",
+    "BAB",
+    "EDE"
+  ],
+  "key": {
+    "A": { "item": "minecraft:terragrim" },
+    "B": { "item": "minecraft:end_crystal" },
+    "C": { "item": "minecraft:conduit" },
+    "D": { "item": "minecraft:heavy_core" },
+    "E": { "item": "minecraft:netherite_block" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:terraprisma",
+    "count": 1
+  }
+}
