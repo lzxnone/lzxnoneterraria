@@ -1,6 +1,7 @@
 {
   "itemGroup.lzxnoneterraria.melee": "泰拉瑞亚 近战武器",
   "itemGroup.lzxnoneterraria.magic": "泰拉瑞亚 魔法武器",
+  "itemGroup.lzxnoneterraria.summon": "泰拉瑞亚 召唤武器",
   "itemGroup.lzxnoneterraria.block": "泰拉瑞亚 方块",
   "itemGroup.lzxnoneterraria.calamity_melee": "泰拉瑞亚灾厄 近战武器",
 
@@ -30,6 +31,7 @@
   "item.lzxnoneterraria.mace": "链锤",
   "item.lzxnoneterraria.devils_devastation": "破灭魔王剑",
   "item.lzxnoneterraria.last_prism": "终极棱镜",
+  "item.lzxnoneterraria.terraprisma": "泰拉棱镜",
 
   "enchantment.lzxnoneterraria.mana_leak": "魔力泄漏",
   "enchantment.lzxnoneterraria.mana_efficiency": "魔力效率",
@@ -57,9 +59,12 @@
   "effect.lzxnoneterraria.kill_mode": "杀戮模式",
   "effect.lzxnoneterraria.kill_mode_cooldown": "杀戮模式 冷却",
   "effect.lzxnoneterraria.demonic_flames": "恶魔之焰",
+  "effect.lzxnoneterraria.summon": "召唤",
 
   "key.categories.lzxnoneterraria": "lzxnoneterraria",
   "key.lzxnoneterraria.kill_mode": "进入杀戮模式",
+  "key.lzxnoneterraria.clear_summon": "清除指定召唤物",
+  "key.lzxnoneterraria.clear_all_summons": "清除所有召唤物",
 
   "lzxnoneterraria.configuration.title": "LzxnoneTerraria 配置",
   "lzxnoneterraria.configuration.nav_weapon": "武器",

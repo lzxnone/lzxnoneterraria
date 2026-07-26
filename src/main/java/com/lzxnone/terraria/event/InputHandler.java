@@ -4,10 +4,12 @@ import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModKeyBindings;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.item.weapon.SummonWeapon;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.item.weapon.melee.FirstFractal;
 import com.lzxnone.terraria.item.weapon.melee.TrueCopperShortsword;
 import com.lzxnone.terraria.item.weapon.melee.Zenith;
+import com.lzxnone.terraria.network.payload.ClearSummonPayload;
 import com.lzxnone.terraria.network.payload.DevilsDevastationKillModePayload;
 import com.lzxnone.terraria.network.payload.FirstFractalScrollPayload;
 import com.lzxnone.terraria.network.payload.ZenithScrollPayload;
@@ -109,6 +111,19 @@ public class InputHandler {
                     }
                 }
             }
+        }
+        while(ModKeyBindings.CLEAR_SUMMON.consumeClick()) {
+            Minecraft mc = Minecraft.getInstance();
+            if(mc.player != null) {
+                Player player = mc.player;
+                ItemStack stack = player.getMainHandItem();
+                if(stack.getItem() instanceof SummonWeapon weapon) {
+                    PacketDistributor.sendToServer(new ClearSummonPayload(weapon.getSummonId()));
+                }
+            }
+        }
+        while(ModKeyBindings.CLEAR_ALL_SUMMONS.consumeClick()) {
+            PacketDistributor.sendToServer(new ClearSummonPayload(""));
         }
     }
 }

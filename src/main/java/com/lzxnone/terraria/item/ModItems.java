@@ -5,6 +5,7 @@ import com.lzxnone.terraria.item.projectile.*;
 import com.lzxnone.terraria.item.projectile.first_fractal.*;
 import com.lzxnone.terraria.item.weapon.magic.*;
 import com.lzxnone.terraria.item.weapon.melee.*;
+import com.lzxnone.terraria.item.weapon.summon.*;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -41,6 +42,9 @@ public class ModItems {
     //魔法武器
     public static final DeferredItem<Item> LAST_PRISM = ITEMS.register("last_prism", LastPrism::new);
 
+    //召唤武器
+    public static final DeferredItem<Item> TERRAPRISMA = ITEMS.register("terraprisma", Terraprisma::new);
+
     //弹射物
     public static final DeferredItem<Item> ENCHANTED_SWORD_BEAM = ITEMS.register("enchanted_sword_beam", EnchantedSwordBeam::new);
     public static final DeferredItem<Item> STARFURY_STAR = ITEMS.register("starfury_star", StarfuryStar::new);
@@ -66,4 +70,5 @@ public class ModItems {
     public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE13 = ITEMS.register("first_fractal_projectile13", FirstFractalProjectile13::new);
     public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE14 = ITEMS.register("first_fractal_projectile14", FirstFractalProjectile14::new);
     public static final DeferredItem<Item> MACE_PROJECTILE = ITEMS.register("mace_projectile", MaceProjectile::new);
+    public static final DeferredItem<Item> TERRAPRISMA_SUMMON = ITEMS.register("terraprisma_summon", TerraprismaSummon::new);
 }

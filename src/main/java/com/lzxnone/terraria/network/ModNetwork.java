@@ -38,5 +38,10 @@ public class ModNetwork {
                 DevilsDevastationLeftClickPayload.CODEC,
                 DevilsDevastationLeftClickHandler::handle
         );
+        registrar.playToServer(
+                ClearSummonPayload.TYPE,
+                ClearSummonPayload.CODEC,
+                ClearSummonHandler::handle
+        );
     }
 }

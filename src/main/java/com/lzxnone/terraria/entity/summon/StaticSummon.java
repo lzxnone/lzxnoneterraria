@@ -9,7 +9,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -70,6 +69,10 @@ public class StaticSummon extends Entity {
             SynchedEntityData.defineId(StaticSummon.class, EntityDataSerializers.COMPOUND_TAG);
 
     public LinkedList<Vec3> trailPositions = new LinkedList<>();
+    public LinkedList<AfterimageFrame> afterimageFrames = new LinkedList<>();
+
+    public record AfterimageFrame(Vec3 position, float xRot, float yRot, float r, float g, float b) {
+    }
 
     private Entity owner = null;
 
@@ -135,7 +138,7 @@ public class StaticSummon extends Entity {
         super.tick();
         this.owner = getOwner();
         StaticSummonBehaviors.getBehavior(this.entityData.get(BEHAVIOR)).tick(this);
-        this.move(MoverType.SELF, this.getDeltaMovement());
+        this.setPos(this.position().add(this.getDeltaMovement()));
     }
 
     @Override

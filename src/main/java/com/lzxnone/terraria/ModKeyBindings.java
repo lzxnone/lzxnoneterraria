@@ -6,6 +6,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.settings.KeyConflictContext;
+import net.neoforged.neoforge.client.settings.KeyModifier;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = LzxnoneTerraria.MODID, value = Dist.CLIENT)
@@ -17,8 +19,28 @@ public class ModKeyBindings {
         "key.categories.lzxnoneterraria"
     );
 
+    public static final KeyMapping CLEAR_SUMMON = new KeyMapping(
+        "key.lzxnoneterraria.clear_summon",
+        KeyConflictContext.IN_GAME,
+        KeyModifier.NONE,
+        InputConstants.Type.KEYSYM,
+        GLFW.GLFW_KEY_X,
+        "key.categories.lzxnoneterraria"
+    );
+
+    public static final KeyMapping CLEAR_ALL_SUMMONS = new KeyMapping(
+        "key.lzxnoneterraria.clear_all_summons",
+        KeyConflictContext.IN_GAME,
+        KeyModifier.CONTROL,
+        InputConstants.Type.KEYSYM,
+        GLFW.GLFW_KEY_X,
+        "key.categories.lzxnoneterraria"
+    );
+
     @SubscribeEvent
     public static void registerKeys(RegisterKeyMappingsEvent event) {
         event.register(KILL_MODE);
+        event.register(CLEAR_SUMMON);
+        event.register(CLEAR_ALL_SUMMONS);
     }
 }

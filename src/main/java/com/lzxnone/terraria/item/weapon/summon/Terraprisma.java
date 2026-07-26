@@ -1,0 +1,615 @@
+package com.lzxnone.terraria.item.weapon.summon;
+
+import com.lzxnone.terraria.attachment.ModAttachments;
+import com.lzxnone.terraria.entity.ModEntities;
+import com.lzxnone.terraria.entity.ModRenderTypes;
+import com.lzxnone.terraria.entity.PureColorVertexConsumer;
+import com.lzxnone.terraria.entity.TintedVertexConsumer;
+import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
+import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
+import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.item.weapon.SummonWeapon;
+import com.lzxnone.terraria.utils.DamageUtil;
+import com.lzxnone.terraria.utils.FilterUtil;
+import com.lzxnone.terraria.utils.MathUtil;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
+import org.checkerframework.checker.units.qual.A;
+import org.checkerframework.checker.units.qual.C;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
+
+public class Terraprisma extends SummonWeapon {
+    private static final double TARGET_RANGE = 32.0D;
+
+    private static final double FOLLOW_SPEED = 4.0D;
+
+    public static final double DASH_PRE_SPEED = -0.75;
+    public static final double DASH_PRE_FRICTION = 0.78;
+
+    public static final double DASH_SPEED = 1.6;
+    public static final int DASH_MORE_TIME = 1;
+    public static final double DASH_FRICTION = 0.72;
+
+    public static final float ROTATION_LERP = 0.25f;
+    public static final float ROTATION_LERP2 = 0.5f;
+
+    public static final double ROTATE_SPEED = 1.0;
+
+    public static final float DAMAGE = 20;
+    public static final float TRAIL_ALPHA = 1.0f;
+    public static final int TRAIL_MAX_LENGTH = 20;
+    public static final float AFTERIMAGE_ALPHA = 0.5f;
+    public static final int AFTERIMAGE_MAX_LENGTH = 3;
+    public static final float AFTERIMAGE_SCALE = 0.92f;
+
+    public enum State {
+        IDLE,
+        FIGHT,
+        DASH_PRE,
+        DASH,
+        ROTATE
+    };
+
+    public Terraprisma() {
+        super(Tiers.NETHERITE, new Item.Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC));
+    }
+
+    public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
+        public static final ResourceLocation RES = ResourceLocation.parse("lzxnoneterraria:textures/vfx/sword_trail.png");
+        @Override
+        public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+            if(!(entity instanceof StaticSummon summon) || summon.getOwner() == null) return;
+            ItemStack stack = summon.getEntityData().get(StaticSummon.ITEM);
+            if(stack.isEmpty()) return;
+
+            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+            int idx = customData.contains("idx") ? customData.getInt("idx") : 0;
+            int state = customData.contains("state") ? customData.getInt("state") : 0;
+            float[] color = computeCrystalColor(summon.tickCount + partialTick, idx);
+            Vec3 currentPos = summon.position();
+
+            if(state == State.DASH_PRE.ordinal() || state == State.DASH.ordinal()) {
+                for(int i = summon.afterimageFrames.size() - 1; i >= 0; i--) {
+                    StaticSummon.AfterimageFrame frame = summon.afterimageFrames.get(i);
+                    float alpha = AFTERIMAGE_ALPHA * (1.0f - (float)i / AFTERIMAGE_MAX_LENGTH);
+                    Vec3 offset = frame.position().subtract(currentPos);
+
+                    poseStack.pushPose();
+                    poseStack.translate(offset.x, offset.y, offset.z);
+
+                    poseStack.mulPose(Axis.YP.rotationDegrees(-frame.yRot()));
+                    poseStack.mulPose(Axis.XP.rotationDegrees(frame.xRot()));
+
+                    poseStack.mulPose(Axis.ZP.rotationDegrees(90));
+                    poseStack.mulPose(Axis.YP.rotationDegrees(90));
+
+                    poseStack.scale(
+                        summon.getEntityData().get(StaticSummon.SCALE_X) * AFTERIMAGE_SCALE,
+                        summon.getEntityData().get(StaticSummon.SCALE_Y) * AFTERIMAGE_SCALE,
+                        summon.getEntityData().get(StaticSummon.SCALE_Z) * AFTERIMAGE_SCALE
+                    );
+
+                    Minecraft.getInstance().getItemRenderer().renderStatic(
+                        stack,
+                        ItemDisplayContext.NONE,
+                        LightTexture.FULL_BRIGHT,
+                        OverlayTexture.NO_OVERLAY,
+                        poseStack,
+                        renderType -> {
+                            VertexConsumer vertexConsumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(InventoryMenu.BLOCK_ATLAS));
+                            return new PureColorVertexConsumer(vertexConsumer,
+                                frame.r(),
+                                frame.g(),
+                                frame.b(),
+                                alpha);
+                        },
+                        entity.level(),
+                        0
+                    );
+                    poseStack.popPose();
+                }
+            }
+
+            poseStack.pushPose();
+
+            poseStack.mulPose(Axis.YP.rotationDegrees(-Mth.lerp(partialTick, summon.yRotO, summon.getYRot())));
+            poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTick, summon.xRotO, summon.getXRot())));
+
+            poseStack.mulPose(Axis.ZP.rotationDegrees(90));
+            poseStack.mulPose(Axis.YP.rotationDegrees(90));
+
+            poseStack.scale(
+                summon.getEntityData().get(StaticSummon.SCALE_X),
+                summon.getEntityData().get(StaticSummon.SCALE_Y),
+                summon.getEntityData().get(StaticSummon.SCALE_Z)
+            );
+
+            for(int i = 0;i < 3;i++) {
+                Minecraft.getInstance().getItemRenderer().renderStatic(
+                    stack,
+                    ItemDisplayContext.NONE,
+                    LightTexture.FULL_BRIGHT,
+                    OverlayTexture.NO_OVERLAY,
+                    poseStack,
+                    renderType -> {
+                        VertexConsumer vertexConsumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(InventoryMenu.BLOCK_ATLAS));
+                        return new TintedVertexConsumer(vertexConsumer,
+                            color[0],
+                            color[1],
+                            color[2],
+                            summon.getEntityData().get(StaticSummon.COLOR_A));
+                    },
+                    entity.level(),
+                    0
+                );
+            }
+            poseStack.popPose();
+
+            if(state == State.ROTATE.ordinal()) {
+                VertexConsumer vertexConsumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES));
+                float mainAlpha = TRAIL_ALPHA;
+                int quadCount = summon.trailPositions.size() / 2 - 1;
+                for(int j = 0; j < 3; j++) {
+                    for(int i = 0; i < quadCount; i++) {
+                        Vec3 currentPoint1 = summon.trailPositions.get(i * 2);
+                        Vec3 currentPoint2 = summon.trailPositions.get(i * 2 + 1);
+                        Vec3 nextPoint1 = summon.trailPositions.get(i * 2 + 3);
+                        Vec3 nextPoint2 = summon.trailPositions.get(i * 2 + 2);
+
+                        double x1 = currentPoint1.x - currentPos.x;
+                        double y1 = currentPoint1.y - currentPos.y;
+                        double z1 = currentPoint1.z - currentPos.z;
+
+                        double x2 = currentPoint2.x - currentPos.x;
+                        double y2 = currentPoint2.y - currentPos.y;
+                        double z2 = currentPoint2.z - currentPos.z;
+
+                        double x3 = nextPoint1.x - currentPos.x;
+                        double y3 = nextPoint1.y - currentPos.y;
+                        double z3 = nextPoint1.z - currentPos.z;
+
+                        double x4 = nextPoint2.x - currentPos.x;
+                        double y4 = nextPoint2.y - currentPos.y;
+                        double z4 = nextPoint2.z - currentPos.z;
+
+                        float radio1 = (float) i / quadCount;
+                        float radio2 = (float) (i + 1) / quadCount;
+
+                        vertexConsumer.addVertex(poseStack.last().pose(), (float)x1, (float)y1, (float)z1)
+                            .setColor(color[0], color[1], color[2], mainAlpha).setUv(radio1, 0.0f)
+                            .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
+                        vertexConsumer.addVertex(poseStack.last().pose(), (float)x2, (float)y2, (float)z2)
+                            .setColor(color[0], color[1], color[2], 0).setUv(radio1, 1.0f)
+                            .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
+                        vertexConsumer.addVertex(poseStack.last().pose(), (float)x3, (float)y3, (float)z3)
+                            .setColor(color[0], color[1], color[2], 0).setUv(radio2, 1.0f)
+                            .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
+                        vertexConsumer.addVertex(poseStack.last().pose(), (float)x4, (float)y4, (float)z4)
+                            .setColor(color[0], color[1], color[2], mainAlpha).setUv(radio2, 0.0f)
+                            .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void tick(StaticSummon summon) {
+            this.checkBeforeTick(summon);
+            if(summon.getOwner() instanceof Player player && !summon.level().isClientSide()) {
+                onState(summon, player);
+            }
+            if(summon.level().isClientSide()) {
+                CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+                int state = customData.contains("state") ? customData.getInt("state") : 0;
+                if(state == State.DASH_PRE.ordinal() || state == State.DASH.ordinal()) {
+                    int idx = customData.contains("idx") ? customData.getInt("idx") : 0;
+                    float[] color = computeCrystalColor(summon.tickCount, idx);
+                    summon.afterimageFrames.addFirst(new StaticSummon.AfterimageFrame(
+                        summon.position(),
+                        summon.getXRot(),
+                        summon.getYRot(),
+                        color[0],
+                        color[1],
+                        color[2]
+                    ));
+                    while(summon.afterimageFrames.size() > AFTERIMAGE_MAX_LENGTH) summon.afterimageFrames.removeLast();
+                }else {
+                    summon.afterimageFrames.clear();
+                }
+
+                if(state == State.ROTATE.ordinal()) {
+                    Vector3f[] dirs = MathUtil.computeCoordinateSystem(summon);
+                    Vec3 dir = MathUtil.toVec3(dirs[0]);
+                    summon.trailPositions.addFirst(summon.position().add(dir.scale(-1)));
+                    summon.trailPositions.addFirst(summon.position().add(dir.scale(1)));
+                    while(summon.trailPositions.size() > TRAIL_MAX_LENGTH) summon.trailPositions.removeLast();
+                }else {
+                    summon.trailPositions.clear();
+                }
+            }
+        }
+    };
+
+    public static void onState(StaticSummon summon, Player player) {
+        CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+        int state = customData.contains("state") ? customData.getInt("state") : 0;
+
+        if(state == State.IDLE.ordinal()) {
+            updateTargetData(summon, player);
+            tickFollowOwner(summon);
+        }else if(state == State.FIGHT.ordinal()) {
+            updateTargetData(summon, player);
+        }else if(state == State.DASH_PRE.ordinal()) {
+            Entity target = getTarget(summon);
+            if(target != null) {
+                Vec3 distV = target.getBoundingBox().getCenter().subtract(summon.position());
+                Vec3 targetDir = distV.normalize();
+                float[] targetXYRot = MathUtil.computeXYRot(targetDir.toVector3f());
+                summon.setXRot(Mth.rotLerp(ROTATION_LERP, summon.getXRot(), targetXYRot[0]));
+                summon.setYRot(Mth.rotLerp(ROTATION_LERP, summon.getYRot(), targetXYRot[1]));
+            }
+            summon.setDeltaMovement(summon.getDeltaMovement().scale(DASH_PRE_FRICTION));
+        }else if(state == State.DASH.ordinal()) {
+            int dashTime = customData.contains("dashTime") ? customData.getInt("dashTime") : 0;
+            customData.putInt("dashTime", dashTime - 1);
+            if(dashTime > 0) {
+                summon.setDeltaMovement(summon.getLookAngle().normalize().scale(DASH_SPEED));
+            }else {
+                summon.setDeltaMovement(summon.getDeltaMovement().scale(DASH_FRICTION));
+            }
+            List<Entity> targets = summon.level().getEntitiesOfClass(
+                Entity.class,
+                summon.getBoundingBox(),
+                FilterUtil.createTargetFilter(summon, player)
+            );
+            for(Entity target : targets) {
+                if(DamageUtil.normalAttack(summon, target, DAMAGE, 1.0f)) target.invulnerableTime = 15;
+            }
+        }else if(state == State.ROTATE.ordinal()) {
+            int time = customData.contains("rotateTime") ? customData.getInt("rotateTime") : 0;
+
+            Vec3 center = new Vec3(
+                customData.getFloat("centerX"),
+                customData.getFloat("centerY"),
+                customData.getFloat("centerZ")
+            );
+
+            Vec3 axisX = new Vec3(
+                customData.getFloat("axisX_X"),
+                customData.getFloat("axisX_Y"),
+                customData.getFloat("axisX_Z")
+            ).normalize();
+
+            Vec3 axisY = new Vec3(
+                customData.getFloat("axisY_X"),
+                customData.getFloat("axisY_Y"),
+                customData.getFloat("axisY_Z")
+            ).normalize();
+
+            double a = customData.getDouble("a");
+            double b = customData.getDouble("b");
+            double w = customData.getDouble("w");
+
+            double theta = Math.PI - w * time;
+
+            Vec3 nextPos = center
+                .add(axisX.scale(Math.cos(theta) * a))
+                .add(axisY.scale(Math.sin(theta) * b));
+
+            summon.setDeltaMovement(nextPos.subtract(summon.position()));
+
+            Vec3 swordDir = nextPos.subtract(center);
+            if(swordDir.lengthSqr() > 0.0001) {
+                float[] xyRot = MathUtil.computeXYRot(swordDir.toVector3f());
+                summon.setXRot(Mth.rotLerp(ROTATION_LERP2, summon.getXRot(), xyRot[0]));
+                summon.setYRot(Mth.rotLerp(ROTATION_LERP2, summon.getYRot(), xyRot[1]));
+            }
+
+            AABB hitBox = new AABB(summon.position(), nextPos).inflate(0.8);
+            List<Entity> targets = summon.level().getEntitiesOfClass(
+                Entity.class,
+                hitBox,
+                FilterUtil.createTargetFilter(summon, player)
+            );
+
+            for(Entity target : targets) {
+                if(DamageUtil.normalAttack(summon, target, DAMAGE, 1.0f)) target.invulnerableTime = 15;
+            }
+
+            customData.putInt("rotateTime", time + 1);
+            summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+        }
+
+        int nextState = getNextState(summon, state);
+        if(nextState != state) changeState(summon, state, nextState);
+    }
+
+    public static int getNextState(StaticSummon summon, int state) {
+        if(state == State.IDLE.ordinal()) {
+            Entity target = getTarget(summon);
+            if(target != null) return State.FIGHT.ordinal();
+            return State.IDLE.ordinal();
+        }else if(state == State.FIGHT.ordinal()) {
+            Entity target = getTarget(summon);
+            if(target != null) {
+                Vec3 distV = target.getBoundingBox().getCenter().subtract(summon.position());
+                double dist = distV.length();
+                if (dist < 8) {
+                    if (summon.getRandom().nextInt(2) == 0) return State.DASH_PRE.ordinal();
+                    else return State.ROTATE.ordinal();
+                } else {
+                    return State.DASH_PRE.ordinal();
+                }
+            }
+            return State.IDLE.ordinal();
+        }else if(state == State.DASH_PRE.ordinal()) {
+            Entity target = getTarget(summon);
+            if(target != null) {
+                Vec3 targetDir = target.getBoundingBox().getCenter().subtract(summon.position()).normalize();
+                double speed = summon.getDeltaMovement().length();
+                if(speed < 0.05 && Math.abs(summon.getLookAngle().dot(targetDir) - 1) < 0.001) {
+                    return State.DASH.ordinal();
+                }
+                return State.DASH_PRE.ordinal();
+            }
+            return State.FIGHT.ordinal();
+        }else if(state == State.DASH.ordinal()) {
+            double speed = summon.getDeltaMovement().length();
+            if(speed < 0.05) {
+                return State.FIGHT.ordinal();
+            }
+            return State.DASH.ordinal();
+        }else if(state == State.ROTATE.ordinal()) {
+            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+            int time = customData.contains("rotateTime") ? customData.getInt("rotateTime") : 0;
+            int duration = customData.getInt("duration");
+            if(time >= duration) {
+                return State.FIGHT.ordinal();
+            }
+            return State.ROTATE.ordinal();
+        }
+        return State.IDLE.ordinal();
+    }
+
+    public static void changeState(StaticSummon summon, int from, int to) {
+        CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA).copy();
+        customData.putInt("state", to);
+        if(to == State.DASH_PRE.ordinal()) {
+            Entity target = getTarget(summon);
+            if(target != null) {
+                summon.setDeltaMovement(target.getBoundingBox().getCenter().subtract(summon.position()).normalize().scale(DASH_PRE_SPEED));
+            }
+        }else if(to == State.DASH.ordinal()) {
+            Entity target = getTarget(summon);
+            if(target != null) {
+                summon.setDeltaMovement(Vec3.ZERO);
+                Vec3 distV = target.getBoundingBox().getCenter().subtract(summon.position());
+                double dist = distV.length();
+                int dashTime = (int) (dist / DASH_SPEED) + DASH_MORE_TIME;
+                customData.putInt("dashTime", dashTime);
+            }
+        }else if(to == State.ROTATE.ordinal()) {
+            Entity target = getTarget(summon);
+            if(target != null) {
+                Vec3 start = summon.position();
+                Vec3 end = target.getBoundingBox().getCenter();
+                Vector3f center = start.add(end).scale(0.5).toVector3f();
+                Vec3 rotateDir = end.subtract(start);
+                if(rotateDir.lengthSqr() < 1.0E-4D) {
+                    rotateDir = summon.getLookAngle();
+                }
+                if(rotateDir.lengthSqr() < 1.0E-4D && summon.getOwner() != null) {
+                    rotateDir = summon.getOwner().getLookAngle();
+                }
+                if(rotateDir.lengthSqr() < 1.0E-4D) {
+                    rotateDir = new Vec3(0.0D, 0.0D, 1.0D);
+                }
+                Vector3f[] dirs = MathUtil.computeCoordinateSystem(rotateDir.toVector3f(), summon.getYRot());
+                int rotationAngle = (int) ((Math.random() * 2 - 1) * 60);
+                dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], rotationAngle);
+                double a = end.subtract(start).length() / 2;
+                double b = Math.min(Math.random() * 4, a) + 1;
+
+                double h = Math.pow(a - b, 2) / Math.pow(a + b, 2);
+                double circumference = Math.PI * (a + b) * (1 + (3 * h) / (10 + Math.sqrt(4 - 3 * h)));
+                double range = 0.5 + Math.random() * 0.5;
+                double arcLength = circumference * range;
+                int duration = (int)Math.ceil(arcLength / ROTATE_SPEED);
+                duration = Mth.clamp(duration, 8, 18);
+                double w = Math.PI * 2 * range / duration;
+                if(summon.getRandom().nextInt(2) == 0) w = -w;
+
+                customData.putFloat("axisX_X", dirs[0].x);
+                customData.putFloat("axisX_Y", dirs[0].y);
+                customData.putFloat("axisX_Z", dirs[0].z);
+                customData.putFloat("axisY_X", dirs[2].x);
+                customData.putFloat("axisY_Y", dirs[2].y);
+                customData.putFloat("axisY_Z", dirs[2].z);
+                customData.putFloat("centerX", center.x);
+                customData.putFloat("centerY", center.y);
+                customData.putFloat("centerZ", center.z);
+                customData.putDouble("a", a);
+                customData.putDouble("b", b);
+                customData.putInt("duration", duration);
+                customData.putDouble("w", w);
+                customData.putInt("rotateTime", 0);
+            }
+        }
+        summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+    }
+
+    private static void tickFollowOwner(StaticSummon summon) {
+        if(summon.getOwner() == null) return;
+        CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+        int idx = customData.contains("idx") ? customData.getInt("idx") : 0;
+
+        Vector3f[] dirs = MathUtil.computeCoordinateSystem(summon.getOwner());
+
+        Vec3 hDir = new Vec3(dirs[0].x, 0, dirs[0].z).normalize();
+        if(dirs[0].y > 0.999) {
+            hDir = new Vec3(-dirs[1].x, 0, -dirs[1].z);
+        }else if(dirs[0].y < -0.999) {
+            hDir = new Vec3(dirs[1].x, 0, dirs[1].z);
+        }
+
+        //剑的朝向，向下
+        Vector3f tipDir = new Vector3f(0, -1, 0);
+        Vector3f upDir = hDir.toVector3f();
+        Quaternionf rotation = new Quaternionf().fromAxisAngleDeg(dirs[2], (idx + 1) * 10);
+        tipDir.rotate(rotation);
+        upDir.rotate(rotation);
+        float[] targetXYRot = MathUtil.computeXYRot(tipDir, upDir);
+        summon.setXRot(Mth.rotLerp(ROTATION_LERP, summon.getXRot(), targetXYRot[0]));
+        summon.setYRot(Mth.rotLerp(ROTATION_LERP, summon.getYRot(), targetXYRot[1]));
+
+        //剑的位置，基于水平方向
+        Vec3 basePos = summon.getOwner().getBoundingBox().getCenter();
+        Vec3 pos = basePos.add(hDir.scale(-(idx + 1) * 0.25 - 1));
+        Vec3 dist = pos.subtract(summon.position());
+        if(dist.length() > 4.0) {
+            summon.setDeltaMovement(dist.normalize().scale(Math.min(FOLLOW_SPEED, dist.length())));
+        }else {
+            summon.setDeltaMovement(Vec3.ZERO);
+            summon.setPos(pos);
+        }
+    }
+
+    private static void updateTargetData(StaticSummon summon, Player player) {
+        LivingEntity target = findTarget(summon, player);
+        CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA).copy();
+        if(target == null) {
+            customData.remove("target");
+        }else {
+            customData.putUUID("target", target.getUUID());
+        }
+        summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+    }
+
+    private static LivingEntity findTarget(StaticSummon summon, Player player) {
+        LivingEntity playerAttackTarget = player.getLastHurtMob();
+        if(isValidTarget(summon, player, playerAttackTarget)) {
+            return playerAttackTarget;
+        }
+
+        LivingEntity playerAttacker = player.getLastHurtByMob();
+        if(isValidTarget(summon, player, playerAttacker)) {
+            return playerAttacker;
+        }
+
+        List<Monster> monsters = summon.level().getEntitiesOfClass(
+            Monster.class,
+            AABB.ofSize(summon.position(), TARGET_RANGE * 2.0D, TARGET_RANGE * 2.0D, TARGET_RANGE * 2.0D),
+            FilterUtil.createMonsterFilter(player)
+        );
+        monsters.sort(Comparator.comparingDouble(monster -> monster.distanceToSqr(summon.position())));
+        if(!monsters.isEmpty()) {
+            return monsters.getFirst();
+        }
+
+        return null;
+    }
+
+    private static boolean isValidTarget(StaticSummon summon, Player player, LivingEntity target) {
+        return target != null
+            && target.level() == summon.level()
+            && target.distanceToSqr(summon) <= TARGET_RANGE * TARGET_RANGE
+            && FilterUtil.createLivingTargetFilter(summon, player).test(target);
+    }
+
+    private static Entity getTarget(StaticSummon summon) {
+        CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+        if(customData.contains("target") && summon.level() instanceof ServerLevel serverLevel) {
+            Entity target = serverLevel.getEntity(customData.getUUID("target"));
+            if(target != null && target.isAlive()) {
+                return target;
+            }
+        }
+        return null;
+    }
+
+    private static float[] computeCrystalColor(float time, int idx) {
+        float hue = (time * 0.015F + idx * 0.12F) % 1.0F;
+        int rgb = Mth.hsvToRgb(hue, 0.85F, 1.0F);
+        float rainbowR = ((rgb >> 16) & 255) / 255.0F;
+        float rainbowG = ((rgb >> 8) & 255) / 255.0F;
+        float rainbowB = (rgb & 255) / 255.0F;
+        float tint = 0.35F;
+        float pulse = 0.92F + 0.08F * Mth.sin(time * 0.12F + idx * 0.7F);
+
+        return new float[]{
+            (1.0F * (1.0F - tint) + rainbowR * tint) * pulse,
+            (1.0F * (1.0F - tint) + rainbowG * tint) * pulse,
+            (1.0F * (1.0F - tint) + rainbowB * tint) * pulse
+        };
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if(stack.is(ModItems.TERRAPRISMA.get()) && level instanceof ServerLevel serverLevel) {
+            StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), level);
+            summon.setOwner(player);
+            summon.setPos(player.position());
+            summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.TERRAPRISMA);
+            summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
+            summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.TERRAPRISMA_SUMMON.get()));
+            summon.getEntityData().set(StaticSummon.SCALE_X, 2.0f);
+            summon.getEntityData().set(StaticSummon.SCALE_Y, 1.0f);
+            summon.getEntityData().set(StaticSummon.SCALE_Z, 1.0f);
+            summon.getEntityData().set(StaticSummon.LIFETIME, 72000);
+            summon.getEntityData().set(StaticSummon.GLOW, true);
+
+            summon.setNoGravity(true);
+            summon.noPhysics = true;
+
+            SummonWeapon.addFreshSummon(player, summon);
+
+            List<UUID> summons = player.getData(ModAttachments.SUMMON_WEAPON_SUMMONS);
+            int idx = 0;
+            for(UUID uuid : summons) {
+                Entity entity = serverLevel.getEntity(uuid);
+                if(entity instanceof StaticSummon terraSummon && terraSummon.getEntityData().get(StaticSummon.BEHAVIOR).equals(StaticSummonBehaviors.TERRAPRISMA)) {
+                    if(terraSummon.isAlive()) {
+                        CompoundTag customData = terraSummon.getEntityData().get(StaticSummon.CUSTOM_DATA).copy();
+                        customData.putInt("idx", idx);
+                        terraSummon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+                        idx++;
+                    }
+                }
+            }
+        }
+        return InteractionResultHolder.consume(stack);
+    }
+
+    @Override
+    public String getSummonId() {
+        return StaticSummonBehaviors.TERRAPRISMA;
+    }
+}

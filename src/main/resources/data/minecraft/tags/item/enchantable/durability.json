@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "#lzxnoneterraria:melee_weapons",
-    "#lzxnoneterraria:magic_weapons"
+    "#lzxnoneterraria:magic_weapons",
+    "#lzxnoneterraria:summon_weapons"
   ]
 }

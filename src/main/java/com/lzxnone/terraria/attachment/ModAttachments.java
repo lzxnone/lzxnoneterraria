@@ -23,4 +23,8 @@ public class ModAttachments {
 
     public static final Supplier<AttachmentType<Integer>> DEVILS_DEVASTATION_HIT_COUNT =
         ATTACHMENT_TYPES.register("devils_devastation_hit_count", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build());
+
+    public static final Supplier<AttachmentType<List<UUID>>> SUMMON_WEAPON_SUMMONS =
+        ATTACHMENT_TYPES.register("summon_weapon_summons", () -> AttachmentType.<List<UUID>>builder((Supplier<List<UUID>>) ArrayList::new).serialize(Codec.list(Codec.STRING.xmap(UUID::fromString, UUID::toString))).build());
+
 }
