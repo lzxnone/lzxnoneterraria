@@ -1,11 +1,10 @@
 package com.lzxnone.terraria.client.item.melee;
 
+import com.lzxnone.terraria.client.ClientSkinUtil;
 import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.TintedVertexConsumer;
 import com.lzxnone.terraria.entity.summon.*;
-import com.lzxnone.terraria.network.SkinFetch;
 import com.lzxnone.terraria.utils.*;
-import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -40,8 +39,7 @@ public class ClientFirstFractal {
             ItemStack item = summon.getEntityData().get(StaticSummon.ITEM);
             if(item == ItemStack.EMPTY) return;
 
-            GameProfile profile = SkinFetch.getCachedProfile(uuid);
-            PlayerSkin playerSkin = Minecraft.getInstance().getSkinManager().getInsecureSkin(profile);
+            PlayerSkin playerSkin = ClientSkinUtil.getPlayerSkin(uuid, summon.getOwner());
 
             boolean isSlim = playerSkin.model() == PlayerSkin.Model.SLIM;
             PlayerModel<LivingEntity> activeModel = isSlim ? StaticSummonRenderer.getSlimModel() : StaticSummonRenderer.getWideModel();
