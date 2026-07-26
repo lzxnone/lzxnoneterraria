@@ -61,12 +61,12 @@ public class Terraprisma extends SummonWeapon {
     public static final double DASH_PRE_FRICTION_MAX = 1.0D;
 
     public static final String DASH_SPEED_PATH = "weapon.terraprisma.dash_speed";
-    public static final double DASH_SPEED_DEFAULT = 1.6D;
+    public static final double DASH_SPEED_DEFAULT = 3.2D;
     public static final double DASH_SPEED_MIN = 0.01D;
     public static final double DASH_SPEED_MAX = 32.0D;
 
     public static final String DASH_FRICTION_PATH = "weapon.terraprisma.dash_friction";
-    public static final double DASH_FRICTION_DEFAULT = 0.72D;
+    public static final double DASH_FRICTION_DEFAULT = 0.66D;
     public static final double DASH_FRICTION_MIN = 0.0D;
     public static final double DASH_FRICTION_MAX = 1.0D;
 
@@ -90,6 +90,8 @@ public class Terraprisma extends SummonWeapon {
     public static final float AFTERIMAGE_ALPHA = 0.5f;
     public static final int AFTERIMAGE_MAX_LENGTH = 3;
     public static final float AFTERIMAGE_SCALE = 0.92f;
+
+    public static final double HITBOX_INFLATE = 1.0;
 
     public enum State {
         IDLE,
@@ -232,9 +234,10 @@ public class Terraprisma extends SummonWeapon {
             }else {
                 summon.setDeltaMovement(summon.getDeltaMovement().scale(getDashFriction()));
             }
+            AABB hitBox = new AABB(summon.position(), summon.position().add(summon.getDeltaMovement().normalize())).inflate(HITBOX_INFLATE);
             List<Entity> targets = summon.level().getEntitiesOfClass(
                 Entity.class,
-                summon.getBoundingBox(),
+                hitBox,
                 FilterUtil.createTargetFilter(summon, player)
             );
             ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
@@ -281,7 +284,7 @@ public class Terraprisma extends SummonWeapon {
                 summon.setYRot(Mth.rotLerp(ROTATION_LERP2, summon.getYRot(), xyRot[1]));
             }
 
-            AABB hitBox = new AABB(summon.position(), nextPos).inflate(0.8);
+            AABB hitBox = new AABB(summon.position(), nextPos).inflate(HITBOX_INFLATE);
             List<Entity> targets = summon.level().getEntitiesOfClass(
                 Entity.class,
                 hitBox,
@@ -311,7 +314,7 @@ public class Terraprisma extends SummonWeapon {
             if(target != null) {
                 Vec3 distV = target.getBoundingBox().getCenter().subtract(summon.position());
                 double dist = distV.length();
-                if (dist < 8) {
+                if (dist < 16) {
                     if (summon.getRandom().nextInt(2) == 0) return State.DASH_PRE.ordinal();
                     else return State.ROTATE.ordinal();
                 } else {
