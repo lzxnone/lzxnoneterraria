@@ -2,25 +2,21 @@ package com.lzxnone.terraria.item.weapon.summon;
 
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.entity.ModEntities;
-import com.lzxnone.terraria.entity.ModRenderTypes;
-import com.lzxnone.terraria.entity.PureColorVertexConsumer;
-import com.lzxnone.terraria.entity.TintedVertexConsumer;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.SummonWeapon;
+import com.lzxnone.terraria.ui.config.ConfigFactory;
+import com.lzxnone.terraria.ui.config.ConfigListItem;
+import com.lzxnone.terraria.ui.config.ConfigUtil;
+import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -30,14 +26,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.checkerframework.checker.units.qual.A;
-import org.checkerframework.checker.units.qual.C;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -46,23 +38,53 @@ import java.util.List;
 import java.util.UUID;
 
 public class Terraprisma extends SummonWeapon {
-    private static final double TARGET_RANGE = 32.0D;
+    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
-    private static final double FOLLOW_SPEED = 4.0D;
+    public static final String TARGET_RANGE_PATH = "weapon.terraprisma.target_range";
+    public static final double TARGET_RANGE_DEFAULT = 64.0D;
+    public static final double TARGET_RANGE_MIN = 1.0D;
+    public static final double TARGET_RANGE_MAX = 256.0D;
 
-    public static final double DASH_PRE_SPEED = -0.75;
-    public static final double DASH_PRE_FRICTION = 0.78;
+    public static final String FOLLOW_SPEED_PATH = "weapon.terraprisma.follow_speed";
+    public static final double FOLLOW_SPEED_DEFAULT = 4.0D;
+    public static final double FOLLOW_SPEED_MIN = 0.0D;
+    public static final double FOLLOW_SPEED_MAX = 32.0D;
 
-    public static final double DASH_SPEED = 1.6;
+    public static final String DASH_PRE_SPEED_PATH = "weapon.terraprisma.dash_pre_speed";
+    public static final double DASH_PRE_SPEED_DEFAULT = -0.75D;
+    public static final double DASH_PRE_SPEED_MIN = -10.0D;
+    public static final double DASH_PRE_SPEED_MAX = 10.0D;
+
+    public static final String DASH_PRE_FRICTION_PATH = "weapon.terraprisma.dash_pre_friction";
+    public static final double DASH_PRE_FRICTION_DEFAULT = 0.78D;
+    public static final double DASH_PRE_FRICTION_MIN = 0.0D;
+    public static final double DASH_PRE_FRICTION_MAX = 1.0D;
+
+    public static final String DASH_SPEED_PATH = "weapon.terraprisma.dash_speed";
+    public static final double DASH_SPEED_DEFAULT = 1.6D;
+    public static final double DASH_SPEED_MIN = 0.01D;
+    public static final double DASH_SPEED_MAX = 32.0D;
+
+    public static final String DASH_FRICTION_PATH = "weapon.terraprisma.dash_friction";
+    public static final double DASH_FRICTION_DEFAULT = 0.72D;
+    public static final double DASH_FRICTION_MIN = 0.0D;
+    public static final double DASH_FRICTION_MAX = 1.0D;
+
     public static final int DASH_MORE_TIME = 1;
-    public static final double DASH_FRICTION = 0.72;
+
+    public static final String ROTATE_SPEED_PATH = "weapon.terraprisma.rotate_speed";
+    public static final double ROTATE_SPEED_DEFAULT = 1.0D;
+    public static final double ROTATE_SPEED_MIN = 0.01D;
+    public static final double ROTATE_SPEED_MAX = 32.0D;
+
+    public static final String DAMAGE_PATH = "weapon.terraprisma.damage";
+    public static final float DAMAGE_DEFAULT = 20.0F;
+    public static final float DAMAGE_MIN = 0.0F;
+    public static final float DAMAGE_MAX = 8388600.0F;
 
     public static final float ROTATION_LERP = 0.25f;
     public static final float ROTATION_LERP2 = 0.5f;
 
-    public static final double ROTATE_SPEED = 1.0;
-
-    public static final float DAMAGE = 20;
     public static final float TRAIL_ALPHA = 1.0f;
     public static final int TRAIL_MAX_LENGTH = 20;
     public static final float AFTERIMAGE_ALPHA = 0.5f;
@@ -81,143 +103,69 @@ public class Terraprisma extends SummonWeapon {
         super(Tiers.NETHERITE, new Item.Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC));
     }
 
+    public static final IConfigData CONFIG_DATA = new IConfigData() {
+        @Override
+        public void onConfigLoad() {
+            ConfigFactory.loadDoubleConfig(TARGET_RANGE_PATH, configText("terraprisma_target_range"), configTooltip("terraprisma_target_range"), TARGET_RANGE_DEFAULT, TARGET_RANGE_MIN, TARGET_RANGE_MAX);
+            ConfigFactory.loadDoubleConfig(FOLLOW_SPEED_PATH, configText("terraprisma_follow_speed"), configTooltip("terraprisma_follow_speed"), FOLLOW_SPEED_DEFAULT, FOLLOW_SPEED_MIN, FOLLOW_SPEED_MAX);
+            ConfigFactory.loadDoubleConfig(DASH_PRE_SPEED_PATH, configText("terraprisma_dash_pre_speed"), configTooltip("terraprisma_dash_pre_speed"), DASH_PRE_SPEED_DEFAULT, DASH_PRE_SPEED_MIN, DASH_PRE_SPEED_MAX);
+            ConfigFactory.loadDoubleConfig(DASH_PRE_FRICTION_PATH, configText("terraprisma_dash_pre_friction"), configTooltip("terraprisma_dash_pre_friction"), DASH_PRE_FRICTION_DEFAULT, DASH_PRE_FRICTION_MIN, DASH_PRE_FRICTION_MAX);
+            ConfigFactory.loadDoubleConfig(DASH_SPEED_PATH, configText("terraprisma_dash_speed"), configTooltip("terraprisma_dash_speed"), DASH_SPEED_DEFAULT, DASH_SPEED_MIN, DASH_SPEED_MAX);
+            ConfigFactory.loadDoubleConfig(DASH_FRICTION_PATH, configText("terraprisma_dash_friction"), configTooltip("terraprisma_dash_friction"), DASH_FRICTION_DEFAULT, DASH_FRICTION_MIN, DASH_FRICTION_MAX);
+            ConfigFactory.loadDoubleConfig(ROTATE_SPEED_PATH, configText("terraprisma_rotate_speed"), configTooltip("terraprisma_rotate_speed"), ROTATE_SPEED_DEFAULT, ROTATE_SPEED_MIN, ROTATE_SPEED_MAX);
+            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("terraprisma_damage"), configTooltip("terraprisma_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+        }
+    };
+
+    private static Component configText(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
+    }
+
+    private static Component configTooltip(String key) {
+        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
+    }
+
+    public static double getTargetRange() {
+        return Math.clamp(ConfigUtil.readDouble(TARGET_RANGE_PATH, TARGET_RANGE_DEFAULT), TARGET_RANGE_MIN, TARGET_RANGE_MAX);
+    }
+
+    public static double getFollowSpeed() {
+        return Math.clamp(ConfigUtil.readDouble(FOLLOW_SPEED_PATH, FOLLOW_SPEED_DEFAULT), FOLLOW_SPEED_MIN, FOLLOW_SPEED_MAX);
+    }
+
+    public static double getDashPreSpeed() {
+        return Math.clamp(ConfigUtil.readDouble(DASH_PRE_SPEED_PATH, DASH_PRE_SPEED_DEFAULT), DASH_PRE_SPEED_MIN, DASH_PRE_SPEED_MAX);
+    }
+
+    public static double getDashPreFriction() {
+        return Math.clamp(ConfigUtil.readDouble(DASH_PRE_FRICTION_PATH, DASH_PRE_FRICTION_DEFAULT), DASH_PRE_FRICTION_MIN, DASH_PRE_FRICTION_MAX);
+    }
+
+    public static double getDashSpeed() {
+        return Math.clamp(ConfigUtil.readDouble(DASH_SPEED_PATH, DASH_SPEED_DEFAULT), DASH_SPEED_MIN, DASH_SPEED_MAX);
+    }
+
+    public static double getDashFriction() {
+        return Math.clamp(ConfigUtil.readDouble(DASH_FRICTION_PATH, DASH_FRICTION_DEFAULT), DASH_FRICTION_MIN, DASH_FRICTION_MAX);
+    }
+
+    public static double getRotateSpeed() {
+        return Math.clamp(ConfigUtil.readDouble(ROTATE_SPEED_PATH, ROTATE_SPEED_DEFAULT), ROTATE_SPEED_MIN, ROTATE_SPEED_MAX);
+    }
+
+    public static float getDamage() {
+        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
+    }
+
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        "terraprisma",
+        ResourceLocation.fromNamespaceAndPath("lzxnoneterraria", "textures/item/terraprisma.png"),
+        Component.translatable("item.lzxnoneterraria.terraprisma"),
+        CONFIG_DATA
+    );
+
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         public static final ResourceLocation RES = ResourceLocation.parse("lzxnoneterraria:textures/vfx/sword_trail.png");
-        @Override
-        public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-            if(!(entity instanceof StaticSummon summon) || summon.getOwner() == null) return;
-            ItemStack stack = summon.getEntityData().get(StaticSummon.ITEM);
-            if(stack.isEmpty()) return;
-
-            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-            int idx = customData.contains("idx") ? customData.getInt("idx") : 0;
-            int state = customData.contains("state") ? customData.getInt("state") : 0;
-            float[] color = computeCrystalColor(summon.tickCount + partialTick, idx);
-            Vec3 currentPos = summon.position();
-
-            if(state == State.DASH_PRE.ordinal() || state == State.DASH.ordinal()) {
-                for(int i = summon.afterimageFrames.size() - 1; i >= 0; i--) {
-                    StaticSummon.AfterimageFrame frame = summon.afterimageFrames.get(i);
-                    float alpha = AFTERIMAGE_ALPHA * (1.0f - (float)i / AFTERIMAGE_MAX_LENGTH);
-                    Vec3 offset = frame.position().subtract(currentPos);
-
-                    poseStack.pushPose();
-                    poseStack.translate(offset.x, offset.y, offset.z);
-
-                    poseStack.mulPose(Axis.YP.rotationDegrees(-frame.yRot()));
-                    poseStack.mulPose(Axis.XP.rotationDegrees(frame.xRot()));
-
-                    poseStack.mulPose(Axis.ZP.rotationDegrees(90));
-                    poseStack.mulPose(Axis.YP.rotationDegrees(90));
-
-                    poseStack.scale(
-                        summon.getEntityData().get(StaticSummon.SCALE_X) * AFTERIMAGE_SCALE,
-                        summon.getEntityData().get(StaticSummon.SCALE_Y) * AFTERIMAGE_SCALE,
-                        summon.getEntityData().get(StaticSummon.SCALE_Z) * AFTERIMAGE_SCALE
-                    );
-
-                    Minecraft.getInstance().getItemRenderer().renderStatic(
-                        stack,
-                        ItemDisplayContext.NONE,
-                        LightTexture.FULL_BRIGHT,
-                        OverlayTexture.NO_OVERLAY,
-                        poseStack,
-                        renderType -> {
-                            VertexConsumer vertexConsumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(InventoryMenu.BLOCK_ATLAS));
-                            return new PureColorVertexConsumer(vertexConsumer,
-                                frame.r(),
-                                frame.g(),
-                                frame.b(),
-                                alpha);
-                        },
-                        entity.level(),
-                        0
-                    );
-                    poseStack.popPose();
-                }
-            }
-
-            poseStack.pushPose();
-
-            poseStack.mulPose(Axis.YP.rotationDegrees(-Mth.lerp(partialTick, summon.yRotO, summon.getYRot())));
-            poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTick, summon.xRotO, summon.getXRot())));
-
-            poseStack.mulPose(Axis.ZP.rotationDegrees(90));
-            poseStack.mulPose(Axis.YP.rotationDegrees(90));
-
-            poseStack.scale(
-                summon.getEntityData().get(StaticSummon.SCALE_X),
-                summon.getEntityData().get(StaticSummon.SCALE_Y),
-                summon.getEntityData().get(StaticSummon.SCALE_Z)
-            );
-
-            for(int i = 0;i < 3;i++) {
-                Minecraft.getInstance().getItemRenderer().renderStatic(
-                    stack,
-                    ItemDisplayContext.NONE,
-                    LightTexture.FULL_BRIGHT,
-                    OverlayTexture.NO_OVERLAY,
-                    poseStack,
-                    renderType -> {
-                        VertexConsumer vertexConsumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(InventoryMenu.BLOCK_ATLAS));
-                        return new TintedVertexConsumer(vertexConsumer,
-                            color[0],
-                            color[1],
-                            color[2],
-                            summon.getEntityData().get(StaticSummon.COLOR_A));
-                    },
-                    entity.level(),
-                    0
-                );
-            }
-            poseStack.popPose();
-
-            if(state == State.ROTATE.ordinal()) {
-                VertexConsumer vertexConsumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES));
-                float mainAlpha = TRAIL_ALPHA;
-                int quadCount = summon.trailPositions.size() / 2 - 1;
-                for(int j = 0; j < 3; j++) {
-                    for(int i = 0; i < quadCount; i++) {
-                        Vec3 currentPoint1 = summon.trailPositions.get(i * 2);
-                        Vec3 currentPoint2 = summon.trailPositions.get(i * 2 + 1);
-                        Vec3 nextPoint1 = summon.trailPositions.get(i * 2 + 3);
-                        Vec3 nextPoint2 = summon.trailPositions.get(i * 2 + 2);
-
-                        double x1 = currentPoint1.x - currentPos.x;
-                        double y1 = currentPoint1.y - currentPos.y;
-                        double z1 = currentPoint1.z - currentPos.z;
-
-                        double x2 = currentPoint2.x - currentPos.x;
-                        double y2 = currentPoint2.y - currentPos.y;
-                        double z2 = currentPoint2.z - currentPos.z;
-
-                        double x3 = nextPoint1.x - currentPos.x;
-                        double y3 = nextPoint1.y - currentPos.y;
-                        double z3 = nextPoint1.z - currentPos.z;
-
-                        double x4 = nextPoint2.x - currentPos.x;
-                        double y4 = nextPoint2.y - currentPos.y;
-                        double z4 = nextPoint2.z - currentPos.z;
-
-                        float radio1 = (float) i / quadCount;
-                        float radio2 = (float) (i + 1) / quadCount;
-
-                        vertexConsumer.addVertex(poseStack.last().pose(), (float)x1, (float)y1, (float)z1)
-                            .setColor(color[0], color[1], color[2], mainAlpha).setUv(radio1, 0.0f)
-                            .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
-                        vertexConsumer.addVertex(poseStack.last().pose(), (float)x2, (float)y2, (float)z2)
-                            .setColor(color[0], color[1], color[2], 0).setUv(radio1, 1.0f)
-                            .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
-                        vertexConsumer.addVertex(poseStack.last().pose(), (float)x3, (float)y3, (float)z3)
-                            .setColor(color[0], color[1], color[2], 0).setUv(radio2, 1.0f)
-                            .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
-                        vertexConsumer.addVertex(poseStack.last().pose(), (float)x4, (float)y4, (float)z4)
-                            .setColor(color[0], color[1], color[2], mainAlpha).setUv(radio2, 0.0f)
-                            .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
-                    }
-                }
-            }
-        }
 
         @Override
         public void tick(StaticSummon summon) {
@@ -275,22 +223,23 @@ public class Terraprisma extends SummonWeapon {
                 summon.setXRot(Mth.rotLerp(ROTATION_LERP, summon.getXRot(), targetXYRot[0]));
                 summon.setYRot(Mth.rotLerp(ROTATION_LERP, summon.getYRot(), targetXYRot[1]));
             }
-            summon.setDeltaMovement(summon.getDeltaMovement().scale(DASH_PRE_FRICTION));
+            summon.setDeltaMovement(summon.getDeltaMovement().scale(getDashPreFriction()));
         }else if(state == State.DASH.ordinal()) {
             int dashTime = customData.contains("dashTime") ? customData.getInt("dashTime") : 0;
             customData.putInt("dashTime", dashTime - 1);
             if(dashTime > 0) {
-                summon.setDeltaMovement(summon.getLookAngle().normalize().scale(DASH_SPEED));
+                summon.setDeltaMovement(summon.getLookAngle().normalize().scale(getDashSpeed()));
             }else {
-                summon.setDeltaMovement(summon.getDeltaMovement().scale(DASH_FRICTION));
+                summon.setDeltaMovement(summon.getDeltaMovement().scale(getDashFriction()));
             }
             List<Entity> targets = summon.level().getEntitiesOfClass(
                 Entity.class,
                 summon.getBoundingBox(),
                 FilterUtil.createTargetFilter(summon, player)
             );
+            ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
             for(Entity target : targets) {
-                if(DamageUtil.normalAttack(summon, target, DAMAGE, 1.0f)) target.invulnerableTime = 15;
+                if(DamageUtil.summonAttack(summon, target, sourceStack, getDamage(customData), 1.0f)) target.invulnerableTime = 15;
             }
         }else if(state == State.ROTATE.ordinal()) {
             int time = customData.contains("rotateTime") ? customData.getInt("rotateTime") : 0;
@@ -339,8 +288,9 @@ public class Terraprisma extends SummonWeapon {
                 FilterUtil.createTargetFilter(summon, player)
             );
 
+            ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
             for(Entity target : targets) {
-                if(DamageUtil.normalAttack(summon, target, DAMAGE, 1.0f)) target.invulnerableTime = 15;
+                if(DamageUtil.summonAttack(summon, target, sourceStack, getDamage(customData), 1.0f)) target.invulnerableTime = 15;
             }
 
             customData.putInt("rotateTime", time + 1);
@@ -404,7 +354,7 @@ public class Terraprisma extends SummonWeapon {
         if(to == State.DASH_PRE.ordinal()) {
             Entity target = getTarget(summon);
             if(target != null) {
-                summon.setDeltaMovement(target.getBoundingBox().getCenter().subtract(summon.position()).normalize().scale(DASH_PRE_SPEED));
+                summon.setDeltaMovement(target.getBoundingBox().getCenter().subtract(summon.position()).normalize().scale(getDashPreSpeed()));
             }
         }else if(to == State.DASH.ordinal()) {
             Entity target = getTarget(summon);
@@ -412,7 +362,8 @@ public class Terraprisma extends SummonWeapon {
                 summon.setDeltaMovement(Vec3.ZERO);
                 Vec3 distV = target.getBoundingBox().getCenter().subtract(summon.position());
                 double dist = distV.length();
-                int dashTime = (int) (dist / DASH_SPEED) + DASH_MORE_TIME;
+                int dashTime = (int) (dist / getDashSpeed()) + DASH_MORE_TIME;
+                if(summon.getRandom().nextInt(2) == 0) dashTime++;
                 customData.putInt("dashTime", dashTime);
             }
         }else if(to == State.ROTATE.ordinal()) {
@@ -441,7 +392,7 @@ public class Terraprisma extends SummonWeapon {
                 double circumference = Math.PI * (a + b) * (1 + (3 * h) / (10 + Math.sqrt(4 - 3 * h)));
                 double range = 0.5 + Math.random() * 0.5;
                 double arcLength = circumference * range;
-                int duration = (int)Math.ceil(arcLength / ROTATE_SPEED);
+                int duration = (int)Math.ceil(arcLength / getRotateSpeed());
                 duration = Mth.clamp(duration, 8, 18);
                 double w = Math.PI * 2 * range / duration;
                 if(summon.getRandom().nextInt(2) == 0) w = -w;
@@ -493,8 +444,9 @@ public class Terraprisma extends SummonWeapon {
         Vec3 basePos = summon.getOwner().getBoundingBox().getCenter();
         Vec3 pos = basePos.add(hDir.scale(-(idx + 1) * 0.25 - 1));
         Vec3 dist = pos.subtract(summon.position());
-        if(dist.length() > 4.0) {
-            summon.setDeltaMovement(dist.normalize().scale(Math.min(FOLLOW_SPEED, dist.length())));
+        double followSpeed = getFollowSpeed();
+        if(dist.length() > followSpeed) {
+            summon.setDeltaMovement(dist.normalize().scale(Math.min(followSpeed, dist.length())));
         }else {
             summon.setDeltaMovement(Vec3.ZERO);
             summon.setPos(pos);
@@ -525,7 +477,7 @@ public class Terraprisma extends SummonWeapon {
 
         List<Monster> monsters = summon.level().getEntitiesOfClass(
             Monster.class,
-            AABB.ofSize(summon.position(), TARGET_RANGE * 2.0D, TARGET_RANGE * 2.0D, TARGET_RANGE * 2.0D),
+            AABB.ofSize(summon.position(), getTargetRange() * 2.0D, getTargetRange() * 2.0D, getTargetRange() * 2.0D),
             FilterUtil.createMonsterFilter(player)
         );
         monsters.sort(Comparator.comparingDouble(monster -> monster.distanceToSqr(summon.position())));
@@ -539,7 +491,7 @@ public class Terraprisma extends SummonWeapon {
     private static boolean isValidTarget(StaticSummon summon, Player player, LivingEntity target) {
         return target != null
             && target.level() == summon.level()
-            && target.distanceToSqr(summon) <= TARGET_RANGE * TARGET_RANGE
+            && target.distanceToSqr(summon) <= getTargetRange() * getTargetRange()
             && FilterUtil.createLivingTargetFilter(summon, player).test(target);
     }
 
@@ -552,6 +504,10 @@ public class Terraprisma extends SummonWeapon {
             }
         }
         return null;
+    }
+
+    private static float getDamage(CompoundTag customData) {
+        return customData.contains("damage") ? customData.getFloat("damage") : getDamage();
     }
 
     private static float[] computeCrystalColor(float time, int idx) {
@@ -576,6 +532,7 @@ public class Terraprisma extends SummonWeapon {
         if(stack.is(ModItems.TERRAPRISMA.get()) && level instanceof ServerLevel serverLevel) {
             StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), level);
             summon.setOwner(player);
+            summon.getEntityData().set(StaticSummon.STACK_SOURCE, stack.copy());
             summon.setPos(player.position());
             summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.TERRAPRISMA);
             summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
@@ -585,6 +542,9 @@ public class Terraprisma extends SummonWeapon {
             summon.getEntityData().set(StaticSummon.SCALE_Z, 1.0f);
             summon.getEntityData().set(StaticSummon.LIFETIME, 72000);
             summon.getEntityData().set(StaticSummon.GLOW, true);
+            CompoundTag summonData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA).copy();
+            summonData.putFloat("damage", getDamage());
+            summon.getEntityData().set(StaticSummon.CUSTOM_DATA, summonData);
 
             summon.setNoGravity(true);
             summon.noPhysics = true;

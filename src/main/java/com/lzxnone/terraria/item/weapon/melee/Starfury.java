@@ -120,7 +120,7 @@ public class Starfury extends MeleeWeapon {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.normalAttack(projectile, target, (float) getDamage(), 1.0f)) {
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) getDamage(), 1.0f)) {
                     target.invulnerableTime = 5;
                 }
             }
@@ -179,6 +179,7 @@ public class Starfury extends MeleeWeapon {
 
             StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), level);
             projectile.setOwner(player);
+            projectile.getEntityData().set(StaticProjectile.STACK_SOURCE, player.getWeaponItem().copy());
             projectile.setPos(spawnPos);
             projectile.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.STARFURY_STAR);
             projectile.getEntityData().set(StaticProjectile.RENDER_MODE, "item");

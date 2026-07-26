@@ -24,6 +24,13 @@
                     </button>
                     <element class="nav-indicator"/>
                 </element>
+                <element id="nav-item-enchantment" class="nav-item">
+                    <button id="nav-button-enchantment" class="nav-button" text="">
+                        <element class="nav-img nav-img-enchantment"/>
+                        <label class="nav-label"><lang key="lzxnoneterraria.configuration.nav_enchantment"/></label>
+                    </button>
+                    <element class="nav-indicator"/>
+                </element>
             </element>
         </element>
 

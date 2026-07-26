@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.item.weapon;
 
 import com.lzxnone.terraria.enchantment.ModEnchantments;
+import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -8,7 +9,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -17,16 +17,10 @@ import net.minecraft.world.level.Level;
 
 import java.util.function.IntSupplier;
 
-public class MagicWeapon extends Item {
+public class MagicWeapon extends Weapon {
     private static final String MANA_CONSUME_PROGRESS_KEY = "magicManaConsumeProgress";
     private static final String MANA_RECOVER_PROGRESS_KEY = "magicManaRecoverProgress";
-    private static final double MANA_LEAK_CONSUME_MULTIPLIER = 1.25D;
-    private static final double MANA_EFFICIENCY_CONSUME_MULTIPLIER = 0.85D;
-    private static final double MANA_GATHERING_RECOVER_MULTIPLIER = 1.25D;
-    private static final double MANA_GATHERING_CURSE_RECOVER_MULTIPLIER = 0.5D;
-    private static final double ARCANE_AMPLIFICATION_DAMAGE_MULTIPLIER = 1.15D;
 
-    private final int enchantmentValue;
     private final IntSupplier manaConsumeRate;
     private final IntSupplier manaRecoverRate;
 
@@ -35,15 +29,13 @@ public class MagicWeapon extends Item {
     }
 
     public MagicWeapon(Tier tier, Properties properties, IntSupplier manaConsumeRate, IntSupplier manaRecoverRate) {
-        super(properties.durability(tier.getUses()));
-        this.enchantmentValue = tier.getEnchantmentValue();
+        super(tier, properties);
         this.manaConsumeRate = manaConsumeRate;
         this.manaRecoverRate = manaRecoverRate;
     }
 
     public MagicWeapon(Properties properties) {
         super(properties);
-        this.enchantmentValue = 0;
         this.manaConsumeRate = () -> 1;
         this.manaRecoverRate = () -> 1;
     }
@@ -90,8 +82,8 @@ public class MagicWeapon extends Item {
         int leakLevel = getEnchantmentLevel(entity, stack, ModEnchantments.MANA_LEAK);
         int efficiencyLevel = getEnchantmentLevel(entity, stack, ModEnchantments.MANA_EFFICIENCY);
 
-        rate *= Math.pow(MANA_LEAK_CONSUME_MULTIPLIER, leakLevel);
-        rate *= Math.pow(MANA_EFFICIENCY_CONSUME_MULTIPLIER, efficiencyLevel);
+        rate *= Math.pow(ModEnchantmentConfigs.getManaLeakConsumeMultiplier(), leakLevel);
+        rate *= Math.pow(ModEnchantmentConfigs.getManaEfficiencyConsumeMultiplier(), efficiencyLevel);
         return Math.max(0.0D, rate);
     }
 
@@ -100,8 +92,8 @@ public class MagicWeapon extends Item {
         int gatheringLevel = getEnchantmentLevel(entity, stack, ModEnchantments.MANA_GATHERING);
         int curseLevel = getEnchantmentLevel(entity, stack, ModEnchantments.MANA_GATHERING_CURSE);
 
-        rate *= Math.pow(MANA_GATHERING_RECOVER_MULTIPLIER, gatheringLevel);
-        rate *= Math.pow(MANA_GATHERING_CURSE_RECOVER_MULTIPLIER, curseLevel);
+        rate *= Math.pow(ModEnchantmentConfigs.getManaGatheringRecoverMultiplier(), gatheringLevel);
+        rate *= Math.pow(ModEnchantmentConfigs.getManaGatheringCurseRecoverMultiplier(), curseLevel);
         return Math.max(0.0D, rate);
     }
 
@@ -109,7 +101,7 @@ public class MagicWeapon extends Item {
         double finalDamage = damage;
         int amplificationLevel = getEnchantmentLevel(entity, stack, ModEnchantments.ARCANE_AMPLIFICATION);
 
-        finalDamage *= Math.pow(ARCANE_AMPLIFICATION_DAMAGE_MULTIPLIER, amplificationLevel);
+        finalDamage *= Math.pow(ModEnchantmentConfigs.getArcaneAmplificationDamageMultiplier(), amplificationLevel);
         return (float) Math.max(0.0D, finalDamage);
     }
 
@@ -165,13 +157,4 @@ public class MagicWeapon extends Item {
             .orElse(0);
     }
 
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return stack.getMaxStackSize() == 1;
-    }
-
-    @Override
-    public int getEnchantmentValue(ItemStack stack) {
-        return enchantmentValue;
-    }
 }

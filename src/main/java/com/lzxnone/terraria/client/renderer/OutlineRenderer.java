@@ -1,14 +1,14 @@
-package com.lzxnone.terraria.renderer;
+package com.lzxnone.terraria.client.renderer;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.client.entity.beam.ClientSwordBeamRenderBehaviors;
+import com.lzxnone.terraria.client.entity.projectile.ClientStaticProjectileRenderBehaviors;
+import com.lzxnone.terraria.client.entity.summon.ClientStaticSummonRenderBehaviors;
 import com.lzxnone.terraria.entity.IrisCompat;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
-import com.lzxnone.terraria.entity.beam.SwordBeamBehaviors;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
-import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
-import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
-import com.lzxnone.terraria.event.ShaderRegistry;
+import com.lzxnone.terraria.client.event.ShaderRegistry;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -160,21 +160,21 @@ public class OutlineRenderer {
                         && projectile.getEntityData().get(StaticProjectile.OUTLINE)) {
                     poseStack.pushPose();
                     poseStack.translate(camX, camY, camZ);
-                    StaticProjectileBehaviors.getBehavior(projectile.getEntityData().get(StaticProjectile.BEHAVIOR))
+                    ClientStaticProjectileRenderBehaviors.getBehavior(projectile.getEntityData().get(StaticProjectile.BEHAVIOR))
                         .render(projectile, entityYaw, partialTick, poseStack, bufferSource, LightTexture.FULL_BRIGHT);
                     poseStack.popPose();
                 }else if(entity instanceof StaticSummon summon
                         && summon.getEntityData().get(StaticSummon.OUTLINE)) {
                     poseStack.pushPose();
                     poseStack.translate(camX, camY, camZ);
-                    StaticSummonBehaviors.getBehavior(summon.getEntityData().get(StaticSummon.BEHAVIOR))
+                    ClientStaticSummonRenderBehaviors.getBehavior(summon.getEntityData().get(StaticSummon.BEHAVIOR))
                         .render(summon, entityYaw, partialTick, poseStack, bufferSource, LightTexture.FULL_BRIGHT);
                     poseStack.popPose();
                 }else if(entity instanceof SwordBeam beam
                         && beam.getEntityData().get(SwordBeam.OUTLINE)) {
                     poseStack.pushPose();
                     poseStack.translate(camX, camY, camZ);
-                    SwordBeamBehaviors.getBehavior(beam.getEntityData().get(SwordBeam.BEHAVIOR))
+                    ClientSwordBeamRenderBehaviors.getBehavior(beam.getEntityData().get(SwordBeam.BEHAVIOR))
                         .render(beam, entityYaw, partialTick, poseStack, bufferSource, LightTexture.FULL_BRIGHT);
                     poseStack.popPose();
                 }

@@ -2,9 +2,9 @@ package com.lzxnone.terraria;
 
 import com.lzxnone.terraria.ui.config.ConfigScreen;
 import com.lzxnone.terraria.entity.ModEntities;
-import com.lzxnone.terraria.entity.beam.SwordBeamRenderer;
-import com.lzxnone.terraria.entity.projectile.StaticProjectileRenderer;
-import com.lzxnone.terraria.entity.summon.StaticSummonRenderer;
+import com.lzxnone.terraria.client.entity.beam.SwordBeamRenderer;
+import com.lzxnone.terraria.client.entity.projectile.StaticProjectileRenderer;
+import com.lzxnone.terraria.client.entity.summon.StaticSummonRenderer;
 import com.lzxnone.terraria.particle.*;
 import net.minecraft.client.renderer.entity.BeeRenderer;
 import net.neoforged.api.distmarker.Dist;

@@ -9,6 +9,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -25,6 +26,8 @@ public class StaticSummon extends Entity {
     public static final EntityDataAccessor<String> RENDER_MODE =
             SynchedEntityData.defineId(StaticSummon.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<ItemStack> ITEM =
+            SynchedEntityData.defineId(StaticSummon.class, EntityDataSerializers.ITEM_STACK);
+    public static final EntityDataAccessor<ItemStack> STACK_SOURCE =
             SynchedEntityData.defineId(StaticSummon.class, EntityDataSerializers.ITEM_STACK);
     public static final EntityDataAccessor<BlockState> BLOCK =
             SynchedEntityData.defineId(StaticSummon.class, EntityDataSerializers.BLOCK_STATE);
@@ -111,6 +114,7 @@ public class StaticSummon extends Entity {
         builder.define(BEHAVIOR, "default");
         builder.define(RENDER_MODE, "custom");
         builder.define(ITEM, ItemStack.EMPTY);
+        builder.define(STACK_SOURCE, ItemStack.EMPTY);
         builder.define(BLOCK, Blocks.AIR.defaultBlockState());
         builder.define(SCALE_X, 1.0f);
         builder.define(SCALE_Y, 1.0f);
@@ -138,7 +142,8 @@ public class StaticSummon extends Entity {
         super.tick();
         this.owner = getOwner();
         StaticSummonBehaviors.getBehavior(this.entityData.get(BEHAVIOR)).tick(this);
-        this.setPos(this.position().add(this.getDeltaMovement()));
+        //this.setPos(this.position().add(this.getDeltaMovement()));
+        this.move(MoverType.SELF, this.getDeltaMovement());
     }
 
     @Override
@@ -147,6 +152,8 @@ public class StaticSummon extends Entity {
         tag.putString("renderMode", this.entityData.get(RENDER_MODE));
         ItemStack stack = this.entityData.get(ITEM);
         if(!stack.isEmpty()) tag.put("item", stack.save(this.level().registryAccess()));
+        ItemStack stackSource = this.entityData.get(STACK_SOURCE);
+        if(!stackSource.isEmpty()) tag.put("stackSource", stackSource.save(this.level().registryAccess()));
         tag.put("block", NbtUtils.writeBlockState(this.entityData.get(BLOCK)));
         tag.putFloat("scaleX", this.entityData.get(SCALE_X));
         tag.putFloat("scaleY", this.entityData.get(SCALE_Y));
@@ -176,6 +183,10 @@ public class StaticSummon extends Entity {
         if(tag.contains("item")) {
             ItemStack.parse(this.level().registryAccess(), tag.getCompound("item"))
                     .ifPresent(stack -> this.entityData.set(ITEM, stack));
+        }
+        if(tag.contains("stackSource")) {
+            ItemStack.parse(this.level().registryAccess(), tag.getCompound("stackSource"))
+                    .ifPresent(stack -> this.entityData.set(STACK_SOURCE, stack));
         }
         if(tag.contains("block")) {
             BlockState blockState = NbtUtils.readBlockState(

@@ -146,7 +146,7 @@ public class Seedler extends MeleeWeapon {
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
                 if(summon.getOwner() instanceof Player player) {
-                    if(DamageUtil.normalAttack(summon, target, (float) getThornDamage(), 1.0f)) {
+                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getThornDamage(), 1.0f)) {
                         target.invulnerableTime = 2;
                     }
                 }
@@ -206,6 +206,7 @@ public class Seedler extends MeleeWeapon {
 
                     StaticProjectile proj = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), summon.level());
                     proj.setOwner(summon.getOwner());
+                    proj.getEntityData().set(StaticProjectile.STACK_SOURCE, summon.getEntityData().get(StaticSummon.STACK_SOURCE).copy());
                     proj.setPos(summon.position());
                     proj.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.SEEDLER_THORN);
                     proj.getEntityData().set(StaticProjectile.RENDER_MODE, "item");
@@ -262,7 +263,7 @@ public class Seedler extends MeleeWeapon {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.normalAttack(projectile, target, (float) getThornDamage(), 1.0f)) {
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) getThornDamage(), 1.0f)) {
                     target.invulnerableTime = 2;
                     onDied(projectile);
                 }
@@ -284,6 +285,7 @@ public class Seedler extends MeleeWeapon {
         if(!level.isClientSide()) {
             StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), level);
             summon.setOwner(player);
+            summon.getEntityData().set(StaticSummon.STACK_SOURCE, player.getWeaponItem().copy());
             Vec3 pos = new Vec3(player.getX(), player.getEyeY() - 0.1, player.getZ());
             summon.setPos(pos);
             summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.SEEDLER_NUT);

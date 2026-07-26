@@ -2,8 +2,10 @@ package com.lzxnone.terraria.network.handler;
 
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.weapon.SummonWeapon;
 import com.lzxnone.terraria.network.payload.ClearSummonPayload;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -37,6 +39,19 @@ public class ClearSummonHandler {
             }
 
             player.setData(ModAttachments.SUMMON_WEAPON_SUMMONS, remainingSummons);
+            player.displayClientMessage(
+                clearAll
+                    ? Component.translatable("message.lzxnoneterraria.clear_all_summons")
+                    : Component.translatable("message.lzxnoneterraria.clear_summon", getSummonName(id)),
+                true
+            );
         });
     };
+
+    private static Component getSummonName(String id) {
+        if(StaticSummonBehaviors.TERRAPRISMA.equals(id)) {
+            return Component.translatable("item.lzxnoneterraria.terraprisma");
+        }
+        return Component.literal(id);
+    }
 }

@@ -225,7 +225,7 @@ public class InfluxWaver extends MeleeWeapon {
                         Entity target = customData.contains("target") ? summon.level().getEntity(customData.getInt("target")) : null;
                         if(target != null && !hitTarget.getUUID().equals(target.getUUID())) return;
                         if(summon.getOwner() instanceof Player player && FilterUtil.createTargetFilter(player).test(hitTarget)) {
-                            if(DamageUtil.normalAttack(summon, hitTarget, (float) getDamage(), 1.0f)) {
+                            if(DamageUtil.meleeAttack(summon, hitTarget, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getDamage(), 1.0f)) {
                                 hitTarget.invulnerableTime = 2;
                             }
                             customData.putBoolean("dead", false);
@@ -260,6 +260,7 @@ public class InfluxWaver extends MeleeWeapon {
         if(player == null) return;
         StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), player.level());
         summon.setOwner(player);
+        summon.getEntityData().set(StaticSummon.STACK_SOURCE, player.getWeaponItem().copy());
         summon.setPos(pos);
 
         //Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);

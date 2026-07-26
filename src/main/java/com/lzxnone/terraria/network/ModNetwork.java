@@ -43,5 +43,10 @@ public class ModNetwork {
                 ClearSummonPayload.CODEC,
                 ClearSummonHandler::handle
         );
+        registrar.playToClient(
+                ScreenShakePayload.TYPE,
+                ScreenShakePayload.CODEC,
+                ScreenShakeHandler::handle
+        );
     }
 }

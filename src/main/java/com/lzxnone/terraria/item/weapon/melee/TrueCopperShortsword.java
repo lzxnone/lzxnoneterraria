@@ -62,6 +62,7 @@ public class TrueCopperShortsword extends MeleeWeapon {
         for(int i = 0;i < Zenith.getWeaponCount();i++) {
             StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), player.level());
             projectile.setOwner(player);
+            projectile.getEntityData().set(StaticProjectile.STACK_SOURCE, player.getWeaponItem().copy());
 
             projectile.setPos(pos);
             projectile.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.ZENITH_PROJECTILE);

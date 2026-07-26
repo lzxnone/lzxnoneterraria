@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class ConfigScreen {
     private static final ResourceLocation UI_PATH = ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "ui/config.xml");
-    private static final String[] NAV_KEYS = {"weapon", "effect"};
+    private static final String[] NAV_KEYS = {ConfigList.WEAPON, ConfigList.EFFECT, ConfigList.ENCHANTMENT};
     private static String selectedNavKey = ConfigList.WEAPON;
     private static final Map<String, Integer> NAV_SELECTED_INDEXES = new HashMap<>();
 
@@ -33,6 +33,7 @@ public class ConfigScreen {
         //为头部导航按钮设置回调
         findElement(ui, "nav-button-weapon", Button.class).setOnClick(event -> onNavSelected(ui, ConfigList.WEAPON));
         findElement(ui, "nav-button-effect", Button.class).setOnClick(event -> onNavSelected(ui, ConfigList.EFFECT));
+        findElement(ui, "nav-button-enchantment", Button.class).setOnClick(event -> onNavSelected(ui, ConfigList.ENCHANTMENT));
 
         //底部回调
         findElement(ui, "button-cancel", Button.class).setOnClick(event -> discardAndReturn(parent));

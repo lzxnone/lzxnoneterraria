@@ -4,7 +4,6 @@ import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
-import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
@@ -15,12 +14,6 @@ import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.*;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -38,7 +31,6 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.List;
@@ -137,58 +129,6 @@ public class Meowmere extends MeleeWeapon {
         public static final ResourceLocation RES = ResourceLocation.parse("lzxnoneterraria:textures/vfx/rainbow.png");
         public static final int MAX_LENGTH = 100;
 
-        @Override
-        public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-            if(!(entity instanceof StaticSummon summon)) return;
-
-            this.renderItem(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-
-            Vec3 currentPos = summon.getPosition(partialTick);
-
-            //VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(RES));
-            VertexConsumer vertexConsumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES));
-            Matrix4f matrix = poseStack.last().pose();
-
-            int quadCount = summon.trailPositions.size() / 2 - 1;
-            for(int i = 0; i < quadCount;i++) {
-                Vec3 currentPoint1 = summon.trailPositions.get(i * 2);
-                Vec3 currentPoint2 = summon.trailPositions.get(i * 2 + 1);
-                Vec3 nextPoint1 = summon.trailPositions.get(i * 2 + 3);
-                Vec3 nextPoint2 = summon.trailPositions.get(i * 2 + 2);
-
-                double x1 = currentPoint1.x - currentPos.x;
-                double y1 = currentPoint1.y - currentPos.y;
-                double z1 = currentPoint1.z - currentPos.z;
-
-                double x2 = currentPoint2.x - currentPos.x;
-                double y2 = currentPoint2.y - currentPos.y;
-                double z2 = currentPoint2.z - currentPos.z;
-
-                double x3 = nextPoint1.x - currentPos.x;
-                double y3 = nextPoint1.y - currentPos.y;
-                double z3 = nextPoint1.z - currentPos.z;
-
-                double x4 = nextPoint2.x - currentPos.x;
-                double y4 = nextPoint2.y - currentPos.y;
-                double z4 = nextPoint2.z - currentPos.z;
-
-                float alpha1 = 1.0F - (float) i / quadCount;
-                float alpha2 = 1.0F - (float) (i + 1) / quadCount;
-
-                vertexConsumer.addVertex(matrix, (float)x1, (float)y1, (float)z1)
-                    .setColor(1.0f, 1.0f, 1.0f, alpha1).setUv(0.0f, 0.0f)
-                    .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
-                vertexConsumer.addVertex(matrix, (float)x2, (float)y2, (float)z2)
-                    .setColor(1.0f, 1.0f, 1.0f, alpha1).setUv(0.0f, 1.0f)
-                    .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
-                vertexConsumer.addVertex(matrix, (float)x3, (float)y3, (float)z3)
-                    .setColor(1.0f, 1.0f, 1.0f, alpha2).setUv(1.0f, 1.0f)
-                    .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
-                vertexConsumer.addVertex(matrix, (float)x4, (float)y4, (float)z4)
-                    .setColor(1.0f, 1.0f, 1.0f, alpha2).setUv(1.0f, 0.0f)
-                    .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0, 1, 0);
-            }
-        }
 
         @Override
         public void tick(StaticSummon summon) {
@@ -207,7 +147,7 @@ public class Meowmere extends MeleeWeapon {
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
                 if(summon.getOwner() instanceof Player player) {
-                    if(DamageUtil.normalAttack(summon, target, (float) getDamage(), 1.0f)) {
+                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getDamage(), 1.0f)) {
                         if(customData.contains("hitEntity") && customData.getInt("hitEntity") < 4) {
                             customData.putInt("hitEntity", customData.getInt("hitEntity") + 1);
                             summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
@@ -338,6 +278,7 @@ public class Meowmere extends MeleeWeapon {
         if(!level.isClientSide()) {
             StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), level);
             summon.setOwner(player);
+            summon.getEntityData().set(StaticSummon.STACK_SOURCE, player.getWeaponItem().copy());
             Vec3 pos = player.getBoundingBox().getCenter();
             summon.setPos(pos);
             summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.MEOWMERE_PROJECTILE);

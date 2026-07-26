@@ -90,6 +90,10 @@
     background: sprite(lzxnoneterraria:textures/ui/nav_effect_icon.png);
 }
 
+.nav-img-enchantment {
+    background: sprite(lzxnoneterraria:textures/ui/nav_enchantment_icon.png);
+}
+
 .main {
     flex: 1;
     flex-direction: row;

@@ -185,7 +185,7 @@ public class Volcano extends MeleeWeapon {
                             for(LivingEntity livingEntity : targets) {
                                 if(livingEntity.getUUID() == target.getUUID()) continue;
                                 if(hitCount >= getExplosionMaxHitCount()) break;
-                                if(DamageUtil.normalAttack(player, livingEntity, (float) getExplosionDamage(), 1.0f)) {
+                                if(DamageUtil.meleeAttack(player, livingEntity, player.getWeaponItem(), (float) getExplosionDamage(), 1.0f)) {
                                     livingTarget.igniteForSeconds(getIgniteSeconds());
                                     hitCount++;
                                 }
@@ -193,6 +193,7 @@ public class Volcano extends MeleeWeapon {
 
                             StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), livingTarget.level());
                             summon.setOwner(player);
+                            summon.getEntityData().set(StaticSummon.STACK_SOURCE, player.getWeaponItem().copy());
                             Vec3 pos = livingTarget.position();
                             summon.setPos(pos);
                             summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.VOLCANO_LIGHT);

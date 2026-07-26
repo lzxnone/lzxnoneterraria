@@ -152,7 +152,7 @@ public class Excalibur extends MeleeWeapon {
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < getMaxHitCount()) {
-                            if(DamageUtil.normalAttack(beam, target, (float) getDamage(), 1.0f)) {
+                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) getDamage(), 1.0f)) {
                                 target.invulnerableTime = 20;
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);

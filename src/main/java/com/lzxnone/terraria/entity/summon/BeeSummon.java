@@ -17,6 +17,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +35,7 @@ public class BeeSummon extends Bee {
     public int customAttackCount = 0;
 
     public LivingEntity owner = null;
+    public ItemStack stackSource = ItemStack.EMPTY;
 
     public BeeSummon(EntityType<? extends Bee> entityType, Level level) {
         super(entityType, level);
@@ -123,8 +125,8 @@ public class BeeSummon extends Bee {
     public boolean doHurtTarget(Entity target) {
         if(owner == null) return false;
         boolean isHurt;
-        if(owner instanceof Player player) {
-            isHurt = DamageUtil.normalAttack(this, target, (float) BeeKeeper.getBeeDamage(), 1.0f);
+        if(owner instanceof Player) {
+            isHurt = DamageUtil.meleeAttack(this, target, stackSource, (float) BeeKeeper.getBeeDamage(), 1.0f);
         }else {
             DamageSource damageSource = this.damageSources().mobAttack(owner);
             isHurt = target.hurt(damageSource, (float) BeeKeeper.getBeeDamage());
@@ -172,6 +174,7 @@ public class BeeSummon extends Bee {
         tag.putInt("customAttackCount", this.customAttackCount);
         tag.putInt("customAge", this.customAge);
         if(this.owner != null) tag.putUUID("owner", this.owner.getUUID());
+        if(!this.stackSource.isEmpty()) tag.put("stackSource", this.stackSource.save(this.level().registryAccess()));
     }
 
     @Override
@@ -182,6 +185,10 @@ public class BeeSummon extends Bee {
         if(tag.contains("owner") && this.level() instanceof ServerLevel level) {
             Entity entity = level.getEntity(tag.getUUID("owner"));
             if(entity instanceof LivingEntity livingEntity) this.owner = livingEntity;
+        }
+        if(tag.contains("stackSource")) {
+            ItemStack.parse(this.level().registryAccess(), tag.getCompound("stackSource"))
+                    .ifPresent(stack -> this.stackSource = stack);
         }
     }
 

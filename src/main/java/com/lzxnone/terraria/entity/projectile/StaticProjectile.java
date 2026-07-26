@@ -28,6 +28,8 @@ public class StaticProjectile extends Projectile {
             SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<ItemStack> ITEM =
             SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.ITEM_STACK);
+    public static final EntityDataAccessor<ItemStack> STACK_SOURCE =
+            SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.ITEM_STACK);
     public static final EntityDataAccessor<BlockState> BLOCK =
             SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.BLOCK_STATE);
     public static final EntityDataAccessor<Vector3f> ORIGIN =
@@ -109,6 +111,7 @@ public class StaticProjectile extends Projectile {
         builder.define(BEHAVIOR, "default");
         builder.define(RENDER_MODE, "custom");
         builder.define(ITEM, ItemStack.EMPTY);
+        builder.define(STACK_SOURCE, ItemStack.EMPTY);
         builder.define(BLOCK, Blocks.AIR.defaultBlockState());
         builder.define(ORIGIN, new Vector3f(0, 0, 0));
         builder.define(DIRECTION, new Vector3f(0, 0, 1));
@@ -200,6 +203,8 @@ public class StaticProjectile extends Projectile {
         tag.putString("renderMode", this.entityData.get(RENDER_MODE));
         ItemStack stack = this.entityData.get(ITEM);
         if(!stack.isEmpty()) tag.put("item", stack.save(this.level().registryAccess()));
+        ItemStack stackSource = this.entityData.get(STACK_SOURCE);
+        if(!stackSource.isEmpty()) tag.put("stackSource", stackSource.save(this.level().registryAccess()));
         tag.put("block", NbtUtils.writeBlockState(this.entityData.get(BLOCK)));
         tag.putFloat("originX", this.entityData.get(ORIGIN).x);
         tag.putFloat("originY", this.entityData.get(ORIGIN).y);
@@ -243,6 +248,10 @@ public class StaticProjectile extends Projectile {
         if(tag.contains("item")) {
             ItemStack.parse(this.level().registryAccess(), tag.getCompound("item"))
                     .ifPresent(stack -> this.entityData.set(ITEM, stack));
+        }
+        if(tag.contains("stackSource")) {
+            ItemStack.parse(this.level().registryAccess(), tag.getCompound("stackSource"))
+                    .ifPresent(stack -> this.entityData.set(STACK_SOURCE, stack));
         }
         if(tag.contains("block")) {
             BlockState blockState = NbtUtils.readBlockState(

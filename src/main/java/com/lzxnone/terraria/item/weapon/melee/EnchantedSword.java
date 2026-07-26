@@ -123,7 +123,7 @@ public class EnchantedSword extends MeleeWeapon {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.normalAttack(projectile, target, (float) getDamage(), 1.0f)) {
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE),(float) getDamage(), 1.0f)) {
                     target.invulnerableTime = 5;
                     ParticleUtil.addParticles(
                         (ServerLevel) projectile.level(), ModParticles.COLORFUL_PARTICLE,
@@ -155,6 +155,7 @@ public class EnchantedSword extends MeleeWeapon {
             projectile.setPos(pos);
             projectile.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.ENCHANTED_SWORD_BEAM);
             projectile.getEntityData().set(StaticProjectile.RENDER_MODE, "item");
+            projectile.getEntityData().set(StaticProjectile.STACK_SOURCE, stack.copy());
             projectile.getEntityData().set(StaticProjectile.ORIGIN, MathUtil.toVector3f(pos));
             projectile.getEntityData().set(StaticProjectile.DIRECTION, dirs[0]);
             projectile.getEntityData().set(StaticProjectile.UP, dirs[1]);

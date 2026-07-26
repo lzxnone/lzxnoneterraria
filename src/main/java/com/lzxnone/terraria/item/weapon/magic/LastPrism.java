@@ -3,7 +3,6 @@ package com.lzxnone.terraria.item.weapon.magic;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
-import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
@@ -20,12 +19,7 @@ import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
 import com.lzxnone.terraria.utils.ParticleUtil;
 import com.lzxnone.terraria.utils.SoundUtil;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -47,7 +41,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
@@ -180,47 +173,6 @@ public class LastPrism extends MagicWeapon {
     };
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
-        @Override
-        public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-            if(!(entity instanceof StaticSummon summon)) return;
-            Entity owner = summon.getOwner();
-            if(owner == null) return;
-
-            Vector3f[] dirs = MathUtil.computeCoordinateSystem(owner);
-            float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
-
-            float time = summon.getEntityData().get(StaticSummon.AGE) + partialTick;
-            float size = 0.35F;
-            float hue = (time * 0.02F) % 1.0F;
-            float baseZ = -size / 3.0F;
-            float baseRadius = size * 2.0F * Mth.sqrt(2.0F) / 3.0F;
-
-            Vec3 v0 = new Vec3(0.0D, 0.0D, size);
-            Vec3 v1 = new Vec3(baseRadius, 0.0D, baseZ);
-            Vec3 v2 = new Vec3(baseRadius * Math.cos(Math.toRadians(120.0D)), baseRadius * Math.sin(Math.toRadians(120.0D)), baseZ);
-            Vec3 v3 = new Vec3(baseRadius * Math.cos(Math.toRadians(240.0D)), baseRadius * Math.sin(Math.toRadians(240.0D)), baseZ);
-
-            poseStack.pushPose();
-            poseStack.mulPose(Axis.YP.rotationDegrees(-xyRot[1]));
-            poseStack.mulPose(Axis.XP.rotationDegrees(xyRot[0]));
-
-            poseStack.mulPose(Axis.ZP.rotationDegrees(computePrismAngle(time)));
-
-            Matrix4f matrix = poseStack.last().pose();
-            VertexConsumer innerConsumer = bufferSource.getBuffer(ModRenderTypes.entitySolidEmissiveTriangles(RES));
-            renderTetrahedronFace(innerConsumer, matrix, v0, v1, v2, 1.0F, 1.0F, 1.0F, 0.5f);
-            renderTetrahedronFace(innerConsumer, matrix, v0, v3, v1, 1.0F, 1.0F, 1.0F, 0.5f);
-            renderTetrahedronFace(innerConsumer, matrix, v0, v2, v3, 1.0F, 1.0F, 1.0F, 0.5f);
-            renderTetrahedronFace(innerConsumer, matrix, v1, v3, v2, 1.0F, 1.0F, 1.0F, 0.5f);
-
-            float outerScale = 1.2F;
-            VertexConsumer outerConsumer = bufferSource.getBuffer(ModRenderTypes.entitySolidEmissiveTriangles(RES));
-            renderTetrahedronFace(outerConsumer, matrix, v0.scale(outerScale), v1.scale(outerScale), v2.scale(outerScale), hue);
-            renderTetrahedronFace(outerConsumer, matrix, v0.scale(outerScale), v3.scale(outerScale), v1.scale(outerScale), hue + 0.25F);
-            renderTetrahedronFace(outerConsumer, matrix, v0.scale(outerScale), v2.scale(outerScale), v3.scale(outerScale), hue + 0.50F);
-            renderTetrahedronFace(outerConsumer, matrix, v1.scale(outerScale), v3.scale(outerScale), v2.scale(outerScale), hue + 0.75F);
-            poseStack.popPose();
-        }
 
         @Override
         public void tick(StaticSummon summon) {
@@ -249,26 +201,6 @@ public class LastPrism extends MagicWeapon {
     };
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR2 = new IStaticSummonBehavior() {
-        @Override
-        public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-            if(!(entity instanceof StaticSummon beam)) return;
-            if(!(beam.getOwner() instanceof StaticSummon tri)) return;
-
-            BeamData beamData = computeBeamData(tri, getBeamIndex(beam), partialTick);
-            if(beamData == null) return;
-
-            VertexConsumer consumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES));
-            Matrix4f matrix = poseStack.last().pose();
-            List<Vec3> points = List.of(beamData.start(), beamData.end());
-
-            renderTube(consumer, matrix, beam.position(),
-                points, beamData.radius() * 0.8f, 1.0f, 1.0f, 1.0f, 1.0f, false);
-            renderTube(consumer, matrix, beam.position(),
-                points, beamData.radius(), beam.getEntityData().get(StaticSummon.COLOR_A),
-                beam.getEntityData().get(StaticSummon.COLOR_R),
-                beam.getEntityData().get(StaticSummon.COLOR_G),
-                beam.getEntityData().get(StaticSummon.COLOR_B), false);
-        }
 
         @Override
         public void tick(StaticSummon beam) {
@@ -315,8 +247,7 @@ public class LastPrism extends MagicWeapon {
                 AABB entityBox = hitEntity.getBoundingBox().inflate(beamData.radius());
                 Optional<Vec3> clipResult = entityBox.clip(beamData.start(), beamData.end());
                 if(entityBox.contains(beamData.start()) || clipResult.isPresent()) {
-                    float damage = MagicWeapon.applyMagicDamageBonus(stack, player, getDamage() * beamData.ratio());
-                    if(DamageUtil.normalAttack(beam, hitEntity, damage, 0.1f)) {
+                    if(DamageUtil.magicAttack(beam, hitEntity, beam.getEntityData().get(StaticSummon.STACK_SOURCE), getDamage() * beamData.ratio(), 0.1f)) {
                         hitEntity.invulnerableTime = 5;
                     }
                 }
@@ -400,6 +331,7 @@ public class LastPrism extends MagicWeapon {
 
             StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), level);
             summon.setOwner(player);
+            summon.getEntityData().set(StaticSummon.STACK_SOURCE, stack.copy());
             Vec3 pos = player.getEyePosition().add(MathUtil.toVec3(dirs[0]).scale(0.5)).add(MathUtil.toVec3(dirs[1]).scale(-1.0));
             summon.setPos(pos);
             summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.LAST_PRISM_TRI);
@@ -420,6 +352,7 @@ public class LastPrism extends MagicWeapon {
                 StaticSummon beam = new StaticSummon(ModEntities.STATIC_SUMMON.get(), level);
                 Vector3f color = BEAM_COLORS[i];
                 beam.setOwner(summon);
+                beam.getEntityData().set(StaticSummon.STACK_SOURCE, stack.copy());
                 beam.setPos(pos);
                 beam.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.LAST_PRISM_BEAM);
                 beam.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
@@ -464,66 +397,9 @@ public class LastPrism extends MagicWeapon {
         return 72000;
     }
 
-    private static void renderTetrahedronFace(
-        VertexConsumer buffer,
-        Matrix4f matrix,
-        Vec3 v0,
-        Vec3 v1,
-        Vec3 v2,
-        float hue
-    ) {
-        float[] color0 = computeSoftPrismColor(hue);
-        float[] color1 = computeSoftPrismColor(hue + 0.10F);
-        float[] color2 = computeSoftPrismColor(hue + 0.20F);
 
-        renderTetrahedronVertex(buffer, matrix, v0, color0[0], color0[1], color0[2]);
-        renderTetrahedronVertex(buffer, matrix, v1, color1[0], color1[1], color1[2]);
-        renderTetrahedronVertex(buffer, matrix, v2, color2[0], color2[1], color2[2]);
-    }
 
-    private static void renderTetrahedronFace(
-        VertexConsumer buffer,
-        Matrix4f matrix,
-        Vec3 v0,
-        Vec3 v1,
-        Vec3 v2,
-        float r,
-        float g,
-        float b,
-        float alpha
-    ) {
-        renderTetrahedronVertex(buffer, matrix, v0, r, g, b, alpha);
-        renderTetrahedronVertex(buffer, matrix, v1, r, g, b, alpha);
-        renderTetrahedronVertex(buffer, matrix, v2, r, g, b, alpha);
-    }
 
-    private static void renderTetrahedronVertex(
-        VertexConsumer buffer,
-        Matrix4f matrix,
-        Vec3 vertex,
-        float r,
-        float g,
-        float b
-    ) {
-        renderTetrahedronVertex(buffer, matrix, vertex, r, g, b, 1.0F);
-    }
-
-    private static void renderTetrahedronVertex(
-        VertexConsumer buffer,
-        Matrix4f matrix,
-        Vec3 vertex,
-        float r,
-        float g,
-        float b,
-        float alpha
-    ) {
-        buffer.addVertex(matrix, (float)vertex.x, (float)vertex.y, (float)vertex.z)
-            .setColor(r, g, b, alpha)
-            .setUv(0.5F, 0.5F)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT)
-            .setNormal(0.0F, 1.0F, 0.0F);
-    }
 
     private static float[] computeSoftPrismColor(float hue) {
         float normalizedHue = Math.floorMod((int)(hue * 1000.0F), 1000) / 1000.0F;
@@ -540,63 +416,9 @@ public class LastPrism extends MagicWeapon {
         };
     }
 
-    public static void renderTube(VertexConsumer buffer, Matrix4f matrix, Vec3 entityWorldPos,
-                                  List<Vec3> points, float radius, float alpha, float colorR, float colorG, float colorB, boolean linear) {
-        int n = points.size();
-        if(n < 2) return;
-
-        Vector3f[][] oriDirs = new Vector3f[n][3];
-        Vec3[] dir = new Vec3[n], up = new Vec3[n], right = new Vec3[n];
-        for(int i = 0;i < n;i++) {
-            if(i == n - 1) oriDirs[i] = MathUtil.computeCoordinateSystem(points.get(n - 1).subtract(points.get(n - 2)).toVector3f(), 0);
-            else oriDirs[i] = MathUtil.computeCoordinateSystem(points.get(i + 1).subtract(points.get(i)).toVector3f(), 0);
-            dir[i] = MathUtil.toVec3(oriDirs[i][0]);
-            up[i] = MathUtil.toVec3(oriDirs[i][1]);
-            right[i] = MathUtil.toVec3(oriDirs[i][2]);
-        }
-
-        for(int i = 0;i < n - 1;i++) {
-            float r0 = linear ? radius * (1.0F - (float) i / (float) (n - 1)) : radius;
-            float r1 = linear ? radius * (1.0F - (float) (i + 1) / (float) (n - 1)) : radius;
-            if(r0 <= 0.001F && r1 <= 0.001F) continue;
-            Vec3 N = right[i], B = up[i], N1 = right[i + 1], B1 = up[i + 1];
-            Vec3 P = points.get(i), P1 = points.get(i + 1);
-            for(int j = 0;j < RING;j++) {
-                float a0 = (float) (2.0 * Math.PI * j / RING);
-                float a1 = (float) (2.0 * Math.PI * (j + 1) / RING);
-                Vec3 d0 = computeRingDir(N, B, a0);
-                Vec3 d1 = computeRingDir(N1, B1, a0);
-                Vec3 d0b = computeRingDir(N, B, a1);
-                Vec3 d1b = computeRingDir(N1, B1, a1);
-                Vec3 v0 = P.add(d0.scale(r0));
-                Vec3 v1 = P1.add(d1.scale(r1));
-                Vec3 v2 = P1.add(d1b.scale(r1));
-                Vec3 v3 = P.add(d0b.scale(r0));
-                for(int k = 0;k < 3;k++) {
-                    writeVert(buffer, matrix, entityWorldPos, v0, 0.5f, 0.5f, alpha, colorR, colorG, colorB);
-                    writeVert(buffer, matrix, entityWorldPos, v1, 0.5f, 0.5f, alpha, colorR, colorG, colorB);
-                    writeVert(buffer, matrix, entityWorldPos, v2, 0.5f, 0.5f, alpha, colorR, colorG, colorB);
-                    writeVert(buffer, matrix, entityWorldPos, v3, 0.5f, 0.5f, alpha, colorR, colorG, colorB);
-                }
-            }
-        }
-    }
 
     public static Vec3 computeRingDir(Vec3 n, Vec3 b, float ang) {
         return n.scale(Math.cos(ang)).add(b.scale(Math.sin(ang)));
     }
 
-    public static void writeVert(VertexConsumer buffer, Matrix4f matrix, Vec3 entityWorldPos,
-                                  Vec3 worldPos, float u, float v, float alpha, float colorR, float colorG, float colorB) {
-        double lx = worldPos.x - entityWorldPos.x;
-        double ly = worldPos.y - entityWorldPos.y;
-        double lz = worldPos.z - entityWorldPos.z;
-
-        buffer.addVertex(matrix, (float)lx, (float)ly, (float)lz)
-            .setColor(colorR, colorG, colorB, alpha)
-            .setUv(u, v)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightTexture.FULL_BRIGHT)
-            .setNormal(0.0F, 1.0F, 0.0F);
-    }
 }

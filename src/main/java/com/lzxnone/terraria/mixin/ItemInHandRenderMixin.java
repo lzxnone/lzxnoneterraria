@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.mixin;
 
 import com.lzxnone.terraria.effect.ModEffects;
+import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
 import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
@@ -139,7 +140,7 @@ public class ItemInHandRenderMixin {
         if(itemStack.is(ModItems.DEVILS_DEVASTATION.get()) && entity instanceof Player player) {
             if(entity.getEffect(ModEffects.KILL_MODE) != null && !player.getCooldowns().isOnCooldown(itemStack.getItem())) {
                 poseStack.pushPose();
-                DevilsDevastation.renderEnergyWave(buffer, poseStack, player);
+                ClientDevilsDevastation.renderEnergyWave(buffer, poseStack, player);
                 poseStack.popPose();
             }
         }

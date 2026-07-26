@@ -12,6 +12,7 @@ public class ModEnchantments {
     public static final ResourceKey<Enchantment> MANA_GATHERING = create("mana_gathering");
     public static final ResourceKey<Enchantment> MANA_GATHERING_CURSE = create("mana_gathering_curse");
     public static final ResourceKey<Enchantment> ARCANE_AMPLIFICATION = create("arcane_amplification");
+    public static final ResourceKey<Enchantment> SUMMON_AMPLIFICATION = create("summon_amplification");
 
     private static ResourceKey<Enchantment> create(String name) {
         return ResourceKey.create(

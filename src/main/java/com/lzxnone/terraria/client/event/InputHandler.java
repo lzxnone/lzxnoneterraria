@@ -1,4 +1,4 @@
-package com.lzxnone.terraria.event;
+package com.lzxnone.terraria.client.event;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModKeyBindings;

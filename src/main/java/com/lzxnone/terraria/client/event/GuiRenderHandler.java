@@ -1,7 +1,6 @@
-package com.lzxnone.terraria.event;
+package com.lzxnone.terraria.client.event;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
-import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.item.ModItems;
 import net.minecraft.Util;

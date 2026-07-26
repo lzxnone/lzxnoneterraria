@@ -203,7 +203,7 @@ public class TheHorsemansBlade extends MeleeWeapon {
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < getBladeMaxHitCount()) {
-                            if(DamageUtil.normalAttack(beam, target, (float) getBladeDamage(), 1.0f)) {
+                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) getBladeDamage(), 1.0f)) {
                                 target.invulnerableTime = 20;
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
@@ -213,6 +213,7 @@ public class TheHorsemansBlade extends MeleeWeapon {
                                 Entity entity = beam.getOwner();
                                 if(entity == null) return;
                                 summon.setOwner(entity);
+                                summon.getEntityData().set(StaticSummon.STACK_SOURCE, beam.getEntityData().get(SwordBeam.STACK_SOURCE).copy());
                                 Vec3 pos = MathUtil.getRandomPosInRadius(entity.position(), getPumpkinSpawnRange());
                                 summon.setPos(pos);
 
@@ -335,7 +336,7 @@ public class TheHorsemansBlade extends MeleeWeapon {
                 summon.setYRot(xyRot[1]);
 
                 if(selfPos.distanceToSqr(targetPos) < 2.0D) {
-                    if(summon.getOwner() instanceof Player player && FilterUtil.createLivingTargetFilter(player).test(target) && DamageUtil.normalAttack(summon, target, (float) getPumpkinDamage(), 1.0f)) onDied(summon);
+                    if(summon.getOwner() instanceof Player player && FilterUtil.createLivingTargetFilter(player).test(target) && DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getPumpkinDamage(), 1.0f)) onDied(summon);
                 }
             }else {
                 Vec3 dir = summon.getLookAngle().normalize();
@@ -360,7 +361,7 @@ public class TheHorsemansBlade extends MeleeWeapon {
                     for(Entity hitEntity : hitEntities) {
                         if(target != null && hitEntity.getUUID() == target.getUUID()) continue;
                         if(summon.getOwner() instanceof Player player) {
-                            if(DamageUtil.normalAttack(summon, hitEntity, (float) getPumpkinDamage(), 1.0f)) {
+                            if(DamageUtil.meleeAttack(summon, hitEntity, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getPumpkinDamage(), 1.0f)) {
                                 hitEntity.invulnerableTime = 2;
                             }
                         }

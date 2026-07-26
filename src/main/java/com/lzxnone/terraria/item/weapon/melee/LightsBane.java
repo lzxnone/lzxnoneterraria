@@ -3,7 +3,6 @@ package com.lzxnone.terraria.item.weapon.melee;
 import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.ModEntities;
-import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
@@ -18,14 +17,7 @@ import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.ParticleUtil;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -44,7 +36,6 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.Comparator;
@@ -144,44 +135,6 @@ public class LightsBane extends MeleeWeapon {
     };
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
-        @Override
-        public void render(Entity entity, float entityYaw, float partialTick,
-                           PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-            if(!(entity instanceof StaticSummon summon)) return;
-
-            float lifeRatio = (summon.getEntityData().get(StaticSummon.AGE) + partialTick) / summon.getEntityData().get(StaticSummon.LIFETIME);
-            if(lifeRatio > 1.0f) return;
-
-            int frame = Math.min((int) (lifeRatio * 12.0f), 11);
-
-            poseStack.pushPose();
-            poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-
-            VertexConsumer consumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES[frame]));
-            Matrix4f matrix = poseStack.last().pose();
-
-            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-            float scale;
-            if(customData.contains("big") && customData.getBoolean("big")) scale = SCALE_BIG;
-            else scale = SCALE_SMALL;
-
-            poseStack.mulPose(Axis.ZP.rotationDegrees(summon.getEntityData().get(StaticSummon.RZP)));
-
-            consumer.addVertex(matrix, -HALF_WIDTH * scale, -HALF_HEIGHT * scale, 0)
-                .setColor(255, 255, 255, 255).setUv(0.0f, 1.0f)
-                .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0.0f, 1.0f, 0.0f);
-            consumer.addVertex(matrix, HALF_WIDTH * scale, -HALF_HEIGHT * scale, 0)
-                .setColor(255, 255, 255, 255).setUv(1.0f, 1.0f)
-                .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0.0f, 1.0f, 0.0f);
-            consumer.addVertex(matrix, HALF_WIDTH * scale, HALF_HEIGHT * scale, 0)
-                .setColor(255, 255, 255, 255).setUv(1.0f, 0.0f)
-                .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0.0f, 1.0f, 0.0f);
-            consumer.addVertex(matrix, -HALF_WIDTH * scale, HALF_HEIGHT * scale, 0)
-                .setColor(255, 255, 255, 255).setUv(0.0f, 0.0f)
-                .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0.0f, 1.0f, 0.0f);
-
-            poseStack.popPose();
-        }
 
         @Override
         public void tick(StaticSummon summon) {
@@ -204,7 +157,7 @@ public class LightsBane extends MeleeWeapon {
                 List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                 for(Entity target : targets) {
                     float damage = customData.contains("big") && customData.getBoolean("big") ? (float) getBigDamage() : (float) getSmallDamage();
-                    if(DamageUtil.normalAttack(summon, target, damage, 1.0f)) {
+                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), damage, 1.0f)) {
 
                     }
                 }
@@ -240,6 +193,7 @@ public class LightsBane extends MeleeWeapon {
                         if(summonTarget != null) {
                             StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), player.level());
                             summon.setOwner(player);
+                            summon.getEntityData().set(StaticSummon.STACK_SOURCE, player.getWeaponItem().copy());
                             summon.setPos(new Vec3(summonTarget.getX(), summonTarget.getY() + summonTarget.getBbHeight(), summonTarget.getZ()));
                             summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.LIGHTS_BANE_SLASH);
                             summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");

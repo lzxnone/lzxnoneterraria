@@ -1,5 +1,6 @@
-package com.lzxnone.terraria.entity.beam;
+package com.lzxnone.terraria.client.entity.beam;
 
+import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -16,7 +17,7 @@ public class SwordBeamRenderer extends EntityRenderer<Entity> {
     public void render(Entity entity, float entityYaw, float partialTick,
                        PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         if(!(entity instanceof SwordBeam beam)) return;
-        SwordBeamBehaviors.getBehavior(beam.getEntityData().get(SwordBeam.BEHAVIOR)).render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        ClientSwordBeamRenderBehaviors.getBehavior(beam.getEntityData().get(SwordBeam.BEHAVIOR)).render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 

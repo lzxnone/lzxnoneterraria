@@ -5,9 +5,10 @@ import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.BeeSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.item.weapon.MagicWeapon;
+import com.lzxnone.terraria.item.weapon.SummonWeapon;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffects;
@@ -15,105 +16,94 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Objects;
 
 public class DamageUtil {
-    public static boolean attack(Player player, Entity target, float damage) {
-        float finalDamage = damage;
-        if(player.hasEffect(MobEffects.DAMAGE_BOOST) && player.getEffect(MobEffects.DAMAGE_BOOST) != null) {
-            int amplifier = Objects.requireNonNull(player.getEffect(MobEffects.DAMAGE_BOOST)).getAmplifier();
-            finalDamage += (amplifier + 1) * 3.0F;
-        }
-        if(player.hasEffect(MobEffects.WEAKNESS) && player.getEffect(MobEffects.WEAKNESS) != null) {
-            int amplifier = Objects.requireNonNull(player.getEffect(MobEffects.WEAKNESS)).getAmplifier();
-            finalDamage -= (amplifier + 1) * 4.0F;
-        }
-        finalDamage = Math.max(0.0F, finalDamage);
-
-        DamageSource source = player.level().damageSources().playerAttack(player);
-
-        float knockbackLevel = (float) player.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
-        boolean isSprinting = player.isSprinting();
-        if(isSprinting) {
-            knockbackLevel += 1.0F;
-        }
-
-        if(player.level() instanceof ServerLevel serverLevel) {
-            finalDamage = EnchantmentHelper.modifyDamage(serverLevel, player.getWeaponItem(), target, source, finalDamage);
-            knockbackLevel = EnchantmentHelper.modifyKnockback(serverLevel, player.getWeaponItem(), target, source, knockbackLevel);
-        }
-        finalDamage = Math.max(0.0F, finalDamage);
-
-        boolean hasHurt = target.hurt(source, finalDamage);
-
-        if(hasHurt) {
-            if(knockbackLevel > 0.0F && target instanceof LivingEntity livingTarget) {
-                livingTarget.knockback(
-                    knockbackLevel * 0.5F,
-                    Mth.sin(player.getYRot() * ((float) Math.PI / 180F)),
-                    -Mth.cos(player.getYRot() * ((float) Math.PI / 180F))
-                );
-
-                if(isSprinting) {
-                    player.setDeltaMovement(player.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
-                    player.setSprinting(false);
-                }
-            }
-            if(player.level() instanceof ServerLevel serverLevel) {
-                EnchantmentHelper.doPostAttackEffects(serverLevel, target, source);
-            }
-        }
-
-        return hasHurt;
+    public enum DamageCategory {
+        MELEE,
+        RANGED,
+        SUMMON,
+        MAGIC,
+        REAL
+    }
+    public static boolean meleeAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
+        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.MELEE);
     }
 
-    public static boolean normalAttack(Entity attackEntity, Entity target, float damage, float knockbackScale) {
-        return entityAttack(attackEntity, target, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, false);
+    public static boolean rangedAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
+        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.RANGED);
     }
 
-    public static boolean realAttack(Entity attackEntity, Entity target, float damage) {
-        return realAttack(attackEntity, target, damage, 0.0F);
+    public static boolean summonAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
+        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.SUMMON);
+    }
+
+    public static boolean magicAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
+        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.MAGIC);
     }
 
     public static boolean realAttack(Entity attackEntity, Entity target, float damage, float knockbackScale) {
-        return entityAttack(attackEntity, target, damage, knockbackScale, ModDamageTypes.PLAYER_REAL_ATTACK, true);
+        return entityAttack(attackEntity, target, ItemStack.EMPTY, damage, knockbackScale, ModDamageTypes.PLAYER_REAL_ATTACK, DamageCategory.REAL);
     }
 
     private static boolean entityAttack(
         Entity attackEntity,
         Entity target,
+        ItemStack sourceStack,
         float damage,
         float knockbackScale,
         ResourceKey<DamageType> damageType,
-        boolean realDamage
+        DamageCategory category
     ) {
         Player player = getAttackOwner(attackEntity);
         if(player == null || !(attackEntity.level() instanceof ServerLevel serverLevel)) return false;
 
         DamageSource source = attackEntity.level().damageSources().source(damageType, attackEntity, player);
-        float finalDamage = realDamage ? Math.max(0.0F, damage) : applyPlayerDamageEffects(player, damage);
-        float knockbackLevel = (float) player.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
+        ItemStack itemSource = sourceStack == null ? ItemStack.EMPTY : sourceStack;
 
-        if(!realDamage) {
-            finalDamage = EnchantmentHelper.modifyDamage(serverLevel, player.getWeaponItem(), target, source, finalDamage);
-            knockbackLevel = EnchantmentHelper.modifyKnockback(serverLevel, player.getWeaponItem(), target, source, knockbackLevel);
+        //应用药水
+        float finalDamage = category == DamageCategory.REAL ? Math.max(0.0F, damage) : applyPlayerDamageEffects(player, damage);
+        float knockbackLevel = (float) player.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
+        //
+        //应用附魔
+        if(category == DamageCategory.MELEE && !itemSource.isEmpty()) {
+            finalDamage = EnchantmentHelper.modifyDamage(serverLevel, itemSource, target, source, finalDamage);
+            knockbackLevel = EnchantmentHelper.modifyKnockback(serverLevel, itemSource, target, source, knockbackLevel);
+        }else if(category == DamageCategory.SUMMON && !itemSource.isEmpty()) {
+            finalDamage = SummonWeapon.applySummonDamageBonus(itemSource, player, finalDamage);
+        }else if(category == DamageCategory.MAGIC && !itemSource.isEmpty()) {
+            finalDamage = MagicWeapon.applyMagicDamageBonus(itemSource, player, finalDamage);
         }
         finalDamage = Math.max(0.0F, finalDamage);
 
+        Vec3 beforeHurtMovement = target instanceof LivingEntity livingTarget ? livingTarget.getDeltaMovement() : Vec3.ZERO;
         boolean hasHurt = target.hurt(source, finalDamage);
 
         if(hasHurt) {
-            float finalKnockback = knockbackLevel * knockbackScale;
-            if(finalKnockback > 0.0F && target instanceof LivingEntity livingTarget) {
-                Vec3 knockbackDirection = getAttackKnockbackDirection(attackEntity, target);
-                livingTarget.knockback(finalKnockback * 0.5F, knockbackDirection.x, knockbackDirection.z);
+            if(category != DamageCategory.SUMMON && target instanceof LivingEntity livingTarget) {
+                player.setLastHurtMob(livingTarget);
             }
-            if(!realDamage) {
-                EnchantmentHelper.doPostAttackEffects(serverLevel, target, source);
+            if(target instanceof LivingEntity livingTarget) {
+                Vec3 hurtKnockback = livingTarget.getDeltaMovement().subtract(beforeHurtMovement);
+                Vec3 extraKnockback = Vec3.ZERO;
+
+                if(knockbackLevel > 0.0F) {
+                    livingTarget.setDeltaMovement(beforeHurtMovement);
+                    Vec3 knockbackDirection = getAttackKnockbackDirection(attackEntity, target);
+                    livingTarget.knockback(knockbackLevel * 0.5F, -knockbackDirection.x, -knockbackDirection.z);
+                    extraKnockback = livingTarget.getDeltaMovement().subtract(beforeHurtMovement);
+                }
+
+                livingTarget.setDeltaMovement(beforeHurtMovement.add(hurtKnockback.add(extraKnockback).scale(knockbackScale)));
             }
+            DamageSource postSource = attackEntity == player
+                ? source
+                : attackEntity.level().damageSources().source(damageType, player, player);
+            EnchantmentHelper.doPostAttackEffectsWithItemSource(serverLevel, target, postSource, itemSource.isEmpty() ? null : itemSource);
         }
 
         return hasHurt;
@@ -121,10 +111,12 @@ public class DamageUtil {
 
     private static float applyPlayerDamageEffects(Player player, float damage) {
         float finalDamage = damage;
+        //力量
         if(player.hasEffect(MobEffects.DAMAGE_BOOST) && player.getEffect(MobEffects.DAMAGE_BOOST) != null) {
             int amplifier = Objects.requireNonNull(player.getEffect(MobEffects.DAMAGE_BOOST)).getAmplifier();
             finalDamage += (amplifier + 1) * 3.0F;
         }
+        //虚弱
         if(player.hasEffect(MobEffects.WEAKNESS) && player.getEffect(MobEffects.WEAKNESS) != null) {
             int amplifier = Objects.requireNonNull(player.getEffect(MobEffects.WEAKNESS)).getAmplifier();
             finalDamage -= (amplifier + 1) * 4.0F;

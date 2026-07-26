@@ -9,6 +9,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
@@ -48,6 +49,8 @@ public class SwordBeam extends Entity {
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> LIFETIME =
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<ItemStack> STACK_SOURCE =
+            SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.ITEM_STACK);
 
     public static final EntityDataAccessor<Optional<UUID>> OWNER =
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.OPTIONAL_UUID);
@@ -203,6 +206,7 @@ public class SwordBeam extends Entity {
         builder.define(COLOR3, new Vector3f(1.0f, 1.0f, 1.0f));
         builder.define(AGE, 0);
         builder.define(LIFETIME, 10);
+        builder.define(STACK_SOURCE, ItemStack.EMPTY);
         builder.define(OWNER, Optional.empty());
         builder.define(CUSTOM_DATA, new CompoundTag());
     }
@@ -232,6 +236,8 @@ public class SwordBeam extends Entity {
         tag.putFloat("color3B", c3.z);
         tag.putInt("age", this.entityData.get(AGE));
         tag.putInt("lifetime", this.entityData.get(LIFETIME));
+        ItemStack stackSource = this.entityData.get(STACK_SOURCE);
+        if(!stackSource.isEmpty()) tag.put("stackSource", stackSource.save(this.level().registryAccess()));
         if(getOwner() != null) tag.putUUID("owner", getOwner().getUUID());
         tag.put("customData", this.entityData.get(CUSTOM_DATA));
     }
@@ -265,6 +271,10 @@ public class SwordBeam extends Entity {
         }
         if(tag.contains("age")) this.entityData.set(AGE, tag.getInt("age"));
         if(tag.contains("lifetime")) this.entityData.set(LIFETIME, tag.getInt("lifetime"));
+        if(tag.contains("stackSource")) {
+            ItemStack.parse(this.level().registryAccess(), tag.getCompound("stackSource"))
+                    .ifPresent(stack -> this.entityData.set(STACK_SOURCE, stack));
+        }
         if(tag.contains("owner")) {
             this.entityData.set(OWNER, Optional.of(tag.getUUID("owner")));
             getOwner();

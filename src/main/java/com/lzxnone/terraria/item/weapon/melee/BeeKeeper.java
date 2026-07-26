@@ -118,6 +118,7 @@ public class BeeKeeper extends MeleeWeapon {
                         BeeSummon bee = ModEntities.BEE_SUMMON.get().create(player.level());
                         if(bee != null) {
                             bee.owner = player;
+                            bee.stackSource = itemStack.copy();
                             bee.setPos(new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ()));
                             player.level().addFreshEntity(bee);
                         }
