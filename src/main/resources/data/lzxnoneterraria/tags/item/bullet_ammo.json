@@ -2,6 +2,20 @@
   "replace": false,
   "values": [
     "lzxnoneterraria:musket_ball",
-    "lzxnoneterraria:meteor_shot"
+    "lzxnoneterraria:meteor_shot",
+    "lzxnoneterraria:silver_bullet",
+    "lzxnoneterraria:crystal_bullet",
+    "lzxnoneterraria:cursed_bullet",
+    "lzxnoneterraria:chlorophyte_bullet",
+    "lzxnoneterraria:high_velocity_bullet",
+    "lzxnoneterraria:ichor_bullet",
+    "lzxnoneterraria:venom_bullet",
+    "lzxnoneterraria:party_bullet",
+    "lzxnoneterraria:nano_bullet",
+    "lzxnoneterraria:exploding_bullet",
+    "lzxnoneterraria:golden_bullet",
+    "lzxnoneterraria:endless_musket_pouch",
+    "lzxnoneterraria:luminite_bullet",
+    "lzxnoneterraria:tungsten_bullet"
   ]
 }

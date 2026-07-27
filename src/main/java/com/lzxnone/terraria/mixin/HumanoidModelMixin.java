@@ -30,11 +30,10 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> {
                 : player.getMainArm().getOpposite();
 
         if(player.getUseItem().is(ModItems.SDMG.get())) {
-            float horizontalArmRot = (float) Math.toRadians(-90.0D);
             if(usedArm == HumanoidArm.RIGHT) {
-                this.rightArm.xRot = horizontalArmRot;
+                this.rightArm.xRot = (float) Math.toRadians(player.getXRot() - 90);
             }else {
-                this.leftArm.xRot = horizontalArmRot;
+                this.leftArm.xRot = (float) Math.toRadians(player.getXRot() - 90);
             }
         }
     }

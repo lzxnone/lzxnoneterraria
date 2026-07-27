@@ -46,6 +46,19 @@ public class ClientStaticSummonRenderBehaviors {
 
         BEHAVIORS.put(StaticSummonBehaviors.MUSKET_BALL, ClientBulletAmmo.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.METEOR_SHOT, ClientBulletAmmo.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.SILVER_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.CRYSTAL_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.CURSED_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.CHLOROPHYTE_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.HIGH_VELOCITY_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.ICHOR_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.VENOM_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.PARTY_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.NANO_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.EXPLODING_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.GOLDEN_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.LUMINITE_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.TUNGSTEN_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
     }
 
     public static IStaticSummonRenderBehavior getBehavior(String id) {

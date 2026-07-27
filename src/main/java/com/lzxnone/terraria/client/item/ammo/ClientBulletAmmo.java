@@ -22,8 +22,10 @@ public class ClientBulletAmmo {
             poseStack.pushPose();
 
             //旋转(方向修正)
-            poseStack.mulPose(Axis.YP.rotationDegrees(-Mth.lerp(partialTick, summon.yRotO, summon.getYRot())));
-            poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTick, summon.xRotO, summon.getXRot())));
+            //poseStack.mulPose(Axis.YP.rotationDegrees(-Mth.lerp(partialTick, summon.yRotO, summon.getYRot())));
+            //poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTick, summon.xRotO, summon.getXRot())));
+            poseStack.mulPose(Axis.YP.rotationDegrees(-summon.getYRot()));
+            poseStack.mulPose(Axis.XP.rotationDegrees(summon.getXRot()));
 
             poseStack.mulPose(Axis.YP.rotationDegrees(-90));
 
@@ -48,8 +50,11 @@ public class ClientBulletAmmo {
             poseStack.pushPose();
 
             //旋转(方向修正)
-            poseStack.mulPose(Axis.YP.rotationDegrees(-Mth.lerp(partialTick, summon.yRotO, summon.getYRot())));
-            poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTick, summon.xRotO, summon.getXRot())));
+            //poseStack.mulPose(Axis.YP.rotationDegrees(-Mth.lerp(partialTick, summon.yRotO, summon.getYRot())));
+            //poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTick, summon.xRotO, summon.getXRot())));
+
+            poseStack.mulPose(Axis.YP.rotationDegrees(-summon.getYRot()));
+            poseStack.mulPose(Axis.XP.rotationDegrees(summon.getXRot()));
 
             poseStack.mulPose(Axis.ZP.rotationDegrees(90));
             poseStack.mulPose(Axis.YP.rotationDegrees(-90));

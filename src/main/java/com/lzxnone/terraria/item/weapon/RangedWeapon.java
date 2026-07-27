@@ -2,6 +2,7 @@ package com.lzxnone.terraria.item.weapon;
 
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
+import com.lzxnone.terraria.item.ModItems;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -90,6 +91,7 @@ public class RangedWeapon extends Weapon {
 
         ItemStack ammoStack = getAmmoStack(weaponStack);
         if(ammoStack.isEmpty() || !canUseAmmo(weaponStack, ammoStack)) return false;
+        if(ammoStack.is(ModItems.ENDLESS_MUSKET_POUCH.get())) return true;
 
         Item ammoItem = ammoStack.getItem();
         int available = 0;

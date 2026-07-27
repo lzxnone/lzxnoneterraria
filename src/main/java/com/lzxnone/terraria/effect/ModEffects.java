@@ -20,6 +20,10 @@ public class ModEffects {
             MOB_EFFECTS.register("kill_mode_cooldown", KillModeCooldownEffect::new);
     public static final DeferredHolder<MobEffect, DemonicFlamesEffect> DEMONIC_FLAMES =
             MOB_EFFECTS.register("demonic_flames", DemonicFlamesEffect::new);
+    public static final DeferredHolder<MobEffect, CursedInfernoEffect> CURSED_INFERNO =
+            MOB_EFFECTS.register("cursed_inferno", CursedInfernoEffect::new);
     public static final DeferredHolder<MobEffect, SummonEffect> SUMMON =
             MOB_EFFECTS.register("summon", SummonEffect::new);
+    public static final DeferredHolder<MobEffect, MidasEffect> MIDAS =
+            MOB_EFFECTS.register("midas", MidasEffect::new);
 }

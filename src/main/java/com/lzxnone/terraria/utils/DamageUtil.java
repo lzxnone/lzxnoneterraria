@@ -1,12 +1,15 @@
 package com.lzxnone.terraria.utils;
 
 import com.lzxnone.terraria.damage.ModDamageTypes;
+import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
+import com.lzxnone.terraria.enchantment.ModEnchantments;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.BeeSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.weapon.MagicWeapon;
 import com.lzxnone.terraria.item.weapon.SummonWeapon;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -17,6 +20,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 
@@ -77,6 +81,8 @@ public class DamageUtil {
             finalDamage = SummonWeapon.applySummonDamageBonus(itemSource, player, finalDamage);
         }else if(category == DamageCategory.MAGIC && !itemSource.isEmpty()) {
             finalDamage = MagicWeapon.applyMagicDamageBonus(itemSource, player, finalDamage);
+        }else if(category == DamageCategory.RANGED && !itemSource.isEmpty()) {
+            finalDamage = applyRangedDamageBonus(itemSource, player, finalDamage);
         }
         finalDamage = Math.max(0.0F, finalDamage);
 
@@ -122,6 +128,22 @@ public class DamageUtil {
             finalDamage -= (amplifier + 1) * 4.0F;
         }
         return Math.max(0.0F, finalDamage);
+    }
+
+    private static float applyRangedDamageBonus(ItemStack stack, LivingEntity entity, float damage) {
+        double finalDamage = damage;
+        int gunpowderLevel = getEnchantmentLevel(entity, stack, ModEnchantments.GUNPOWDER);
+
+        finalDamage *= Math.pow(ModEnchantmentConfigs.getGunpowderDamageMultiplier(), gunpowderLevel);
+        return (float)Math.max(0.0D, finalDamage);
+    }
+
+    private static int getEnchantmentLevel(LivingEntity entity, ItemStack stack, ResourceKey<Enchantment> enchantment) {
+        return entity.registryAccess()
+            .lookupOrThrow(Registries.ENCHANTMENT)
+            .get(enchantment)
+            .map(stack::getEnchantmentLevel)
+            .orElse(0);
     }
 
     private static Player getAttackOwner(Entity attackEntity) {

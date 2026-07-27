@@ -62,6 +62,20 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.SDMG.get());
                 output.accept(ModItems.MUSKET_BALL.get());
                 output.accept(ModItems.METEOR_SHOT.get());
+                output.accept(ModItems.SILVER_BULLET.get());
+                output.accept(ModItems.CRYSTAL_BULLET.get());
+                output.accept(ModItems.CURSED_BULLET.get());
+                output.accept(ModItems.CHLOROPHYTE_BULLET.get());
+                output.accept(ModItems.HIGH_VELOCITY_BULLET.get());
+                output.accept(ModItems.ICHOR_BULLET.get());
+                output.accept(ModItems.VENOM_BULLET.get());
+                output.accept(ModItems.PARTY_BULLET.get());
+                output.accept(ModItems.NANO_BULLET.get());
+                output.accept(ModItems.EXPLODING_BULLET.get());
+                output.accept(ModItems.GOLDEN_BULLET.get());
+                output.accept(ModItems.ENDLESS_MUSKET_POUCH.get());
+                output.accept(ModItems.LUMINITE_BULLET.get());
+                output.accept(ModItems.TUNGSTEN_BULLET.get());
             }).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> SUMMON_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_summon_0", () -> CreativeModeTab.builder()

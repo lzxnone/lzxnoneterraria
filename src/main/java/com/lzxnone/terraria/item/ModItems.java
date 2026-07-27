@@ -3,8 +3,6 @@ package com.lzxnone.terraria.item;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.item.ammo.*;
 import com.lzxnone.terraria.item.projectile.*;
-import com.lzxnone.terraria.item.projectile.ammo.BulletProjectile;
-import com.lzxnone.terraria.item.projectile.ammo.MeteorShotProjectile;
 import com.lzxnone.terraria.item.projectile.first_fractal.*;
 import com.lzxnone.terraria.item.weapon.magic.*;
 import com.lzxnone.terraria.item.weapon.melee.*;
@@ -52,9 +50,35 @@ public class ModItems {
     //弹药
     public static final DeferredItem<Item> MUSKET_BALL = ITEMS.register("musket_ball", MusketBall::new);
     public static final DeferredItem<Item> METEOR_SHOT = ITEMS.register("meteor_shot", MeteorShot::new);
+    public static final DeferredItem<Item> SILVER_BULLET = ITEMS.register("silver_bullet", SilverBullet::new);
+    public static final DeferredItem<Item> CRYSTAL_BULLET = ITEMS.register("crystal_bullet", CrystalBullet::new);
+    public static final DeferredItem<Item> CURSED_BULLET = ITEMS.register("cursed_bullet", CursedBullet::new);
+    public static final DeferredItem<Item> CHLOROPHYTE_BULLET = ITEMS.register("chlorophyte_bullet", ChlorophyteBullet::new);
+    public static final DeferredItem<Item> HIGH_VELOCITY_BULLET = ITEMS.register("high_velocity_bullet", HighVelocityBullet::new);
+    public static final DeferredItem<Item> ICHOR_BULLET = ITEMS.register("ichor_bullet", IchorBullet::new);
+    public static final DeferredItem<Item> VENOM_BULLET = ITEMS.register("venom_bullet", VenomBullet::new);
+    public static final DeferredItem<Item> PARTY_BULLET = ITEMS.register("party_bullet", PartyBullet::new);
+    public static final DeferredItem<Item> NANO_BULLET = ITEMS.register("nano_bullet", NanoBullet::new);
+    public static final DeferredItem<Item> EXPLODING_BULLET = ITEMS.register("exploding_bullet", ExplodingBullet::new);
+    public static final DeferredItem<Item> GOLDEN_BULLET = ITEMS.register("golden_bullet", GoldenBullet::new);
+    public static final DeferredItem<Item> ENDLESS_MUSKET_POUCH = ITEMS.register("endless_musket_pouch", EndlessMusketPouch::new);
+    public static final DeferredItem<Item> LUMINITE_BULLET = ITEMS.register("luminite_bullet", LuminiteBullet::new);
+    public static final DeferredItem<Item> TUNGSTEN_BULLET = ITEMS.register("tungsten_bullet", TungstenBullet::new);
 
-    public static final DeferredItem<Item> BULLET_PROJECTILE = ITEMS.register("bullet_projectile", BulletProjectile::new);
-    public static final DeferredItem<Item> METEOR_SHOT_PROJECTILE = ITEMS.register("meteor_shot_projectile", MeteorShotProjectile::new);
+    public static final DeferredItem<Item> BULLET_PROJECTILE = ITEMS.register("bullet_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> METEOR_SHOT_PROJECTILE = ITEMS.register("meteor_shot_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> SILVER_BULLET_PROJECTILE = ITEMS.register("silver_bullet_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> CRYSTAL_BULLET_PROJECTILE = ITEMS.register("crystal_bullet_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> CURSED_BULLET_PROJECTILE = ITEMS.register("cursed_bullet_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> CHLOROPHYTE_BULLET_PROJECTILE = ITEMS.register("chlorophyte_bullet_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> HIGH_VELOCITY_BULLET_PROJECTILE = ITEMS.register("high_velocity_bullet_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> ICHOR_BULLET_PROJECTILE = ITEMS.register("ichor_bullet_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> VENOM_BULLET_PROJECTILE = ITEMS.register("venom_bullet_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> PARTY_BULLET_PROJECTILE = ITEMS.register("party_bullet_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> NANO_BULLET_PROJECTILE = ITEMS.register("nano_bullet_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> EXPLODING_BULLET_PROJECTILE = ITEMS.register("exploding_bullet_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> GOLDEN_BULLET_PROJECTILE = ITEMS.register("golden_bullet_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> LUMINITE_BULLET_PROJECTILE = ITEMS.register("luminite_bullet_projectile", () -> new Item(new Item.Properties()));
 
     //召唤武器
     public static final DeferredItem<Item> TERRAPRISMA = ITEMS.register("terraprisma", Terraprisma::new);
@@ -85,4 +109,5 @@ public class ModItems {
     public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE14 = ITEMS.register("first_fractal_projectile14", FirstFractalProjectile14::new);
     public static final DeferredItem<Item> MACE_PROJECTILE = ITEMS.register("mace_projectile", MaceProjectile::new);
     public static final DeferredItem<Item> TERRAPRISMA_SUMMON = ITEMS.register("terraprisma_summon", TerraprismaSummon::new);
+
 }

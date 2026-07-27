@@ -64,11 +64,8 @@ public class BloodButcheredEffect extends MobEffect {
     @Override
     public boolean applyEffectTick(LivingEntity entity, int amplifier) {
         if(entity.level() instanceof ServerLevel serverLevel) {
-            MobEffectInstance instance = entity.getEffect(ModEffects.BLOOD_BUTCHERED);
-            if(instance != null) {
-                if(instance.getDuration() % 20 == 0) {
-                    entity.hurt(entity.damageSources().magic(), (float) getDamagePerLevel() * (amplifier + 1));
-                }
+            if(entity.tickCount % 20 == 0) {
+                if(entity.hurt(entity.damageSources().magic(), (float) getDamagePerLevel() * (amplifier + 1))) entity.invulnerableTime = 10;
             }
 
             ParticleUtil.addParticles(

@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/ammo",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/crystal_bullet_projectile"
+  }
+}
