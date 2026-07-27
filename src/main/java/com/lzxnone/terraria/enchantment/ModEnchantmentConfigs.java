@@ -42,6 +42,21 @@ public class ModEnchantmentConfigs {
     public static final double SUMMON_AMPLIFICATION_DAMAGE_MULTIPLIER_MIN = 0.0D;
     public static final double SUMMON_AMPLIFICATION_DAMAGE_MULTIPLIER_MAX = 10.0D;
 
+    public static final String AMMO_EXHAUSTION_CONSUME_BONUS_PATH = "enchantment.ammo_exhaustion.consume_bonus";
+    public static final int AMMO_EXHAUSTION_CONSUME_BONUS_DEFAULT = 1;
+    public static final int AMMO_EXHAUSTION_CONSUME_BONUS_MIN = 0;
+    public static final int AMMO_EXHAUSTION_CONSUME_BONUS_MAX = 1024;
+
+    public static final String BULLET_HELL_NOT_CONSUME_CHANCE_PATH = "enchantment.bullet_hell.not_consume_chance";
+    public static final double BULLET_HELL_NOT_CONSUME_CHANCE_DEFAULT = 0.5D;
+    public static final double BULLET_HELL_NOT_CONSUME_CHANCE_MIN = 0.0D;
+    public static final double BULLET_HELL_NOT_CONSUME_CHANCE_MAX = 1.0D;
+
+    public static final String GUNPOWDER_DAMAGE_MULTIPLIER_PATH = "enchantment.gunpowder.damage_multiplier";
+    public static final double GUNPOWDER_DAMAGE_MULTIPLIER_DEFAULT = 1.15D;
+    public static final double GUNPOWDER_DAMAGE_MULTIPLIER_MIN = 0.0D;
+    public static final double GUNPOWDER_DAMAGE_MULTIPLIER_MAX = 10.0D;
+
     public static final ConfigListItem MANA_LEAK_CONFIG_LIST_ITEM = createConfigListItem(
         "mana_leak",
         "enchantment.lzxnoneterraria.mana_leak",
@@ -78,6 +93,24 @@ public class ModEnchantmentConfigs {
         () -> ConfigFactory.loadDoubleConfig(SUMMON_AMPLIFICATION_DAMAGE_MULTIPLIER_PATH, configText("summon_amplification_damage_multiplier"), configTooltip("summon_amplification_damage_multiplier"), SUMMON_AMPLIFICATION_DAMAGE_MULTIPLIER_DEFAULT, SUMMON_AMPLIFICATION_DAMAGE_MULTIPLIER_MIN, SUMMON_AMPLIFICATION_DAMAGE_MULTIPLIER_MAX)
     );
 
+    public static final ConfigListItem AMMO_EXHAUSTION_CONFIG_LIST_ITEM = createConfigListItem(
+        "ammo_exhaustion",
+        "enchantment.lzxnoneterraria.ammo_exhaustion",
+        () -> ConfigFactory.loadIntConfig(AMMO_EXHAUSTION_CONSUME_BONUS_PATH, configText("ammo_exhaustion_consume_bonus"), configTooltip("ammo_exhaustion_consume_bonus"), AMMO_EXHAUSTION_CONSUME_BONUS_DEFAULT, AMMO_EXHAUSTION_CONSUME_BONUS_MIN, AMMO_EXHAUSTION_CONSUME_BONUS_MAX)
+    );
+
+    public static final ConfigListItem BULLET_HELL_CONFIG_LIST_ITEM = createConfigListItem(
+        "bullet_hell",
+        "enchantment.lzxnoneterraria.bullet_hell",
+        () -> ConfigFactory.loadDoubleConfig(BULLET_HELL_NOT_CONSUME_CHANCE_PATH, configText("bullet_hell_not_consume_chance"), configTooltip("bullet_hell_not_consume_chance"), BULLET_HELL_NOT_CONSUME_CHANCE_DEFAULT, BULLET_HELL_NOT_CONSUME_CHANCE_MIN, BULLET_HELL_NOT_CONSUME_CHANCE_MAX)
+    );
+
+    public static final ConfigListItem GUNPOWDER_CONFIG_LIST_ITEM = createConfigListItem(
+        "gunpowder",
+        "enchantment.lzxnoneterraria.gunpowder",
+        () -> ConfigFactory.loadDoubleConfig(GUNPOWDER_DAMAGE_MULTIPLIER_PATH, configText("gunpowder_damage_multiplier"), configTooltip("gunpowder_damage_multiplier"), GUNPOWDER_DAMAGE_MULTIPLIER_DEFAULT, GUNPOWDER_DAMAGE_MULTIPLIER_MIN, GUNPOWDER_DAMAGE_MULTIPLIER_MAX)
+    );
+
     public static double getManaLeakConsumeMultiplier() {
         return readDouble(MANA_LEAK_CONSUME_MULTIPLIER_PATH, MANA_LEAK_CONSUME_MULTIPLIER_DEFAULT, MANA_LEAK_CONSUME_MULTIPLIER_MIN, MANA_LEAK_CONSUME_MULTIPLIER_MAX);
     }
@@ -100,6 +133,18 @@ public class ModEnchantmentConfigs {
 
     public static double getSummonAmplificationDamageMultiplier() {
         return readDouble(SUMMON_AMPLIFICATION_DAMAGE_MULTIPLIER_PATH, SUMMON_AMPLIFICATION_DAMAGE_MULTIPLIER_DEFAULT, SUMMON_AMPLIFICATION_DAMAGE_MULTIPLIER_MIN, SUMMON_AMPLIFICATION_DAMAGE_MULTIPLIER_MAX);
+    }
+
+    public static int getAmmoExhaustionConsumeBonus() {
+        return Math.clamp(ConfigUtil.readInt(AMMO_EXHAUSTION_CONSUME_BONUS_PATH, AMMO_EXHAUSTION_CONSUME_BONUS_DEFAULT), AMMO_EXHAUSTION_CONSUME_BONUS_MIN, AMMO_EXHAUSTION_CONSUME_BONUS_MAX);
+    }
+
+    public static double getBulletHellNotConsumeChance() {
+        return readDouble(BULLET_HELL_NOT_CONSUME_CHANCE_PATH, BULLET_HELL_NOT_CONSUME_CHANCE_DEFAULT, BULLET_HELL_NOT_CONSUME_CHANCE_MIN, BULLET_HELL_NOT_CONSUME_CHANCE_MAX);
+    }
+
+    public static double getGunpowderDamageMultiplier() {
+        return readDouble(GUNPOWDER_DAMAGE_MULTIPLIER_PATH, GUNPOWDER_DAMAGE_MULTIPLIER_DEFAULT, GUNPOWDER_DAMAGE_MULTIPLIER_MIN, GUNPOWDER_DAMAGE_MULTIPLIER_MAX);
     }
 
     private static ConfigListItem createConfigListItem(String id, String nameKey, Runnable loader) {

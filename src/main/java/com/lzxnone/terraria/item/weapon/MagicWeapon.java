@@ -24,20 +24,10 @@ public class MagicWeapon extends Weapon {
     private final IntSupplier manaConsumeRate;
     private final IntSupplier manaRecoverRate;
 
-    public MagicWeapon(Tier tier, Properties properties, int manaConsumeRate, int manaRecoverRate) {
-        this(tier, properties, () -> manaConsumeRate, () -> manaRecoverRate);
-    }
-
     public MagicWeapon(Tier tier, Properties properties, IntSupplier manaConsumeRate, IntSupplier manaRecoverRate) {
         super(tier, properties);
         this.manaConsumeRate = manaConsumeRate;
         this.manaRecoverRate = manaRecoverRate;
-    }
-
-    public MagicWeapon(Properties properties) {
-        super(properties);
-        this.manaConsumeRate = () -> 1;
-        this.manaRecoverRate = () -> 1;
     }
 
     @Override

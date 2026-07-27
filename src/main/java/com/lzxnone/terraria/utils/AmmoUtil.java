@@ -1,12 +1,13 @@
 package com.lzxnone.terraria.utils;
 
-import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.RangedWeapon;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -15,15 +16,20 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 public class AmmoUtil {
-    public static final Vector3f OFFSET = new Vector3f(-0.3f, 0, 1.5f);
+    public static final Vector3f OFFSET = new Vector3f(-0.3f, -0.15f, 1.5f);
 
     public static StaticSummon createAmmoSummon(Level level, Player player, ItemStack stack) {
+        return createAmmoSummon(level, player, InteractionHand.MAIN_HAND, stack);
+    }
+
+    public static StaticSummon createAmmoSummon(Level level, Player player, InteractionHand hand, ItemStack stack) {
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
         Vec3 eyePos = player.getEyePosition();
+        Vector3f offset = getOffset(hand);
         Vec3 pos = new Vec3(
-            eyePos.x + dirs[0].x * OFFSET.z + dirs[1].x * OFFSET.y + dirs[2].x * OFFSET.x,
-            eyePos.y + dirs[0].y * OFFSET.z + dirs[1].y * OFFSET.y + dirs[2].y * OFFSET.x,
-            eyePos.z + dirs[0].z * OFFSET.z + dirs[1].z * OFFSET.y + dirs[2].z * OFFSET.x
+            eyePos.x + dirs[0].x * offset.z + dirs[1].x * offset.y + dirs[2].x * offset.x,
+            eyePos.y + dirs[0].y * offset.z + dirs[1].y * offset.y + dirs[2].y * offset.x,
+            eyePos.z + dirs[0].z * offset.z + dirs[1].z * offset.y + dirs[2].z * offset.x
         );
 
         StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), level);
@@ -44,6 +50,14 @@ public class AmmoUtil {
         return summon;
     }
 
+    public static Vector3f getOffset(InteractionHand hand) {
+        return new Vector3f(
+            hand == InteractionHand.OFF_HAND ? -OFFSET.x : OFFSET.x,
+            OFFSET.y,
+            OFFSET.z
+        );
+    }
+
     public static void setMusketBall(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.MUSKET_BALL);
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.BULLET_PROJECTILE.get()));
@@ -61,6 +75,9 @@ public class AmmoUtil {
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
         summon.getEntityData().set(StaticSummon.SCALE_Y, 0.05f);
         summon.getEntityData().set(StaticSummon.SCALE_Z, 0.01f);
+        CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+        customData.putInt("hit", 0);
+        summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
         summon.setNoGravity(true);
     }
 }

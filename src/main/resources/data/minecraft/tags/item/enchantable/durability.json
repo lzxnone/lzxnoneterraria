@@ -3,6 +3,7 @@
   "values": [
     "#lzxnoneterraria:melee_weapons",
     "#lzxnoneterraria:magic_weapons",
-    "#lzxnoneterraria:summon_weapons"
+    "#lzxnoneterraria:summon_weapons",
+    "#lzxnoneterraria:ranged_weapons"
   ]
 }

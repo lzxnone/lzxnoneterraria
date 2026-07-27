@@ -86,6 +86,10 @@
     background: sprite(lzxnoneterraria:textures/ui/nav_weapon_icon.png);
 }
 
+.nav-img-ammo {
+    background: sprite(lzxnoneterraria:textures/item/musket_ball.png);
+}
+
 .nav-img-effect {
     background: sprite(lzxnoneterraria:textures/ui/nav_effect_icon.png);
 }

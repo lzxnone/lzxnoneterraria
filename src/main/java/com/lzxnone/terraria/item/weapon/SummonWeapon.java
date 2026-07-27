@@ -30,10 +30,6 @@ public class SummonWeapon extends Weapon {
         super(tier, properties);
     }
 
-    public SummonWeapon(Properties properties) {
-        super(properties);
-    }
-
     public static int getMaxSummonCount(Player player) {
         MobEffectInstance instance = player.getEffect(ModEffects.SUMMON);
         return 1 + (instance == null ? 0 : (instance.getAmplifier() + 1) * SummonEffect.getSummonCountPerLevel());
@@ -86,13 +82,6 @@ public class SummonWeapon extends Weapon {
     public static void addFreshSummon(Player player, Entity summon) {
         registerSummon(player, summon);
         player.level().addFreshEntity(summon);
-    }
-
-    public static void removeSummon(Player player, Entity summon) {
-        List<UUID> summons = getSummons(player);
-        if(summons.remove(summon.getUUID())) {
-            player.setData(ModAttachments.SUMMON_WEAPON_SUMMONS, summons);
-        }
     }
 
     public String getSummonId() {

@@ -1,9 +1,14 @@
 package com.lzxnone.terraria.item.weapon;
 
+import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
+import com.lzxnone.terraria.enchantment.ModEnchantments;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -15,6 +20,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -24,10 +30,6 @@ public class RangedWeapon extends Weapon {
 
     public RangedWeapon(Tier tier, Properties properties) {
         super(tier, properties);
-    }
-
-    public RangedWeapon(Properties properties) {
-        super(properties);
     }
 
     public boolean canUseAmmo(ItemStack weaponStack, ItemStack ammoStack) {
@@ -40,6 +42,21 @@ public class RangedWeapon extends Weapon {
 
     public int getAmmoConsumeAmount(ItemStack weaponStack, LivingEntity entity) {
         return 1;
+    }
+
+    public int getFinalAmmoConsumeAmount(ItemStack weaponStack, LivingEntity entity, int amount) {
+        if(amount <= 0) return 0;
+        int exhaustionLevel = getEnchantmentLevel(entity, weaponStack, ModEnchantments.AMMO_EXHAUSTION);
+        return Math.max(0, amount + exhaustionLevel * ModEnchantmentConfigs.getAmmoExhaustionConsumeBonus());
+    }
+
+    public boolean shouldSkipAmmoConsume(ItemStack weaponStack, LivingEntity entity) {
+        int bulletHellLevel = getEnchantmentLevel(entity, weaponStack, ModEnchantments.BULLET_HELL);
+        if(bulletHellLevel <= 0) return false;
+
+        double triggerChance = Math.pow(1.0D - ModEnchantmentConfigs.getBulletHellNotConsumeChance(), bulletHellLevel);
+        double skipChance = 1.0D - triggerChance;
+        return entity.getRandom().nextDouble() < skipChance;
     }
 
     public boolean shouldShootThisTick(ItemStack weaponStack, LivingEntity entity, int remainingUseTicks) {
@@ -55,6 +72,7 @@ public class RangedWeapon extends Weapon {
     public boolean canShoot(ItemStack weaponStack, Player player) {
         ItemStack ammoStack = getAmmoStack(weaponStack);
         if(ammoStack.isEmpty() || !canUseAmmo(weaponStack, ammoStack)) return false;
+        if(player.hasInfiniteMaterials()) return true;
 
         Item ammoItem = ammoStack.getItem();
         for(ItemStack inventoryStack : player.getInventory().items) {
@@ -65,6 +83,10 @@ public class RangedWeapon extends Weapon {
 
     public boolean consumeAmmo(ItemStack weaponStack, Player player, int amount) {
         if(amount <= 0 || player.hasInfiniteMaterials()) return true;
+        if(shouldSkipAmmoConsume(weaponStack, player)) return true;
+
+        amount = getFinalAmmoConsumeAmount(weaponStack, player, amount);
+        if(amount <= 0) return true;
 
         ItemStack ammoStack = getAmmoStack(weaponStack);
         if(ammoStack.isEmpty() || !canUseAmmo(weaponStack, ammoStack)) return false;
@@ -92,23 +114,22 @@ public class RangedWeapon extends Weapon {
         return false;
     }
 
-    public boolean tryShoot(Level level, Player player, ItemStack weaponStack) {
+    public boolean tryShoot(Level level, Player player, InteractionHand hand, ItemStack weaponStack) {
         if(!canShoot(weaponStack, player)) return false;
         if(!level.isClientSide() && !consumeAmmo(weaponStack, player, getAmmoConsumeAmount(weaponStack, player))) return false;
 
-        shoot(level, player, weaponStack);
+        shoot(level, player, hand, weaponStack);
         return true;
     }
 
-    protected void shoot(Level level, Player player, ItemStack weaponStack) {
-    }
+    protected void shoot(Level level, Player player, InteractionHand hand, ItemStack weaponStack) {}
 
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseTicks) {
         if(!(entity instanceof Player player)) return;
         if(!shouldShootThisTick(stack, entity, remainingUseTicks)) return;
 
-        if(!tryShoot(level, player, stack)) {
+        if(!tryShoot(level, player, player.getUsedItemHand(), stack)) {
             player.stopUsingItem();
         }
     }
@@ -155,5 +176,13 @@ public class RangedWeapon extends Weapon {
                 "tooltip.lzxnoneterraria.ammo",
                 ammoStack.getHoverName()
         ).withStyle(style -> style.withColor(0x55FF55)));
+    }
+
+    protected static int getEnchantmentLevel(LivingEntity entity, ItemStack stack, ResourceKey<Enchantment> enchantment) {
+        return entity.registryAccess()
+            .lookupOrThrow(Registries.ENCHANTMENT)
+            .get(enchantment)
+            .map(stack::getEnchantmentLevel)
+            .orElse(0);
     }
 }

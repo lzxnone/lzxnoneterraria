@@ -4,6 +4,8 @@ import com.lzxnone.terraria.effect.BloodButcheredEffect;
 import com.lzxnone.terraria.effect.DemonicFlamesEffect;
 import com.lzxnone.terraria.effect.SummonEffect;
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
+import com.lzxnone.terraria.item.ammo.MeteorShot;
+import com.lzxnone.terraria.item.ammo.MusketBall;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.item.weapon.melee.BladeOfGrass;
@@ -28,6 +30,7 @@ import com.lzxnone.terraria.item.weapon.melee.TrueExcalibur;
 import com.lzxnone.terraria.item.weapon.melee.TrueNightsEdge;
 import com.lzxnone.terraria.item.weapon.melee.Volcano;
 import com.lzxnone.terraria.item.weapon.melee.Zenith;
+import com.lzxnone.terraria.item.weapon.ranged.SDMG;
 import com.lzxnone.terraria.item.weapon.summon.Terraprisma;
 
 import java.util.HashMap;
@@ -35,6 +38,7 @@ import java.util.Map;
 
 public class ConfigList {
     public static final String WEAPON = "weapon";
+    public static final String AMMO = "ammo";
     public static final String EFFECT = "effect";
     public static final String ENCHANTMENT = "enchantment";
 
@@ -66,12 +70,17 @@ public class ConfigList {
             Mace.CONFIG_LIST_ITEM,
             DevilsDevastation.CONFIG_LIST_ITEM,
             Terraprisma.CONFIG_LIST_ITEM,
-            LastPrism.CONFIG_LIST_ITEM
+            LastPrism.CONFIG_LIST_ITEM,
+            SDMG.CONFIG_LIST_ITEM
         });
         ITEMS.put(EFFECT, new ConfigListItem[]{
             BloodButcheredEffect.CONFIG_LIST_ITEM,
             DemonicFlamesEffect.CONFIG_LIST_ITEM,
             SummonEffect.CONFIG_LIST_ITEM
+        });
+        ITEMS.put(AMMO, new ConfigListItem[]{
+            MusketBall.CONFIG_LIST_ITEM,
+            MeteorShot.CONFIG_LIST_ITEM
         });
         ITEMS.put(ENCHANTMENT, new ConfigListItem[]{
             ModEnchantmentConfigs.MANA_LEAK_CONFIG_LIST_ITEM,
@@ -79,7 +88,10 @@ public class ConfigList {
             ModEnchantmentConfigs.MANA_GATHERING_CONFIG_LIST_ITEM,
             ModEnchantmentConfigs.MANA_GATHERING_CURSE_CONFIG_LIST_ITEM,
             ModEnchantmentConfigs.ARCANE_AMPLIFICATION_CONFIG_LIST_ITEM,
-            ModEnchantmentConfigs.SUMMON_AMPLIFICATION_CONFIG_LIST_ITEM
+            ModEnchantmentConfigs.SUMMON_AMPLIFICATION_CONFIG_LIST_ITEM,
+            ModEnchantmentConfigs.AMMO_EXHAUSTION_CONFIG_LIST_ITEM,
+            ModEnchantmentConfigs.BULLET_HELL_CONFIG_LIST_ITEM,
+            ModEnchantmentConfigs.GUNPOWDER_CONFIG_LIST_ITEM
         });
     }
 

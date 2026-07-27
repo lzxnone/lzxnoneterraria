@@ -17,6 +17,13 @@
                     </button>
                     <element class="nav-indicator"/>
                 </element>
+                <element id="nav-item-ammo" class="nav-item">
+                    <button id="nav-button-ammo" class="nav-button" text="">
+                        <element class="nav-img nav-img-ammo"/>
+                        <label class="nav-label"><lang key="lzxnoneterraria.configuration.nav_ammo"/></label>
+                    </button>
+                    <element class="nav-indicator"/>
+                </element>
                 <element id="nav-item-effect" class="nav-item">
                     <button id="nav-button-effect" class="nav-button" text="">
                         <element class="nav-img nav-img-effect"/>

@@ -1,0 +1,21 @@
+{
+  "anvil_cost": 6,
+  "description": {
+    "translate": "enchantment.lzxnoneterraria.bullet_hell"
+  },
+  "max_cost": {
+    "base": 55,
+    "per_level_above_first": 12
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 10,
+    "per_level_above_first": 12
+  },
+  "primary_items": "#lzxnoneterraria:ranged_weapons",
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#lzxnoneterraria:ranged_weapons",
+  "weight": 5
+}
