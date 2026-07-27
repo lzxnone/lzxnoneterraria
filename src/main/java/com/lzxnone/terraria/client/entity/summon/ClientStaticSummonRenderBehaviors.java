@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.client.entity.summon;
 
+import com.lzxnone.terraria.client.item.ammo.ClientBulletAmmo;
 import com.lzxnone.terraria.client.item.magic.ClientLastPrism;
 import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
 import com.lzxnone.terraria.client.item.melee.ClientFirstFractal;
@@ -22,6 +23,7 @@ public class ClientStaticSummonRenderBehaviors {
 
     static {
         BEHAVIORS.put(StaticSummonBehaviors.DEFAULT, DEFAULT_BEHAVIOR);
+
         BEHAVIORS.put(StaticSummonBehaviors.SEEDLER_NUT, DEFAULT_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.THE_HORSEMANS_BLADE_JACK, DEFAULT_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.INFLUX_WAVER_BEAM, DEFAULT_BEHAVIOR);
@@ -41,6 +43,9 @@ public class ClientStaticSummonRenderBehaviors {
         BEHAVIORS.put(StaticSummonBehaviors.LAST_PRISM_TRI, ClientLastPrism.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.LAST_PRISM_BEAM, ClientLastPrism.SUMMON_BEHAVIOR2);
         BEHAVIORS.put(StaticSummonBehaviors.TERRAPRISMA, ClientTerraprisma.SUMMON_BEHAVIOR);
+
+        BEHAVIORS.put(StaticSummonBehaviors.MUSKET_BALL, ClientBulletAmmo.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.METEOR_SHOT, ClientBulletAmmo.SUMMON_BEHAVIOR);
     }
 
     public static IStaticSummonRenderBehavior getBehavior(String id) {

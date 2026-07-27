@@ -1,5 +1,7 @@
 package com.lzxnone.terraria.entity.summon;
 
+import com.lzxnone.terraria.item.ammo.MeteorShot;
+import com.lzxnone.terraria.item.ammo.MusketBall;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.*;
 import com.lzxnone.terraria.item.weapon.summon.Terraprisma;
@@ -11,6 +13,8 @@ public class StaticSummonBehaviors {
     private static final Map<String, IStaticSummonBehavior> BEHAVIORS = new HashMap<>();
 
     public static final String DEFAULT = "default";
+
+    //弹射实体
     public static final String SEEDLER_NUT = "seedler_nut";
     public static final String THE_HORSEMANS_BLADE_JACK = "the_horsemans_blade_jack";
     public static final String INFLUX_WAVER_BEAM = "influx_waver_beam";
@@ -31,8 +35,13 @@ public class StaticSummonBehaviors {
     public static final String LAST_PRISM_BEAM = "last_prism_beam";
     public static final String TERRAPRISMA = "terraprisma";
 
+    //弹药实体
+    public static final String MUSKET_BALL = "musket_ball";
+    public static final String METEOR_SHOT = "meteor_shot";
+
     static {
         BEHAVIORS.put(DEFAULT, new IStaticSummonBehavior() {});
+
         BEHAVIORS.put(SEEDLER_NUT, Seedler.SUMMON_BEHAVIOR);
         BEHAVIORS.put(THE_HORSEMANS_BLADE_JACK, TheHorsemansBlade.SUMMON_BEHAVIOR);
         BEHAVIORS.put(INFLUX_WAVER_BEAM, InfluxWaver.SUMMON_BEHAVIOR);
@@ -52,6 +61,9 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(LAST_PRISM_TRI, LastPrism.SUMMON_BEHAVIOR);
         BEHAVIORS.put(LAST_PRISM_BEAM, LastPrism.SUMMON_BEHAVIOR2);
         BEHAVIORS.put(TERRAPRISMA, Terraprisma.SUMMON_BEHAVIOR);
+
+        BEHAVIORS.put(MUSKET_BALL, MusketBall.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(METEOR_SHOT, MeteorShot.SUMMON_BEHAVIOR);
     }
 
     public static IStaticSummonBehavior getBehavior(String id) {

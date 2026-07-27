@@ -43,6 +43,14 @@ public class ModSounds {
             SOUND_EVENTS.register("star_collide",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "star_collide")));
+    public static final Supplier<SoundEvent> SUMMON_TERRAPRISMA =
+            SOUND_EVENTS.register("summon_terraprisma",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "summon_terraprisma")));
+    public static final Supplier<SoundEvent> SHOT =
+            SOUND_EVENTS.register("shot",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "shot")));
     public static final Supplier<SoundEvent> BOOM =
             SOUND_EVENTS.register("boom",
                     () -> SoundEvent.createVariableRangeEvent(

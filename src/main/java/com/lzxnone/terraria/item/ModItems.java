@@ -1,10 +1,14 @@
 package com.lzxnone.terraria.item;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.item.ammo.*;
 import com.lzxnone.terraria.item.projectile.*;
+import com.lzxnone.terraria.item.projectile.ammo.BulletProjectile;
+import com.lzxnone.terraria.item.projectile.ammo.MeteorShotProjectile;
 import com.lzxnone.terraria.item.projectile.first_fractal.*;
 import com.lzxnone.terraria.item.weapon.magic.*;
 import com.lzxnone.terraria.item.weapon.melee.*;
+import com.lzxnone.terraria.item.weapon.ranged.*;
 import com.lzxnone.terraria.item.weapon.summon.*;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -41,6 +45,16 @@ public class ModItems {
 
     //魔法武器
     public static final DeferredItem<Item> LAST_PRISM = ITEMS.register("last_prism", LastPrism::new);
+
+    //远程武器
+    public static final DeferredItem<Item> SDMG = ITEMS.register("sdmg", SDMG::new);
+
+    //弹药
+    public static final DeferredItem<Item> MUSKET_BALL = ITEMS.register("musket_ball", MusketBall::new);
+    public static final DeferredItem<Item> METEOR_SHOT = ITEMS.register("meteor_shot", MeteorShot::new);
+
+    public static final DeferredItem<Item> BULLET_PROJECTILE = ITEMS.register("bullet_projectile", BulletProjectile::new);
+    public static final DeferredItem<Item> METEOR_SHOT_PROJECTILE = ITEMS.register("meteor_shot_projectile", MeteorShotProjectile::new);
 
     //召唤武器
     public static final DeferredItem<Item> TERRAPRISMA = ITEMS.register("terraprisma", Terraprisma::new);

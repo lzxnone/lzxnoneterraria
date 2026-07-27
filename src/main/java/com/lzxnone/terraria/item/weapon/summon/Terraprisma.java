@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.summon;
 
+import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
 import com.lzxnone.terraria.entity.ModEntities;
@@ -15,6 +16,7 @@ import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
+import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.registries.Registries;
@@ -601,6 +603,7 @@ public class Terraprisma extends SummonWeapon {
                 }
             }
         }
+        SoundUtil.playClientSound(player, ModSounds.SUMMON_TERRAPRISMA.get());
         return InteractionResultHolder.consume(stack);
     }
 

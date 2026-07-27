@@ -55,6 +55,15 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.LAST_PRISM.get());
             }).build());
 
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> RANGED_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_ranged_0", () -> CreativeModeTab.builder()
+            .title(Component.translatable("itemGroup.lzxnoneterraria.ranged"))
+            .icon(() -> ModItems.SDMG.get().getDefaultInstance())
+            .displayItems((parameters, output) -> {
+                output.accept(ModItems.SDMG.get());
+                output.accept(ModItems.MUSKET_BALL.get());
+                output.accept(ModItems.METEOR_SHOT.get());
+            }).build());
+
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> SUMMON_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_summon_0", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.lzxnoneterraria.summon"))
             .icon(() -> ModItems.TERRAPRISMA.get().getDefaultInstance())

@@ -1,6 +1,7 @@
 {
   "itemGroup.lzxnoneterraria.melee": "Terraria Melee",
   "itemGroup.lzxnoneterraria.magic": "Terraria Magic",
+  "itemGroup.lzxnoneterraria.ranged": "Terraria Ranged",
   "itemGroup.lzxnoneterraria.summon": "Terraria Summon",
   "itemGroup.lzxnoneterraria.block": "Terraria Block",
   "itemGroup.lzxnoneterraria.calamity_melee": "Terraria Calamity Melee",
@@ -31,6 +32,9 @@
   "item.lzxnoneterraria.mace": "Mace",
   "item.lzxnoneterraria.devils_devastation": "Devil's Devastation",
   "item.lzxnoneterraria.last_prism": "Last Prism",
+  "item.lzxnoneterraria.sdmg": "S.D.M.G.",
+  "item.lzxnoneterraria.musket_ball": "Musket Ball",
+  "item.lzxnoneterraria.meteor_shot": "Meteor Shot",
   "item.lzxnoneterraria.terraprisma": "Terraprisma",
 
   "enchantment.lzxnoneterraria.mana_leak": "Mana Leak",
@@ -48,6 +52,7 @@
 
   "tooltip.lzxnoneterraria.relative_distance": "Relative Distance",
   "tooltip.lzxnoneterraria.absolute_distance": "Absolute Distance",
+  "tooltip.lzxnoneterraria.ammo": "Ammo: %s",
   "tooltip.lzxnoneterraria.devils_devastation_kill_mode": "Kill Mode",
   "tooltip.lzxnoneterraria.devils_devastation.0": "The perfect blade of the Underworld, wielding the power of Brimstone directly.",
   "tooltip.lzxnoneterraria.devils_devastation.1": "Humans understand this force as Havoc, the inevitable sundering of all order in fire.",

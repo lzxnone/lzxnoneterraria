@@ -23,6 +23,12 @@
   "star_collide": {
     "sounds": ["lzxnoneterraria:star_collide"]
   },
+  "summon_terraprisma": {
+    "sounds": ["lzxnoneterraria:summon_terraprisma"]
+  },
+  "shot": {
+    "sounds": ["lzxnoneterraria:shot"]
+  },
   "boom": {
     "sounds": ["lzxnoneterraria:boom"]
   },

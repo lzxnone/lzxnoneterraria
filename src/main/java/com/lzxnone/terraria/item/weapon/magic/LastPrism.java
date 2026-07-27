@@ -178,13 +178,12 @@ public class LastPrism extends MagicWeapon {
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
             if(summon.getOwner() instanceof Player player) {
-                ItemStack stack = player.getMainHandItem();
-                if(!stack.is(ModItems.LAST_PRISM.get()) || !player.isUsingItem()) {
+                if(!player.isUsingItem()) {
                     this.onDied(summon);
                     return;
                 }
-                ItemStack usingStack = player.getUseItem();
-                if(!usingStack.is(ModItems.LAST_PRISM.get())) {
+                ItemStack stack = player.getUseItem();
+                if(!stack.is(ModItems.LAST_PRISM.get())) {
                     this.onDied(summon);
                     return;
                 }
@@ -210,13 +209,6 @@ public class LastPrism extends MagicWeapon {
                 return;
             }
             if(!(tri.getOwner() instanceof Player player)) {
-                this.onDied(beam);
-                return;
-            }
-
-            ItemStack stack = player.getMainHandItem();
-            ItemStack usingStack = player.getUseItem();
-            if(!stack.is(ModItems.LAST_PRISM.get()) || !player.isUsingItem() || !usingStack.is(ModItems.LAST_PRISM.get())) {
                 this.onDied(beam);
                 return;
             }
