@@ -5,6 +5,7 @@ import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
@@ -38,7 +39,7 @@ public class ClientBulletAmmo {
             Minecraft.getInstance().getItemRenderer().renderStatic(
                 itemStack,
                 ItemDisplayContext.NONE,
-                packedLight,
+                summon.getEntityData().get(StaticSummon.GLOW) ? LightTexture.FULL_BRIGHT : packedLight,
                 OverlayTexture.NO_OVERLAY,
                 poseStack,
                 bufferSource,
@@ -68,7 +69,7 @@ public class ClientBulletAmmo {
             Minecraft.getInstance().getItemRenderer().renderStatic(
                 itemStack,
                 ItemDisplayContext.NONE,
-                packedLight,
+                summon.getEntityData().get(StaticSummon.GLOW) ? LightTexture.FULL_BRIGHT : packedLight,
                 OverlayTexture.NO_OVERLAY,
                 poseStack,
                 bufferSource,

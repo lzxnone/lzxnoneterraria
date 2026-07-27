@@ -5,9 +5,12 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.util.Mth;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class DustParticle extends EmissiveBloomParticle {
+public class DustParticle extends TextureSheetParticle {
 
     private final SpriteSet sprites;
     private final float rotSpeed;
@@ -82,17 +85,68 @@ public class DustParticle extends EmissiveBloomParticle {
         this.rCol = coloredR;
         this.gCol = coloredG;
         this.bCol = coloredB;
-        super.render(buffer, camera, partialTick);
+        renderCurrentSprite(buffer, camera, partialTick);
 
         this.setSprite(this.sprites.get(1, 1));
         this.rCol = 1.0F;
         this.gCol = 1.0F;
         this.bCol = 1.0F;
-        super.render(buffer, camera, partialTick);
+        renderCurrentSprite(buffer, camera, partialTick);
 
         this.rCol = coloredR;
         this.gCol = coloredG;
         this.bCol = coloredB;
+    }
+
+    private void renderCurrentSprite(VertexConsumer buffer, Camera camera, float partialTick) {
+        if(glow) {
+            renderEmissiveBloom(buffer, camera, partialTick);
+        }else {
+            super.render(buffer, camera, partialTick);
+        }
+    }
+
+    private void renderEmissiveBloom(VertexConsumer buffer, Camera camera, float partialTick) {
+        float x = (float)(Mth.lerp(partialTick, this.xo, this.x) - camera.getPosition().x);
+        float y = (float)(Mth.lerp(partialTick, this.yo, this.y) - camera.getPosition().y);
+        float z = (float)(Mth.lerp(partialTick, this.zo, this.z) - camera.getPosition().z);
+
+        Quaternionf quaternion = new Quaternionf(camera.rotation());
+        quaternion.rotateZ(Mth.lerp(partialTick, this.oRoll, this.roll));
+
+        float size = this.quadSize;
+        float u0 = this.getU0();
+        float u1 = this.getU1();
+        float v0 = this.getV0();
+        float v1 = this.getV1();
+
+        float[][] uvs = {
+            {u1, v1},
+            {u1, v0},
+            {u0, v0},
+            {u0, v1}
+        };
+
+        Vector3f[] corners = {
+            new Vector3f(1.0F, -1.0F, 0.0F),
+            new Vector3f(1.0F, 1.0F, 0.0F),
+            new Vector3f(-1.0F, 1.0F, 0.0F),
+            new Vector3f(-1.0F, -1.0F, 0.0F)
+        };
+
+        for(int i = 0; i < 4; i++) {
+            Vector3f vertex = corners[i];
+            vertex.rotate(quaternion);
+            vertex.mul(size);
+            vertex.add(x, y, z);
+
+            buffer.addVertex(vertex.x(), vertex.y(), vertex.z())
+                .setColor(this.rCol, this.gCol, this.bCol, this.alpha)
+                .setUv(uvs[i][0], uvs[i][1])
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(LightTexture.FULL_BRIGHT)
+                .setNormal(0.0F, 0.0F, 1.0F);
+        }
     }
 
     @Override
@@ -102,7 +156,7 @@ public class DustParticle extends EmissiveBloomParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return ModParticleRenderTypes.EMISSIVE_BLOOM;
+        return glow ? ModParticleRenderTypes.EMISSIVE_BLOOM : ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 
     public static class Provider implements ParticleProvider<DustParticleOptions> {

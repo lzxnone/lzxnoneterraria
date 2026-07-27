@@ -22,6 +22,10 @@ public class ModEffects {
             MOB_EFFECTS.register("demonic_flames", DemonicFlamesEffect::new);
     public static final DeferredHolder<MobEffect, CursedInfernoEffect> CURSED_INFERNO =
             MOB_EFFECTS.register("cursed_inferno", CursedInfernoEffect::new);
+    public static final DeferredHolder<MobEffect, IchorEffect> ICHOR =
+            MOB_EFFECTS.register("ichor", IchorEffect::new);
+    public static final DeferredHolder<MobEffect, AcidVenomEffect> ACID_VENOM =
+            MOB_EFFECTS.register("acid_venom", AcidVenomEffect::new);
     public static final DeferredHolder<MobEffect, SummonEffect> SUMMON =
             MOB_EFFECTS.register("summon", SummonEffect::new);
     public static final DeferredHolder<MobEffect, MidasEffect> MIDAS =

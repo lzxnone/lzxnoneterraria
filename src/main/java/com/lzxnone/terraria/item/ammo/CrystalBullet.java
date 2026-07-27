@@ -8,6 +8,8 @@ import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.particle.ModParticles;
+import com.lzxnone.terraria.ui.config.ConfigListItem;
+import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -20,19 +22,64 @@ import org.joml.Vector3f;
 import java.util.List;
 
 public class CrystalBullet extends BasicBulletAmmo {
-    public static final float BASE_DAMAGE = 1.2f;
-    public static final double SPEED = 3.0D;
+    public static final String ID = "crystal_bullet";
+    public static final float BASE_DAMAGE_DEFAULT = 1.2f;
+    public static final double SPEED_DEFAULT = 3.0D;
 
-    public static final float FRAGMENT_DAMAGE_MUL = 0.5f;
-    public static final double FRAGMENT_SPEED = 1.0;
-    public static final int FRAGMENT_TIME = 60;
-    public static final int FRAGMENT_COUNT = 3;
+    public static final float FRAGMENT_DAMAGE_MUL_DEFAULT = 0.5f;
+    public static final double FRAGMENT_SPEED_DEFAULT = 1.0;
+    public static final int FRAGMENT_TIME_DEFAULT = 60;
+    public static final int FRAGMENT_COUNT_DEFAULT = 3;
+    public static final int PARTICLE_COUNT_DEFAULT = 5;
+
+    public static final IConfigData CONFIG_DATA = new IConfigData() {
+        @Override
+        public void onConfigLoad() {
+            AmmoConfig.loadFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
+            AmmoConfig.loadDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
+            AmmoConfig.loadFloat(ID, "fragment_damage_multiplier", FRAGMENT_DAMAGE_MUL_DEFAULT, 0.0f, 100.0f);
+            AmmoConfig.loadDouble(ID, "fragment_speed", FRAGMENT_SPEED_DEFAULT, 0.0D, 24.0D);
+            AmmoConfig.loadInt(ID, "fragment_time", FRAGMENT_TIME_DEFAULT, 0, 72000);
+            AmmoConfig.loadInt(ID, "fragment_count", FRAGMENT_COUNT_DEFAULT, 0, 100);
+            AmmoConfig.loadInt(ID, "particle_count", PARTICLE_COUNT_DEFAULT, 0, 1000);
+        }
+    };
+
+    public static final ConfigListItem CONFIG_LIST_ITEM = AmmoConfig.createListItem(ID, CONFIG_DATA);
+
+    public static float getBaseDamage() {
+        return AmmoConfig.readFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
+    }
+
+    public static double getSpeed() {
+        return AmmoConfig.readDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
+    }
+
+    public static float getFragmentDamageMultiplier() {
+        return AmmoConfig.readFloat(ID, "fragment_damage_multiplier", FRAGMENT_DAMAGE_MUL_DEFAULT, 0.0f, 100.0f);
+    }
+
+    public static double getFragmentSpeed() {
+        return AmmoConfig.readDouble(ID, "fragment_speed", FRAGMENT_SPEED_DEFAULT, 0.0D, 24.0D);
+    }
+
+    public static int getFragmentTime() {
+        return AmmoConfig.readInt(ID, "fragment_time", FRAGMENT_TIME_DEFAULT, 0, 72000);
+    }
+
+    public static int getFragmentCount() {
+        return AmmoConfig.readInt(ID, "fragment_count", FRAGMENT_COUNT_DEFAULT, 0, 100);
+    }
+
+    public static int getParticleCount() {
+        return AmmoConfig.readInt(ID, "particle_count", PARTICLE_COUNT_DEFAULT, 0, 1000);
+    }
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
-            Vec3 motion = summon.getLookAngle().normalize().scale(SPEED);
+            Vec3 motion = summon.getLookAngle().normalize().scale(getSpeed());
             summon.setDeltaMovement(motion);
 
             if(summon.level().isClientSide()) return;
@@ -52,15 +99,15 @@ public class CrystalBullet extends BasicBulletAmmo {
 
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 Entity target = targets.getFirst();
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, BASE_DAMAGE + damage, knockbackScale)) {
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, getBaseDamage() + damage, knockbackScale)) {
                     target.invulnerableTime = invulnerableTime;
-                    for(int i = 0;i < FRAGMENT_COUNT;i++) {
-                        summonProjectile(summon, (BASE_DAMAGE + damage) * FRAGMENT_DAMAGE_MUL);
+                    for(int i = 0;i < getFragmentCount();i++) {
+                        summonProjectile(summon, (getBaseDamage() + damage) * getFragmentDamageMultiplier());
                     }
                     ParticleUtil.addParticles(
                         (ServerLevel) summon.level(), ModParticles.CRYSTAL_FRAGMENT_PARTICLE.get(),
                         summon.position(), new Vec3(0.2, 0.2, 0.2),
-                        0.2, 5
+                        0.2, getParticleCount()
                     );
                     this.onDied(summon);
                 }
@@ -71,13 +118,13 @@ public class CrystalBullet extends BasicBulletAmmo {
             if(blockHitResult.getType() != HitResult.Type.MISS) {
                 CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
                 float damage = customData.contains("damage") ? customData.getFloat("damage") : 0;
-                for(int i = 0;i < FRAGMENT_COUNT;i++) {
-                    summonProjectile(summon, (BASE_DAMAGE + damage) * FRAGMENT_DAMAGE_MUL);
+                for(int i = 0;i < getFragmentCount();i++) {
+                    summonProjectile(summon, (getBaseDamage() + damage) * getFragmentDamageMultiplier());
                 }
                 ParticleUtil.addParticles(
                     (ServerLevel) summon.level(), ModParticles.CRYSTAL_FRAGMENT_PARTICLE.get(),
                     summon.position(), new Vec3(0.2, 0.2, 0.2),
-                    0.2, 5
+                    0.2, getParticleCount()
                 );
                 this.onDied(summon);
             }
@@ -131,8 +178,8 @@ public class CrystalBullet extends BasicBulletAmmo {
         projectile.getEntityData().set(StaticProjectile.SCALE_Y, 0.5f);
         projectile.getEntityData().set(StaticProjectile.SCALE_Z, 0.5f);
         projectile.getEntityData().set(StaticProjectile.RXPS, 10);
-        projectile.getEntityData().set(StaticProjectile.LIFETIME, FRAGMENT_TIME);
-        projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", FRAGMENT_SPEED));
+        projectile.getEntityData().set(StaticProjectile.LIFETIME, getFragmentTime());
+        projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", getFragmentSpeed()));
 
         CompoundTag customData = new CompoundTag();
         customData.putFloat("damage", damage);

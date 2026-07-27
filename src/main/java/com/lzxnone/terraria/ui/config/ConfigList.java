@@ -1,16 +1,14 @@
 package com.lzxnone.terraria.ui.config;
 
 import com.lzxnone.terraria.effect.BloodButcheredEffect;
+import com.lzxnone.terraria.effect.AcidVenomEffect;
 import com.lzxnone.terraria.effect.CursedInfernoEffect;
 import com.lzxnone.terraria.effect.DemonicFlamesEffect;
+import com.lzxnone.terraria.effect.IchorEffect;
 import com.lzxnone.terraria.effect.MidasEffect;
 import com.lzxnone.terraria.effect.SummonEffect;
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
-import com.lzxnone.terraria.item.ammo.MeteorShot;
-import com.lzxnone.terraria.item.ammo.MusketBall;
-import com.lzxnone.terraria.item.ammo.GoldenBullet;
-import com.lzxnone.terraria.item.ammo.SilverBullet;
-import com.lzxnone.terraria.item.ammo.TungstenBullet;
+import com.lzxnone.terraria.item.ammo.*;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.item.weapon.melee.BladeOfGrass;
@@ -82,6 +80,8 @@ public class ConfigList {
             BloodButcheredEffect.CONFIG_LIST_ITEM,
             DemonicFlamesEffect.CONFIG_LIST_ITEM,
             CursedInfernoEffect.CONFIG_LIST_ITEM,
+            IchorEffect.CONFIG_LIST_ITEM,
+            AcidVenomEffect.CONFIG_LIST_ITEM,
             MidasEffect.CONFIG_LIST_ITEM,
             SummonEffect.CONFIG_LIST_ITEM
         });
@@ -89,7 +89,17 @@ public class ConfigList {
             MusketBall.CONFIG_LIST_ITEM,
             MeteorShot.CONFIG_LIST_ITEM,
             SilverBullet.CONFIG_LIST_ITEM,
+            CrystalBullet.CONFIG_LIST_ITEM,
+            CursedBullet.CONFIG_LIST_ITEM,
+            ChlorophyteBullet.CONFIG_LIST_ITEM,
+            HighVelocityBullet.CONFIG_LIST_ITEM,
+            IchorBullet.CONFIG_LIST_ITEM,
+            VenomBullet.CONFIG_LIST_ITEM,
+            PartyBullet.CONFIG_LIST_ITEM,
+            NanoBullet.CONFIG_LIST_ITEM,
+            ExplodingBullet.CONFIG_LIST_ITEM,
             GoldenBullet.CONFIG_LIST_ITEM,
+            LuminiteBullet.CONFIG_LIST_ITEM,
             TungstenBullet.CONFIG_LIST_ITEM
         });
         ITEMS.put(ENCHANTMENT, new ConfigListItem[]{

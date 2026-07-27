@@ -115,6 +115,7 @@ public class AmmoUtil {
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
         summon.getEntityData().set(StaticSummon.SCALE_Y, 0.05f);
         summon.getEntityData().set(StaticSummon.SCALE_Z, 0.01f);
+        summon.getEntityData().set(StaticSummon.GLOW, true);
         summon.setNoGravity(true);
     }
 
@@ -125,6 +126,9 @@ public class AmmoUtil {
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
         summon.getEntityData().set(StaticSummon.SCALE_Y, 0.05f);
         summon.getEntityData().set(StaticSummon.SCALE_Z, 0.01f);
+        CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+        customData.putInt("hit", 0);
+        summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
         summon.setNoGravity(true);
     }
 
@@ -135,6 +139,7 @@ public class AmmoUtil {
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
         summon.getEntityData().set(StaticSummon.SCALE_Y, 0.05f);
         summon.getEntityData().set(StaticSummon.SCALE_Z, 0.01f);
+        summon.getEntityData().set(StaticSummon.GLOW, true);
         summon.setNoGravity(true);
     }
 
@@ -165,6 +170,10 @@ public class AmmoUtil {
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
         summon.getEntityData().set(StaticSummon.SCALE_Y, 0.05f);
         summon.getEntityData().set(StaticSummon.SCALE_Z, 0.01f);
+        summon.getEntityData().set(StaticSummon.GLOW, true);
+        CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+        customData.putInt("hit", 0);
+        summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
         summon.setNoGravity(true);
     }
 
@@ -195,6 +204,10 @@ public class AmmoUtil {
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
         summon.getEntityData().set(StaticSummon.SCALE_Y, 0.05f);
         summon.getEntityData().set(StaticSummon.SCALE_Z, 0.01f);
+        summon.getEntityData().set(StaticSummon.GLOW, true);
+        CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+        customData.putInt("hit", 0);
+        summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
         summon.setNoGravity(true);
     }
 

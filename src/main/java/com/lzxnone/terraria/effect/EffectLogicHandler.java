@@ -89,6 +89,8 @@ public class EffectLogicHandler {
             || effect == ModEffects.KILL_MODE
             || effect == ModEffects.KILL_MODE_COOLDOWN
             || effect == ModEffects.MIDAS
-            || effect == ModEffects.CURSED_INFERNO;
+            || effect == ModEffects.CURSED_INFERNO
+            || effect == ModEffects.ICHOR
+            || effect == ModEffects.ACID_VENOM;
     }
 }

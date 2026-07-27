@@ -1,6 +1,8 @@
 package com.lzxnone.terraria.utils;
 
 import com.lzxnone.terraria.damage.ModDamageTypes;
+import com.lzxnone.terraria.effect.IchorEffect;
+import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
@@ -84,6 +86,9 @@ public class DamageUtil {
         }else if(category == DamageCategory.RANGED && !itemSource.isEmpty()) {
             finalDamage = applyRangedDamageBonus(itemSource, player, finalDamage);
         }
+        if(category != DamageCategory.REAL) {
+            finalDamage = applyTargetDamageEffects(target, finalDamage);
+        }
         finalDamage = Math.max(0.0F, finalDamage);
 
         Vec3 beforeHurtMovement = target instanceof LivingEntity livingTarget ? livingTarget.getDeltaMovement() : Vec3.ZERO;
@@ -136,6 +141,17 @@ public class DamageUtil {
 
         finalDamage *= Math.pow(ModEnchantmentConfigs.getGunpowderDamageMultiplier(), gunpowderLevel);
         return (float)Math.max(0.0D, finalDamage);
+    }
+
+    private static float applyTargetDamageEffects(Entity target, float damage) {
+        if(!(target instanceof LivingEntity livingTarget)) return damage;
+
+        float finalDamage = damage;
+        if(livingTarget.hasEffect(ModEffects.ICHOR) && livingTarget.getEffect(ModEffects.ICHOR) != null) {
+            int amplifier = Objects.requireNonNull(livingTarget.getEffect(ModEffects.ICHOR)).getAmplifier();
+            finalDamage *= 1.0f + IchorEffect.getDamageBonusPerLevel() * (amplifier + 1);
+        }
+        return Math.max(0.0F, finalDamage);
     }
 
     private static int getEnchantmentLevel(LivingEntity entity, ItemStack stack, ResourceKey<Enchantment> enchantment) {

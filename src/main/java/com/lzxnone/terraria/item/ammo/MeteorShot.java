@@ -101,19 +101,20 @@ public class MeteorShot extends BulletAmmo {
                         hitBox,
                         FilterUtil.createTargetFilter(summon, summon.getOwner())
                 );
-                if (!targets.isEmpty()) {
+                if(!targets.isEmpty()) {
                     CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
                     float damage = customData.contains("damage") ? customData.getFloat("damage") : 0;
                     float knockbackScale = customData.contains("knockbackScale") ? customData.getFloat("knockbackScale") : 1.0f;
                     int invulnerableTime = customData.contains("invulnerableTime") ? customData.getInt("invulnerableTime") : 20;
 
                     ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
-                    Entity target = targets.getFirst();
-                    if (DamageUtil.rangedAttack(summon, target, sourceStack, getBaseDamage() + damage, knockbackScale)) {
-                        target.invulnerableTime = invulnerableTime;
-                        if (MeteorShot.incrementHit(summon) >= getMaxHit()) {
-                            this.onDied(summon);
-                            return;
+                    for(Entity target : targets) {
+                        if(DamageUtil.rangedAttack(summon, target, sourceStack, (getBaseDamage() + damage), knockbackScale)) {
+                            target.invulnerableTime = invulnerableTime;
+                            if(incrementHit(summon) >= getMaxHit()) {
+                                this.onDied(summon);
+                                return;
+                            }
                         }
                     }
                 }

@@ -3,6 +3,8 @@ package com.lzxnone.terraria.item.ammo;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.ui.config.ConfigListItem;
+import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
@@ -19,16 +21,39 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class CursedBullet extends BasicBulletAmmo {
-    public static final float BASE_DAMAGE = 2.0f;
-    public static final double SPEED = 3.0D;
-    public static final int EFFECT_TIME = 140;
+    public static final String ID = "cursed_bullet";
+    public static final float BASE_DAMAGE_DEFAULT = 2.0f;
+    public static final double SPEED_DEFAULT = 3.0D;
+    public static final int EFFECT_TIME_DEFAULT = 140;
 
+    public static final IConfigData CONFIG_DATA = new IConfigData() {
+        @Override
+        public void onConfigLoad() {
+            AmmoConfig.loadFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
+            AmmoConfig.loadDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
+            AmmoConfig.loadInt(ID, "effect_time", EFFECT_TIME_DEFAULT, 0, 72000);
+        }
+    };
+
+    public static final ConfigListItem CONFIG_LIST_ITEM = AmmoConfig.createListItem(ID, CONFIG_DATA);
+
+    public static float getBaseDamage() {
+        return AmmoConfig.readFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
+    }
+
+    public static double getSpeed() {
+        return AmmoConfig.readDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
+    }
+
+    public static int getEffectTime() {
+        return AmmoConfig.readInt(ID, "effect_time", EFFECT_TIME_DEFAULT, 0, 72000);
+    }
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
-            Vec3 motion = summon.getLookAngle().normalize().scale(SPEED);
+            Vec3 motion = summon.getLookAngle().normalize().scale(getSpeed());
             summon.setDeltaMovement(motion);
 
             if(summon.level().isClientSide()) return;
@@ -48,10 +73,10 @@ public class CursedBullet extends BasicBulletAmmo {
 
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 Entity target = targets.getFirst();
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, BASE_DAMAGE + damage, knockbackScale)) {
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, getBaseDamage() + damage, knockbackScale)) {
                     target.invulnerableTime = invulnerableTime;
                     if(target instanceof LivingEntity livingEntity) {
-                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.CURSED_INFERNO, EFFECT_TIME, 0);
+                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.CURSED_INFERNO, getEffectTime(), 0);
                         livingEntity.addEffect(effectInstance);
                     }
                     this.onDied(summon);
