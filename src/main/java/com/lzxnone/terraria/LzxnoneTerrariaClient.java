@@ -84,6 +84,9 @@ public class LzxnoneTerrariaClient {
             event.registerSpriteSet(ModParticles.SOLAR_EXPLOSION_PARTICLE.get(), SolarExplosionParticle.Provider::new);
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.CRYSTAL_FRAGMENT_PARTICLE.get(), CrystalFragmentParticle.Provider::new);
+        });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
             event.registerSpriteSet(ModParticles.DEVILS_DEVASTATION_RUNE_PARTICLE.get(), DevilsDevastationRuneParticle.Provider::new);
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {

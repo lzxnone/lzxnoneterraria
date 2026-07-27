@@ -94,25 +94,27 @@ public class MeteorShot extends BulletAmmo {
             summon.setDeltaMovement(motion);
 
             //碰撞检测
-            AABB hitBox = new AABB(summon.position(), summon.position().add(motion)).inflate(0.25);
-            List<Entity> targets = summon.level().getEntitiesOfClass(
-                Entity.class,
-                hitBox,
-                FilterUtil.createTargetFilter(summon, summon.getOwner())
-            );
-            if(!targets.isEmpty()) {
-                CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-                float damage = customData.contains("damage") ? customData.getFloat("damage") : 0;
-                float knockbackScale = customData.contains("knockbackScale") ? customData.getFloat("knockbackScale") : 1.0f;
-                int invulnerableTime = customData.contains("invulnerableTime") ? customData.getInt("invulnerableTime") : 20;
+            if(!summon.level().isClientSide()) {
+                AABB hitBox = new AABB(summon.position(), summon.position().add(motion)).inflate(0.25);
+                List<Entity> targets = summon.level().getEntitiesOfClass(
+                        Entity.class,
+                        hitBox,
+                        FilterUtil.createTargetFilter(summon, summon.getOwner())
+                );
+                if (!targets.isEmpty()) {
+                    CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+                    float damage = customData.contains("damage") ? customData.getFloat("damage") : 0;
+                    float knockbackScale = customData.contains("knockbackScale") ? customData.getFloat("knockbackScale") : 1.0f;
+                    int invulnerableTime = customData.contains("invulnerableTime") ? customData.getInt("invulnerableTime") : 20;
 
-                ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
-                Entity target = targets.getFirst();
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, getBaseDamage() + damage, knockbackScale)) {
-                    target.invulnerableTime = invulnerableTime;
-                    if(MeteorShot.incrementHit(summon) >= getMaxHit()) {
-                        this.onDied(summon);
-                        return;
+                    ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
+                    Entity target = targets.getFirst();
+                    if (DamageUtil.rangedAttack(summon, target, sourceStack, getBaseDamage() + damage, knockbackScale)) {
+                        target.invulnerableTime = invulnerableTime;
+                        if (MeteorShot.incrementHit(summon) >= getMaxHit()) {
+                            this.onDied(summon);
+                            return;
+                        }
                     }
                 }
             }

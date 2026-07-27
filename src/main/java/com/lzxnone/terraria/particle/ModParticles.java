@@ -120,6 +120,8 @@ public class ModParticles {
             PARTICLE_TYPES.register("leaf_particle", () -> new SimpleParticleType(true));
     public static final Supplier<SimpleParticleType> SOLAR_EXPLOSION_PARTICLE =
             PARTICLE_TYPES.register("solar_explosion_particle", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> CRYSTAL_FRAGMENT_PARTICLE =
+            PARTICLE_TYPES.register("crystal_fragment_particle", () -> new SimpleParticleType(true));
     public static final Supplier<SimpleParticleType> DEVILS_DEVASTATION_RUNE_PARTICLE =
             PARTICLE_TYPES.register("devils_devastation_rune_particle", () -> new SimpleParticleType(true));
     public static final Supplier<SimpleParticleType> DEVILS_DEVASTATION_RUNE_PARTICLE2 =

@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.client.entity.projectile;
 
+import com.lzxnone.terraria.client.item.ammo.ClientCrystalFragment;
 import com.lzxnone.terraria.client.item.melee.ClientBladeOfGrass;
 import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
 import com.lzxnone.terraria.client.item.melee.ClientMace;
@@ -27,6 +28,7 @@ public class ClientStaticProjectileRenderBehaviors {
         BEHAVIORS.put(StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE, ClientDevilsDevastation.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE2, ClientDevilsDevastation.PROJECTILE_BEHAVIOR2);
         BEHAVIORS.put(StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE3, ClientDevilsDevastation.PROJECTILE_BEHAVIOR3);
+        BEHAVIORS.put(StaticProjectileBehaviors.CRYSTAL_FRAGMENT, ClientCrystalFragment.PROJECTILE_BEHAVIOR);
     }
 
     public static IStaticProjectileRenderBehavior getBehavior(String id) {

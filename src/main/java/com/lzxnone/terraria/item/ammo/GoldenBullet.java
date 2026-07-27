@@ -86,6 +86,8 @@ public class GoldenBullet extends BasicBulletAmmo {
             Vec3 motion = summon.getLookAngle().normalize().scale(getSpeed());
             summon.setDeltaMovement(motion);
 
+            if(summon.level().isClientSide()) return;
+
             //碰撞检测
             AABB hitBox = new AABB(summon.position(), summon.position().add(motion)).inflate(0.25);
             List<Entity> targets = summon.level().getEntitiesOfClass(
