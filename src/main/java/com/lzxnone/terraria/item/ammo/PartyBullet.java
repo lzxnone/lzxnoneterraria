@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class PartyBullet extends BasicBulletAmmo {
+public class PartyBullet extends BulletAmmo {
     public static final String ID = "party_bullet";
     public static final float BASE_DAMAGE_DEFAULT = 1.5f;
     public static final double SPEED_DEFAULT = 3.0D;

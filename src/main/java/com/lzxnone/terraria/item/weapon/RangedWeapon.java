@@ -82,6 +82,18 @@ public class RangedWeapon extends Weapon {
         return false;
     }
 
+    public int getAmmoCount(ItemStack weaponStack, Player player) {
+        ItemStack ammoStack = getAmmoStack(weaponStack);
+        if(ammoStack.isEmpty() || !canUseAmmo(weaponStack, ammoStack)) return 0;
+
+        Item ammoItem = ammoStack.getItem();
+        int count = 0;
+        for(ItemStack inventoryStack : player.getInventory().items) {
+            if(inventoryStack.is(ammoItem)) count += inventoryStack.getCount();
+        }
+        return count;
+    }
+
     public boolean consumeAmmo(ItemStack weaponStack, Player player, int amount) {
         if(amount <= 0 || player.hasInfiniteMaterials()) return true;
         if(shouldSkipAmmoConsume(weaponStack, player)) return true;

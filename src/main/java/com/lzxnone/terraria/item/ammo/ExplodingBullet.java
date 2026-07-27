@@ -20,7 +20,7 @@ import org.joml.Vector3f;
 
 import java.util.List;
 
-public class ExplodingBullet extends BasicBulletAmmo {
+public class ExplodingBullet extends BulletAmmo {
     public static final String ID = "exploding_bullet";
     public static final float BASE_DAMAGE_DEFAULT = 1.5f;
     public static final double SPEED_DEFAULT = 3.0D;

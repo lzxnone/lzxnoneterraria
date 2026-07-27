@@ -25,7 +25,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class SilverBullet extends BasicBulletAmmo {
+public class SilverBullet extends BulletAmmo {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String BASE_DAMAGE_PATH = "ammo.silver_bullet.base_damage";

@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class HighVelocityBullet extends BasicBulletAmmo {
+public class HighVelocityBullet extends BulletAmmo {
     public static final String ID = "high_velocity_bullet";
     public static final float BASE_DAMAGE_DEFAULT = 1.5f;
     public static final double SPEED_DEFAULT = 4.0D;

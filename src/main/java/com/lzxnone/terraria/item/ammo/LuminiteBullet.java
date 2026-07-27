@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class LuminiteBullet extends BasicBulletAmmo {
+public class LuminiteBullet extends BulletAmmo {
     public static final String ID = "luminite_bullet";
     public static final float BASE_DAMAGE_DEFAULT = 3.0f;
     public static final double SPEED_DEFAULT = 3.5D;

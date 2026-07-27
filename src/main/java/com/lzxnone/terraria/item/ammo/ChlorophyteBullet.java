@@ -22,7 +22,7 @@ import org.joml.Vector3f;
 
 import java.util.List;
 
-public class ChlorophyteBullet extends BasicBulletAmmo {
+public class ChlorophyteBullet extends BulletAmmo {
     public static final String ID = "chlorophyte_bullet";
     public static final float BASE_DAMAGE_DEFAULT = 1.5f;
     public static final double SPEED_DEFAULT = 3.0D;

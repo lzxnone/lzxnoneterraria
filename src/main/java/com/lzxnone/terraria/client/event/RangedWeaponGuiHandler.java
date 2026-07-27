@@ -3,6 +3,7 @@ package com.lzxnone.terraria.client.event;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.item.ModItemTags;
 import com.lzxnone.terraria.item.weapon.RangedWeapon;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.HumanoidArm;
@@ -49,7 +50,7 @@ public class RangedWeaponGuiHandler {
         for(int i = 0; i < 9; i++) {
             ItemStack stack = player.getInventory().items.get(i);
             int slotX = centerX - 90 + i * 20 + 2;
-            renderSelectedAmmoIcon(guiGraphics, stack, slotX, hotbarY);
+            renderSelectedAmmoIcon(guiGraphics, stack, slotX, hotbarY, player);
         }
 
         ItemStack offhandStack = player.getOffhandItem();
@@ -57,7 +58,7 @@ public class RangedWeaponGuiHandler {
             int offhandX = player.getMainArm().getOpposite() == HumanoidArm.LEFT
                     ? centerX - 91 - 26
                     : centerX + 91 + 10;
-            renderSelectedAmmoIcon(guiGraphics, offhandStack, offhandX, hotbarY);
+            renderSelectedAmmoIcon(guiGraphics, offhandStack, offhandX, hotbarY, player);
         }
     }
 
@@ -70,7 +71,11 @@ public class RangedWeaponGuiHandler {
     }
 
     private static void renderSelectedAmmoIcon(GuiGraphics guiGraphics, ItemStack weaponStack, int slotX, int slotY) {
-        if(!(weaponStack.getItem() instanceof RangedWeapon)) return;
+        renderSelectedAmmoIcon(guiGraphics, weaponStack, slotX, slotY, null);
+    }
+
+    private static void renderSelectedAmmoIcon(GuiGraphics guiGraphics, ItemStack weaponStack, int slotX, int slotY, Player player) {
+        if(!(weaponStack.getItem() instanceof RangedWeapon rangedWeapon)) return;
 
         ItemStack ammoStack = RangedWeapon.getAmmoStack(weaponStack);
         if(ammoStack.isEmpty()) return;
@@ -82,6 +87,28 @@ public class RangedWeaponGuiHandler {
         guiGraphics.pose().translate(x, y, 200.0F);
         guiGraphics.pose().scale(0.25F, 0.25F, 1.0F);
         guiGraphics.renderItem(ammoStack, 0, 0);
+        guiGraphics.pose().popPose();
+
+        if(player != null) {
+            renderAmmoCount(guiGraphics, rangedWeapon, weaponStack, player, x, y);
+        }
+    }
+
+    private static void renderAmmoCount(GuiGraphics guiGraphics, RangedWeapon rangedWeapon,
+                                        ItemStack weaponStack, Player player, int iconX, int iconY) {
+        int count = rangedWeapon.getAmmoCount(weaponStack, player);
+        String text = Integer.toString(count);
+        Minecraft minecraft = Minecraft.getInstance();
+        Font font = minecraft.font;
+        float scale = 0.75F;
+        int textWidth = font.width(text);
+        float textX = (iconX - 2) / scale - textWidth;
+        float textY = (iconY - 3) / scale;
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0.0F, 0.0F, 300.0F);
+        guiGraphics.pose().scale(scale, scale, 1.0F);
+        guiGraphics.drawString(font, text, (int) textX, (int) textY, 0xFFFFFF, true);
         guiGraphics.pose().popPose();
     }
 }

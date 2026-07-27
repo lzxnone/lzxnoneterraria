@@ -20,7 +20,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class IchorBullet extends BasicBulletAmmo {
+public class IchorBullet extends BulletAmmo {
     public static final String ID = "ichor_bullet";
     public static final float BASE_DAMAGE_DEFAULT = 2.25f;
     public static final double SPEED_DEFAULT = 3.0D;

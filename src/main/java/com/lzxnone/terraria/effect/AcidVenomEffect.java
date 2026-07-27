@@ -56,8 +56,8 @@ public class AcidVenomEffect extends MobEffect {
 
     public static final DustParticleOptions PARTICLE = new DustParticleOptions(
         0.075f, 0.5f, 40, false, new Vector3f[]{
-            new Vector3f(0.0F, 0.0F, 0.0F),
-            new Vector3f(0.06F, 0.06F, 0.06F)
+            new Vector3f(0.12F, 0.0F, 0.18F),
+            new Vector3f(0.45F, 0.05F, 0.65F)
         }
     );
 

@@ -22,7 +22,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class TungstenBullet extends BasicBulletAmmo {
+public class TungstenBullet extends BulletAmmo {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String BASE_DAMAGE_PATH = "ammo.tungsten_bullet.base_damage";

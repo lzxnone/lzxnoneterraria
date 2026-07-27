@@ -25,7 +25,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class GoldenBullet extends BasicBulletAmmo {
+public class GoldenBullet extends BulletAmmo {
     private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
 
     public static final String BASE_DAMAGE_PATH = "ammo.golden_bullet.base_damage";

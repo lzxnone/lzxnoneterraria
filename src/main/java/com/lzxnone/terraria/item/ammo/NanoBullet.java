@@ -22,7 +22,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class NanoBullet extends BasicBulletAmmo {
+public class NanoBullet extends BulletAmmo {
     public static final String ID = "nano_bullet";
     public static final float BASE_DAMAGE_DEFAULT = 2.5f;
     public static final double SPEED_DEFAULT = 3.0D;

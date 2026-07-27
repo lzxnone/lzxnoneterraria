@@ -21,7 +21,7 @@ import org.joml.Vector3f;
 
 import java.util.List;
 
-public class CrystalBullet extends BasicBulletAmmo {
+public class CrystalBullet extends BulletAmmo {
     public static final String ID = "crystal_bullet";
     public static final float BASE_DAMAGE_DEFAULT = 1.2f;
     public static final double SPEED_DEFAULT = 3.0D;
