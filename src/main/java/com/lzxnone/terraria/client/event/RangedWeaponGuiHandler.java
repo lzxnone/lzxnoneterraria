@@ -88,6 +88,7 @@ public class RangedWeaponGuiHandler {
         guiGraphics.pose().scale(0.25F, 0.25F, 1.0F);
         guiGraphics.renderItem(ammoStack, 0, 0);
         guiGraphics.pose().popPose();
+        guiGraphics.flush();
 
         if(player != null) {
             renderAmmoCount(guiGraphics, rangedWeapon, weaponStack, player, x, y);
@@ -100,15 +101,16 @@ public class RangedWeaponGuiHandler {
         String text = Integer.toString(count);
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
-        float scale = 0.75F;
+        float scale = 0.5F;
         int textWidth = font.width(text);
-        float textX = (iconX - 2) / scale - textWidth;
-        float textY = (iconY - 3) / scale;
+        float textX = iconX - textWidth * scale;
+        float textY = iconY;
 
         guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0.0F, 0.0F, 300.0F);
+        guiGraphics.pose().translate(textX, textY, 500.0F);
         guiGraphics.pose().scale(scale, scale, 1.0F);
-        guiGraphics.drawString(font, text, (int) textX, (int) textY, 0xFFFFFF, true);
+        guiGraphics.drawString(font, text, 0, 0, 0xFFFFFF, true);
         guiGraphics.pose().popPose();
+        guiGraphics.flush();
     }
 }

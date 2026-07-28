@@ -89,6 +89,7 @@
 
   "tooltip.lzxnoneterraria.relative_distance": "相对距离",
   "tooltip.lzxnoneterraria.absolute_distance": "绝对距离",
+  "tooltip.lzxnoneterraria.zoom": "倍率",
   "tooltip.lzxnoneterraria.ammo": "弹药: %s",
   "tooltip.lzxnoneterraria.devils_devastation_kill_mode": "杀戮模式",
   "tooltip.lzxnoneterraria.devils_devastation.0": "完美的地狱之剑，直接掌握着硫磺火之力。",
@@ -624,6 +625,8 @@
   "lzxnoneterraria.configuration.sniper_rifle_settings": "狙击步枪 设置",
   "lzxnoneterraria.configuration.sniper_rifle_damage": "伤害",
   "lzxnoneterraria.configuration.sniper_rifle_damage.tooltip": "每次命中伤害",
+  "lzxnoneterraria.configuration.sniper_rifle_zoom_scroll_speed": "滚轮调节系数",
+  "lzxnoneterraria.configuration.sniper_rifle_zoom_scroll_speed.tooltip": "鼠标滚轮调节狙击镜倍率的速度",
   "lzxnoneterraria.configuration.chain_gun_settings": "链式机枪 设置",
   "lzxnoneterraria.configuration.chain_gun_damage": "伤害",
   "lzxnoneterraria.configuration.chain_gun_damage.tooltip": "每次命中伤害",

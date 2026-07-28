@@ -89,6 +89,7 @@
 
   "tooltip.lzxnoneterraria.relative_distance": "Relative Distance",
   "tooltip.lzxnoneterraria.absolute_distance": "Absolute Distance",
+  "tooltip.lzxnoneterraria.zoom": "Zoom",
   "tooltip.lzxnoneterraria.ammo": "Ammo: %s",
   "tooltip.lzxnoneterraria.devils_devastation_kill_mode": "Kill Mode",
   "tooltip.lzxnoneterraria.devils_devastation.0": "The perfect blade of the Underworld, wielding the power of Brimstone directly.",
@@ -625,6 +626,8 @@
   "lzxnoneterraria.configuration.sniper_rifle_settings": "Sniper Rifle Settings",
   "lzxnoneterraria.configuration.sniper_rifle_damage": "Damage",
   "lzxnoneterraria.configuration.sniper_rifle_damage.tooltip": "Damage per hit",
+  "lzxnoneterraria.configuration.sniper_rifle_zoom_scroll_speed": "Zoom Scroll Speed",
+  "lzxnoneterraria.configuration.sniper_rifle_zoom_scroll_speed.tooltip": "Mouse wheel speed for adjusting sniper scope zoom",
   "lzxnoneterraria.configuration.chain_gun_settings": "Chain Gun Settings",
   "lzxnoneterraria.configuration.chain_gun_damage": "Damage",
   "lzxnoneterraria.configuration.chain_gun_damage.tooltip": "Damage per hit",

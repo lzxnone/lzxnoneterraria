@@ -9,17 +9,20 @@ import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.item.weapon.melee.FirstFractal;
 import com.lzxnone.terraria.item.weapon.melee.TrueCopperShortsword;
 import com.lzxnone.terraria.item.weapon.melee.Zenith;
+import com.lzxnone.terraria.item.weapon.ranged.SniperRifle;
 import com.lzxnone.terraria.network.payload.ClearSummonPayload;
 import com.lzxnone.terraria.network.payload.DevilsDevastationKillModePayload;
 import com.lzxnone.terraria.network.payload.FirstFractalScrollPayload;
 import com.lzxnone.terraria.network.payload.ToggleSummonFreeTargetingPayload;
 import com.lzxnone.terraria.network.payload.ZenithScrollPayload;
+import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -65,6 +68,26 @@ public class InputHandler {
                     player.displayClientMessage(displayText, true);
 
                     PacketDistributor.sendToServer(new ZenithScrollPayload(scrollDelta));
+                }
+            }
+        }else if(player.getUseItem().getItem() instanceof SniperRifle) {
+            if(player.isUsingItem()) {
+                double scrollDelta = event.getScrollDeltaY();
+                if(scrollDelta != 0) {
+                    event.setCanceled(true);
+                    ItemStack useStack = player.getUseItem();
+                    double zoom = useStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getDouble("zoom") + scrollDelta * SniperRifle.getZoomScrollSpeed();
+                    if(zoom > SniperRifle.MAX_ZOOM) zoom = SniperRifle.MAX_ZOOM;
+                    else if(zoom < 1) zoom = 1;
+                    double finalZoom = zoom;
+                    CustomData.update(DataComponents.CUSTOM_DATA, useStack, tag -> tag.putDouble("zoom", finalZoom));
+
+                    MutableComponent displayText = Component.empty();
+                    displayText.append(Component.translatable("tooltip.lzxnoneterraria.zoom").withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD))
+                        .append(Component.literal(": ").withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD))
+                        .append(Component.literal(String.format("x%.1f", finalZoom)).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
+                    player.displayClientMessage(displayText, true);
+                    SoundUtil.playClientSound(player, SoundEvents.SPYGLASS_USE, 1.0f, 1.0f);
                 }
             }
         }else if(mainHand.getItem() instanceof FirstFractal) {

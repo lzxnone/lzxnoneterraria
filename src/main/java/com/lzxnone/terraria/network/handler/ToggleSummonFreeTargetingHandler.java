@@ -2,6 +2,7 @@ package com.lzxnone.terraria.network.handler;
 
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.network.payload.ToggleSummonFreeTargetingPayload;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -17,7 +18,8 @@ public class ToggleSummonFreeTargetingHandler {
             player.displayClientMessage(
                 Component.translatable(enabled
                     ? "message.lzxnoneterraria.summon_free_targeting_enabled"
-                    : "message.lzxnoneterraria.summon_free_targeting_disabled"),
+                    : "message.lzxnoneterraria.summon_free_targeting_disabled")
+                    .withStyle(enabled ? ChatFormatting.GREEN : ChatFormatting.RED),
                 true
             );
         });
