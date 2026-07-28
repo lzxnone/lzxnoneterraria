@@ -86,6 +86,8 @@ public class ChlorophyteBullet extends BulletAmmo {
             this.checkBeforeTick(summon);
 
             Vec3 currentDir = getCurrentDirection(summon);
+            Vec3 oldMotion = currentDir.normalize().scale(getSpeed());
+
             Entity target = findTarget(summon);
             Vec3 nextDir = currentDir;
             if(target != null) {
@@ -104,6 +106,7 @@ public class ChlorophyteBullet extends BulletAmmo {
             Vec3 motion = nextDir.normalize().scale(getSpeed());
             Vec3 start = summon.position();
             Vec3 end = start.add(motion);
+
             updateRotation(summon, nextDir);
 
             if(summon.level().isClientSide()) {
@@ -149,8 +152,7 @@ public class ChlorophyteBullet extends BulletAmmo {
                     return;
                 }
             }
-
-            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, end);
+            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, summon.position().add(oldMotion));
             if(blockHitResult.getType() != HitResult.Type.MISS) {
                 this.onDied(summon);
                 return;

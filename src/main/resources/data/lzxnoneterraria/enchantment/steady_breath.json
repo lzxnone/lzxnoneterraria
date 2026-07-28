@@ -1,0 +1,21 @@
+{
+  "anvil_cost": 6,
+  "description": {
+    "translate": "enchantment.lzxnoneterraria.steady_breath"
+  },
+  "max_cost": {
+    "base": 45,
+    "per_level_above_first": 0
+  },
+  "max_level": 1,
+  "min_cost": {
+    "base": 10,
+    "per_level_above_first": 0
+  },
+  "primary_items": "#lzxnoneterraria:spread_ranged_weapons",
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#lzxnoneterraria:spread_ranged_weapons",
+  "weight": 5
+}

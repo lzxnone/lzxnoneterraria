@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/gun4",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/uzi"
+  }
+}

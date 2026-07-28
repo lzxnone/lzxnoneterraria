@@ -70,6 +70,14 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.HANDGUN.get());
                 output.accept(ModItems.PHOENIX_BLASTER.get());
                 output.accept(ModItems.MEGASHARK.get());
+                output.accept(ModItems.CLOCKWORK_ASSAULT_RIFLE.get());
+                output.accept(ModItems.GATLIGATOR.get());
+                output.accept(ModItems.SHOTGUN.get());
+                output.accept(ModItems.UZI.get());
+                output.accept(ModItems.VENUS_MAGNUM.get());
+                output.accept(ModItems.TACTICAL_SHOTGUN.get());
+                output.accept(ModItems.SNIPER_RIFLE.get());
+                output.accept(ModItems.CHAIN_GUN.get());
                 output.accept(ModItems.SDMG.get());
                 output.accept(ModItems.MUSKET_BALL.get());
                 output.accept(ModItems.METEOR_SHOT.get());

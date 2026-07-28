@@ -44,6 +44,12 @@
   "shot6": {
     "sounds": ["lzxnoneterraria:shot6"]
   },
+  "shot7": {
+    "sounds": ["lzxnoneterraria:shot7"]
+  },
+  "shot8": {
+    "sounds": ["lzxnoneterraria:shot8"]
+  },
   "boom": {
     "sounds": ["lzxnoneterraria:boom"]
   },

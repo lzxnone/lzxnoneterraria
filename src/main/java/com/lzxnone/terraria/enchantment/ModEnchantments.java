@@ -16,6 +16,7 @@ public class ModEnchantments {
     public static final ResourceKey<Enchantment> AMMO_EXHAUSTION = create("ammo_exhaustion");
     public static final ResourceKey<Enchantment> BULLET_HELL = create("bullet_hell");
     public static final ResourceKey<Enchantment> GUNPOWDER = create("gunpowder");
+    public static final ResourceKey<Enchantment> STEADY_BREATH = create("steady_breath");
     public static final ResourceKey<Enchantment> BARREN_LAND = create("barren_land");
 
     private static ResourceKey<Enchantment> create(String name) {

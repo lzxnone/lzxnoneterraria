@@ -11,7 +11,7 @@ import org.joml.Vector3f;
 public class SDMG extends BasicGun {
     public static final String ID = "sdmg";
     public static final Vector3f OFFSET = new Vector3f(-0.3f, -0.15f, 1.5f);
-    public static final float DAMAGE_DEFAULT = 6.0f;
+    public static final float DAMAGE_DEFAULT = 10.0f;
     public static final float AMMO_NOT_CONSUME_CHANCE_DEFAULT = 0.66f;
     public static final IConfigData CONFIG_DATA = createConfigData(ID, DAMAGE_DEFAULT, AMMO_NOT_CONSUME_CHANCE_DEFAULT);
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);

@@ -56,6 +56,14 @@ public class ModItems {
     public static final DeferredItem<Item> HANDGUN = ITEMS.register("handgun", Handgun::new);
     public static final DeferredItem<Item> PHOENIX_BLASTER = ITEMS.register("phoenix_blaster", PhoenixBlaster::new);
     public static final DeferredItem<Item> MEGASHARK = ITEMS.register("megashark", Megashark::new);
+    public static final DeferredItem<Item> CLOCKWORK_ASSAULT_RIFLE = ITEMS.register("clockwork_assault_rifle", ClockworkAssaultRifle::new);
+    public static final DeferredItem<Item> GATLIGATOR = ITEMS.register("gatligator", Gatligator::new);
+    public static final DeferredItem<Item> SHOTGUN = ITEMS.register("shotgun", Shotgun::new);
+    public static final DeferredItem<Item> UZI = ITEMS.register("uzi", Uzi::new);
+    public static final DeferredItem<Item> VENUS_MAGNUM = ITEMS.register("venus_magnum", VenusMagnum::new);
+    public static final DeferredItem<Item> TACTICAL_SHOTGUN = ITEMS.register("tactical_shotgun", TacticalShotgun::new);
+    public static final DeferredItem<Item> SNIPER_RIFLE = ITEMS.register("sniper_rifle", SniperRifle::new);
+    public static final DeferredItem<Item> CHAIN_GUN = ITEMS.register("chain_gun", ChainGun::new);
     public static final DeferredItem<Item> SDMG = ITEMS.register("sdmg", SDMG::new);
 
     //召唤武器

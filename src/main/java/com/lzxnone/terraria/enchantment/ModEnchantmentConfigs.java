@@ -57,6 +57,11 @@ public class ModEnchantmentConfigs {
     public static final double GUNPOWDER_DAMAGE_MULTIPLIER_MIN = 0.0D;
     public static final double GUNPOWDER_DAMAGE_MULTIPLIER_MAX = 10.0D;
 
+    public static final String STEADY_BREATH_SPREAD_MULTIPLIER_PATH = "enchantment.steady_breath.spread_multiplier";
+    public static final double STEADY_BREATH_SPREAD_MULTIPLIER_DEFAULT = 0.5D;
+    public static final double STEADY_BREATH_SPREAD_MULTIPLIER_MIN = 0.0D;
+    public static final double STEADY_BREATH_SPREAD_MULTIPLIER_MAX = 10.0D;
+
     public static final ConfigListItem MANA_LEAK_CONFIG_LIST_ITEM = createConfigListItem(
         "mana_leak",
         "enchantment.lzxnoneterraria.mana_leak",
@@ -111,6 +116,12 @@ public class ModEnchantmentConfigs {
         () -> ConfigFactory.loadDoubleConfig(GUNPOWDER_DAMAGE_MULTIPLIER_PATH, configText("gunpowder_damage_multiplier"), configTooltip("gunpowder_damage_multiplier"), GUNPOWDER_DAMAGE_MULTIPLIER_DEFAULT, GUNPOWDER_DAMAGE_MULTIPLIER_MIN, GUNPOWDER_DAMAGE_MULTIPLIER_MAX)
     );
 
+    public static final ConfigListItem STEADY_BREATH_CONFIG_LIST_ITEM = createConfigListItem(
+        "steady_breath",
+        "enchantment.lzxnoneterraria.steady_breath",
+        () -> ConfigFactory.loadDoubleConfig(STEADY_BREATH_SPREAD_MULTIPLIER_PATH, configText("steady_breath_spread_multiplier"), configTooltip("steady_breath_spread_multiplier"), STEADY_BREATH_SPREAD_MULTIPLIER_DEFAULT, STEADY_BREATH_SPREAD_MULTIPLIER_MIN, STEADY_BREATH_SPREAD_MULTIPLIER_MAX)
+    );
+
     public static double getManaLeakConsumeMultiplier() {
         return readDouble(MANA_LEAK_CONSUME_MULTIPLIER_PATH, MANA_LEAK_CONSUME_MULTIPLIER_DEFAULT, MANA_LEAK_CONSUME_MULTIPLIER_MIN, MANA_LEAK_CONSUME_MULTIPLIER_MAX);
     }
@@ -145,6 +156,10 @@ public class ModEnchantmentConfigs {
 
     public static double getGunpowderDamageMultiplier() {
         return readDouble(GUNPOWDER_DAMAGE_MULTIPLIER_PATH, GUNPOWDER_DAMAGE_MULTIPLIER_DEFAULT, GUNPOWDER_DAMAGE_MULTIPLIER_MIN, GUNPOWDER_DAMAGE_MULTIPLIER_MAX);
+    }
+
+    public static double getSteadyBreathSpreadMultiplier() {
+        return readDouble(STEADY_BREATH_SPREAD_MULTIPLIER_PATH, STEADY_BREATH_SPREAD_MULTIPLIER_DEFAULT, STEADY_BREATH_SPREAD_MULTIPLIER_MIN, STEADY_BREATH_SPREAD_MULTIPLIER_MAX);
     }
 
     private static ConfigListItem createConfigListItem(String id, String nameKey, Runnable loader) {

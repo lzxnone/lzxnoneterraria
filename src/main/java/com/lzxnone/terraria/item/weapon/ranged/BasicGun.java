@@ -1,6 +1,8 @@
 package com.lzxnone.terraria.item.weapon.ranged;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
+import com.lzxnone.terraria.enchantment.ModEnchantments;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.ModItemTags;
 import com.lzxnone.terraria.item.weapon.RangedWeapon;
@@ -32,6 +34,9 @@ public class BasicGun extends RangedWeapon {
     private static final float DAMAGE_MAX = 8388600.0f;
     private static final float AMMO_NOT_CONSUME_CHANCE_MIN = 0.0f;
     private static final float AMMO_NOT_CONSUME_CHANCE_MAX = 1.0f;
+    public static final double SPRINT_SPREAD_MULTIPLIER = 2.0D;
+    public static final double WALK_SPREAD_MULTIPLIER = 1.5D;
+    public static final double CROUCH_SPREAD_MULTIPLIER = 0.5D;
 
     private final String id;
     private final Vector3f offset;
@@ -148,6 +153,24 @@ public class BasicGun extends RangedWeapon {
     public int getAmmoConsumeAmount(ItemStack weaponStack, LivingEntity entity) {
         if(!hasAmmoNotConsumeChance) return super.getAmmoConsumeAmount(weaponStack, entity);
         return entity.getRandom().nextFloat() < getAmmoNotConsumeChance() ? 0 : 1;
+    }
+
+    protected float getFinalSpreadDegrees(float baseSpread, ItemStack weaponStack, Player player) {
+        double spread = baseSpread;
+        if(player.isSprinting()) {
+            spread *= SPRINT_SPREAD_MULTIPLIER;
+        }else if(player.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4D) {
+            spread *= WALK_SPREAD_MULTIPLIER;
+        }
+        if(player.isShiftKeyDown()) {
+            spread *= CROUCH_SPREAD_MULTIPLIER;
+        }
+
+        int steadyBreathLevel = getEnchantmentLevel(player, weaponStack, ModEnchantments.STEADY_BREATH);
+        if(steadyBreathLevel > 0) {
+            spread *= Math.pow(ModEnchantmentConfigs.getSteadyBreathSpreadMultiplier(), steadyBreathLevel);
+        }
+        return (float) spread;
     }
 
     @Override

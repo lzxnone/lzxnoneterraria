@@ -85,6 +85,14 @@ public class ConfigList {
             Handgun.CONFIG_LIST_ITEM,
             PhoenixBlaster.CONFIG_LIST_ITEM,
             Megashark.CONFIG_LIST_ITEM,
+            ClockworkAssaultRifle.CONFIG_LIST_ITEM,
+            Gatligator.CONFIG_LIST_ITEM,
+            Shotgun.CONFIG_LIST_ITEM,
+            Uzi.CONFIG_LIST_ITEM,
+            VenusMagnum.CONFIG_LIST_ITEM,
+            TacticalShotgun.CONFIG_LIST_ITEM,
+            SniperRifle.CONFIG_LIST_ITEM,
+            ChainGun.CONFIG_LIST_ITEM,
             SDMG.CONFIG_LIST_ITEM
         });
         ITEMS.put(EFFECT, new ConfigListItem[]{
@@ -122,7 +130,8 @@ public class ConfigList {
             ModEnchantmentConfigs.SUMMON_AMPLIFICATION_CONFIG_LIST_ITEM,
             ModEnchantmentConfigs.AMMO_EXHAUSTION_CONFIG_LIST_ITEM,
             ModEnchantmentConfigs.BULLET_HELL_CONFIG_LIST_ITEM,
-            ModEnchantmentConfigs.GUNPOWDER_CONFIG_LIST_ITEM
+            ModEnchantmentConfigs.GUNPOWDER_CONFIG_LIST_ITEM,
+            ModEnchantmentConfigs.STEADY_BREATH_CONFIG_LIST_ITEM
         });
     }
 
