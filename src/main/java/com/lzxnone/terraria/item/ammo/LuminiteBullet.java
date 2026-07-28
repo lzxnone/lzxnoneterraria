@@ -2,18 +2,22 @@ package com.lzxnone.terraria.item.ammo;
 
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
+import com.lzxnone.terraria.utils.ParticleUtil;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 import java.util.List;
 
@@ -46,17 +50,28 @@ public class LuminiteBullet extends BulletAmmo {
         return AmmoConfig.readFloat(ID, "damage_decay", DAMAGE_DECAY_DEFAULT, 0.0f, 1.0f);
     }
 
+    public static final DustParticleOptions PARTICLE = new DustParticleOptions(
+        0.025f, 0.5f, 40, true, new Vector3f[]{
+            new Vector3f(0.0F, 1.0F, 1.0F),
+            new Vector3f(0.1F, 0.4F, 1.0F)
+        }
+    );
+
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
             Vec3 motion = summon.getLookAngle().normalize().scale(getSpeed());
-            summon.setDeltaMovement(motion);
+            Vec3 start = summon.position();
+            Vec3 end = start.add(motion);
 
-            if(summon.level().isClientSide()) return;
+            if(summon.level().isClientSide()) {
+                summon.setPos(end);
+                return;
+            }
 
             //碰撞检测
-            AABB hitBox = new AABB(summon.position(), summon.position().add(motion)).inflate(0.25);
+            AABB hitBox = new AABB(start, end).inflate(0.25);
             List<Entity> targets = summon.level().getEntitiesOfClass(
                 Entity.class,
                 hitBox,
@@ -77,15 +92,29 @@ public class LuminiteBullet extends BulletAmmo {
                         hit++;
                         customData.putInt("hit", hit);
                         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+                        ParticleUtil.addParticles(
+                            (ServerLevel) summon.level(), PARTICLE,
+                            end, new Vec3(0, 0, 0),
+                            0.2, 5
+                        );
                     }
                 }
             }
 
             //方块检测
-            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, summon.position().add(motion));
+            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, end);
             if(blockHitResult.getType() != HitResult.Type.MISS) {
+                summon.setPos(blockHitResult.getLocation());
+                ParticleUtil.addParticles(
+                    (ServerLevel) summon.level(), PARTICLE,
+                    summon.position(), new Vec3(0, 0, 0),
+                    0.2, 10
+                );
                 this.onDied(summon);
+                return;
             }
+
+            summon.setPos(end);
         }
     };
 }

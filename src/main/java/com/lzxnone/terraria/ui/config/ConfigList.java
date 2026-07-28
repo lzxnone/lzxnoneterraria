@@ -33,7 +33,7 @@ import com.lzxnone.terraria.item.weapon.melee.TrueExcalibur;
 import com.lzxnone.terraria.item.weapon.melee.TrueNightsEdge;
 import com.lzxnone.terraria.item.weapon.melee.Volcano;
 import com.lzxnone.terraria.item.weapon.melee.Zenith;
-import com.lzxnone.terraria.item.weapon.ranged.SDMG;
+import com.lzxnone.terraria.item.weapon.ranged.*;
 import com.lzxnone.terraria.item.weapon.summon.Terraprisma;
 
 import java.util.HashMap;
@@ -74,6 +74,17 @@ public class ConfigList {
             DevilsDevastation.CONFIG_LIST_ITEM,
             Terraprisma.CONFIG_LIST_ITEM,
             LastPrism.CONFIG_LIST_ITEM,
+            Minishark.CONFIG_LIST_ITEM,
+            FlintlockPistol.CONFIG_LIST_ITEM,
+            Boomstick.CONFIG_LIST_ITEM,
+            Revolver.CONFIG_LIST_ITEM,
+            RedRyder.CONFIG_LIST_ITEM,
+            Musket.CONFIG_LIST_ITEM,
+            TheUndertaker.CONFIG_LIST_ITEM,
+            QuadBarrelShotgun.CONFIG_LIST_ITEM,
+            Handgun.CONFIG_LIST_ITEM,
+            PhoenixBlaster.CONFIG_LIST_ITEM,
+            Megashark.CONFIG_LIST_ITEM,
             SDMG.CONFIG_LIST_ITEM
         });
         ITEMS.put(EFFECT, new ConfigListItem[]{

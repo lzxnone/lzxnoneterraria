@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/gun2",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/minishark"
+  }
+}

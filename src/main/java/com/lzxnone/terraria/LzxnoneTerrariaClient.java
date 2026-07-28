@@ -92,5 +92,11 @@ public class LzxnoneTerrariaClient {
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
             event.registerSpriteSet(ModParticles.DEVILS_DEVASTATION_RUNE_PARTICLE2.get(), DevilsDevastationRuneParticle2.Provider::new);
         });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.BLACK_DUST_PARTICLE.get(), BlackDustParticle.Provider::new);
+        });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.PARTY_PARTICLE.get(), PartyParticle.Provider::new);
+        });
     }
 }

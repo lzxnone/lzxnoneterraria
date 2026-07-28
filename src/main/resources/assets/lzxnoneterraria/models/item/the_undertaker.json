@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/gun",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/the_undertaker"
+  }
+}

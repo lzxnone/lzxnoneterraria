@@ -1,6 +1,6 @@
 package com.lzxnone.terraria.mixin;
 
-import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.item.weapon.RangedWeapon;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.InteractionHand;
@@ -29,7 +29,7 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> {
                 ? player.getMainArm()
                 : player.getMainArm().getOpposite();
 
-        if(player.getUseItem().is(ModItems.SDMG.get())) {
+        if(player.getUseItem().getItem() instanceof RangedWeapon) {
             if(usedArm == HumanoidArm.RIGHT) {
                 this.rightArm.xRot = (float) Math.toRadians(player.getXRot() - 90);
             }else {

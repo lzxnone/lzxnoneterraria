@@ -59,6 +59,17 @@ public class ModCreativeModeTabs {
             .title(Component.translatable("itemGroup.lzxnoneterraria.ranged"))
             .icon(() -> ModItems.SDMG.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
+                output.accept(ModItems.MINISHARK.get());
+                output.accept(ModItems.FLINTLOCK_PISTOL.get());
+                output.accept(ModItems.BOOMSTICK.get());
+                output.accept(ModItems.REVOLVER.get());
+                output.accept(ModItems.RED_RYDER.get());
+                output.accept(ModItems.MUSKET.get());
+                output.accept(ModItems.THE_UNDERTAKER.get());
+                output.accept(ModItems.QUAD_BARREL_SHOTGUN.get());
+                output.accept(ModItems.HANDGUN.get());
+                output.accept(ModItems.PHOENIX_BLASTER.get());
+                output.accept(ModItems.MEGASHARK.get());
                 output.accept(ModItems.SDMG.get());
                 output.accept(ModItems.MUSKET_BALL.get());
                 output.accept(ModItems.METEOR_SHOT.get());

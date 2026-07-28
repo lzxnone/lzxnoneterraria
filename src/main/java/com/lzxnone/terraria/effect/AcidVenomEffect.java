@@ -2,6 +2,7 @@ package com.lzxnone.terraria.effect;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.particle.DustParticleOptions;
+import com.lzxnone.terraria.particle.ModParticles;
 import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.ConfigUtil;
@@ -54,13 +55,6 @@ public class AcidVenomEffect extends MobEffect {
         CONFIG_DATA
     );
 
-    public static final DustParticleOptions PARTICLE = new DustParticleOptions(
-        0.075f, 0.5f, 40, false, new Vector3f[]{
-            new Vector3f(0.12F, 0.0F, 0.18F),
-            new Vector3f(0.45F, 0.05F, 0.65F)
-        }
-    );
-
     @Override
     public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
         return true;
@@ -73,7 +67,7 @@ public class AcidVenomEffect extends MobEffect {
                 if(entity.hurt(entity.damageSources().magic(), getDamagePerLevel() * (amplifier + 1))) entity.invulnerableTime = 10;
             }
             ParticleUtil.addParticles(
-                serverLevel, PARTICLE,
+                serverLevel, ModParticles.BLACK_DUST_PARTICLE.get(),
                 entity.getBoundingBox().getCenter(), new Vec3(0, 0, 0),
                 0.1, 1
             );

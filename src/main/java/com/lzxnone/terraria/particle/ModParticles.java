@@ -22,20 +22,6 @@ public class ModParticles {
         }
     );
 
-    public static final DustParticleOptions SMOKE_PARTICLE = new DustParticleOptions(
-        0.025f, 0.5f, 40, true, new Vector3f[]{
-            new Vector3f(0.7F, 0.7F, 0.7F),
-        }
-    );
-
-    public static final DustParticleOptions EXPLODE_FLAME_PARTICLE = new DustParticleOptions(
-        0.05f, 0.5f, 40, true, new Vector3f[]{
-            new Vector3f(1.0F, 0.8F, 0.5F),
-            new Vector3f(1.0F, 0.5F, 0.0F),
-            new Vector3f(1.0F, 0.9F, 0.0F),
-        }
-    );
-
     public static final DustParticleOptions COLORFUL_PARTICLE = new DustParticleOptions(
         0.025f, 0.5f, 40, true, new Vector3f[]{
             new Vector3f(0.0F, 1.0F, 1.0F), // 0: 青色 (Cyan)
@@ -126,6 +112,8 @@ public class ModParticles {
             PARTICLE_TYPES.register("devils_devastation_rune_particle", () -> new SimpleParticleType(true));
     public static final Supplier<SimpleParticleType> DEVILS_DEVASTATION_RUNE_PARTICLE2 =
             PARTICLE_TYPES.register("devils_devastation_rune_particle2", () -> new SimpleParticleType(true));
-
-
+    public static final Supplier<SimpleParticleType> BLACK_DUST_PARTICLE =
+            PARTICLE_TYPES.register("black_dust_particle", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> PARTY_PARTICLE =
+            PARTICLE_TYPES.register("party_particle", () -> new SimpleParticleType(true));
 }

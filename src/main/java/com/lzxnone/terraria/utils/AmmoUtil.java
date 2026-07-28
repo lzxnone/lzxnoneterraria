@@ -18,10 +18,10 @@ import org.joml.Vector3f;
 public class AmmoUtil {
     public static final Vector3f OFFSET = new Vector3f(-0.3f, -0.15f, 1.5f);
 
-    public static StaticSummon createAmmoSummon(Level level, Player player, InteractionHand hand, ItemStack stack) {
+    public static StaticSummon createAmmoSummon(Level level, Player player, InteractionHand hand, ItemStack stack, Vector3f offset) {
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
         Vec3 eyePos = player.getEyePosition();
-        Vector3f offset = getOffset(hand);
+        offset = getOffset(hand, offset);
         Vec3 pos = new Vec3(
             eyePos.x + dirs[0].x * offset.z + dirs[1].x * offset.y + dirs[2].x * offset.x,
             eyePos.y + dirs[0].y * offset.z + dirs[1].y * offset.y + dirs[2].y * offset.x,
@@ -39,6 +39,7 @@ public class AmmoUtil {
         summon.setYRot(xyRot[1]);
         summon.xRotO = xyRot[0];
         summon.yRotO = xyRot[1];
+        summon.noPhysics = true;
 
         String ammo = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getString(RangedWeapon.AMMO_KEY);
         if(ammo.equals("lzxnoneterraria:musket_ball")) setMusketBall(summon);
@@ -60,11 +61,11 @@ public class AmmoUtil {
         return summon;
     }
 
-    public static Vector3f getOffset(InteractionHand hand) {
+    public static Vector3f getOffset(InteractionHand hand, Vector3f offset) {
         return new Vector3f(
-            hand == InteractionHand.OFF_HAND ? -OFFSET.x : OFFSET.x,
-            OFFSET.y,
-            OFFSET.z
+            hand == InteractionHand.OFF_HAND ? -offset.x : offset.x,
+            offset.y,
+            offset.z
         );
     }
 

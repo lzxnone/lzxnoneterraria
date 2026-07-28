@@ -29,6 +29,21 @@
   "shot": {
     "sounds": ["lzxnoneterraria:shot"]
   },
+  "shot2": {
+    "sounds": ["lzxnoneterraria:shot2"]
+  },
+  "shot3": {
+    "sounds": ["lzxnoneterraria:shot3"]
+  },
+  "shot4": {
+    "sounds": ["lzxnoneterraria:shot4"]
+  },
+  "shot5": {
+    "sounds": ["lzxnoneterraria:shot5"]
+  },
+  "shot6": {
+    "sounds": ["lzxnoneterraria:shot6"]
+  },
   "boom": {
     "sounds": ["lzxnoneterraria:boom"]
   },

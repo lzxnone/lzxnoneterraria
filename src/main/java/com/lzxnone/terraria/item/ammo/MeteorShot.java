@@ -85,43 +85,42 @@ public class MeteorShot extends BulletAmmo {
             if(summon.isRemoved()) return;
 
             double speed = getSpeed();
-            Vec3 motion = summon.getDeltaMovement();
-            if(motion.lengthSqr() < 0.0001) {
-                motion = summon.getLookAngle().normalize().scale(speed);
-            }else {
-                motion = motion.normalize().scale(speed);
+            Vec3 motion = summon.getLookAngle().normalize().scale(speed);
+            Vec3 start = summon.position();
+            Vec3 end = start.add(motion);
+
+            if(summon.level().isClientSide()) {
+                summon.setPos(end);
+                return;
             }
-            summon.setDeltaMovement(motion);
 
             //碰撞检测
-            if(!summon.level().isClientSide()) {
-                AABB hitBox = new AABB(summon.position(), summon.position().add(motion)).inflate(0.25);
-                List<Entity> targets = summon.level().getEntitiesOfClass(
-                        Entity.class,
-                        hitBox,
-                        FilterUtil.createTargetFilter(summon, summon.getOwner())
-                );
-                if(!targets.isEmpty()) {
-                    CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-                    float damage = customData.contains("damage") ? customData.getFloat("damage") : 0;
-                    float knockbackScale = customData.contains("knockbackScale") ? customData.getFloat("knockbackScale") : 1.0f;
-                    int invulnerableTime = customData.contains("invulnerableTime") ? customData.getInt("invulnerableTime") : 20;
+            AABB hitBox = new AABB(start, end).inflate(0.25);
+            List<Entity> targets = summon.level().getEntitiesOfClass(
+                    Entity.class,
+                    hitBox,
+                    FilterUtil.createTargetFilter(summon, summon.getOwner())
+            );
+            if(!targets.isEmpty()) {
+                CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+                float damage = customData.contains("damage") ? customData.getFloat("damage") : 0;
+                float knockbackScale = customData.contains("knockbackScale") ? customData.getFloat("knockbackScale") : 1.0f;
+                int invulnerableTime = customData.contains("invulnerableTime") ? customData.getInt("invulnerableTime") : 20;
 
-                    ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
-                    for(Entity target : targets) {
-                        if(DamageUtil.rangedAttack(summon, target, sourceStack, (getBaseDamage() + damage), knockbackScale)) {
-                            target.invulnerableTime = invulnerableTime;
-                            if(incrementHit(summon) >= getMaxHit()) {
-                                this.onDied(summon);
-                                return;
-                            }
+                ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
+                for(Entity target : targets) {
+                    if(DamageUtil.rangedAttack(summon, target, sourceStack, (getBaseDamage() + damage), knockbackScale)) {
+                        target.invulnerableTime = invulnerableTime;
+                        if(incrementHit(summon) >= getMaxHit()) {
+                            this.onDied(summon);
+                            return;
                         }
                     }
                 }
             }
 
             //方块检测
-            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, summon.position().add(motion));
+            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, end);
             if(blockHitResult.getType() != HitResult.Type.MISS) {
                 if(MeteorShot.incrementHit(summon) >= getMaxHit()) {
                     this.onDied(summon);
@@ -130,9 +129,11 @@ public class MeteorShot extends BulletAmmo {
 
                 Vec3 reflectedMotion = MeteorShot.reflect(motion, blockHitResult.getDirection()).normalize().scale(speed);
                 summon.setPos(blockHitResult.getLocation().add(Vec3.atLowerCornerOf(blockHitResult.getDirection().getNormal()).scale(0.05)));
-                summon.setDeltaMovement(reflectedMotion);
                 MeteorShot.updateRotation(summon, reflectedMotion);
+                return;
             }
+
+            summon.setPos(end);
         }
     };
 

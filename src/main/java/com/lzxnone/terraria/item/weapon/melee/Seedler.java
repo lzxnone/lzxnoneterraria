@@ -11,6 +11,7 @@ import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.particle.ModParticles;
 import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
@@ -135,6 +136,20 @@ public class Seedler extends MeleeWeapon {
         CONFIG_DATA
     );
 
+    public static final DustParticleOptions PARTICLE = new DustParticleOptions(
+        0.025f, 0.5f, 40, true, new Vector3f[]{
+            new Vector3f(0.7F, 0.7F, 0.7F),
+        }
+    );
+
+    public static final DustParticleOptions PARTICLE2 = new DustParticleOptions(
+        0.05f, 0.5f, 40, true, new Vector3f[]{
+            new Vector3f(1.0F, 0.8F, 0.5F),
+            new Vector3f(1.0F, 0.5F, 0.0F),
+            new Vector3f(1.0F, 0.9F, 0.0F),
+        }
+    );
+
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
         public void tick(StaticSummon summon) {
@@ -231,12 +246,12 @@ public class Seedler extends MeleeWeapon {
                     0.05, 1
                 );
                 ParticleUtil.addParticles(
-                    (ServerLevel) summon.level(), ModParticles.EXPLODE_FLAME_PARTICLE,
+                    (ServerLevel) summon.level(), PARTICLE2,
                     summon.position(), new Vec3(0.2, 0.2, 0.2),
                     0.2, 25
                 );
                 ParticleUtil.addParticles(
-                    (ServerLevel) summon.level(), ModParticles.SMOKE_PARTICLE,
+                    (ServerLevel) summon.level(), PARTICLE,
                     summon.position(), new Vec3(0.2, 0.2, 0.2),
                     0.2, 25
                 );

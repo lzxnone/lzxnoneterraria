@@ -68,12 +68,16 @@ public class ExplodingBullet extends BulletAmmo {
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
             Vec3 motion = summon.getLookAngle().normalize().scale(getSpeed());
-            summon.setDeltaMovement(motion);
+            Vec3 start = summon.position();
+            Vec3 end = start.add(motion);
 
-            if(summon.level().isClientSide()) return;
+            if(summon.level().isClientSide()) {
+                summon.setPos(end);
+                return;
+            }
 
             //碰撞检测
-            AABB hitBox = new AABB(summon.position(), summon.position().add(motion)).inflate(0.25);
+            AABB hitBox = new AABB(start, end).inflate(0.25);
             List<Entity> targets = summon.level().getEntitiesOfClass(
                 Entity.class,
                 hitBox,
@@ -86,10 +90,17 @@ public class ExplodingBullet extends BulletAmmo {
                 int invulnerableTime = customData.contains("invulnerableTime") ? customData.getInt("invulnerableTime") : 20;
 
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
-                Entity target = targets.getFirst();
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, getBaseDamage() + damage, knockbackScale * getKnockbackMultiplier())) {
-                    target.invulnerableTime = invulnerableTime;
-                    SoundUtil.playServerSound(summon.level(), ModSounds.BOOM.get(), summon.position());
+                boolean dead = false;
+                for(Entity target : targets) {
+                    if(DamageUtil.rangedAttack(summon, target, sourceStack, getBaseDamage() + damage, knockbackScale * getKnockbackMultiplier())) {
+                        dead = true;
+                        target.invulnerableTime = invulnerableTime;
+                        SoundUtil.playServerSound(summon.level(), ModSounds.BOOM.get(), summon.position());
+
+                    }
+                }
+                if(dead) {
+                    summon.setPos(end);
                     ParticleUtil.addParticles(
                         (ServerLevel) summon.level(), ModParticles.EXPLODE_PARTICLE.get(),
                         summon.position(), new Vec3(0, 0, 0),
@@ -101,12 +112,14 @@ public class ExplodingBullet extends BulletAmmo {
                         0.2, getDustCount()
                     );
                     this.onDied(summon);
+                    return;
                 }
             }
 
             //方块检测
-            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, summon.position().add(motion));
+            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, end);
             if(blockHitResult.getType() != HitResult.Type.MISS) {
+                summon.setPos(blockHitResult.getLocation());
                 SoundUtil.playServerSound(summon.level(), ModSounds.BOOM.get(), summon.position());
                 ParticleUtil.addParticles(
                     (ServerLevel) summon.level(), ModParticles.EXPLODE_PARTICLE.get(),
@@ -119,7 +132,10 @@ public class ExplodingBullet extends BulletAmmo {
                     0.2, getDustCount()
                 );
                 this.onDied(summon);
+                return;
             }
+
+            summon.setPos(end);
         }
     };
 }

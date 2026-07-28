@@ -80,12 +80,16 @@ public class CrystalBullet extends BulletAmmo {
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
             Vec3 motion = summon.getLookAngle().normalize().scale(getSpeed());
-            summon.setDeltaMovement(motion);
+            Vec3 start = summon.position();
+            Vec3 end = start.add(motion);
 
-            if(summon.level().isClientSide()) return;
+            if(summon.level().isClientSide()) {
+                summon.setPos(end);
+                return;
+            }
 
             //碰撞检测
-            AABB hitBox = new AABB(summon.position(), summon.position().add(motion)).inflate(0.25);
+            AABB hitBox = new AABB(start, end).inflate(0.25);
             List<Entity> targets = summon.level().getEntitiesOfClass(
                 Entity.class,
                 hitBox,
@@ -101,6 +105,7 @@ public class CrystalBullet extends BulletAmmo {
                 Entity target = targets.getFirst();
                 if(DamageUtil.rangedAttack(summon, target, sourceStack, getBaseDamage() + damage, knockbackScale)) {
                     target.invulnerableTime = invulnerableTime;
+                    summon.setPos(end);
                     for(int i = 0;i < getFragmentCount();i++) {
                         summonProjectile(summon, (getBaseDamage() + damage) * getFragmentDamageMultiplier());
                     }
@@ -110,12 +115,14 @@ public class CrystalBullet extends BulletAmmo {
                         0.2, getParticleCount()
                     );
                     this.onDied(summon);
+                    return;
                 }
             }
 
             //方块检测
-            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, summon.position().add(motion));
+            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, end);
             if(blockHitResult.getType() != HitResult.Type.MISS) {
+                summon.setPos(blockHitResult.getLocation());
                 CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
                 float damage = customData.contains("damage") ? customData.getFloat("damage") : 0;
                 for(int i = 0;i < getFragmentCount();i++) {
@@ -125,9 +132,12 @@ public class CrystalBullet extends BulletAmmo {
                     (ServerLevel) summon.level(), ModParticles.CRYSTAL_FRAGMENT_PARTICLE.get(),
                     summon.position(), new Vec3(0.2, 0.2, 0.2),
                     0.2, getParticleCount()
-                );
+                    );
                 this.onDied(summon);
+                return;
             }
+
+            summon.setPos(end);
         }
     };
 

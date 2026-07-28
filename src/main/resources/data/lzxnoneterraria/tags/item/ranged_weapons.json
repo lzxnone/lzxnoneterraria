@@ -1,6 +1,17 @@
 {
   "replace": false,
   "values": [
+    "lzxnoneterraria:musket",
+    "lzxnoneterraria:minishark",
+    "lzxnoneterraria:flintlock_pistol",
+    "lzxnoneterraria:boomstick",
+    "lzxnoneterraria:revolver",
+    "lzxnoneterraria:red_ryder",
+    "lzxnoneterraria:the_undertaker",
+    "lzxnoneterraria:quad_barrel_shotgun",
+    "lzxnoneterraria:handgun",
+    "lzxnoneterraria:phoenix_blaster",
+    "lzxnoneterraria:megashark",
     "lzxnoneterraria:sdmg"
   ]
 }

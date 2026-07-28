@@ -57,12 +57,16 @@ public class HighVelocityBullet extends BulletAmmo {
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
             Vec3 motion = summon.getLookAngle().normalize().scale(getSpeed());
-            summon.setDeltaMovement(motion);
+            Vec3 start = summon.position();
+            Vec3 end = start.add(motion);
 
-            if(summon.level().isClientSide()) return;
+            if(summon.level().isClientSide()) {
+                summon.setPos(end);
+                return;
+            }
 
             //碰撞检测
-            AABB hitBox = new AABB(summon.position(), summon.position().add(motion)).inflate(0.25);
+            AABB hitBox = new AABB(start, end).inflate(0.25);
             List<Entity> targets = summon.level().getEntitiesOfClass(
                 Entity.class,
                 hitBox,
@@ -89,10 +93,13 @@ public class HighVelocityBullet extends BulletAmmo {
             }
 
             //方块检测
-            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, summon.position().add(motion));
+            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, end);
             if(blockHitResult.getType() != HitResult.Type.MISS) {
                 this.onDied(summon);
+                return;
             }
+
+            summon.setPos(end);
         }
     };
 

@@ -62,6 +62,12 @@ public class MEntityLuminance implements EntityLuminance {
 					 StaticSummonBehaviors.TERRAPRISMA -> {
 					return 15;
 				}
+				case StaticSummonBehaviors.CHLOROPHYTE_BULLET,
+					 StaticSummonBehaviors.ICHOR_BULLET,
+					 StaticSummonBehaviors.NANO_BULLET,
+					 StaticSummonBehaviors.LUMINITE_BULLET -> {
+					return 5;
+				}
 				default -> {
 					return 0;
 				}

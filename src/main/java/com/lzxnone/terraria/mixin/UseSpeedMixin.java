@@ -3,6 +3,7 @@ package com.lzxnone.terraria.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.item.weapon.RangedWeapon;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,7 +21,7 @@ public abstract class UseSpeedMixin {
                 || usingItem.is(ModItems.TERRAGRIM.get())
                 || usingItem.is(ModItems.MACE.get())
                 || usingItem.is(ModItems.LAST_PRISM.get())
-                || usingItem.is(ModItems.SDMG.get());
+                || usingItem.getItem() instanceof RangedWeapon;
     }
 
     @WrapOperation(

@@ -2,12 +2,15 @@ package com.lzxnone.terraria.item.ammo;
 
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.particle.ModParticles;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
+import com.lzxnone.terraria.utils.ParticleUtil;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
@@ -45,12 +48,16 @@ public class PartyBullet extends BulletAmmo {
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
             Vec3 motion = summon.getLookAngle().normalize().scale(getSpeed());
-            summon.setDeltaMovement(motion);
+            Vec3 start = summon.position();
+            Vec3 end = start.add(motion);
 
-            if(summon.level().isClientSide()) return;
+            if(summon.level().isClientSide()) {
+                summon.setPos(end);
+                return;
+            }
 
             //碰撞检测
-            AABB hitBox = new AABB(summon.position(), summon.position().add(motion)).inflate(0.25);
+            AABB hitBox = new AABB(start, end).inflate(0.25);
             List<Entity> targets = summon.level().getEntitiesOfClass(
                 Entity.class,
                 hitBox,
@@ -66,15 +73,31 @@ public class PartyBullet extends BulletAmmo {
                 Entity target = targets.getFirst();
                 if(DamageUtil.rangedAttack(summon, target, sourceStack, getBaseDamage() + damage, knockbackScale)) {
                     target.invulnerableTime = invulnerableTime;
+                    summon.setPos(end);
+                    ParticleUtil.addParticles(
+                        (ServerLevel) summon.level(), ModParticles.PARTY_PARTICLE.get(),
+                        summon.position(), new Vec3(0, 0, 0),
+                        0.2, 5
+                    );
                     this.onDied(summon);
+                    return;
                 }
             }
 
             //方块检测
-            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, summon.position().add(motion));
+            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, end);
             if(blockHitResult.getType() != HitResult.Type.MISS) {
+                summon.setPos(blockHitResult.getLocation());
+                ParticleUtil.addParticles(
+                    (ServerLevel) summon.level(), ModParticles.PARTY_PARTICLE.get(),
+                    summon.position(), new Vec3(0, 0, 0),
+                    0.2, 5
+                );
                 this.onDied(summon);
+                return;
             }
+
+            summon.setPos(end);
         }
     };
 

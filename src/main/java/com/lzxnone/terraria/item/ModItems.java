@@ -15,6 +15,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(LzxnoneTerraria.MODID);
 
+    //近战武器
     public static final DeferredItem<Item> COPPER_SHORTSWORD = ITEMS.register("copper_shortsword", CopperShortsword::new);
     public static final DeferredItem<Item> ENCHANTED_SWORD = ITEMS.register("enchanted_sword", EnchantedSword::new);
     public static final DeferredItem<Item> BEE_KEEPER = ITEMS.register("bee_keeper", BeeKeeper::new);
@@ -39,13 +40,29 @@ public class ModItems {
     public static final DeferredItem<Item> TRUE_COPPER_SHORTSWORD = ITEMS.register("true_copper_shortsword", TrueCopperShortsword::new);
     public static final DeferredItem<Item> FIRST_FRACTAL = ITEMS.register("first_fractal", FirstFractal::new);
     public static final DeferredItem<Item> MACE = ITEMS.register("mace", Mace::new);
-    public static final DeferredItem<Item> DEVILS_DEVASTATION = ITEMS.register("devils_devastation", DevilsDevastation::new);
 
     //魔法武器
     public static final DeferredItem<Item> LAST_PRISM = ITEMS.register("last_prism", LastPrism::new);
 
     //远程武器
+    public static final DeferredItem<Item> MUSKET = ITEMS.register("musket", Musket::new);
+    public static final DeferredItem<Item> MINISHARK = ITEMS.register("minishark", Minishark::new);
+    public static final DeferredItem<Item> FLINTLOCK_PISTOL = ITEMS.register("flintlock_pistol", FlintlockPistol::new);
+    public static final DeferredItem<Item> BOOMSTICK = ITEMS.register("boomstick", Boomstick::new);
+    public static final DeferredItem<Item> REVOLVER = ITEMS.register("revolver", Revolver::new);
+    public static final DeferredItem<Item> RED_RYDER = ITEMS.register("red_ryder", RedRyder::new);
+    public static final DeferredItem<Item> THE_UNDERTAKER = ITEMS.register("the_undertaker", TheUndertaker::new);
+    public static final DeferredItem<Item> QUAD_BARREL_SHOTGUN = ITEMS.register("quad_barrel_shotgun", QuadBarrelShotgun::new);
+    public static final DeferredItem<Item> HANDGUN = ITEMS.register("handgun", Handgun::new);
+    public static final DeferredItem<Item> PHOENIX_BLASTER = ITEMS.register("phoenix_blaster", PhoenixBlaster::new);
+    public static final DeferredItem<Item> MEGASHARK = ITEMS.register("megashark", Megashark::new);
     public static final DeferredItem<Item> SDMG = ITEMS.register("sdmg", SDMG::new);
+
+    //召唤武器
+    public static final DeferredItem<Item> TERRAPRISMA = ITEMS.register("terraprisma", Terraprisma::new);
+
+    //近战武器 灾厄
+    public static final DeferredItem<Item> DEVILS_DEVASTATION = ITEMS.register("devils_devastation", DevilsDevastation::new);
 
     //弹药
     public static final DeferredItem<Item> MUSKET_BALL = ITEMS.register("musket_ball", MusketBall::new);
@@ -65,6 +82,7 @@ public class ModItems {
     public static final DeferredItem<Item> LUMINITE_BULLET = ITEMS.register("luminite_bullet", LuminiteBullet::new);
     public static final DeferredItem<Item> TUNGSTEN_BULLET = ITEMS.register("tungsten_bullet", TungstenBullet::new);
 
+    //弹射物
     public static final DeferredItem<Item> BULLET_PROJECTILE = ITEMS.register("bullet_projectile", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> METEOR_SHOT_PROJECTILE = ITEMS.register("meteor_shot_projectile", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> SILVER_BULLET_PROJECTILE = ITEMS.register("silver_bullet_projectile", () -> new Item(new Item.Properties()));
@@ -81,34 +99,30 @@ public class ModItems {
     public static final DeferredItem<Item> GOLDEN_BULLET_PROJECTILE = ITEMS.register("golden_bullet_projectile", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> LUMINITE_BULLET_PROJECTILE = ITEMS.register("luminite_bullet_projectile", () -> new Item(new Item.Properties()));
 
-    //召唤武器
-    public static final DeferredItem<Item> TERRAPRISMA = ITEMS.register("terraprisma", Terraprisma::new);
-
-    //弹射物
-    public static final DeferredItem<Item> ENCHANTED_SWORD_BEAM = ITEMS.register("enchanted_sword_beam", EnchantedSwordBeam::new);
-    public static final DeferredItem<Item> STARFURY_STAR = ITEMS.register("starfury_star", StarfuryStar::new);
-    public static final DeferredItem<Item> SEEDLER_NUT = ITEMS.register("seedler_nut", SeedlerNut::new);
-    public static final DeferredItem<Item> SEEDLER_THORN = ITEMS.register("seedler_thorn", SeedlerThorn::new);
-    public static final DeferredItem<Item> INFLUX_WAVER_BEAM = ITEMS.register("influx_waver_beam", InfluxWaverBeam::new);
-    public static final DeferredItem<Item> STAR_WRATH_STAR = ITEMS.register("star_wrath_star", StarWrathStar::new);
-    public static final DeferredItem<Item> MEOWMERE_PROJECTILE = ITEMS.register("meowmere_projectile", MeowmereProjectile::new);
-    public static final DeferredItem<Item> LEAF_PROJECTILE = ITEMS.register("leaf_projectile", LeafProjectile::new);
-    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE0 = ITEMS.register("first_fractal_projectile0", FirstFractalProjectile0::new);
-    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE1 = ITEMS.register("first_fractal_projectile1", FirstFractalProjectile1::new);
-    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE2 = ITEMS.register("first_fractal_projectile2", FirstFractalProjectile2::new);
-    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE3 = ITEMS.register("first_fractal_projectile3", FirstFractalProjectile3::new);
-    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE4 = ITEMS.register("first_fractal_projectile4", FirstFractalProjectile4::new);
-    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE5 = ITEMS.register("first_fractal_projectile5", FirstFractalProjectile5::new);
-    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE6 = ITEMS.register("first_fractal_projectile6", FirstFractalProjectile6::new);
-    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE7 = ITEMS.register("first_fractal_projectile7", FirstFractalProjectile7::new);
-    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE8 = ITEMS.register("first_fractal_projectile8", FirstFractalProjectile8::new);
-    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE9 = ITEMS.register("first_fractal_projectile9", FirstFractalProjectile9::new);
-    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE10 = ITEMS.register("first_fractal_projectile10", FirstFractalProjectile10::new);
-    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE11 = ITEMS.register("first_fractal_projectile11", FirstFractalProjectile11::new);
-    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE12 = ITEMS.register("first_fractal_projectile12", FirstFractalProjectile12::new);
-    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE13 = ITEMS.register("first_fractal_projectile13", FirstFractalProjectile13::new);
-    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE14 = ITEMS.register("first_fractal_projectile14", FirstFractalProjectile14::new);
-    public static final DeferredItem<Item> MACE_PROJECTILE = ITEMS.register("mace_projectile", MaceProjectile::new);
-    public static final DeferredItem<Item> TERRAPRISMA_SUMMON = ITEMS.register("terraprisma_summon", TerraprismaSummon::new);
+    public static final DeferredItem<Item> ENCHANTED_SWORD_BEAM = ITEMS.register("enchanted_sword_beam", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> STARFURY_STAR = ITEMS.register("starfury_star", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> SEEDLER_NUT = ITEMS.register("seedler_nut", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> SEEDLER_THORN = ITEMS.register("seedler_thorn", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> INFLUX_WAVER_BEAM = ITEMS.register("influx_waver_beam", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> STAR_WRATH_STAR = ITEMS.register("star_wrath_star", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> MEOWMERE_PROJECTILE = ITEMS.register("meowmere_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> LEAF_PROJECTILE = ITEMS.register("leaf_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE0 = ITEMS.register("first_fractal_projectile0", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE1 = ITEMS.register("first_fractal_projectile1", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE2 = ITEMS.register("first_fractal_projectile2", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE3 = ITEMS.register("first_fractal_projectile3", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE4 = ITEMS.register("first_fractal_projectile4", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE5 = ITEMS.register("first_fractal_projectile5", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE6 = ITEMS.register("first_fractal_projectile6", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE7 = ITEMS.register("first_fractal_projectile7", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE8 = ITEMS.register("first_fractal_projectile8", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE9 = ITEMS.register("first_fractal_projectile9", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE10 = ITEMS.register("first_fractal_projectile10", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE11 = ITEMS.register("first_fractal_projectile11", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE12 = ITEMS.register("first_fractal_projectile12", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE13 = ITEMS.register("first_fractal_projectile13", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE14 = ITEMS.register("first_fractal_projectile14", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> MACE_PROJECTILE = ITEMS.register("mace_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> TERRAPRISMA_SUMMON = ITEMS.register("terraprisma_summon", () -> new Item(new Item.Properties()));
 
 }

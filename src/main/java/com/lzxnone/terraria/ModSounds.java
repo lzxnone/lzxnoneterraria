@@ -51,6 +51,26 @@ public class ModSounds {
             SOUND_EVENTS.register("shot",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "shot")));
+    public static final Supplier<SoundEvent> SHOT2 =
+            SOUND_EVENTS.register("shot2",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "shot2")));
+    public static final Supplier<SoundEvent> SHOT3 =
+            SOUND_EVENTS.register("shot3",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "shot3")));
+    public static final Supplier<SoundEvent> SHOT4 =
+            SOUND_EVENTS.register("shot4",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "shot4")));
+    public static final Supplier<SoundEvent> SHOT5 =
+            SOUND_EVENTS.register("shot5",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "shot5")));
+    public static final Supplier<SoundEvent> SHOT6 =
+            SOUND_EVENTS.register("shot6",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "shot6")));
     public static final Supplier<SoundEvent> BOOM =
             SOUND_EVENTS.register("boom",
                     () -> SoundEvent.createVariableRangeEvent(

@@ -2,12 +2,11 @@ package com.lzxnone.terraria.item.ammo;
 
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.particle.DustParticleOptions;
+import com.lzxnone.terraria.particle.ModParticles;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
-import com.lzxnone.terraria.utils.CollisionUtil;
-import com.lzxnone.terraria.utils.DamageUtil;
-import com.lzxnone.terraria.utils.FilterUtil;
-import com.lzxnone.terraria.utils.MathUtil;
+import com.lzxnone.terraria.utils.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Monster;
@@ -74,6 +73,13 @@ public class ChlorophyteBullet extends BulletAmmo {
         {0.0D, -1.1D}
     };
 
+    public static final DustParticleOptions PARTICLE = new DustParticleOptions(
+        0.025f, 0f, 20, true, new Vector3f[]{
+            new Vector3f(0.5F, 1.0F, 0.5F),
+            new Vector3f(0.0F, 1.0F, 0.2F)
+        }
+    );
+
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
         public void tick(StaticSummon summon) {
@@ -96,10 +102,34 @@ public class ChlorophyteBullet extends BulletAmmo {
             }
 
             Vec3 motion = nextDir.normalize().scale(getSpeed());
-            summon.setDeltaMovement(motion);
+            Vec3 start = summon.position();
+            Vec3 end = start.add(motion);
             updateRotation(summon, nextDir);
 
-            AABB hitBox = new AABB(summon.position(), summon.position().add(motion)).inflate(0.25);
+            if(summon.level().isClientSide()) {
+                summon.setPos(end);
+                summon.trailPositions.addFirst(summon.position());
+                while(summon.trailPositions.size() > 2) summon.trailPositions.removeLast();
+                if(summon.trailPositions.size() == 2) {
+                    Vec3 pos1 = summon.trailPositions.getFirst();
+                    Vec3 pos2 = summon.trailPositions.getLast();
+                    Vec3 dir = pos1.subtract(pos2).normalize();
+                    double length = pos1.subtract(pos2).length();
+                    int count = 10;
+                    double deltaLength = length / count;
+                    for(int i = 0;i < count;i++) {
+                        Vec3 pos = pos2.add(dir.scale(deltaLength * i));
+                        ParticleUtil.addParticle(
+                            summon.level(), PARTICLE,
+                            pos, 0.0,
+                            new Vec3(0, 0, 0), 0
+                        );
+                    }
+                }
+                return;
+            }
+
+            AABB hitBox = new AABB(start, end).inflate(0.25);
             List<Entity> targets = summon.level().getEntitiesOfClass(
                 Entity.class,
                 hitBox,
@@ -116,13 +146,17 @@ public class ChlorophyteBullet extends BulletAmmo {
                 if(DamageUtil.rangedAttack(summon, hitTarget, sourceStack, getBaseDamage() + damage, knockbackScale)) {
                     hitTarget.invulnerableTime = invulnerableTime;
                     this.onDied(summon);
+                    return;
                 }
             }
 
-            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, summon.position().add(motion));
+            BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, end);
             if(blockHitResult.getType() != HitResult.Type.MISS) {
                 this.onDied(summon);
+                return;
             }
+
+            summon.setPos(end);
         }
     };
 
@@ -136,7 +170,10 @@ public class ChlorophyteBullet extends BulletAmmo {
         Entity bestTarget = null;
         double bestDistance = Double.MAX_VALUE;
         for(Entity target : targets) {
-            double distance = target.getBoundingBox().getCenter().distanceToSqr(summon.position());
+            Vec3 targetCenter = target.getBoundingBox().getCenter();
+            if(!hasLineOfSight(summon.level(), summon, summon.position(), targetCenter)) continue;
+
+            double distance = targetCenter.distanceToSqr(summon.position());
             if(distance < bestDistance) {
                 bestDistance = distance;
                 bestTarget = target;
