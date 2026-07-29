@@ -13,7 +13,7 @@ import com.lzxnone.terraria.item.weapon.ranged.SniperRifle;
 import com.lzxnone.terraria.network.payload.ClearSummonPayload;
 import com.lzxnone.terraria.network.payload.DevilsDevastationKillModePayload;
 import com.lzxnone.terraria.network.payload.FirstFractalScrollPayload;
-import com.lzxnone.terraria.network.payload.ToggleSummonFreeTargetingPayload;
+import com.lzxnone.terraria.network.payload.ToggleSummonAttackModePayload;
 import com.lzxnone.terraria.network.payload.ZenithScrollPayload;
 import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.ChatFormatting;
@@ -149,8 +149,8 @@ public class InputHandler {
         while(ModKeyBindings.CLEAR_ALL_SUMMONS.consumeClick()) {
             PacketDistributor.sendToServer(new ClearSummonPayload(""));
         }
-        while(ModKeyBindings.TOGGLE_SUMMON_FREE_TARGETING.consumeClick()) {
-            PacketDistributor.sendToServer(new ToggleSummonFreeTargetingPayload(true));
+        while(ModKeyBindings.TOGGLE_SUMMON_ATTACK_MODE.consumeClick()) {
+            PacketDistributor.sendToServer(new ToggleSummonAttackModePayload());
         }
     }
 }

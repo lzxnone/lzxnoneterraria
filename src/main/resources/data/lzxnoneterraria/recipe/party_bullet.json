@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "AAA",
+    "ABA",
+    "AAA"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:high_velocity_bullet" },
+    "B": { "item": "minecraft:black_dye" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:party_bullet",
+    "count": 8
+  }
+}

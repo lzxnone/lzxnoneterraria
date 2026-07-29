@@ -16,6 +16,6 @@ public class FlintlockPistol extends BasicGun {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public FlintlockPistol() {
-        super(Tiers.IRON, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON), ID, OFFSET, DAMAGE_DEFAULT, 16, ModSounds.SHOT4, 0.25f, 10);
+        super(Tiers.IRON, new Item.Properties().stacksTo(1), ID, OFFSET, DAMAGE_DEFAULT, 16, ModSounds.SHOT4, 0.25f, 10);
     }
 }

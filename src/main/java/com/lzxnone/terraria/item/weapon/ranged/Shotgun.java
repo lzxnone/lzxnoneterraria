@@ -29,7 +29,7 @@ public class Shotgun extends BasicGun {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public Shotgun() {
-        super(Tiers.IRON, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON), ID, OFFSET, DAMAGE_DEFAULT, 45, ModSounds.SHOT5, 1.25f, 10);
+        super(Tiers.IRON, new Item.Properties().stacksTo(1).rarity(Rarity.COMMON), ID, OFFSET, DAMAGE_DEFAULT, 45, ModSounds.SHOT5, 1.25f, 10);
     }
 
     @Override

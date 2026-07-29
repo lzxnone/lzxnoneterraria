@@ -29,7 +29,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
@@ -299,21 +298,22 @@ public class TheHorsemansBlade extends MeleeWeapon {
             this.checkBeforeTick(summon);
 
             CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-            LivingEntity target = null;
+            Entity target = null;
 
             if(customData.contains("target")) {
                 Entity entity = summon.level().getEntity(customData.getInt("target"));
-                if(entity instanceof LivingEntity le && le.isAlive()) {
-                    target = le;
+                if(entity != null && entity.isAlive()) {
+                    target = entity;
                 }
             }
 
             if(!summon.level().isClientSide()) {
                 if(target == null) {
-                    List<Monster> targets = summon.level().getEntitiesOfClass(
-                        Monster.class,
+                    List<Entity> targets = CollisionUtil.searchEnemies(
+                        summon.level(),
                         AABB.ofSize(summon.position(), getPumpkinMaxTargetRange() * 2, getPumpkinMaxTargetRange() * 2, getPumpkinMaxTargetRange() * 2),
-                        FilterUtil.createMonsterFilter(summon.getOwner())
+                        summon,
+                        summon.getOwner()
                     );
                     targets.sort(Comparator.comparingDouble(e -> e.distanceToSqr(summon.position())));
                     if(!targets.isEmpty()) target = targets.getFirst();
@@ -336,7 +336,7 @@ public class TheHorsemansBlade extends MeleeWeapon {
                 summon.setYRot(xyRot[1]);
 
                 if(selfPos.distanceToSqr(targetPos) < 2.0D) {
-                    if(summon.getOwner() instanceof Player player && FilterUtil.createLivingTargetFilter(player).test(target) && DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getPumpkinDamage(), 1.0f)) onDied(summon);
+                    if(summon.getOwner() instanceof Player player && FilterUtil.createTargetFilter(player).test(target) && DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getPumpkinDamage(), 1.0f)) onDied(summon);
                 }
             }else {
                 Vec3 dir = summon.getLookAngle().normalize();
@@ -351,10 +351,10 @@ public class TheHorsemansBlade extends MeleeWeapon {
                 );
                 summon.setBoundingBox(box);
 
-                List<Monster> hitEntities = summon.level().getEntitiesOfClass(
-                    Monster.class,
+                List<Entity> hitEntities = summon.level().getEntitiesOfClass(
+                    Entity.class,
                     summon.getBoundingBox().inflate(0.2D),
-                    FilterUtil.createMonsterFilter(summon.getOwner())
+                    entity -> CollisionUtil.isEnemySearchTarget(entity, summon, summon.getOwner())
                 );
 
                 if(!hitEntities.isEmpty()) {

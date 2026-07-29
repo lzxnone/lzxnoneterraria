@@ -37,8 +37,8 @@ public class ModKeyBindings {
         "key.categories.lzxnoneterraria"
     );
 
-    public static final KeyMapping TOGGLE_SUMMON_FREE_TARGETING = new KeyMapping(
-        "key.lzxnoneterraria.toggle_summon_free_targeting",
+    public static final KeyMapping TOGGLE_SUMMON_ATTACK_MODE = new KeyMapping(
+        "key.lzxnoneterraria.toggle_summon_attack_mode",
         KeyConflictContext.IN_GAME,
         KeyModifier.NONE,
         InputConstants.Type.KEYSYM,
@@ -51,6 +51,6 @@ public class ModKeyBindings {
         event.register(KILL_MODE);
         event.register(CLEAR_SUMMON);
         event.register(CLEAR_ALL_SUMMONS);
-        event.register(TOGGLE_SUMMON_FREE_TARGETING);
+        event.register(TOGGLE_SUMMON_ATTACK_MODE);
     }
 }

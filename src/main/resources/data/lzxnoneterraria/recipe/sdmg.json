@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "ABC",
+    "DFE",
+    "GGG"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:chain_gun" },
+    "B": { "item": "lzxnoneterraria:venus_magnum" },
+    "C": { "item": "lzxnoneterraria:tactical_shotgun" },
+    "D": { "item": "lzxnoneterraria:sniper_rifle" },
+    "E": { "item": "lzxnoneterraria:sniper_rifle" },
+    "F": { "item": "minecraft:dragon_egg" },
+    "G": { "item": "minecraft:nether_star" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:sdmg",
+    "count": 1
+  }
+}

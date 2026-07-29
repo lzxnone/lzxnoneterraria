@@ -18,11 +18,6 @@ public class Musket extends BasicGun {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public Musket() {
-        super(Tiers.IRON, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON), ID, OFFSET, DAMAGE_DEFAULT, 32, ModSounds.SHOT3, 1.0f, 10);
-    }
-
-    @Override
-    public boolean canUseAmmo(ItemStack weaponStack, ItemStack ammoStack) {
-        return ammoStack.is(ModItems.MUSKET_BALL.get()) || ammoStack.is(ModItems.ENDLESS_MUSKET_POUCH.get());
+        super(Tiers.IRON, new Item.Properties().stacksTo(1), ID, OFFSET, DAMAGE_DEFAULT, 32, ModSounds.SHOT3, 1.0f, 10);
     }
 }

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "DDD",
+    "AAA",
+    "BBC"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:clockwork_assault_rifle" },
+    "B": { "item": "minecraft:diamond_block" },
+    "C": { "item": "minecraft:netherite_block" },
+    "D": { "item": "minecraft:gold_block" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:gatligator",
+    "count": 1
+  }
+}

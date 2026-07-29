@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "AAA",
+    "ABA",
+    "AAA"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:musket_ball" },
+    "B": { "item": "minecraft:amethyst_shard" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:crystal_bullet",
+    "count": 8
+  }
+}

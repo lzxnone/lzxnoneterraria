@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "AAA",
+    "ABA",
+    "AAA"
+  ],
+  "key": {
+    "A": { "item": "minecraft:iron_ingot" },
+    "B": { "item": "minecraft:iron_block" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:high_velocity_bullet",
+    "count": 16
+  }
+}

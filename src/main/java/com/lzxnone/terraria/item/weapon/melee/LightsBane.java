@@ -14,6 +14,7 @@ import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.ParticleUtil;
@@ -26,7 +27,6 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
@@ -182,12 +182,8 @@ public class LightsBane extends MeleeWeapon {
                             pos.x - targetRange, pos.y - targetRange, pos.z - targetRange,
                             pos.x + targetRange, pos.y + targetRange, pos.z + targetRange
                         );
-                        List<Monster> entities = target.level().getEntitiesOfClass(
-                            Monster.class,
-                            searchBox,
-                            FilterUtil.createMonsterFilter(player)
-                        );
-                        Monster summonTarget = null;
+                        List<Entity> entities = CollisionUtil.searchEnemies(target.level(), searchBox, player, player);
+                        Entity summonTarget = null;
                         entities.sort(Comparator.comparingDouble(e -> e.distanceToSqr(pos)));
                         if(!entities.isEmpty()) summonTarget = entities.getFirst();
                         if(summonTarget != null) {

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "CCC",
+    "BBB",
+    "AA "
+  ],
+  "key": {
+    "A": { "tag": "minecraft:oak_logs" },
+    "B": { "item": "minecraft:iron_block" },
+    "C": { "item": "minecraft:red_dye" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:red_ryder",
+    "count": 1
+  }
+}

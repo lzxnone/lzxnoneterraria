@@ -2,7 +2,6 @@ package com.lzxnone.terraria.item.weapon.summon;
 
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.attachment.ModAttachments;
-import com.lzxnone.terraria.enchantment.ModEnchantments;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
@@ -19,27 +18,20 @@ import com.lzxnone.terraria.utils.MathUtil;
 import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -90,6 +82,7 @@ public class Terraprisma extends SummonWeapon {
 
     public static final float ROTATION_LERP = 0.25f;
     public static final float ROTATION_LERP2 = 0.5f;
+    public static final float ROTATION_LERP3 = 1.0f;
 
     public static final float TRAIL_ALPHA = 1.0f;
     public static final int TRAIL_MAX_LENGTH = 20;
@@ -218,18 +211,23 @@ public class Terraprisma extends SummonWeapon {
         int state = customData.contains("state") ? customData.getInt("state") : 0;
 
         if(state == State.IDLE.ordinal()) {
-            updateTargetData(summon, player);
+            storeSummonTarget(summon, findSummonTarget(summon, player, getTargetRange()));
             tickFollowOwner(summon);
         }else if(state == State.FIGHT.ordinal()) {
-            updateTargetData(summon, player);
+            storeSummonTarget(summon, findSummonTarget(summon, player, getTargetRange()));
         }else if(state == State.DASH_PRE.ordinal()) {
-            Entity target = getTarget(summon);
+            Entity target = getStoredSummonTarget(summon);
             if(target != null) {
                 Vec3 distV = target.getBoundingBox().getCenter().subtract(summon.position());
                 Vec3 targetDir = distV.normalize();
                 float[] targetXYRot = MathUtil.computeXYRot(targetDir.toVector3f());
-                summon.setXRot(Mth.rotLerp(ROTATION_LERP, summon.getXRot(), targetXYRot[0]));
-                summon.setYRot(Mth.rotLerp(ROTATION_LERP, summon.getYRot(), targetXYRot[1]));
+                if(summon.getDeltaMovement().length() < 0.05) {
+                    summon.setXRot(Mth.rotLerp(ROTATION_LERP3, summon.getXRot(), targetXYRot[0]));
+                    summon.setYRot(Mth.rotLerp(ROTATION_LERP3, summon.getYRot(), targetXYRot[1]));
+                }else {
+                    summon.setXRot(Mth.rotLerp(ROTATION_LERP, summon.getXRot(), targetXYRot[0]));
+                    summon.setYRot(Mth.rotLerp(ROTATION_LERP, summon.getYRot(), targetXYRot[1]));
+                }
             }
             summon.setDeltaMovement(summon.getDeltaMovement().scale(getDashPreFriction()));
         }else if(state == State.DASH.ordinal()) {
@@ -248,7 +246,7 @@ public class Terraprisma extends SummonWeapon {
             );
             ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
             for(Entity target : targets) {
-                if(DamageUtil.summonAttack(summon, target, sourceStack, getDamage(customData), 1.0f)) target.invulnerableTime = 15;
+                if(DamageUtil.summonAttack(summon, target, sourceStack, customData.contains("damage") ? customData.getFloat("damage") : getDamage(), 1.0f)) target.invulnerableTime = 15;
             }
         }else if(state == State.ROTATE.ordinal()) {
             int time = customData.contains("rotateTime") ? customData.getInt("rotateTime") : 0;
@@ -299,7 +297,7 @@ public class Terraprisma extends SummonWeapon {
 
             ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
             for(Entity target : targets) {
-                if(DamageUtil.summonAttack(summon, target, sourceStack, getDamage(customData), 1.0f)) target.invulnerableTime = 15;
+                if(DamageUtil.summonAttack(summon, target, sourceStack, customData.contains("damage") ? customData.getFloat("damage") : getDamage(), 1.0f)) target.invulnerableTime = 15;
             }
 
             customData.putInt("rotateTime", time + 1);
@@ -312,11 +310,11 @@ public class Terraprisma extends SummonWeapon {
 
     public static int getNextState(StaticSummon summon, int state) {
         if(state == State.IDLE.ordinal()) {
-            Entity target = getTarget(summon);
+            Entity target = getStoredSummonTarget(summon);
             if(target != null) return State.FIGHT.ordinal();
             return State.IDLE.ordinal();
         }else if(state == State.FIGHT.ordinal()) {
-            Entity target = getTarget(summon);
+            Entity target = getStoredSummonTarget(summon);
             if(target != null) {
                 Vec3 distV = target.getBoundingBox().getCenter().subtract(summon.position());
                 double dist = distV.length();
@@ -329,7 +327,7 @@ public class Terraprisma extends SummonWeapon {
             }
             return State.IDLE.ordinal();
         }else if(state == State.DASH_PRE.ordinal()) {
-            Entity target = getTarget(summon);
+            Entity target = getStoredSummonTarget(summon);
             if(target != null) {
                 Vec3 targetDir = target.getBoundingBox().getCenter().subtract(summon.position()).normalize();
                 double speed = summon.getDeltaMovement().length();
@@ -361,12 +359,12 @@ public class Terraprisma extends SummonWeapon {
         CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA).copy();
         customData.putInt("state", to);
         if(to == State.DASH_PRE.ordinal()) {
-            Entity target = getTarget(summon);
+            Entity target = getStoredSummonTarget(summon);
             if(target != null) {
                 summon.setDeltaMovement(target.getBoundingBox().getCenter().subtract(summon.position()).normalize().scale(getDashPreSpeed()));
             }
         }else if(to == State.DASH.ordinal()) {
-            Entity target = getTarget(summon);
+            Entity target = getStoredSummonTarget(summon);
             if(target != null) {
                 summon.setDeltaMovement(Vec3.ZERO);
                 Vec3 distV = target.getBoundingBox().getCenter().subtract(summon.position());
@@ -376,7 +374,7 @@ public class Terraprisma extends SummonWeapon {
                 customData.putInt("dashTime", dashTime);
             }
         }else if(to == State.ROTATE.ordinal()) {
-            Entity target = getTarget(summon);
+            Entity target = getStoredSummonTarget(summon);
             if(target != null) {
                 Vec3 start = summon.position();
                 Vec3 end = target.getBoundingBox().getCenter();
@@ -460,92 +458,6 @@ public class Terraprisma extends SummonWeapon {
             summon.setDeltaMovement(Vec3.ZERO);
             summon.setPos(pos);
         }
-    }
-
-    private static void updateTargetData(StaticSummon summon, Player player) {
-        LivingEntity target = findTarget(summon, player);
-        CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA).copy();
-        if(target == null) {
-            customData.remove("target");
-        }else {
-            customData.putUUID("target", target.getUUID());
-        }
-        summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
-    }
-
-    private static LivingEntity findTarget(StaticSummon summon, Player player) {
-        LivingEntity playerAttackTarget = player.getLastHurtMob();
-        if(isValidTarget(summon, player, playerAttackTarget)) {
-            return playerAttackTarget;
-        }
-
-        LivingEntity playerAttacker = player.getLastHurtByMob();
-        if(isValidTarget(summon, player, playerAttacker)) {
-            return playerAttacker;
-        }
-
-        if(!player.getData(ModAttachments.SUMMON_FREE_TARGETING)) {
-            return null;
-        }
-
-        boolean ignoreBlockOcclusion = hasBarrenLand(summon, player);
-        List<Monster> monsters = summon.level().getEntitiesOfClass(
-            Monster.class,
-            AABB.ofSize(summon.position(), getTargetRange() * 2.0D, getTargetRange() * 2.0D, getTargetRange() * 2.0D),
-            monster -> FilterUtil.createMonsterFilter(player).test(monster)
-                && (ignoreBlockOcclusion || hasFreeTargetLineOfSight(player, monster))
-        );
-        monsters.sort(Comparator.comparingDouble(monster -> monster.distanceToSqr(summon.position())));
-        if(!monsters.isEmpty()) {
-            return monsters.getFirst();
-        }
-
-        return null;
-    }
-
-    private static boolean isValidTarget(StaticSummon summon, Player player, LivingEntity target) {
-        return target != null
-            && target.level() == summon.level()
-            && target.distanceToSqr(summon) <= getTargetRange() * getTargetRange()
-            && FilterUtil.createLivingTargetFilter(summon, player).test(target);
-    }
-
-    private static boolean hasFreeTargetLineOfSight(Player player, LivingEntity target) {
-        BlockHitResult hitResult = player.level().clip(new ClipContext(
-            player.getEyePosition(),
-            target.getEyePosition(),
-            ClipContext.Block.COLLIDER,
-            ClipContext.Fluid.NONE,
-            player
-        ));
-        return hitResult.getType() == HitResult.Type.MISS;
-    }
-
-    private static boolean hasBarrenLand(StaticSummon summon, Player player) {
-        ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
-        if(sourceStack.isEmpty()) sourceStack = player.getWeaponItem();
-        if(sourceStack.isEmpty()) return false;
-
-        return player.registryAccess()
-            .lookupOrThrow(Registries.ENCHANTMENT)
-            .get(ModEnchantments.BARREN_LAND)
-            .map(sourceStack::getEnchantmentLevel)
-            .orElse(0) > 0;
-    }
-
-    private static Entity getTarget(StaticSummon summon) {
-        CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-        if(customData.contains("target") && summon.level() instanceof ServerLevel serverLevel) {
-            Entity target = serverLevel.getEntity(customData.getUUID("target"));
-            if(target != null && target.isAlive()) {
-                return target;
-            }
-        }
-        return null;
-    }
-
-    private static float getDamage(CompoundTag customData) {
-        return customData.contains("damage") ? customData.getFloat("damage") : getDamage();
     }
 
     private static float[] computeCrystalColor(float time, int idx) {

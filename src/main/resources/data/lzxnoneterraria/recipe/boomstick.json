@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "   ",
+    "BBB",
+    "AAA"
+  ],
+  "key": {
+    "A": { "tag": "minecraft:oak_logs" },
+    "B": { "item": "minecraft:iron_block" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:boomstick",
+    "count": 1
+  }
+}

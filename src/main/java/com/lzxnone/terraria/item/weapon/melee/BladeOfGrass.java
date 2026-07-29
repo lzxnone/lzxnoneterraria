@@ -23,7 +23,6 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -210,10 +209,11 @@ public class BladeOfGrass extends MeleeWeapon {
         ItemStack stack = player.getItemInHand(hand);
 
         if(!level.isClientSide()) {
-             List<Monster> targets = player.level().getEntitiesOfClass(
-                Monster.class,
+             List<Entity> targets = CollisionUtil.searchEnemies(
+                player.level(),
                 AABB.ofSize(player.getBoundingBox().getCenter(), getTargetRange() * 2, getTargetRange() * 2, getTargetRange() * 2),
-                FilterUtil.createMonsterFilter(player)
+                player,
+                player
             );
             targets.sort(Comparator.comparingDouble(e -> e.distanceToSqr(player.position())));
 

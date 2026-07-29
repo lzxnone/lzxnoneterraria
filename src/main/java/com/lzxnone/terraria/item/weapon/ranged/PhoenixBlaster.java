@@ -16,6 +16,6 @@ public class PhoenixBlaster extends BasicGun {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public PhoenixBlaster() {
-        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.RARE), ID, OFFSET, DAMAGE_DEFAULT, 14, ModSounds.SHOT6, 0.25f, 10);
+        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1), ID, OFFSET, DAMAGE_DEFAULT, 14, ModSounds.SHOT6, 0.25f, 10);
     }
 }

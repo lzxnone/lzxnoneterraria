@@ -17,6 +17,6 @@ public class Megashark extends BasicGun {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public Megashark() {
-        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), ID, OFFSET, DAMAGE_DEFAULT, AMMO_NOT_CONSUME_CHANCE_DEFAULT, 7, ModSounds.SHOT2, 0.1f, 5);
+        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON), ID, OFFSET, DAMAGE_DEFAULT, AMMO_NOT_CONSUME_CHANCE_DEFAULT, 7, ModSounds.SHOT2, 0.1f, 5);
     }
 }

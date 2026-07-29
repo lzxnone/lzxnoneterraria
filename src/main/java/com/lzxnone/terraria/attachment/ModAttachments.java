@@ -27,7 +27,7 @@ public class ModAttachments {
     public static final Supplier<AttachmentType<List<UUID>>> SUMMON_WEAPON_SUMMONS =
         ATTACHMENT_TYPES.register("summon_weapon_summons", () -> AttachmentType.<List<UUID>>builder((Supplier<List<UUID>>) ArrayList::new).serialize(Codec.list(Codec.STRING.xmap(UUID::fromString, UUID::toString))).build());
 
-    public static final Supplier<AttachmentType<Boolean>> SUMMON_FREE_TARGETING =
-        ATTACHMENT_TYPES.register("summon_free_targeting", () -> AttachmentType.builder(() -> true).serialize(Codec.BOOL).build());
+    public static final Supplier<AttachmentType<Integer>> SUMMON_ATTACK_MODE =
+        ATTACHMENT_TYPES.register("summon_attack_mode", () -> AttachmentType.builder(() -> 2).serialize(Codec.INT).build());
 
 }

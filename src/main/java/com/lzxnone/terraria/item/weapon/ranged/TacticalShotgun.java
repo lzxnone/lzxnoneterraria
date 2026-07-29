@@ -28,7 +28,7 @@ public class TacticalShotgun extends BasicGun {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public TacticalShotgun() {
-        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), ID, OFFSET, DAMAGE_DEFAULT, 34, ModSounds.SHOT8, 1.5f, 10);
+        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON), ID, OFFSET, DAMAGE_DEFAULT, 34, ModSounds.SHOT8, 1.5f, 10);
     }
 
     @Override

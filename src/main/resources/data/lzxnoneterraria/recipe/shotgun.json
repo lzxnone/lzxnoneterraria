@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "DDD",
+    "AAA",
+    "BBC"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:quad_barrel_shotgun" },
+    "B": { "item": "minecraft:diamond_block" },
+    "C": { "item": "minecraft:netherite_ingot" },
+    "D": { "item": "minecraft:gold_block" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:shotgun",
+    "count": 1
+  }
+}

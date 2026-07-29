@@ -2,7 +2,7 @@ package com.lzxnone.terraria.utils;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.Enemy;
 
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
@@ -40,9 +40,15 @@ public class FilterUtil {
             && target != attacker;
     }
 
-    public static Predicate<Monster> createMonsterFilter(@Nullable Entity owner) {
-        return monster ->
-            BASE_FILTER.test(monster)
-            && (owner == null || (monster != owner && !monster.isAlliedTo(owner)));
+    public static Predicate<LivingEntity> createEnemyFilter(@Nullable Entity owner) {
+        return target ->
+            createLivingTargetFilter(owner).test(target)
+            && target instanceof Enemy;
+    }
+
+    public static Predicate<LivingEntity> createEnemyFilter(Entity attacker, @Nullable Entity owner) {
+        return target ->
+            createEnemyFilter(owner).test(target)
+            && target != attacker;
     }
 }

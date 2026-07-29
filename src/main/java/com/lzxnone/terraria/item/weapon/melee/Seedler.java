@@ -29,7 +29,6 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
@@ -157,7 +156,7 @@ public class Seedler extends MeleeWeapon {
             Vec3 motion = summon.getDeltaMovement();
             motion = motion.add(0, -getNutGravity(), 0);
 
-            EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(motion));
+            EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(motion), 1.0);
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
                 if(summon.getOwner() instanceof Player player) {
@@ -205,10 +204,11 @@ public class Seedler extends MeleeWeapon {
         @Override
         public void onDied(StaticSummon summon) {
             if(!summon.level().isClientSide()) {
-                List<Monster> targets = summon.level().getEntitiesOfClass(
-                    Monster.class,
+                List<Entity> targets = CollisionUtil.searchEnemies(
+                    summon.level(),
                     AABB.ofSize(summon.position(), 64, 64, 64),
-                    FilterUtil.createMonsterFilter(summon.getOwner())
+                    summon,
+                    summon.getOwner()
                 );
                 targets.sort(Comparator.comparingDouble(e -> e.distanceToSqr(summon.position())));
 

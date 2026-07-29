@@ -26,7 +26,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
@@ -219,7 +218,7 @@ public class InfluxWaver extends MeleeWeapon {
                     }
                 }
                 if(checkEntity) {
-                    EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(motion));
+                    EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(motion), 1.0);
                     if(entityHitResult != null) {
                         Entity hitTarget = entityHitResult.getEntity();
                         Entity target = customData.contains("target") ? summon.level().getEntity(customData.getInt("target")) : null;
@@ -296,12 +295,8 @@ public class InfluxWaver extends MeleeWeapon {
             pos.x - getTargetRange(), pos.y - getTargetRange(), pos.z - getTargetRange(),
             pos.x + getTargetRange(), pos.y + getTargetRange(), pos.z + getTargetRange()
         );
-        List<Monster> entities = player.level().getEntitiesOfClass(
-            Monster.class,
-            searchBox,
-            FilterUtil.createMonsterFilter(player)
-        );
-        Monster target = null;
+        List<Entity> entities = CollisionUtil.searchEnemies(player.level(), searchBox, player, player);
+        Entity target = null;
         entities.sort(Comparator.comparingDouble(e -> e.distanceToSqr(pos)));
         if(!entities.isEmpty()) target = entities.getFirst();
         return target;

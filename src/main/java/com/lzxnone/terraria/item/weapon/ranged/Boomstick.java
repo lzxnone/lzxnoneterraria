@@ -28,7 +28,7 @@ public class Boomstick extends BasicGun {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public Boomstick() {
-        super(Tiers.IRON, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON), ID, OFFSET, DAMAGE_DEFAULT, 40, ModSounds.SHOT5, 1.0f, 10);
+        super(Tiers.IRON, new Item.Properties().stacksTo(1), ID, OFFSET, DAMAGE_DEFAULT, 40, ModSounds.SHOT5, 1.0f, 10);
     }
 
     @Override

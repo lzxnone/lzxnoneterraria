@@ -9,7 +9,6 @@ import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.utils.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -164,11 +163,7 @@ public class ChlorophyteBullet extends BulletAmmo {
 
     private static Entity findTarget(StaticSummon summon) {
         AABB searchBox = summon.getBoundingBox().inflate(getTargetRange());
-        List<Monster> targets = summon.level().getEntitiesOfClass(
-            Monster.class,
-            searchBox,
-            FilterUtil.createTargetFilter(summon, summon.getOwner())
-        );
+        List<Entity> targets = CollisionUtil.searchEnemies(summon.level(), searchBox, summon, summon.getOwner());
         Entity bestTarget = null;
         double bestDistance = Double.MAX_VALUE;
         for(Entity target : targets) {

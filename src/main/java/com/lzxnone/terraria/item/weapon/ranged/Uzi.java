@@ -26,7 +26,7 @@ public class Uzi extends BasicGun {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public Uzi() {
-        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.RARE), ID, OFFSET, DAMAGE_DEFAULT, 9, ModSounds.SHOT2, 0.1f, 5);
+        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON), ID, OFFSET, DAMAGE_DEFAULT, 9, ModSounds.SHOT2, 0.1f, 5);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class Uzi extends BasicGun {
 
         StaticSummon summon = AmmoUtil.createAmmoSummon(level, player, hand, stack, OFFSET);
         ItemStack ammoStack = RangedWeapon.getAmmoStack(stack);
-        if(ammoStack.is(ModItems.MUSKET_BALL.get()) || ammoStack.is(ModItems.TUNGSTEN_BULLET.get())) {
+        if(ammoStack.is(ModItems.MUSKET_BALL.get()) || ammoStack.is(ModItems.TUNGSTEN_BULLET.get()) || ammoStack.is(ModItems.ENDLESS_MUSKET_POUCH.get())) {
             AmmoUtil.setHighVelocityBullet(summon);
         }
 

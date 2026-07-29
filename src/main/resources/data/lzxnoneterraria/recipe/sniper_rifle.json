@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "DCD",
+    "AAA",
+    "BBB"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:clockwork_assault_rifle" },
+    "B": { "item": "minecraft:netherite_block" },
+    "C": { "item": "minecraft:spyglass" },
+    "D": { "item": "minecraft:sea_lantern" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:sniper_rifle",
+    "count": 1
+  }
+}

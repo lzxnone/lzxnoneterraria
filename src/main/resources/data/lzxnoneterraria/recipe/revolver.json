@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "B  ",
+    "BAB",
+    "BB "
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:flintlock_pistol" },
+    "B": { "item": "minecraft:iron_block" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:revolver",
+    "count": 1
+  }
+}

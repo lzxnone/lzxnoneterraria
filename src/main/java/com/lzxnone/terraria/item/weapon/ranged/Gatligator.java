@@ -29,7 +29,7 @@ public class Gatligator extends BasicGun {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public Gatligator() {
-        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.RARE), ID, OFFSET, DAMAGE_DEFAULT, 7, ModSounds.SHOT6, 0.1f, 5);
+        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON), ID, OFFSET, DAMAGE_DEFAULT, 7, ModSounds.SHOT6, 0.1f, 5);
     }
 
     @Override

@@ -29,7 +29,7 @@ public class ChainGun extends BasicGun {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public ChainGun() {
-        super(Tiers.NETHERITE, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), ID, OFFSET, DAMAGE_DEFAULT, 4, ModSounds.SHOT6, 0.1f, 4);
+        super(Tiers.NETHERITE, new Item.Properties().stacksTo(1).rarity(Rarity.RARE), ID, OFFSET, DAMAGE_DEFAULT, 4, ModSounds.SHOT6, 0.1f, 4);
     }
 
     @Override

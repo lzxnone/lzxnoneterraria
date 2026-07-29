@@ -44,9 +44,9 @@ public class ModNetwork {
                 ClearSummonHandler::handle
         );
         registrar.playToServer(
-                ToggleSummonFreeTargetingPayload.TYPE,
-                ToggleSummonFreeTargetingPayload.CODEC,
-                ToggleSummonFreeTargetingHandler::handle
+                ToggleSummonAttackModePayload.TYPE,
+                ToggleSummonAttackModePayload.CODEC,
+                ToggleSummonAttackModeHandler::handle
         );
         registrar.playToClient(
                 ScreenShakePayload.TYPE,

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "BBB",
+    "AAA",
+    "CDC"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:shotgun" },
+    "B": { "item": "minecraft:netherite_block" },
+    "C": { "item": "minecraft:mace" },
+    "D": { "item": "minecraft:silence_armor_trim_smithing_template" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:tactical_shotgun",
+    "count": 1
+  }
+}

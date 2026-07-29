@@ -53,7 +53,7 @@ public class SniperRifle extends BasicGun {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public SniperRifle() {
-        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), ID, OFFSET, DAMAGE_DEFAULT, 36, ModSounds.SHOT, 2.0f, 10);
+        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON), ID, OFFSET, DAMAGE_DEFAULT, 36, ModSounds.SHOT, 2.0f, 20);
     }
 
     public static double getZoomScrollSpeed() {
@@ -67,14 +67,14 @@ public class SniperRifle extends BasicGun {
 
         StaticSummon summon = AmmoUtil.createAmmoSummon(level, player, hand, stack, OFFSET);
         ItemStack ammoStack = RangedWeapon.getAmmoStack(stack);
-        if(ammoStack.is(ModItems.MUSKET_BALL.get()) || ammoStack.is(ModItems.TUNGSTEN_BULLET.get())) {
+        if(ammoStack.is(ModItems.MUSKET_BALL.get()) || ammoStack.is(ModItems.TUNGSTEN_BULLET.get()) || ammoStack.is(ModItems.ENDLESS_MUSKET_POUCH.get())) {
             AmmoUtil.setHighVelocityBullet(summon);
         }
 
         CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
         customData.putFloat("damage", getDamage());
         customData.putFloat("knockbackScale", 2.0f);
-        customData.putInt("invulnerableTime", 10);
+        customData.putInt("invulnerableTime", 20);
         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
         level.addFreshEntity(summon);
     }

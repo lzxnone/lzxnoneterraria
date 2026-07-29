@@ -17,6 +17,6 @@ public class Minishark extends BasicGun {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public Minishark() {
-        super(Tiers.IRON, new Item.Properties().stacksTo(1).rarity(Rarity.RARE), ID, OFFSET, DAMAGE_DEFAULT, AMMO_NOT_CONSUME_CHANCE_DEFAULT, 8, ModSounds.SHOT2, 0.1f, 5);
+        super(Tiers.IRON, new Item.Properties().stacksTo(1).rarity(Rarity.COMMON), ID, OFFSET, DAMAGE_DEFAULT, AMMO_NOT_CONSUME_CHANCE_DEFAULT, 8, ModSounds.SHOT2, 0.1f, 5);
     }
 }

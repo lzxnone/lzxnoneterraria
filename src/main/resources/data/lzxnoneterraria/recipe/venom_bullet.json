@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "AAA",
+    "ABA",
+    "AAA"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:high_velocity_bullet" },
+    "B": {
+      "type": "neoforge:components",
+      "items": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:poison"
+        }
+      }
+    }
+  },
+  "result": {
+    "id": "lzxnoneterraria:venom_bullet",
+    "count": 8
+  }
+}

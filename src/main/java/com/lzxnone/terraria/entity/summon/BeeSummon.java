@@ -2,6 +2,7 @@ package com.lzxnone.terraria.entity.summon;
 
 import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.utils.DamageUtil;
+import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -15,7 +16,6 @@ import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Bee;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -118,7 +118,7 @@ public class BeeSummon extends Bee {
         super.registerGoals();
         this.goalSelector.removeAllGoals(goal -> true);
         this.targetSelector.removeAllGoals(goal -> true);
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Monster.class, false));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, false, FilterUtil.createEnemyFilter(this)));
     }
 
     @Override

@@ -28,7 +28,7 @@ public class ClockworkAssaultRifle extends BasicGun {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public ClockworkAssaultRifle() {
-        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.RARE), ID, OFFSET, DAMAGE_DEFAULT, 24, ModSounds.SHOT7, 0.2f, 5);
+        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.COMMON), ID, OFFSET, DAMAGE_DEFAULT, 24, ModSounds.SHOT7, 0.2f, 5);
     }
 
     @Override

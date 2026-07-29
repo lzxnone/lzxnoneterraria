@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "AAA",
+    "A A",
+    "AAA"
+  ],
+  "key": {
+    "A": { "item": "minecraft:iron_ingot" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:musket_ball",
+    "count": 16
+  }
+}

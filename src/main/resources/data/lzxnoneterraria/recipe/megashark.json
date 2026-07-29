@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "DDD",
+    "AAA",
+    "BBC"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:minishark" },
+    "B": { "item": "minecraft:diamond_block" },
+    "C": { "item": "minecraft:netherite_ingot" },
+    "D": {
+      "type": "neoforge:components",
+      "items": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:strong_swiftness"
+        }
+      }
+    }
+  },
+  "result": {
+    "id": "lzxnoneterraria:megashark",
+    "count": 1
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "BCB",
+    "AAA",
+    "BDB"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:gatligator" },
+    "B": { "item": "minecraft:dragon_breath" },
+    "C": { "item": "minecraft:elytra" },
+    "D": { "item": "minecraft:conduit" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:chain_gun",
+    "count": 1
+  }
+}

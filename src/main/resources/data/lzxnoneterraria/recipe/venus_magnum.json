@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "DDD",
+    "ABC",
+    "EEF"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:gatligator" },
+    "B": { "item": "lzxnoneterraria:uzi" },
+    "C": { "item": "lzxnoneterraria:megashark" },
+    "D": { "item": "minecraft:totem_of_undying" },
+    "E": { "item": "minecraft:diamond_block" },
+    "F": { "item": "minecraft:netherite_block" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:venus_magnum",
+    "count": 1
+  }
+}

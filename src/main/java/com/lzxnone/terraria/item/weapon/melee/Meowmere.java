@@ -143,7 +143,7 @@ public class Meowmere extends MeleeWeapon {
 
             CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
 
-            EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(motion));
+            EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(motion), 1.0);
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
                 if(summon.getOwner() instanceof Player player) {

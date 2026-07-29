@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "AAA",
+    "BBB",
+    "CC "
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:revolver" },
+    "B": { "item": "lzxnoneterraria:the_undertaker" },
+    "C": { "item": "minecraft:gold_block" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:handgun",
+    "count": 1
+  }
+}

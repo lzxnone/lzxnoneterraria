@@ -293,7 +293,7 @@ public class Mace extends MeleeWeapon {
                             tag -> tag.putInt("state", State.THROWING_BACK.ordinal()));
                 }
                 if(!summon.level().isClientSide()) {
-                    EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(summon.getDeltaMovement()));
+                    EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(summon.getDeltaMovement()), 1.0);
                     if(entityHitResult != null) {
                         Entity target = entityHitResult.getEntity();
                         if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getDamage(), 1.0f)) {
@@ -343,7 +343,7 @@ public class Mace extends MeleeWeapon {
                         }
                     }
                 }
-                EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(summon.getDeltaMovement()));
+                EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(summon.getDeltaMovement()), 1.0);
                 if(entityHitResult != null) {
                     Entity target = entityHitResult.getEntity();
                     if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getDamage(), 1.0f)) {

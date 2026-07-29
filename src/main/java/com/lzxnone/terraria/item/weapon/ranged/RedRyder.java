@@ -16,6 +16,6 @@ public class RedRyder extends BasicGun {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public RedRyder() {
-        super(Tiers.IRON, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON), ID, OFFSET, DAMAGE_DEFAULT, 38, ModSounds.SHOT2, 1.0f, 10);
+        super(Tiers.IRON, new Item.Properties().stacksTo(1), ID, OFFSET, DAMAGE_DEFAULT, 38, ModSounds.SHOT2, 1.0f, 10);
     }
 }
