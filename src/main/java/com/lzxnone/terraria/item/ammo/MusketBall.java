@@ -3,13 +3,15 @@ package com.lzxnone.terraria.item.ammo;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -23,41 +25,16 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class MusketBall extends BulletAmmo {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
+    public static final ConfigFloat BASE_DAMAGE = new ConfigFloat("ammo.musket_ball.base_damage", "musket_ball_base_damage", 0.8f, 0.0f, 8388600.0f);
 
-    public static final String BASE_DAMAGE_PATH = "ammo.musket_ball.base_damage";
-    public static final float BASE_DAMAGE_DEFAULT = 0.8f;
-    public static final float BASE_DAMAGE_MIN = 0.0f;
-    public static final float BASE_DAMAGE_MAX = 8388600.0f;
-
-    public static final String SPEED_PATH = "ammo.musket_ball.speed";
-    public static final double SPEED_DEFAULT = 3.0D;
-    public static final double SPEED_MIN = 0.0D;
-    public static final double SPEED_MAX = 24.0D;
+    public static final ConfigDouble SPEED = new ConfigDouble("ammo.musket_ball.speed", "musket_ball_speed", 3.0D, 0.0D, 24.0D);
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadFloatConfig(BASE_DAMAGE_PATH, configText("musket_ball_base_damage"), configTooltip("musket_ball_base_damage"), BASE_DAMAGE_DEFAULT, BASE_DAMAGE_MIN, BASE_DAMAGE_MAX);
-            ConfigFactory.loadDoubleConfig(SPEED_PATH, configText("musket_ball_speed"), configTooltip("musket_ball_speed"), SPEED_DEFAULT, SPEED_MIN, SPEED_MAX);
+            ConfigStruct.loadAll(BASE_DAMAGE, SPEED);
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static float getBaseDamage() {
-        return Math.clamp(ConfigUtil.readFloat(BASE_DAMAGE_PATH, BASE_DAMAGE_DEFAULT), BASE_DAMAGE_MIN, BASE_DAMAGE_MAX);
-    }
-
-    public static double getSpeed() {
-        return Math.clamp(ConfigUtil.readDouble(SPEED_PATH, SPEED_DEFAULT), SPEED_MIN, SPEED_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "musket_ball",
@@ -70,7 +47,7 @@ public class MusketBall extends BulletAmmo {
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
-            Vec3 motion = summon.getLookAngle().normalize().scale(getSpeed());
+            Vec3 motion = summon.getLookAngle().normalize().scale(SPEED.get());
             Vec3 start = summon.position();
             Vec3 end = start.add(motion);
 
@@ -94,7 +71,7 @@ public class MusketBall extends BulletAmmo {
 
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 Entity target = targets.getFirst();
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, getBaseDamage() + damage, knockbackScale)) {
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, BASE_DAMAGE.get() + damage, knockbackScale)) {
                     target.invulnerableTime = invulnerableTime;
                     this.onDied(summon);
                     return;

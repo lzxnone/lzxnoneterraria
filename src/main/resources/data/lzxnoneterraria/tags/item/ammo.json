@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "#lzxnoneterraria:bullet_ammo",
+    "lzxnoneterraria:fallen_star",
+    "minecraft:snowball",
+    "minecraft:slime_ball"
+  ]
+}

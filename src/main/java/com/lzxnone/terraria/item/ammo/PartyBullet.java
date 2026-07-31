@@ -1,15 +1,22 @@
 package com.lzxnone.terraria.item.ammo;
 
+import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.particle.ModParticles;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.ParticleUtil;
+
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -22,32 +29,29 @@ import java.util.List;
 
 public class PartyBullet extends BulletAmmo {
     public static final String ID = "party_bullet";
-    public static final float BASE_DAMAGE_DEFAULT = 1.5f;
-    public static final double SPEED_DEFAULT = 3.0D;
+
+    public static final ConfigFloat BASE_DAMAGE = new ConfigFloat("ammo.party_bullet.base_damage", "party_bullet_base_damage", 1.5f, 0.0f, 8388600.0f);
+    public static final ConfigDouble SPEED = new ConfigDouble("ammo.party_bullet.speed", "party_bullet_speed", 3.0D, 0.0D, 24.0D);
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            AmmoConfig.loadFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
-            AmmoConfig.loadDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
+            ConfigStruct.loadAll(BASE_DAMAGE, SPEED);
         }
     };
 
-    public static final ConfigListItem CONFIG_LIST_ITEM = AmmoConfig.createListItem(ID, CONFIG_DATA);
-
-    public static float getBaseDamage() {
-        return AmmoConfig.readFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
-    }
-
-    public static double getSpeed() {
-        return AmmoConfig.readDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
-    }
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        ID,
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/" + ID + ".png"),
+        Component.translatable("item.lzxnoneterraria." + ID),
+        CONFIG_DATA
+    );
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
-            Vec3 motion = summon.getLookAngle().normalize().scale(getSpeed());
+            Vec3 motion = summon.getLookAngle().normalize().scale(SPEED.get());
             Vec3 start = summon.position();
             Vec3 end = start.add(motion);
 
@@ -71,7 +75,7 @@ public class PartyBullet extends BulletAmmo {
 
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 Entity target = targets.getFirst();
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, getBaseDamage() + damage, knockbackScale)) {
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, BASE_DAMAGE.get() + damage, knockbackScale)) {
                     target.invulnerableTime = invulnerableTime;
                     summon.setPos(end);
                     ParticleUtil.addParticles(

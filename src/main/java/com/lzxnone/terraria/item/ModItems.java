@@ -2,11 +2,16 @@ package com.lzxnone.terraria.item;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.item.ammo.*;
-import com.lzxnone.terraria.item.projectile.*;
-import com.lzxnone.terraria.item.projectile.first_fractal.*;
+import com.lzxnone.terraria.item.accessory.ManaFlower;
+import com.lzxnone.terraria.item.accessory.NaturesGift;
+import com.lzxnone.terraria.item.weapon.ranged.ElfMelter;
 import com.lzxnone.terraria.item.weapon.magic.*;
 import com.lzxnone.terraria.item.weapon.melee.*;
-import com.lzxnone.terraria.item.weapon.ranged.*;
+import com.lzxnone.terraria.item.weapon.ranged.Flamethrower;
+import com.lzxnone.terraria.item.weapon.ranged.SnowballCannon;
+import com.lzxnone.terraria.item.weapon.ranged.StarCannon;
+import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
+import com.lzxnone.terraria.item.weapon.ranged.gun.*;
 import com.lzxnone.terraria.item.weapon.summon.*;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -65,6 +70,11 @@ public class ModItems {
     public static final DeferredItem<Item> SNIPER_RIFLE = ITEMS.register("sniper_rifle", SniperRifle::new);
     public static final DeferredItem<Item> CHAIN_GUN = ITEMS.register("chain_gun", ChainGun::new);
     public static final DeferredItem<Item> SDMG = ITEMS.register("sdmg", SDMG::new);
+    public static final DeferredItem<Item> SNOWBALL_CANNON = ITEMS.register("snowball_cannon", SnowballCannon::new);
+    public static final DeferredItem<Item> STAR_CANNON = ITEMS.register("star_cannon", StarCannon::new);
+    public static final DeferredItem<Item> SUPER_STAR_SHOOTER = ITEMS.register("super_star_shooter", SuperStarShooter::new);
+    public static final DeferredItem<Item> FLAMETHROWER = ITEMS.register("flamethrower", Flamethrower::new);
+    public static final DeferredItem<Item> ELF_MELTER = ITEMS.register("elf_melter", ElfMelter::new);
 
     //召唤武器
     public static final DeferredItem<Item> TERRAPRISMA = ITEMS.register("terraprisma", Terraprisma::new);
@@ -89,6 +99,11 @@ public class ModItems {
     public static final DeferredItem<Item> ENDLESS_MUSKET_POUCH = ITEMS.register("endless_musket_pouch", EndlessMusketPouch::new);
     public static final DeferredItem<Item> LUMINITE_BULLET = ITEMS.register("luminite_bullet", LuminiteBullet::new);
     public static final DeferredItem<Item> TUNGSTEN_BULLET = ITEMS.register("tungsten_bullet", TungstenBullet::new);
+    public static final DeferredItem<Item> FALLEN_STAR = ITEMS.register("fallen_star", FallenStar::new);
+
+    //饰品
+    public static final DeferredItem<Item> NATURES_GIFT = ITEMS.register("natures_gift", NaturesGift::new);
+    public static final DeferredItem<Item> MANA_FLOWER = ITEMS.register("mana_flower", ManaFlower::new);
 
     //弹射物
     public static final DeferredItem<Item> BULLET_PROJECTILE = ITEMS.register("bullet_projectile", () -> new Item(new Item.Properties()));
@@ -106,6 +121,7 @@ public class ModItems {
     public static final DeferredItem<Item> EXPLODING_BULLET_PROJECTILE = ITEMS.register("exploding_bullet_projectile", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> GOLDEN_BULLET_PROJECTILE = ITEMS.register("golden_bullet_projectile", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> LUMINITE_BULLET_PROJECTILE = ITEMS.register("luminite_bullet_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> WHITE_STAR = ITEMS.register("white_star", () -> new Item(new Item.Properties()));
 
     public static final DeferredItem<Item> ENCHANTED_SWORD_BEAM = ITEMS.register("enchanted_sword_beam", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> STARFURY_STAR = ITEMS.register("starfury_star", () -> new Item(new Item.Properties()));

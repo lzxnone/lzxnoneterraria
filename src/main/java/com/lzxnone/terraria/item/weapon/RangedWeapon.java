@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -43,6 +44,10 @@ public class RangedWeapon extends Weapon {
 
     public int getAmmoConsumeAmount(ItemStack weaponStack, LivingEntity entity) {
         return 1;
+    }
+
+    protected ResourceLocation getDefaultAmmo(ItemStack weaponStack) {
+        return null;
     }
 
     public int getFinalAmmoConsumeAmount(ItemStack weaponStack, LivingEntity entity, int amount) {
@@ -139,6 +144,15 @@ public class RangedWeapon extends Weapon {
     protected void shoot(Level level, Player player, InteractionHand hand, ItemStack weaponStack) {}
 
     @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if(player.getCooldowns().isOnCooldown(stack.getItem()) || !tryShoot(level, player, hand, stack)) return InteractionResultHolder.fail(stack);
+        player.startUsingItem(hand);
+        player.getCooldowns().addCooldown(stack.getItem(), Math.max(1, getUseTime(stack, player) / 3));
+        return InteractionResultHolder.consume(stack);
+    }
+
+    @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseTicks) {
         if(!(entity instanceof Player player)) return;
         if(!shouldShootThisTick(stack, entity, remainingUseTicks)) return;
@@ -157,7 +171,11 @@ public class RangedWeapon extends Weapon {
         String ammo = weaponStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                 .copyTag()
                 .getString(AMMO_KEY);
-        return ammo.isEmpty() ? null : ResourceLocation.parse(ammo);
+        if(!ammo.isEmpty()) return ResourceLocation.parse(ammo);
+        if(weaponStack.getItem() instanceof RangedWeapon rangedWeapon) {
+            return rangedWeapon.getDefaultAmmo(weaponStack);
+        }
+        return null;
     }
 
     public static ItemStack getAmmoStack(ItemStack weaponStack) {

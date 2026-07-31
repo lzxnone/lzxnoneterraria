@@ -5,6 +5,7 @@ import com.lzxnone.terraria.effect.AcidVenomEffect;
 import com.lzxnone.terraria.effect.CursedInfernoEffect;
 import com.lzxnone.terraria.effect.DemonicFlamesEffect;
 import com.lzxnone.terraria.effect.IchorEffect;
+import com.lzxnone.terraria.effect.ManaSicknessEffect;
 import com.lzxnone.terraria.effect.MidasEffect;
 import com.lzxnone.terraria.effect.SummonEffect;
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
@@ -33,7 +34,12 @@ import com.lzxnone.terraria.item.weapon.melee.TrueExcalibur;
 import com.lzxnone.terraria.item.weapon.melee.TrueNightsEdge;
 import com.lzxnone.terraria.item.weapon.melee.Volcano;
 import com.lzxnone.terraria.item.weapon.melee.Zenith;
-import com.lzxnone.terraria.item.weapon.ranged.*;
+import com.lzxnone.terraria.item.weapon.ranged.ElfMelter;
+import com.lzxnone.terraria.item.weapon.ranged.Flamethrower;
+import com.lzxnone.terraria.item.weapon.ranged.SnowballCannon;
+import com.lzxnone.terraria.item.weapon.ranged.StarCannon;
+import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
+import com.lzxnone.terraria.item.weapon.ranged.gun.*;
 import com.lzxnone.terraria.item.weapon.summon.Terraprisma;
 
 import java.util.HashMap;
@@ -93,7 +99,12 @@ public class ConfigList {
             TacticalShotgun.CONFIG_LIST_ITEM,
             SniperRifle.CONFIG_LIST_ITEM,
             ChainGun.CONFIG_LIST_ITEM,
-            SDMG.CONFIG_LIST_ITEM
+            SDMG.CONFIG_LIST_ITEM,
+            SnowballCannon.CONFIG_LIST_ITEM,
+            StarCannon.CONFIG_LIST_ITEM,
+            SuperStarShooter.CONFIG_LIST_ITEM,
+            Flamethrower.CONFIG_LIST_ITEM,
+            ElfMelter.CONFIG_LIST_ITEM
         });
         ITEMS.put(EFFECT, new ConfigListItem[]{
             BloodButcheredEffect.CONFIG_LIST_ITEM,
@@ -102,6 +113,7 @@ public class ConfigList {
             IchorEffect.CONFIG_LIST_ITEM,
             AcidVenomEffect.CONFIG_LIST_ITEM,
             MidasEffect.CONFIG_LIST_ITEM,
+            ManaSicknessEffect.CONFIG_LIST_ITEM,
             SummonEffect.CONFIG_LIST_ITEM
         });
         ITEMS.put(AMMO, new ConfigListItem[]{
@@ -124,8 +136,6 @@ public class ConfigList {
         ITEMS.put(ENCHANTMENT, new ConfigListItem[]{
             ModEnchantmentConfigs.MANA_LEAK_CONFIG_LIST_ITEM,
             ModEnchantmentConfigs.MANA_EFFICIENCY_CONFIG_LIST_ITEM,
-            ModEnchantmentConfigs.MANA_GATHERING_CONFIG_LIST_ITEM,
-            ModEnchantmentConfigs.MANA_GATHERING_CURSE_CONFIG_LIST_ITEM,
             ModEnchantmentConfigs.ARCANE_AMPLIFICATION_CONFIG_LIST_ITEM,
             ModEnchantmentConfigs.SUMMON_AMPLIFICATION_CONFIG_LIST_ITEM,
             ModEnchantmentConfigs.AMMO_EXHAUSTION_CONFIG_LIST_ITEM,

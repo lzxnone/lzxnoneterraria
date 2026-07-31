@@ -3,20 +3,15 @@ package com.lzxnone.terraria.effect;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import org.joml.Matrix4f;
 
-@EventBusSubscriber(modid = LzxnoneTerraria.MODID, value = Dist.CLIENT)
 public class EffectIconRenderer {
     private static final ResourceLocation CONFUSED_ICON =
             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/mob_effect_display/confused.png");

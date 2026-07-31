@@ -53,5 +53,10 @@ public class ModNetwork {
                 ScreenShakePayload.CODEC,
                 ScreenShakeHandler::handle
         );
+        registrar.playToClient(
+                ManaSyncPayload.TYPE,
+                ManaSyncPayload.CODEC,
+                ManaSyncHandler::handle
+        );
     }
 }

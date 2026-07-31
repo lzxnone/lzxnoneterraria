@@ -55,6 +55,14 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.LAST_PRISM.get());
             }).build());
 
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> ACCESSORY_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_accessory_0", () -> CreativeModeTab.builder()
+            .title(Component.translatable("itemGroup.lzxnoneterraria.accessory"))
+            .icon(() -> ModItems.MANA_FLOWER.get().getDefaultInstance())
+            .displayItems((parameters, output) -> {
+                output.accept(ModItems.NATURES_GIFT.get());
+                output.accept(ModItems.MANA_FLOWER.get());
+            }).build());
+
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> RANGED_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_ranged_0", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.lzxnoneterraria.ranged"))
             .icon(() -> ModItems.SDMG.get().getDefaultInstance())
@@ -79,6 +87,11 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.SNIPER_RIFLE.get());
                 output.accept(ModItems.CHAIN_GUN.get());
                 output.accept(ModItems.SDMG.get());
+                output.accept(ModItems.SNOWBALL_CANNON.get());
+                output.accept(ModItems.STAR_CANNON.get());
+                output.accept(ModItems.SUPER_STAR_SHOOTER.get());
+                output.accept(ModItems.FLAMETHROWER.get());
+                output.accept(ModItems.ELF_MELTER.get());
                 output.accept(ModItems.MUSKET_BALL.get());
                 output.accept(ModItems.METEOR_SHOT.get());
                 output.accept(ModItems.SILVER_BULLET.get());
@@ -95,6 +108,7 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.ENDLESS_MUSKET_POUCH.get());
                 output.accept(ModItems.LUMINITE_BULLET.get());
                 output.accept(ModItems.TUNGSTEN_BULLET.get());
+                output.accept(ModItems.FALLEN_STAR.get());
             }).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> SUMMON_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_summon_0", () -> CreativeModeTab.builder()

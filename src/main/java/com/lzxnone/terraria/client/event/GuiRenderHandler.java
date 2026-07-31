@@ -22,6 +22,8 @@ public class GuiRenderHandler {
         LocalPlayer player = minecraft.player;
         if(player == null || minecraft.options.hideGui) return;
 
+        ManaHudRenderer.render(event.getGuiGraphics(), player);
+
         ItemStack stack = player.getMainHandItem();
         if(stack.is(ModItems.DEVILS_DEVASTATION.get()) && player.getEffect(ModEffects.KILL_MODE) != null) {
             Component text = Component.translatable("tooltip.lzxnoneterraria.devils_devastation_kill_mode");

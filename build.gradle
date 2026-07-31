@@ -28,6 +28,10 @@ sourceSets.main.resources {
 
 repositories {
     maven {
+        name = "Illusive Soulworks"
+        url = "https://maven.theillusivec4.top/"
+    }
+    maven {
         name = "Gegy"
         url = "https://maven.gegy.dev"
     }
@@ -131,6 +135,8 @@ dependencies {
     jarJar('net.objecthunter:exp4j:0.4.8')
     additionalRuntimeClasspath 'net.objecthunter:exp4j:0.4.8'
     implementation("com.lowdragmc.ldlib2:ldlib2-neoforge-${minecraft_version}:${ldlib2_version}:all")
+    compileOnly("top.theillusivec4.curios:curios-neoforge:${curios_version}:api")
+    localRuntime("top.theillusivec4.curios:curios-neoforge:${curios_version}")
     attributesSchema {
         attribute(mappingsAttribute)
     }

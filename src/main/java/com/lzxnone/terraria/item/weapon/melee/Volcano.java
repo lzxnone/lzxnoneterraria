@@ -10,10 +10,12 @@ import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.IItemWaveBehavior;
 import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.particle.ModParticles;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.ParticleUtil;
@@ -41,28 +43,34 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Volcano extends MeleeWeapon {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String EXPLOSION_RANGE_PATH = "weapon.volcano.explosion_range";
-    public static final double EXPLOSION_RANGE_DEFAULT = 4.0;
-    public static final double EXPLOSION_RANGE_MIN = 1.0;
-    public static final double EXPLOSION_RANGE_MAX = 64.0;
-
-    public static final String EXPLOSION_DAMAGE_PATH = "weapon.volcano.explosion_damage";
-    public static final float EXPLOSION_DAMAGE_DEFAULT = 6.0f;
-    public static final float EXPLOSION_DAMAGE_MIN = 0.0f;
-    public static final float EXPLOSION_DAMAGE_MAX = 8388600.0f;
-
-    public static final String EXPLOSION_MAX_HIT_COUNT_PATH = "weapon.volcano.explosion_max_hit_count";
-    public static final int EXPLOSION_MAX_HIT_COUNT_DEFAULT = 2;
-    public static final int EXPLOSION_MAX_HIT_COUNT_MIN = 0;
-    public static final int EXPLOSION_MAX_HIT_COUNT_MAX = 100;
-
-    public static final String IGNITE_SECONDS_PATH = "weapon.volcano.ignite_seconds";
-    public static final int IGNITE_SECONDS_DEFAULT = 3;
-    public static final int IGNITE_SECONDS_MIN = 0;
-    public static final int IGNITE_SECONDS_MAX = 60;
-
+    public static final ConfigDouble EXPLOSION_RANGE = new ConfigDouble(
+        "weapon.volcano.explosion_range",
+        "volcano_explosion_range",
+        4.0,
+        1.0,
+        64.0
+    );
+    public static final ConfigFloat EXPLOSION_DAMAGE = new ConfigFloat(
+        "weapon.volcano.explosion_damage",
+        "volcano_explosion_damage",
+        6.0f,
+        0.0f,
+        8388600.0f
+    );
+    public static final ConfigInt EXPLOSION_MAX_HIT_COUNT = new ConfigInt(
+        "weapon.volcano.explosion_max_hit_count",
+        "volcano_explosion_max_hit_count",
+        2,
+        0,
+        100
+    );
+    public static final ConfigInt IGNITE_SECONDS = new ConfigInt(
+        "weapon.volcano.ignite_seconds",
+        "volcano_ignite_seconds",
+        3,
+        0,
+        60
+    );
     public Volcano() {
         super(Tiers.IRON, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
@@ -78,36 +86,14 @@ public class Volcano extends MeleeWeapon {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadDoubleConfig(EXPLOSION_RANGE_PATH, configText("volcano_explosion_range"), configTooltip("volcano_explosion_range"), EXPLOSION_RANGE_DEFAULT, EXPLOSION_RANGE_MIN, EXPLOSION_RANGE_MAX);
-            ConfigFactory.loadFloatConfig(EXPLOSION_DAMAGE_PATH, configText("volcano_explosion_damage"), configTooltip("volcano_explosion_damage"), EXPLOSION_DAMAGE_DEFAULT, EXPLOSION_DAMAGE_MIN, EXPLOSION_DAMAGE_MAX);
-            ConfigFactory.loadIntConfig(EXPLOSION_MAX_HIT_COUNT_PATH, configText("volcano_explosion_max_hit_count"), configTooltip("volcano_explosion_max_hit_count"), EXPLOSION_MAX_HIT_COUNT_DEFAULT, EXPLOSION_MAX_HIT_COUNT_MIN, EXPLOSION_MAX_HIT_COUNT_MAX);
-            ConfigFactory.loadIntConfig(IGNITE_SECONDS_PATH, configText("volcano_ignite_seconds"), configTooltip("volcano_ignite_seconds"), IGNITE_SECONDS_DEFAULT, IGNITE_SECONDS_MIN, IGNITE_SECONDS_MAX);
+            ConfigStruct.loadAll(
+                EXPLOSION_RANGE,
+                EXPLOSION_DAMAGE,
+                EXPLOSION_MAX_HIT_COUNT,
+                IGNITE_SECONDS
+            );
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static double getExplosionRange() {
-        return Math.clamp(ConfigUtil.readDouble(EXPLOSION_RANGE_PATH, EXPLOSION_RANGE_DEFAULT), EXPLOSION_RANGE_MIN, EXPLOSION_RANGE_MAX);
-    }
-
-    public static float getExplosionDamage() {
-        return Math.clamp(ConfigUtil.readFloat(EXPLOSION_DAMAGE_PATH, EXPLOSION_DAMAGE_DEFAULT), EXPLOSION_DAMAGE_MIN, EXPLOSION_DAMAGE_MAX);
-    }
-
-    public static int getExplosionMaxHitCount() {
-        return Math.clamp(ConfigUtil.readInt(EXPLOSION_MAX_HIT_COUNT_PATH, EXPLOSION_MAX_HIT_COUNT_DEFAULT), EXPLOSION_MAX_HIT_COUNT_MIN, EXPLOSION_MAX_HIT_COUNT_MAX);
-    }
-
-    public static int getIgniteSeconds() {
-        return Math.clamp(ConfigUtil.readInt(IGNITE_SECONDS_PATH, IGNITE_SECONDS_DEFAULT), IGNITE_SECONDS_MIN, IGNITE_SECONDS_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "volcano",
@@ -176,16 +162,16 @@ public class Volcano extends MeleeWeapon {
                         if(!player.getCooldowns().isOnCooldown(item)) {
                             List<LivingEntity> targets = player.level().getEntitiesOfClass(
                                 LivingEntity.class,
-                                AABB.ofSize(player.getBoundingBox().getCenter(), getExplosionRange() * 2, getExplosionRange() * 2, getExplosionRange() * 2),
+                                AABB.ofSize(player.getBoundingBox().getCenter(), EXPLOSION_RANGE.get() * 2, EXPLOSION_RANGE.get() * 2, EXPLOSION_RANGE.get() * 2),
                                 FilterUtil.createLivingTargetFilter(player)
                             );
                             targets.sort(Comparator.comparingDouble(e -> e.distanceToSqr(target.position())));
                             int hitCount = 0;
                             for(LivingEntity livingEntity : targets) {
                                 if(livingEntity.getUUID() == target.getUUID()) continue;
-                                if(hitCount >= getExplosionMaxHitCount()) break;
-                                if(DamageUtil.meleeAttack(player, livingEntity, player.getWeaponItem(), (float) getExplosionDamage(), 1.0f)) {
-                                    livingTarget.igniteForSeconds(getIgniteSeconds());
+                                if(hitCount >= EXPLOSION_MAX_HIT_COUNT.get()) break;
+                                if(DamageUtil.meleeAttack(player, livingEntity, player.getWeaponItem(), (float) EXPLOSION_DAMAGE.get(), 1.0f)) {
+                                    livingTarget.igniteForSeconds(IGNITE_SECONDS.get());
                                     hitCount++;
                                 }
                             }
@@ -227,7 +213,7 @@ public class Volcano extends MeleeWeapon {
                             );
                             player.getCooldowns().addCooldown(item, 10);
                         }
-                        if(player.getRandom().nextInt(2) == 0) livingTarget.igniteForSeconds(getIgniteSeconds());
+                        if(player.getRandom().nextInt(2) == 0) livingTarget.igniteForSeconds(IGNITE_SECONDS.get());
                     }
                 }else {
                     ParticleUtil.addParticles(

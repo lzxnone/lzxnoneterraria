@@ -2,7 +2,6 @@ package com.lzxnone.terraria.client.event;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.item.ModItems;
-import com.lzxnone.terraria.item.weapon.ranged.SniperRifle;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;

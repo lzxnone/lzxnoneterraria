@@ -9,10 +9,11 @@ import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.particle.ModParticles;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -39,23 +40,27 @@ import net.minecraft.world.phys.*;
 import org.joml.Vector3f;
 
 public class Starfury extends MeleeWeapon {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String DAMAGE_PATH = "weapon.starfury.damage";
-    public static final float DAMAGE_DEFAULT = 6.0f;
-    public static final float DAMAGE_MIN = 0.0f;
-    public static final float DAMAGE_MAX = 8388600.0f;
-
-    public static final String MAX_RANGE_PATH = "weapon.starfury.max_range";
-    public static final double MAX_RANGE_DEFAULT = 24.0;
-    public static final double MAX_RANGE_MIN = 1.0;
-    public static final double MAX_RANGE_MAX = 1024.0;
-
-    public static final String SPEED_PATH = "weapon.starfury.speed";
-    public static final double SPEED_DEFAULT = 2.0;
-    public static final double SPEED_MIN = 0.0;
-    public static final double SPEED_MAX = 10.0;
-
+    public static final ConfigFloat DAMAGE = new ConfigFloat(
+        "weapon.starfury.damage",
+        "starfury_damage",
+        6.0f,
+        0.0f,
+        8388600.0f
+    );
+    public static final ConfigDouble MAX_RANGE = new ConfigDouble(
+        "weapon.starfury.max_range",
+        "starfury_max_range",
+        24.0,
+        1.0,
+        1024.0
+    );
+    public static final ConfigDouble SPEED = new ConfigDouble(
+        "weapon.starfury.speed",
+        "starfury_speed",
+        2.0,
+        0.0,
+        10.0
+    );
     public Starfury() {
         super(Tiers.IRON, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
@@ -71,31 +76,13 @@ public class Starfury extends MeleeWeapon {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("starfury_damage"), configTooltip("starfury_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
-            ConfigFactory.loadDoubleConfig(MAX_RANGE_PATH, configText("starfury_max_range"), configTooltip("starfury_max_range"), MAX_RANGE_DEFAULT, MAX_RANGE_MIN, MAX_RANGE_MAX);
-            ConfigFactory.loadDoubleConfig(SPEED_PATH, configText("starfury_speed"), configTooltip("starfury_speed"), SPEED_DEFAULT, SPEED_MIN, SPEED_MAX);
+            ConfigStruct.loadAll(
+                DAMAGE,
+                MAX_RANGE,
+                SPEED
+            );
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static float getDamage() {
-        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
-    }
-
-    public static double getMaxRange() {
-        return Math.clamp(ConfigUtil.readDouble(MAX_RANGE_PATH, MAX_RANGE_DEFAULT), MAX_RANGE_MIN, MAX_RANGE_MAX);
-    }
-
-    public static double getSpeed() {
-        return Math.clamp(ConfigUtil.readDouble(SPEED_PATH, SPEED_DEFAULT), SPEED_MIN, SPEED_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "starfury",
@@ -120,7 +107,7 @@ public class Starfury extends MeleeWeapon {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) getDamage(), 1.0f)) {
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) DAMAGE.get(), 1.0f)) {
                     target.invulnerableTime = 5;
                 }
             }
@@ -167,7 +154,7 @@ public class Starfury extends MeleeWeapon {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         if(!level.isClientSide()) {
-            Vec3 targetPos = MathUtil.getCrosshairPos(player, level, getMaxRange());
+            Vec3 targetPos = MathUtil.getCrosshairPos(player, level, MAX_RANGE.get());
 
             Vec3 spawnPos = new Vec3(
                 targetPos.x + SPAWN_OFFSET * (Math.random() * 2 - 1),
@@ -194,10 +181,10 @@ public class Starfury extends MeleeWeapon {
             projectile.getEntityData().set(StaticProjectile.GLOW, true);
             projectile.getEntityData().set(StaticProjectile.RXP, 90);
             projectile.getEntityData().set(StaticProjectile.RZP, 90);
-            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", getSpeed()));
+            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", SPEED.get()));
 
             CompoundTag customData = new CompoundTag();
-            customData.putInt("targetLifetime", (int) Math.floor(targetPos.distanceTo(spawnPos) / getSpeed()));
+            customData.putInt("targetLifetime", (int) Math.floor(targetPos.distanceTo(spawnPos) / SPEED.get()));
             projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
 
             projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));

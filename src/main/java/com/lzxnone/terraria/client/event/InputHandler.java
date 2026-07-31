@@ -9,7 +9,7 @@ import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.item.weapon.melee.FirstFractal;
 import com.lzxnone.terraria.item.weapon.melee.TrueCopperShortsword;
 import com.lzxnone.terraria.item.weapon.melee.Zenith;
-import com.lzxnone.terraria.item.weapon.ranged.SniperRifle;
+import com.lzxnone.terraria.item.weapon.ranged.gun.SniperRifle;
 import com.lzxnone.terraria.network.payload.ClearSummonPayload;
 import com.lzxnone.terraria.network.payload.DevilsDevastationKillModePayload;
 import com.lzxnone.terraria.network.payload.FirstFractalScrollPayload;

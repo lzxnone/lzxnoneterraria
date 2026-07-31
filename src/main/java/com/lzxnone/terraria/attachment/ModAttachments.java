@@ -30,4 +30,7 @@ public class ModAttachments {
     public static final Supplier<AttachmentType<Integer>> SUMMON_ATTACK_MODE =
         ATTACHMENT_TYPES.register("summon_attack_mode", () -> AttachmentType.builder(() -> 2).serialize(Codec.INT).build());
 
+    public static final Supplier<AttachmentType<PlayerMana>> PLAYER_MANA =
+        ATTACHMENT_TYPES.register("player_mana", () -> AttachmentType.builder(PlayerMana::new).serialize(PlayerMana.CODEC).copyOnDeath().build());
+
 }

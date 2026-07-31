@@ -28,6 +28,10 @@ public class ModEffects {
             MOB_EFFECTS.register("acid_venom", AcidVenomEffect::new);
     public static final DeferredHolder<MobEffect, SummonEffect> SUMMON =
             MOB_EFFECTS.register("summon", SummonEffect::new);
+    public static final DeferredHolder<MobEffect, ManaEffect> MANA =
+            MOB_EFFECTS.register("mana", ManaEffect::new);
+    public static final DeferredHolder<MobEffect, ManaSicknessEffect> MANA_SICKNESS =
+            MOB_EFFECTS.register("mana_sickness", ManaSicknessEffect::new);
     public static final DeferredHolder<MobEffect, MidasEffect> MIDAS =
             MOB_EFFECTS.register("midas", MidasEffect::new);
 }

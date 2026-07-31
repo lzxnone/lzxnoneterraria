@@ -64,7 +64,8 @@ public class RangedWeaponGuiHandler {
 
     private static void renderAmmoDropHint(GuiGraphics guiGraphics, RangedWeapon rangedWeapon,
                                            ItemStack weaponStack, ItemStack carriedStack, Slot slot) {
-        if(carriedStack.isEmpty() || !carriedStack.is(ModItemTags.BULLET_AMMO)) return;
+        if(carriedStack.isEmpty()) return;
+        if(!carriedStack.is(ModItemTags.AMMO)) return;
 
         int color = rangedWeapon.canUseAmmo(weaponStack, carriedStack) ? VALID_AMMO_COLOR : INVALID_AMMO_COLOR;
         guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color);

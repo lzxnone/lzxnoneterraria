@@ -1,8 +1,13 @@
 package com.lzxnone.terraria.entity.summon;
 
 import com.lzxnone.terraria.item.ammo.*;
+import com.lzxnone.terraria.item.weapon.ranged.ElfMelter;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.*;
+import com.lzxnone.terraria.item.weapon.ranged.Flamethrower;
+import com.lzxnone.terraria.item.weapon.ranged.SnowballCannon;
+import com.lzxnone.terraria.item.weapon.ranged.StarCannon;
+import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
 import com.lzxnone.terraria.item.weapon.summon.Terraprisma;
 
 import java.util.HashMap;
@@ -34,7 +39,7 @@ public class StaticSummonBehaviors {
     public static final String LAST_PRISM_BEAM = "last_prism_beam";
     public static final String TERRAPRISMA = "terraprisma";
 
-    //弹药实体
+    //通用子弹实体
     public static final String MUSKET_BALL = "musket_ball";
     public static final String METEOR_SHOT = "meteor_shot";
     public static final String SILVER_BULLET = "silver_bullet";
@@ -50,6 +55,13 @@ public class StaticSummonBehaviors {
     public static final String GOLDEN_BULLET = "golden_bullet";
     public static final String LUMINITE_BULLET = "luminite_bullet";
     public static final String TUNGSTEN_BULLET = "tungsten_bullet";
+
+    //特殊子弹实体
+    public static final String SNOWBALL = "snowball";
+    public static final String FALLEN_STAR = "fallen_star";
+    public static final String FALLEN_STAR_SUPER = "fallen_star_super";
+    public static final String FLAMETHROWER_FLAME = "flamethrower_flame";
+    public static final String ELF_MELTER_FLAME = "elf_melter_flame";
 
     static {
         BEHAVIORS.put(DEFAULT, new IStaticSummonBehavior() {});
@@ -89,6 +101,12 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(GOLDEN_BULLET, GoldenBullet.SUMMON_BEHAVIOR);
         BEHAVIORS.put(LUMINITE_BULLET, LuminiteBullet.SUMMON_BEHAVIOR);
         BEHAVIORS.put(TUNGSTEN_BULLET, TungstenBullet.SUMMON_BEHAVIOR);
+
+        BEHAVIORS.put(SNOWBALL, SnowballCannon.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(FALLEN_STAR, StarCannon.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(FALLEN_STAR_SUPER, SuperStarShooter.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(FLAMETHROWER_FLAME, Flamethrower.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(ELF_MELTER_FLAME, ElfMelter.SUMMON_BEHAVIOR);
     }
 
     public static IStaticSummonBehavior getBehavior(String id) {

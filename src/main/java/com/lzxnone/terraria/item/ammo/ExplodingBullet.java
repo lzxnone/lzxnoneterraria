@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.ammo;
 
+import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
@@ -7,8 +8,15 @@ import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.particle.ModParticles;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.*;
+
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -16,44 +24,32 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
 import org.joml.Vector3f;
 
 import java.util.List;
 
 public class ExplodingBullet extends BulletAmmo {
     public static final String ID = "exploding_bullet";
-    public static final float BASE_DAMAGE_DEFAULT = 1.5f;
-    public static final double SPEED_DEFAULT = 3.0D;
-    public static final float KNOCKBACK_MULTIPLIER_DEFAULT = 2.0f;
-    public static final int DUST_COUNT_DEFAULT = 10;
+
+    public static final ConfigFloat BASE_DAMAGE = new ConfigFloat("ammo.exploding_bullet.base_damage", "exploding_bullet_base_damage", 1.5f, 0.0f, 8388600.0f);
+    public static final ConfigDouble SPEED = new ConfigDouble("ammo.exploding_bullet.speed", "exploding_bullet_speed", 3.0D, 0.0D, 24.0D);
+    public static final ConfigFloat KNOCKBACK_MULTIPLIER = new ConfigFloat("ammo.exploding_bullet.knockback_multiplier", "exploding_bullet_knockback_multiplier", 2.0f, 0.0f, 100.0f);
+    public static final ConfigInt DUST_COUNT = new ConfigInt("ammo.exploding_bullet.dust_count", "exploding_bullet_dust_count", 10, 0, 1000);
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            AmmoConfig.loadFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
-            AmmoConfig.loadDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
-            AmmoConfig.loadFloat(ID, "knockback_multiplier", KNOCKBACK_MULTIPLIER_DEFAULT, 0.0f, 100.0f);
-            AmmoConfig.loadInt(ID, "dust_count", DUST_COUNT_DEFAULT, 0, 1000);
+            ConfigStruct.loadAll(BASE_DAMAGE, SPEED, KNOCKBACK_MULTIPLIER, DUST_COUNT);
         }
     };
 
-    public static final ConfigListItem CONFIG_LIST_ITEM = AmmoConfig.createListItem(ID, CONFIG_DATA);
-
-    public static float getBaseDamage() {
-        return AmmoConfig.readFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
-    }
-
-    public static double getSpeed() {
-        return AmmoConfig.readDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
-    }
-
-    public static float getKnockbackMultiplier() {
-        return AmmoConfig.readFloat(ID, "knockback_multiplier", KNOCKBACK_MULTIPLIER_DEFAULT, 0.0f, 100.0f);
-    }
-
-    public static int getDustCount() {
-        return AmmoConfig.readInt(ID, "dust_count", DUST_COUNT_DEFAULT, 0, 1000);
-    }
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        ID,
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/" + ID + ".png"),
+        Component.translatable("item.lzxnoneterraria." + ID),
+        CONFIG_DATA
+    );
 
     public static final DustParticleOptions PARTICLE = new DustParticleOptions(
         0.075f, 0.5f, 40, true, new Vector3f[]{
@@ -67,7 +63,7 @@ public class ExplodingBullet extends BulletAmmo {
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
-            Vec3 motion = summon.getLookAngle().normalize().scale(getSpeed());
+            Vec3 motion = summon.getLookAngle().normalize().scale(SPEED.get());
             Vec3 start = summon.position();
             Vec3 end = start.add(motion);
 
@@ -92,7 +88,7 @@ public class ExplodingBullet extends BulletAmmo {
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 boolean dead = false;
                 for(Entity target : targets) {
-                    if(DamageUtil.rangedAttack(summon, target, sourceStack, getBaseDamage() + damage, knockbackScale * getKnockbackMultiplier())) {
+                    if(DamageUtil.rangedAttack(summon, target, sourceStack, BASE_DAMAGE.get() + damage, knockbackScale * KNOCKBACK_MULTIPLIER.get())) {
                         dead = true;
                         target.invulnerableTime = invulnerableTime;
                         SoundUtil.playServerSound(summon.level(), ModSounds.BOOM.get(), summon.position());
@@ -109,7 +105,7 @@ public class ExplodingBullet extends BulletAmmo {
                     ParticleUtil.addParticles(
                         (ServerLevel) summon.level(), PARTICLE,
                         summon.position(), new Vec3(0, 0, 0),
-                        0.2, getDustCount()
+                        0.2, DUST_COUNT.get()
                     );
                     this.onDied(summon);
                     return;
@@ -129,7 +125,7 @@ public class ExplodingBullet extends BulletAmmo {
                 ParticleUtil.addParticles(
                     (ServerLevel) summon.level(), PARTICLE,
                     summon.position(), new Vec3(0, 0, 0),
-                    0.2, getDustCount()
+                    0.2, DUST_COUNT.get()
                 );
                 this.onDied(summon);
                 return;

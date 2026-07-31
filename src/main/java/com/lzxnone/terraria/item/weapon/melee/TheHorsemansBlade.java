@@ -41,101 +41,81 @@ import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import net.minecraft.network.chat.Component;
 
 import java.util.Comparator;
 import java.util.List;
 
 public class TheHorsemansBlade extends MeleeWeapon {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String BLADE_ROTATE_RANGE_PATH = "weapon.the_horsemans_blade.blade_rotate_range";
-    public static final int BLADE_ROTATE_RANGE_DEFAULT = 45;
-    public static final int BLADE_ROTATE_RANGE_MIN = 0;
-    public static final int BLADE_ROTATE_RANGE_MAX = 90;
-
-    public static final String BLADE_MAX_HIT_COUNT_PATH = "weapon.the_horsemans_blade.blade_max_hit_count";
-    public static final int BLADE_MAX_HIT_COUNT_DEFAULT = 3;
-    public static final int BLADE_MAX_HIT_COUNT_MIN = 0;
-    public static final int BLADE_MAX_HIT_COUNT_MAX = 100;
-
-    public static final String BLADE_DAMAGE_PATH = "weapon.the_horsemans_blade.blade_damage";
-    public static final float BLADE_DAMAGE_DEFAULT = 15.0f;
-    public static final float BLADE_DAMAGE_MIN = 0.0f;
-    public static final float BLADE_DAMAGE_MAX = 8388600.0f;
-
-    public static final String PUMPKIN_SPAWN_RANGE_PATH = "weapon.the_horsemans_blade.pumpkin_spawn_range";
-    public static final double PUMPKIN_SPAWN_RANGE_DEFAULT = 16.0;
-    public static final double PUMPKIN_SPAWN_RANGE_MIN = 1.0;
-    public static final double PUMPKIN_SPAWN_RANGE_MAX = 64.0;
-
-    public static final String PUMPKIN_SPEED_PATH = "weapon.the_horsemans_blade.pumpkin_speed";
-    public static final double PUMPKIN_SPEED_DEFAULT = 0.5;
-    public static final double PUMPKIN_SPEED_MIN = 0.0;
-    public static final double PUMPKIN_SPEED_MAX = 10.0;
-
-    public static final String PUMPKIN_DAMAGE_PATH = "weapon.the_horsemans_blade.pumpkin_damage";
-    public static final float PUMPKIN_DAMAGE_DEFAULT = 15.0f;
-    public static final float PUMPKIN_DAMAGE_MIN = 0.0f;
-    public static final float PUMPKIN_DAMAGE_MAX = 8388600.0f;
-
-    public static final String PUMPKIN_MAX_TARGET_RANGE_PATH = "weapon.the_horsemans_blade.pumpkin_max_target_range";
-    public static final double PUMPKIN_MAX_TARGET_RANGE_DEFAULT = 32.0;
-    public static final double PUMPKIN_MAX_TARGET_RANGE_MIN = 1.0;
-    public static final double PUMPKIN_MAX_TARGET_RANGE_MAX = 64.0;
-
+    public static final ConfigInt BLADE_ROTATE_RANGE = new ConfigInt(
+        "weapon.the_horsemans_blade.blade_rotate_range",
+        "horsemans_blade_rotate_range",
+        45,
+        0,
+        90
+    );
+    public static final ConfigInt BLADE_MAX_HIT_COUNT = new ConfigInt(
+        "weapon.the_horsemans_blade.blade_max_hit_count",
+        "horsemans_blade_max_hit_count",
+        3,
+        0,
+        100
+    );
+    public static final ConfigFloat BLADE_DAMAGE = new ConfigFloat(
+        "weapon.the_horsemans_blade.blade_damage",
+        "horsemans_blade_damage",
+        15.0f,
+        0.0f,
+        8388600.0f
+    );
+    public static final ConfigDouble PUMPKIN_SPAWN_RANGE = new ConfigDouble(
+        "weapon.the_horsemans_blade.pumpkin_spawn_range",
+        "horsemans_pumpkin_spawn_range",
+        16.0,
+        1.0,
+        64.0
+    );
+    public static final ConfigDouble PUMPKIN_SPEED = new ConfigDouble(
+        "weapon.the_horsemans_blade.pumpkin_speed",
+        "horsemans_pumpkin_speed",
+        0.5,
+        0.0,
+        10.0
+    );
+    public static final ConfigFloat PUMPKIN_DAMAGE = new ConfigFloat(
+        "weapon.the_horsemans_blade.pumpkin_damage",
+        "horsemans_pumpkin_damage",
+        15.0f,
+        0.0f,
+        8388600.0f
+    );
+    public static final ConfigDouble PUMPKIN_MAX_TARGET_RANGE = new ConfigDouble(
+        "weapon.the_horsemans_blade.pumpkin_max_target_range",
+        "horsemans_pumpkin_max_target_range",
+        32.0,
+        1.0,
+        64.0
+    );
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadIntConfig(BLADE_ROTATE_RANGE_PATH, configText("horsemans_blade_rotate_range"), configTooltip("horsemans_blade_rotate_range"), BLADE_ROTATE_RANGE_DEFAULT, BLADE_ROTATE_RANGE_MIN, BLADE_ROTATE_RANGE_MAX);
-            ConfigFactory.loadIntConfig(BLADE_MAX_HIT_COUNT_PATH, configText("horsemans_blade_max_hit_count"), configTooltip("horsemans_blade_max_hit_count"), BLADE_MAX_HIT_COUNT_DEFAULT, BLADE_MAX_HIT_COUNT_MIN, BLADE_MAX_HIT_COUNT_MAX);
-            ConfigFactory.loadFloatConfig(BLADE_DAMAGE_PATH, configText("horsemans_blade_damage"), configTooltip("horsemans_blade_damage"), BLADE_DAMAGE_DEFAULT, BLADE_DAMAGE_MIN, BLADE_DAMAGE_MAX);
-            ConfigFactory.loadDoubleConfig(PUMPKIN_SPAWN_RANGE_PATH, configText("horsemans_pumpkin_spawn_range"), configTooltip("horsemans_pumpkin_spawn_range"), PUMPKIN_SPAWN_RANGE_DEFAULT, PUMPKIN_SPAWN_RANGE_MIN, PUMPKIN_SPAWN_RANGE_MAX);
-            ConfigFactory.loadDoubleConfig(PUMPKIN_SPEED_PATH, configText("horsemans_pumpkin_speed"), configTooltip("horsemans_pumpkin_speed"), PUMPKIN_SPEED_DEFAULT, PUMPKIN_SPEED_MIN, PUMPKIN_SPEED_MAX);
-            ConfigFactory.loadFloatConfig(PUMPKIN_DAMAGE_PATH, configText("horsemans_pumpkin_damage"), configTooltip("horsemans_pumpkin_damage"), PUMPKIN_DAMAGE_DEFAULT, PUMPKIN_DAMAGE_MIN, PUMPKIN_DAMAGE_MAX);
-            ConfigFactory.loadDoubleConfig(PUMPKIN_MAX_TARGET_RANGE_PATH, configText("horsemans_pumpkin_max_target_range"), configTooltip("horsemans_pumpkin_max_target_range"), PUMPKIN_MAX_TARGET_RANGE_DEFAULT, PUMPKIN_MAX_TARGET_RANGE_MIN, PUMPKIN_MAX_TARGET_RANGE_MAX);
+            ConfigStruct.loadAll(
+                BLADE_ROTATE_RANGE,
+                BLADE_MAX_HIT_COUNT,
+                BLADE_DAMAGE,
+                PUMPKIN_SPAWN_RANGE,
+                PUMPKIN_SPEED,
+                PUMPKIN_DAMAGE,
+                PUMPKIN_MAX_TARGET_RANGE
+            );
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static int getBladeRotateRange() {
-        return Math.clamp(ConfigUtil.readInt(BLADE_ROTATE_RANGE_PATH, BLADE_ROTATE_RANGE_DEFAULT), BLADE_ROTATE_RANGE_MIN, BLADE_ROTATE_RANGE_MAX);
-    }
-
-    public static int getBladeMaxHitCount() {
-        return Math.clamp(ConfigUtil.readInt(BLADE_MAX_HIT_COUNT_PATH, BLADE_MAX_HIT_COUNT_DEFAULT), BLADE_MAX_HIT_COUNT_MIN, BLADE_MAX_HIT_COUNT_MAX);
-    }
-
-    public static float getBladeDamage() {
-        return Math.clamp(ConfigUtil.readFloat(BLADE_DAMAGE_PATH, BLADE_DAMAGE_DEFAULT), BLADE_DAMAGE_MIN, BLADE_DAMAGE_MAX);
-    }
-
-    public static double getPumpkinSpawnRange() {
-        return Math.clamp(ConfigUtil.readDouble(PUMPKIN_SPAWN_RANGE_PATH, PUMPKIN_SPAWN_RANGE_DEFAULT), PUMPKIN_SPAWN_RANGE_MIN, PUMPKIN_SPAWN_RANGE_MAX);
-    }
-
-    public static double getPumpkinSpeed() {
-        return Math.clamp(ConfigUtil.readDouble(PUMPKIN_SPEED_PATH, PUMPKIN_SPEED_DEFAULT), PUMPKIN_SPEED_MIN, PUMPKIN_SPEED_MAX);
-    }
-
-    public static float getPumpkinDamage() {
-        return Math.clamp(ConfigUtil.readFloat(PUMPKIN_DAMAGE_PATH, PUMPKIN_DAMAGE_DEFAULT), PUMPKIN_DAMAGE_MIN, PUMPKIN_DAMAGE_MAX);
-    }
-
-    public static double getPumpkinMaxTargetRange() {
-        return Math.clamp(ConfigUtil.readDouble(PUMPKIN_MAX_TARGET_RANGE_PATH, PUMPKIN_MAX_TARGET_RANGE_DEFAULT), PUMPKIN_MAX_TARGET_RANGE_MIN, PUMPKIN_MAX_TARGET_RANGE_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "the_horsemans_blade",
@@ -201,8 +181,8 @@ public class TheHorsemansBlade extends MeleeWeapon {
                     CompoundTag custom_data = beam.getEntityData().get(SwordBeam.CUSTOM_DATA);
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
-                        if(count < getBladeMaxHitCount()) {
-                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) getBladeDamage(), 1.0f)) {
+                        if(count < BLADE_MAX_HIT_COUNT.get()) {
+                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) BLADE_DAMAGE.get(), 1.0f)) {
                                 target.invulnerableTime = 20;
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
@@ -213,7 +193,7 @@ public class TheHorsemansBlade extends MeleeWeapon {
                                 if(entity == null) return;
                                 summon.setOwner(entity);
                                 summon.getEntityData().set(StaticSummon.STACK_SOURCE, beam.getEntityData().get(SwordBeam.STACK_SOURCE).copy());
-                                Vec3 pos = MathUtil.getRandomPosInRadius(entity.position(), getPumpkinSpawnRange());
+                                Vec3 pos = MathUtil.getRandomPosInRadius(entity.position(), PUMPKIN_SPAWN_RANGE.get());
                                 summon.setPos(pos);
 
                                 float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(target.position().subtract(pos)));
@@ -248,7 +228,7 @@ public class TheHorsemansBlade extends MeleeWeapon {
 
         @Override
         public void generate(Entity entity, CompoundTag beamData) {
-            beamData.putInt("rotate", (int) (getBladeRotateRange() * (Math.random() * 2 - 1)));
+            beamData.putInt("rotate", (int) (BLADE_ROTATE_RANGE.get() * (Math.random() * 2 - 1)));
             //beamData.putBoolean("right", entity.getRandom().nextInt(2) == 0);
             ISwordBeamBehavior.super.generate(entity, beamData);
         }
@@ -311,7 +291,7 @@ public class TheHorsemansBlade extends MeleeWeapon {
                 if(target == null) {
                     List<Entity> targets = CollisionUtil.searchEnemies(
                         summon.level(),
-                        AABB.ofSize(summon.position(), getPumpkinMaxTargetRange() * 2, getPumpkinMaxTargetRange() * 2, getPumpkinMaxTargetRange() * 2),
+                        AABB.ofSize(summon.position(), PUMPKIN_MAX_TARGET_RANGE.get() * 2, PUMPKIN_MAX_TARGET_RANGE.get() * 2, PUMPKIN_MAX_TARGET_RANGE.get() * 2),
                         summon,
                         summon.getOwner()
                     );
@@ -329,18 +309,18 @@ public class TheHorsemansBlade extends MeleeWeapon {
                 Vec3 selfPos = summon.position();
                 Vec3 dir = targetPos.subtract(selfPos).normalize();
 
-                summon.setDeltaMovement(dir.scale(getPumpkinSpeed()));
+                summon.setDeltaMovement(dir.scale(PUMPKIN_SPEED.get()));
 
                 float[] xyRot = MathUtil.computeXYRot(MathUtil.toVector3f(dir));
                 summon.setXRot(xyRot[0]);
                 summon.setYRot(xyRot[1]);
 
                 if(selfPos.distanceToSqr(targetPos) < 2.0D) {
-                    if(summon.getOwner() instanceof Player player && FilterUtil.createTargetFilter(player).test(target) && DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getPumpkinDamage(), 1.0f)) onDied(summon);
+                    if(summon.getOwner() instanceof Player player && FilterUtil.createTargetFilter(player).test(target) && DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PUMPKIN_DAMAGE.get(), 1.0f)) onDied(summon);
                 }
             }else {
                 Vec3 dir = summon.getLookAngle().normalize();
-                summon.setDeltaMovement(dir.scale(getPumpkinSpeed()));
+                summon.setDeltaMovement(dir.scale(PUMPKIN_SPEED.get()));
             }
 
             if(!summon.level().isClientSide()) {
@@ -361,7 +341,7 @@ public class TheHorsemansBlade extends MeleeWeapon {
                     for(Entity hitEntity : hitEntities) {
                         if(target != null && hitEntity.getUUID() == target.getUUID()) continue;
                         if(summon.getOwner() instanceof Player player) {
-                            if(DamageUtil.meleeAttack(summon, hitEntity, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getPumpkinDamage(), 1.0f)) {
+                            if(DamageUtil.meleeAttack(summon, hitEntity, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PUMPKIN_DAMAGE.get(), 1.0f)) {
                                 hitEntity.invulnerableTime = 2;
                             }
                         }

@@ -41,8 +41,20 @@ public class ModPotions {
         registerSummonPotion("medium_summon_4", 36000, 4);
     public static final DeferredHolder<Potion, Potion> LONG_SUMMON_4 =
         registerSummonPotion("long_summon_4", 216000, 4);
+    public static final DeferredHolder<Potion, Potion> MANA_0 =
+        registerManaPotion("mana_0", 0);
+    public static final DeferredHolder<Potion, Potion> MANA_1 =
+        registerManaPotion("mana_1", 1);
+    public static final DeferredHolder<Potion, Potion> MANA_2 =
+        registerManaPotion("mana_2", 2);
+    public static final DeferredHolder<Potion, Potion> MANA_3 =
+        registerManaPotion("mana_3", 3);
 
     private static DeferredHolder<Potion, Potion> registerSummonPotion(String name, int duration, int amplifier) {
         return POTIONS.register(name, () -> new Potion("summon", new MobEffectInstance(ModEffects.SUMMON, duration, amplifier)));
+    }
+
+    private static DeferredHolder<Potion, Potion> registerManaPotion(String name, int amplifier) {
+        return POTIONS.register(name, () -> new Potion("mana", new MobEffectInstance(ModEffects.MANA, 1, amplifier)));
     }
 }

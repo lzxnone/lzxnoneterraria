@@ -14,10 +14,13 @@ import com.lzxnone.terraria.item.IItemWaveBehavior;
 import com.lzxnone.terraria.network.payload.SwordBeamPayload;
 import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.particle.ModParticles;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigBoolean;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.*;
 import com.mojang.math.Axis;
 import net.minecraft.Util;
@@ -46,50 +49,67 @@ import org.joml.Vector3f;
 import java.util.List;
 
 public class TerraBlade extends MeleeWeapon {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String PROJECTILE_ALIGN_TO_SWORD_BEAM_PATH = "weapon.terra_blade.projectile_align_to_sword_beam";
-    public static final boolean PROJECTILE_ALIGN_TO_SWORD_BEAM_DEFAULT = true;
-
-    public static final String SWORD_BEAM_ROTATE_RANGE_PATH = "weapon.terra_blade.sword_beam_rotate_range";
-    public static final int SWORD_BEAM_ROTATE_RANGE_DEFAULT = 45;
-    public static final int SWORD_BEAM_ROTATE_RANGE_MIN = 0;
-    public static final int SWORD_BEAM_ROTATE_RANGE_MAX = 90;
-
-    public static final String PROJECTILE_ROTATE_RANGE_PATH = "weapon.terra_blade.projectile_rotate_range";
-    public static final int PROJECTILE_ROTATE_RANGE_DEFAULT = 45;
-    public static final int PROJECTILE_ROTATE_RANGE_MIN = 0;
-    public static final int PROJECTILE_ROTATE_RANGE_MAX = 90;
-
-    public static final String SWORD_BEAM_MAX_HIT_COUNT_PATH = "weapon.terra_blade.sword_beam_max_hit_count";
-    public static final int SWORD_BEAM_MAX_HIT_COUNT_DEFAULT = 3;
-    public static final int SWORD_BEAM_MAX_HIT_COUNT_MIN = 0;
-    public static final int SWORD_BEAM_MAX_HIT_COUNT_MAX = 100;
-
-    public static final String SWORD_BEAM_DAMAGE_PATH = "weapon.terra_blade.sword_beam_damage";
-    public static final float SWORD_BEAM_DAMAGE_DEFAULT = 11.0f;
-    public static final float SWORD_BEAM_DAMAGE_MIN = 0.0f;
-    public static final float SWORD_BEAM_DAMAGE_MAX = 8388600.0f;
-
-    public static final String PROJECTILE_DAMAGE_PATH = "weapon.terra_blade.projectile_damage";
-    public static final float PROJECTILE_DAMAGE_DEFAULT = 11.0f;
-    public static final float PROJECTILE_DAMAGE_MIN = 0.0f;
-    public static final float PROJECTILE_DAMAGE_MAX = 8388600.0f;
-
-    public static final String PROJECTILE_SPEED_PATH = "weapon.terra_blade.projectile_speed";
-    public static final double PROJECTILE_SPEED_DEFAULT = 2.0;
-    public static final double PROJECTILE_SPEED_MIN = 0.0;
-    public static final double PROJECTILE_SPEED_MAX = 10.0;
-
-    public static final String PROJECTILE_LIFETIME_PATH = "weapon.terra_blade.projectile_lifetime";
-    public static final int PROJECTILE_LIFETIME_DEFAULT = 60;
-    public static final int PROJECTILE_LIFETIME_MIN = 1;
-    public static final int PROJECTILE_LIFETIME_MAX = 1200;
-
-    public static final String PROJECTILE_DAMAGE_DECAY_PATH = "weapon.terra_blade.projectile_damage_decay";
-    public static final float PROJECTILE_DAMAGE_DECAY_DEFAULT = 0.75f;
-    public static final float PROJECTILE_DAMAGE_DECAY_MIN = 0.0f;
-    public static final float PROJECTILE_DAMAGE_DECAY_MAX = 1.0f;
+    public static final ConfigBoolean PROJECTILE_ALIGN_TO_SWORD_BEAM = new ConfigBoolean(
+        "weapon.terra_blade.projectile_align_to_sword_beam",
+        "terra_projectile_align_to_blade",
+        true
+    );
+    public static final ConfigInt SWORD_BEAM_ROTATE_RANGE = new ConfigInt(
+        "weapon.terra_blade.sword_beam_rotate_range",
+        "terra_blade_rotate_range",
+        45,
+        0,
+        90
+    );
+    public static final ConfigInt PROJECTILE_ROTATE_RANGE = new ConfigInt(
+        "weapon.terra_blade.projectile_rotate_range",
+        "terra_projectile_rotate_range",
+        45,
+        0,
+        90
+    );
+    public static final ConfigInt SWORD_BEAM_MAX_HIT_COUNT = new ConfigInt(
+        "weapon.terra_blade.sword_beam_max_hit_count",
+        "terra_blade_max_hit_count",
+        3,
+        0,
+        100
+    );
+    public static final ConfigFloat SWORD_BEAM_DAMAGE = new ConfigFloat(
+        "weapon.terra_blade.sword_beam_damage",
+        "terra_blade_damage",
+        11.0f,
+        0.0f,
+        8388600.0f
+    );
+    public static final ConfigFloat PROJECTILE_DAMAGE = new ConfigFloat(
+        "weapon.terra_blade.projectile_damage",
+        "terra_projectile_damage",
+        11.0f,
+        0.0f,
+        8388600.0f
+    );
+    public static final ConfigDouble PROJECTILE_SPEED = new ConfigDouble(
+        "weapon.terra_blade.projectile_speed",
+        "terra_projectile_speed",
+        2.0,
+        0.0,
+        10.0
+    );
+    public static final ConfigInt PROJECTILE_LIFETIME = new ConfigInt(
+        "weapon.terra_blade.projectile_lifetime",
+        "terra_projectile_lifetime",
+        60,
+        1,
+        1200
+    );
+    public static final ConfigFloat PROJECTILE_DAMAGE_DECAY = new ConfigFloat(
+        "weapon.terra_blade.projectile_damage_decay",
+        "terra_projectile_damage_decay",
+        0.75f,
+        0.0f,
+        1.0f
+    );
 
     public TerraBlade() {
         super(Tiers.DIAMOND, new Item.Properties().attributes(ItemAttributeModifiers.builder()
@@ -106,61 +126,19 @@ public class TerraBlade extends MeleeWeapon {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadBooleanConfig(PROJECTILE_ALIGN_TO_SWORD_BEAM_PATH, configText("terra_projectile_align_to_blade"), configTooltip("terra_projectile_align_to_blade"), PROJECTILE_ALIGN_TO_SWORD_BEAM_DEFAULT);
-            ConfigFactory.loadIntConfig(SWORD_BEAM_ROTATE_RANGE_PATH, configText("terra_blade_rotate_range"), configTooltip("terra_blade_rotate_range"), SWORD_BEAM_ROTATE_RANGE_DEFAULT, SWORD_BEAM_ROTATE_RANGE_MIN, SWORD_BEAM_ROTATE_RANGE_MAX);
-            ConfigFactory.loadIntConfig(PROJECTILE_ROTATE_RANGE_PATH, configText("terra_projectile_rotate_range"), configTooltip("terra_projectile_rotate_range"), PROJECTILE_ROTATE_RANGE_DEFAULT, PROJECTILE_ROTATE_RANGE_MIN, PROJECTILE_ROTATE_RANGE_MAX);
-            ConfigFactory.loadIntConfig(SWORD_BEAM_MAX_HIT_COUNT_PATH, configText("terra_blade_max_hit_count"), configTooltip("terra_blade_max_hit_count"), SWORD_BEAM_MAX_HIT_COUNT_DEFAULT, SWORD_BEAM_MAX_HIT_COUNT_MIN, SWORD_BEAM_MAX_HIT_COUNT_MAX);
-            ConfigFactory.loadFloatConfig(SWORD_BEAM_DAMAGE_PATH, configText("terra_blade_damage"), configTooltip("terra_blade_damage"), SWORD_BEAM_DAMAGE_DEFAULT, SWORD_BEAM_DAMAGE_MIN, SWORD_BEAM_DAMAGE_MAX);
-            ConfigFactory.loadFloatConfig(PROJECTILE_DAMAGE_PATH, configText("terra_projectile_damage"), configTooltip("terra_projectile_damage"), PROJECTILE_DAMAGE_DEFAULT, PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
-            ConfigFactory.loadDoubleConfig(PROJECTILE_SPEED_PATH, configText("terra_projectile_speed"), configTooltip("terra_projectile_speed"), PROJECTILE_SPEED_DEFAULT, PROJECTILE_SPEED_MIN, PROJECTILE_SPEED_MAX);
-            ConfigFactory.loadIntConfig(PROJECTILE_LIFETIME_PATH, configText("terra_projectile_lifetime"), configTooltip("terra_projectile_lifetime"), PROJECTILE_LIFETIME_DEFAULT, PROJECTILE_LIFETIME_MIN, PROJECTILE_LIFETIME_MAX);
-            ConfigFactory.loadFloatConfig(PROJECTILE_DAMAGE_DECAY_PATH, configText("terra_projectile_damage_decay"), configTooltip("terra_projectile_damage_decay"), PROJECTILE_DAMAGE_DECAY_DEFAULT, PROJECTILE_DAMAGE_DECAY_MIN, PROJECTILE_DAMAGE_DECAY_MAX);
+            ConfigStruct.loadAll(
+                PROJECTILE_ALIGN_TO_SWORD_BEAM,
+                SWORD_BEAM_ROTATE_RANGE,
+                PROJECTILE_ROTATE_RANGE,
+                SWORD_BEAM_MAX_HIT_COUNT,
+                SWORD_BEAM_DAMAGE,
+                PROJECTILE_DAMAGE,
+                PROJECTILE_SPEED,
+                PROJECTILE_LIFETIME,
+                PROJECTILE_DAMAGE_DECAY
+            );
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static boolean isProjectileAlignToSwordBeam() {
-        return ConfigUtil.readBoolean(PROJECTILE_ALIGN_TO_SWORD_BEAM_PATH, PROJECTILE_ALIGN_TO_SWORD_BEAM_DEFAULT);
-    }
-
-    public static int getSwordBeamRotateRange() {
-        return Math.clamp(ConfigUtil.readInt(SWORD_BEAM_ROTATE_RANGE_PATH, SWORD_BEAM_ROTATE_RANGE_DEFAULT), SWORD_BEAM_ROTATE_RANGE_MIN, SWORD_BEAM_ROTATE_RANGE_MAX);
-    }
-
-    public static int getProjectileRotateRange() {
-        return Math.clamp(ConfigUtil.readInt(PROJECTILE_ROTATE_RANGE_PATH, PROJECTILE_ROTATE_RANGE_DEFAULT), PROJECTILE_ROTATE_RANGE_MIN, PROJECTILE_ROTATE_RANGE_MAX);
-    }
-
-    public static int getSwordBeamMaxHitCount() {
-        return Math.clamp(ConfigUtil.readInt(SWORD_BEAM_MAX_HIT_COUNT_PATH, SWORD_BEAM_MAX_HIT_COUNT_DEFAULT), SWORD_BEAM_MAX_HIT_COUNT_MIN, SWORD_BEAM_MAX_HIT_COUNT_MAX);
-    }
-
-    public static float getSwordBeamDamage() {
-        return Math.clamp(ConfigUtil.readFloat(SWORD_BEAM_DAMAGE_PATH, SWORD_BEAM_DAMAGE_DEFAULT), SWORD_BEAM_DAMAGE_MIN, SWORD_BEAM_DAMAGE_MAX);
-    }
-
-    public static float getProjectileDamage() {
-        return Math.clamp(ConfigUtil.readFloat(PROJECTILE_DAMAGE_PATH, PROJECTILE_DAMAGE_DEFAULT), PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
-    }
-
-    public static double getProjectileSpeed() {
-        return Math.clamp(ConfigUtil.readDouble(PROJECTILE_SPEED_PATH, PROJECTILE_SPEED_DEFAULT), PROJECTILE_SPEED_MIN, PROJECTILE_SPEED_MAX);
-    }
-
-    public static int getProjectileLifetime() {
-        return Math.clamp(ConfigUtil.readInt(PROJECTILE_LIFETIME_PATH, PROJECTILE_LIFETIME_DEFAULT), PROJECTILE_LIFETIME_MIN, PROJECTILE_LIFETIME_MAX);
-    }
-
-    public static float getProjectileDamageDecay() {
-        return Math.clamp(ConfigUtil.readFloat(PROJECTILE_DAMAGE_DECAY_PATH, PROJECTILE_DAMAGE_DECAY_DEFAULT), PROJECTILE_DAMAGE_DECAY_MIN, PROJECTILE_DAMAGE_DECAY_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "terra_blade",
@@ -215,8 +193,8 @@ public class TerraBlade extends MeleeWeapon {
                     CompoundTag custom_data = beam.getEntityData().get(SwordBeam.CUSTOM_DATA);
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
-                        if(count < getSwordBeamMaxHitCount()) {
-                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float)getSwordBeamDamage(), 0.1f)) {
+                        if(count < SWORD_BEAM_MAX_HIT_COUNT.get()) {
+                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), SWORD_BEAM_DAMAGE.get(), 0.1f)) {
                                 target.invulnerableTime = 20;
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
@@ -230,7 +208,7 @@ public class TerraBlade extends MeleeWeapon {
 
         @Override
         public void generate(Entity entity, CompoundTag beamData) {
-            int randomAngle = (int) (getSwordBeamRotateRange() * (Math.random() * 2 - 1));
+            int randomAngle = (int) (SWORD_BEAM_ROTATE_RANGE.get() * (Math.random() * 2 - 1));
             beamData.putInt("rotate", randomAngle);
             ISwordBeamBehavior.super.generate(entity, beamData);
             if(entity instanceof Player player) summon(player, randomAngle);
@@ -260,10 +238,10 @@ public class TerraBlade extends MeleeWeapon {
             if(!customData.contains("dead")) {
                 float progress = summon.getEntityData().get(StaticSummon.AGE) / (float) summon.getEntityData().get(StaticSummon.LIFETIME);
                 if(progress > FADE_IN) {
-                    double projectileSpeed = getProjectileSpeed();
+                    double projectileSpeed = PROJECTILE_SPEED.get();
                     summon.setDeltaMovement(summon.getLookAngle().normalize().scale(projectileSpeed - projectileSpeed * (progress - FADE_IN) / (1.0f - FADE_IN)));
                 }else {
-                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(getProjectileSpeed()));
+                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(PROJECTILE_SPEED.get()));
                 }
             }else {
                 summon.setDeltaMovement(summon.getLookAngle().normalize().scale(0.1));
@@ -284,7 +262,7 @@ public class TerraBlade extends MeleeWeapon {
                 int count = customData.getInt("hitCount");
                 List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                 for(Entity target : targets) {
-                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float)getProjectileDamage() * (float)Math.pow(getProjectileDamageDecay(), count), 0.1f)) {
+                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), PROJECTILE_DAMAGE.get() * (float)Math.pow(PROJECTILE_DAMAGE_DECAY.get(), count), 0.1f)) {
                         count++;
                         ParticleUtil.addParticles(
                             (ServerLevel) summon.level(), ModParticles.TERRA_BEAM_HIT_PARTICLE.get(),
@@ -343,7 +321,7 @@ public class TerraBlade extends MeleeWeapon {
         Vec3 pos = new Vec3(player.getX(), player.getEyeY() - 0.1, player.getZ());
         summon.setPos(pos);
 
-        if(!isProjectileAlignToSwordBeam()) randomAngle = (int) (getProjectileRotateRange() * (Math.random() * 2 - 1));
+        if(!PROJECTILE_ALIGN_TO_SWORD_BEAM.get()) randomAngle = (int) (PROJECTILE_ROTATE_RANGE.get() * (Math.random() * 2 - 1));
 
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
         dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], randomAngle);
@@ -355,7 +333,7 @@ public class TerraBlade extends MeleeWeapon {
 
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.TERRA_BLADE_BEAM);
         summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-        summon.getEntityData().set(StaticSummon.LIFETIME, getProjectileLifetime());
+        summon.getEntityData().set(StaticSummon.LIFETIME, PROJECTILE_LIFETIME.get());
         summon.getEntityData().set(StaticSummon.RZP, randomAngle);
         summon.getEntityData().set(StaticSummon.GLOW, true);
         summon.setNoGravity(true);
@@ -393,7 +371,7 @@ public class TerraBlade extends MeleeWeapon {
         customData.putFloat("rightZ", dirs[2].z);
         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
 
-        summon.setDeltaMovement(player.getLookAngle().normalize().scale(getProjectileSpeed()));
+        summon.setDeltaMovement(player.getLookAngle().normalize().scale(PROJECTILE_SPEED.get()));
 
         player.level().addFreshEntity(summon);
     }

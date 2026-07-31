@@ -1,12 +1,11 @@
 package com.lzxnone.terraria.effect;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
-import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.particle.ModParticles;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.ParticleUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -15,38 +14,16 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 public class AcidVenomEffect extends MobEffect {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String DAMAGE_PER_LEVEL_PATH = "effect.acid_venom.damage_per_level";
-    public static final float DAMAGE_PER_LEVEL_DEFAULT = 2.0f;
-    public static final float DAMAGE_PER_LEVEL_MIN = 0.0f;
-    public static final float DAMAGE_PER_LEVEL_MAX = 8388600.0f;
-
-    public AcidVenomEffect() {
-        super(MobEffectCategory.HARMFUL, 0x8A2BE2);
-    }
+    public static final ConfigFloat DAMAGE_PER_LEVEL = new ConfigFloat("effect.acid_venom.damage_per_level", "acid_venom_damage_per_level", 2.0f, 0.0f, 8388600.0f);
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadFloatConfig(DAMAGE_PER_LEVEL_PATH, configText("acid_venom_damage_per_level"), configTooltip("acid_venom_damage_per_level"), DAMAGE_PER_LEVEL_DEFAULT, DAMAGE_PER_LEVEL_MIN, DAMAGE_PER_LEVEL_MAX);
+            ConfigStruct.loadAll(DAMAGE_PER_LEVEL);
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static float getDamagePerLevel() {
-        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PER_LEVEL_PATH, DAMAGE_PER_LEVEL_DEFAULT), DAMAGE_PER_LEVEL_MIN, DAMAGE_PER_LEVEL_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "acid_venom",
@@ -54,6 +31,10 @@ public class AcidVenomEffect extends MobEffect {
         Component.translatable("effect.lzxnoneterraria.acid_venom"),
         CONFIG_DATA
     );
+
+    public AcidVenomEffect() {
+        super(MobEffectCategory.HARMFUL, 0x8A2BE2);
+    }
 
     @Override
     public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
@@ -64,7 +45,7 @@ public class AcidVenomEffect extends MobEffect {
     public boolean applyEffectTick(LivingEntity entity, int amplifier) {
         if(entity.level() instanceof ServerLevel serverLevel) {
             if(entity.tickCount % 20 == 0) {
-                if(entity.hurt(entity.damageSources().magic(), getDamagePerLevel() * (amplifier + 1))) entity.invulnerableTime = 10;
+                if(entity.hurt(entity.damageSources().magic(), DAMAGE_PER_LEVEL.get() * (amplifier + 1))) entity.invulnerableTime = 10;
             }
             ParticleUtil.addParticles(
                 serverLevel, ModParticles.BLACK_DUST_PARTICLE.get(),

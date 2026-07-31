@@ -2,10 +2,10 @@ package com.lzxnone.terraria.effect;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.particle.CircleParticleOptions;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.ParticleUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -18,35 +18,14 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 public class DemonicFlamesEffect extends MobEffect {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String DAMAGE_PER_LEVEL_PATH = "effect.demonic_flames.damage_per_level";
-    public static final float DAMAGE_PER_LEVEL_DEFAULT = 2.5f;
-    public static final float DAMAGE_PER_LEVEL_MIN = 0.0f;
-    public static final float DAMAGE_PER_LEVEL_MAX = 8388600.0f;
-
-    public DemonicFlamesEffect() {
-        super(MobEffectCategory.HARMFUL, 0xCC2DC7);
-    }
+    public static final ConfigFloat DAMAGE_PER_LEVEL = new ConfigFloat("effect.demonic_flames.damage_per_level", "demonic_flames_damage_per_level", 2.5f, 0.0f, 8388600.0f);
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadFloatConfig(DAMAGE_PER_LEVEL_PATH, configText("demonic_flames_damage_per_level"), configTooltip("demonic_flames_damage_per_level"), DAMAGE_PER_LEVEL_DEFAULT, DAMAGE_PER_LEVEL_MIN, DAMAGE_PER_LEVEL_MAX);
+            ConfigStruct.loadAll(DAMAGE_PER_LEVEL);
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static float getDamagePerLevel() {
-        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PER_LEVEL_PATH, DAMAGE_PER_LEVEL_DEFAULT), DAMAGE_PER_LEVEL_MIN, DAMAGE_PER_LEVEL_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "demonic_flames",
@@ -54,6 +33,10 @@ public class DemonicFlamesEffect extends MobEffect {
         Component.translatable("effect.lzxnoneterraria.demonic_flames"),
         CONFIG_DATA
     );
+
+    public DemonicFlamesEffect() {
+        super(MobEffectCategory.HARMFUL, 0xCC2DC7);
+    }
 
     public static final CircleParticleOptions PARTICLE = new CircleParticleOptions(0.075f, 20, new Vector3f(0.8f, 0.176f, 0.78f));
 
@@ -69,7 +52,7 @@ public class DemonicFlamesEffect extends MobEffect {
             if(instance != null) {
                 if(entity.tickCount % 4 == 0) {
                     entity.invulnerableTime = 5;
-                    entity.hurt(entity.damageSources().magic(), (float) getDamagePerLevel() * (amplifier + 1));
+                    entity.hurt(entity.damageSources().magic(), (float) DAMAGE_PER_LEVEL.get() * (amplifier + 1));
                 }
             }
 

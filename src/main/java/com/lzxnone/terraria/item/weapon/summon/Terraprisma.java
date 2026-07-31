@@ -8,10 +8,11 @@ import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.SummonWeapon;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
@@ -36,50 +37,64 @@ import java.util.List;
 import java.util.UUID;
 
 public class Terraprisma extends SummonWeapon {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String TARGET_RANGE_PATH = "weapon.terraprisma.target_range";
-    public static final double TARGET_RANGE_DEFAULT = 64.0D;
-    public static final double TARGET_RANGE_MIN = 1.0D;
-    public static final double TARGET_RANGE_MAX = 256.0D;
-
-    public static final String FOLLOW_SPEED_PATH = "weapon.terraprisma.follow_speed";
-    public static final double FOLLOW_SPEED_DEFAULT = 4.0D;
-    public static final double FOLLOW_SPEED_MIN = 0.0D;
-    public static final double FOLLOW_SPEED_MAX = 32.0D;
-
-    public static final String DASH_PRE_SPEED_PATH = "weapon.terraprisma.dash_pre_speed";
-    public static final double DASH_PRE_SPEED_DEFAULT = -0.75D;
-    public static final double DASH_PRE_SPEED_MIN = -10.0D;
-    public static final double DASH_PRE_SPEED_MAX = 10.0D;
-
-    public static final String DASH_PRE_FRICTION_PATH = "weapon.terraprisma.dash_pre_friction";
-    public static final double DASH_PRE_FRICTION_DEFAULT = 0.78D;
-    public static final double DASH_PRE_FRICTION_MIN = 0.0D;
-    public static final double DASH_PRE_FRICTION_MAX = 1.0D;
-
-    public static final String DASH_SPEED_PATH = "weapon.terraprisma.dash_speed";
-    public static final double DASH_SPEED_DEFAULT = 3.2D;
-    public static final double DASH_SPEED_MIN = 0.01D;
-    public static final double DASH_SPEED_MAX = 32.0D;
-
-    public static final String DASH_FRICTION_PATH = "weapon.terraprisma.dash_friction";
-    public static final double DASH_FRICTION_DEFAULT = 0.66D;
-    public static final double DASH_FRICTION_MIN = 0.0D;
-    public static final double DASH_FRICTION_MAX = 1.0D;
-
+    public static final ConfigDouble TARGET_RANGE = new ConfigDouble(
+        "weapon.terraprisma.target_range",
+        "terraprisma_target_range",
+        64.0D,
+        1.0D,
+        256.0D
+    );
+    public static final ConfigDouble FOLLOW_SPEED = new ConfigDouble(
+        "weapon.terraprisma.follow_speed",
+        "terraprisma_follow_speed",
+        4.0D,
+        0.0D,
+        32.0D
+    );
+    public static final ConfigDouble DASH_PRE_SPEED = new ConfigDouble(
+        "weapon.terraprisma.dash_pre_speed",
+        "terraprisma_dash_pre_speed",
+        -0.75D,
+        -10.0D,
+        10.0D
+    );
+    public static final ConfigDouble DASH_PRE_FRICTION = new ConfigDouble(
+        "weapon.terraprisma.dash_pre_friction",
+        "terraprisma_dash_pre_friction",
+        0.78D,
+        0.0D,
+        1.0D
+    );
+    public static final ConfigDouble DASH_SPEED = new ConfigDouble(
+        "weapon.terraprisma.dash_speed",
+        "terraprisma_dash_speed",
+        3.2D,
+        0.01D,
+        32.0D
+    );
+    public static final ConfigDouble DASH_FRICTION = new ConfigDouble(
+        "weapon.terraprisma.dash_friction",
+        "terraprisma_dash_friction",
+        0.66D,
+        0.0D,
+        1.0D
+    );
     public static final int DASH_MORE_TIME = 1;
 
-    public static final String ROTATE_SPEED_PATH = "weapon.terraprisma.rotate_speed";
-    public static final double ROTATE_SPEED_DEFAULT = 1.0D;
-    public static final double ROTATE_SPEED_MIN = 0.01D;
-    public static final double ROTATE_SPEED_MAX = 32.0D;
-
-    public static final String DAMAGE_PATH = "weapon.terraprisma.damage";
-    public static final float DAMAGE_DEFAULT = 20.0F;
-    public static final float DAMAGE_MIN = 0.0F;
-    public static final float DAMAGE_MAX = 8388600.0F;
-
+    public static final ConfigDouble ROTATE_SPEED = new ConfigDouble(
+        "weapon.terraprisma.rotate_speed",
+        "terraprisma_rotate_speed",
+        1.0D,
+        0.01D,
+        32.0D
+    );
+    public static final ConfigFloat DAMAGE = new ConfigFloat(
+        "weapon.terraprisma.damage",
+        "terraprisma_damage",
+        20.0F,
+        0.0F,
+        8388600.0F
+    );
     public static final float ROTATION_LERP = 0.25f;
     public static final float ROTATION_LERP2 = 0.5f;
     public static final float ROTATION_LERP3 = 1.0f;
@@ -107,56 +122,18 @@ public class Terraprisma extends SummonWeapon {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadDoubleConfig(TARGET_RANGE_PATH, configText("terraprisma_target_range"), configTooltip("terraprisma_target_range"), TARGET_RANGE_DEFAULT, TARGET_RANGE_MIN, TARGET_RANGE_MAX);
-            ConfigFactory.loadDoubleConfig(FOLLOW_SPEED_PATH, configText("terraprisma_follow_speed"), configTooltip("terraprisma_follow_speed"), FOLLOW_SPEED_DEFAULT, FOLLOW_SPEED_MIN, FOLLOW_SPEED_MAX);
-            ConfigFactory.loadDoubleConfig(DASH_PRE_SPEED_PATH, configText("terraprisma_dash_pre_speed"), configTooltip("terraprisma_dash_pre_speed"), DASH_PRE_SPEED_DEFAULT, DASH_PRE_SPEED_MIN, DASH_PRE_SPEED_MAX);
-            ConfigFactory.loadDoubleConfig(DASH_PRE_FRICTION_PATH, configText("terraprisma_dash_pre_friction"), configTooltip("terraprisma_dash_pre_friction"), DASH_PRE_FRICTION_DEFAULT, DASH_PRE_FRICTION_MIN, DASH_PRE_FRICTION_MAX);
-            ConfigFactory.loadDoubleConfig(DASH_SPEED_PATH, configText("terraprisma_dash_speed"), configTooltip("terraprisma_dash_speed"), DASH_SPEED_DEFAULT, DASH_SPEED_MIN, DASH_SPEED_MAX);
-            ConfigFactory.loadDoubleConfig(DASH_FRICTION_PATH, configText("terraprisma_dash_friction"), configTooltip("terraprisma_dash_friction"), DASH_FRICTION_DEFAULT, DASH_FRICTION_MIN, DASH_FRICTION_MAX);
-            ConfigFactory.loadDoubleConfig(ROTATE_SPEED_PATH, configText("terraprisma_rotate_speed"), configTooltip("terraprisma_rotate_speed"), ROTATE_SPEED_DEFAULT, ROTATE_SPEED_MIN, ROTATE_SPEED_MAX);
-            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("terraprisma_damage"), configTooltip("terraprisma_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigStruct.loadAll(
+                TARGET_RANGE,
+                FOLLOW_SPEED,
+                DASH_PRE_SPEED,
+                DASH_PRE_FRICTION,
+                DASH_SPEED,
+                DASH_FRICTION,
+                ROTATE_SPEED,
+                DAMAGE
+            );
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static double getTargetRange() {
-        return Math.clamp(ConfigUtil.readDouble(TARGET_RANGE_PATH, TARGET_RANGE_DEFAULT), TARGET_RANGE_MIN, TARGET_RANGE_MAX);
-    }
-
-    public static double getFollowSpeed() {
-        return Math.clamp(ConfigUtil.readDouble(FOLLOW_SPEED_PATH, FOLLOW_SPEED_DEFAULT), FOLLOW_SPEED_MIN, FOLLOW_SPEED_MAX);
-    }
-
-    public static double getDashPreSpeed() {
-        return Math.clamp(ConfigUtil.readDouble(DASH_PRE_SPEED_PATH, DASH_PRE_SPEED_DEFAULT), DASH_PRE_SPEED_MIN, DASH_PRE_SPEED_MAX);
-    }
-
-    public static double getDashPreFriction() {
-        return Math.clamp(ConfigUtil.readDouble(DASH_PRE_FRICTION_PATH, DASH_PRE_FRICTION_DEFAULT), DASH_PRE_FRICTION_MIN, DASH_PRE_FRICTION_MAX);
-    }
-
-    public static double getDashSpeed() {
-        return Math.clamp(ConfigUtil.readDouble(DASH_SPEED_PATH, DASH_SPEED_DEFAULT), DASH_SPEED_MIN, DASH_SPEED_MAX);
-    }
-
-    public static double getDashFriction() {
-        return Math.clamp(ConfigUtil.readDouble(DASH_FRICTION_PATH, DASH_FRICTION_DEFAULT), DASH_FRICTION_MIN, DASH_FRICTION_MAX);
-    }
-
-    public static double getRotateSpeed() {
-        return Math.clamp(ConfigUtil.readDouble(ROTATE_SPEED_PATH, ROTATE_SPEED_DEFAULT), ROTATE_SPEED_MIN, ROTATE_SPEED_MAX);
-    }
-
-    public static float getDamage() {
-        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "terraprisma",
@@ -211,10 +188,10 @@ public class Terraprisma extends SummonWeapon {
         int state = customData.contains("state") ? customData.getInt("state") : 0;
 
         if(state == State.IDLE.ordinal()) {
-            storeSummonTarget(summon, findSummonTarget(summon, player, getTargetRange()));
+            storeSummonTarget(summon, findSummonTarget(summon, player, TARGET_RANGE.get()));
             tickFollowOwner(summon);
         }else if(state == State.FIGHT.ordinal()) {
-            storeSummonTarget(summon, findSummonTarget(summon, player, getTargetRange()));
+            storeSummonTarget(summon, findSummonTarget(summon, player, TARGET_RANGE.get()));
         }else if(state == State.DASH_PRE.ordinal()) {
             Entity target = getStoredSummonTarget(summon);
             if(target != null) {
@@ -229,14 +206,14 @@ public class Terraprisma extends SummonWeapon {
                     summon.setYRot(Mth.rotLerp(ROTATION_LERP, summon.getYRot(), targetXYRot[1]));
                 }
             }
-            summon.setDeltaMovement(summon.getDeltaMovement().scale(getDashPreFriction()));
+            summon.setDeltaMovement(summon.getDeltaMovement().scale(DASH_PRE_FRICTION.get()));
         }else if(state == State.DASH.ordinal()) {
             int dashTime = customData.contains("dashTime") ? customData.getInt("dashTime") : 0;
             customData.putInt("dashTime", dashTime - 1);
             if(dashTime > 0) {
-                summon.setDeltaMovement(summon.getLookAngle().normalize().scale(getDashSpeed()));
+                summon.setDeltaMovement(summon.getLookAngle().normalize().scale(DASH_SPEED.get()));
             }else {
-                summon.setDeltaMovement(summon.getDeltaMovement().scale(getDashFriction()));
+                summon.setDeltaMovement(summon.getDeltaMovement().scale(DASH_FRICTION.get()));
             }
             AABB hitBox = new AABB(summon.position(), summon.position().add(summon.getDeltaMovement().normalize())).inflate(HITBOX_INFLATE);
             List<Entity> targets = summon.level().getEntitiesOfClass(
@@ -246,7 +223,7 @@ public class Terraprisma extends SummonWeapon {
             );
             ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
             for(Entity target : targets) {
-                if(DamageUtil.summonAttack(summon, target, sourceStack, customData.contains("damage") ? customData.getFloat("damage") : getDamage(), 1.0f)) target.invulnerableTime = 15;
+                if(DamageUtil.summonAttack(summon, target, sourceStack, customData.contains("damage") ? customData.getFloat("damage") : DAMAGE.get(), 1.0f)) target.invulnerableTime = 15;
             }
         }else if(state == State.ROTATE.ordinal()) {
             int time = customData.contains("rotateTime") ? customData.getInt("rotateTime") : 0;
@@ -297,7 +274,7 @@ public class Terraprisma extends SummonWeapon {
 
             ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
             for(Entity target : targets) {
-                if(DamageUtil.summonAttack(summon, target, sourceStack, customData.contains("damage") ? customData.getFloat("damage") : getDamage(), 1.0f)) target.invulnerableTime = 15;
+                if(DamageUtil.summonAttack(summon, target, sourceStack, customData.contains("damage") ? customData.getFloat("damage") : DAMAGE.get(), 1.0f)) target.invulnerableTime = 15;
             }
 
             customData.putInt("rotateTime", time + 1);
@@ -361,7 +338,7 @@ public class Terraprisma extends SummonWeapon {
         if(to == State.DASH_PRE.ordinal()) {
             Entity target = getStoredSummonTarget(summon);
             if(target != null) {
-                summon.setDeltaMovement(target.getBoundingBox().getCenter().subtract(summon.position()).normalize().scale(getDashPreSpeed()));
+                summon.setDeltaMovement(target.getBoundingBox().getCenter().subtract(summon.position()).normalize().scale(DASH_PRE_SPEED.get()));
             }
         }else if(to == State.DASH.ordinal()) {
             Entity target = getStoredSummonTarget(summon);
@@ -369,7 +346,7 @@ public class Terraprisma extends SummonWeapon {
                 summon.setDeltaMovement(Vec3.ZERO);
                 Vec3 distV = target.getBoundingBox().getCenter().subtract(summon.position());
                 double dist = distV.length();
-                int dashTime = (int) (dist / getDashSpeed()) + DASH_MORE_TIME;
+                int dashTime = (int) (dist / DASH_SPEED.get()) + DASH_MORE_TIME;
                 if(summon.getRandom().nextInt(2) == 0) dashTime++;
                 customData.putInt("dashTime", dashTime);
             }
@@ -399,7 +376,7 @@ public class Terraprisma extends SummonWeapon {
                 double circumference = Math.PI * (a + b) * (1 + (3 * h) / (10 + Math.sqrt(4 - 3 * h)));
                 double range = 0.5 + Math.random() * 0.5;
                 double arcLength = circumference * range;
-                int duration = (int)Math.ceil(arcLength / getRotateSpeed());
+                int duration = (int)Math.ceil(arcLength / ROTATE_SPEED.get());
                 duration = Mth.clamp(duration, 8, 18);
                 double w = Math.PI * 2 * range / duration;
                 if(summon.getRandom().nextInt(2) == 0) w = -w;
@@ -451,7 +428,7 @@ public class Terraprisma extends SummonWeapon {
         Vec3 basePos = summon.getOwner().getBoundingBox().getCenter();
         Vec3 pos = basePos.add(hDir.scale(-(idx + 1) * 0.25 - 1));
         Vec3 dist = pos.subtract(summon.position());
-        double followSpeed = getFollowSpeed();
+        double followSpeed = FOLLOW_SPEED.get();
         if(dist.length() > followSpeed) {
             summon.setDeltaMovement(dist.normalize().scale(Math.min(followSpeed, dist.length())));
         }else {
@@ -493,7 +470,7 @@ public class Terraprisma extends SummonWeapon {
             summon.getEntityData().set(StaticSummon.LIFETIME, 72000);
             summon.getEntityData().set(StaticSummon.GLOW, true);
             CompoundTag summonData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA).copy();
-            summonData.putFloat("damage", getDamage());
+            summonData.putFloat("damage", DAMAGE.get());
             summon.getEntityData().set(StaticSummon.CUSTOM_DATA, summonData);
 
             summon.setNoGravity(true);

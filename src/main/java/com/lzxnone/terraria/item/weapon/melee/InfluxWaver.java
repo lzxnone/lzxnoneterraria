@@ -35,10 +35,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.*;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.joml.Vector3f;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import net.minecraft.network.chat.Component;
 
 import java.util.Comparator;
@@ -46,71 +48,53 @@ import java.util.List;
 import java.util.Locale;
 
 public class InfluxWaver extends MeleeWeapon {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String DAMAGE_PATH = "weapon.influx_waver.damage";
-    public static final float DAMAGE_DEFAULT = 12.0f;
-    public static final float DAMAGE_MIN = 0.0f;
-    public static final float DAMAGE_MAX = 8388600.0f;
-
-    public static final String MAX_COUNT_PATH = "weapon.influx_waver.max_count";
-    public static final int MAX_COUNT_DEFAULT = 2;
-    public static final int MAX_COUNT_MIN = 0;
-    public static final int MAX_COUNT_MAX = 10;
-
-    public static final String SPEED_PATH = "weapon.influx_waver.speed";
-    public static final double SPEED_DEFAULT = 1.0;
-    public static final double SPEED_MIN = 0.0;
-    public static final double SPEED_MAX = 10.0;
-
-    public static final String SPAWN_RANGE_PATH = "weapon.influx_waver.spawn_range";
-    public static final double SPAWN_RANGE_DEFAULT = 8.0;
-    public static final double SPAWN_RANGE_MIN = 1.0;
-    public static final double SPAWN_RANGE_MAX = 64.0;
-
-    public static final String TARGET_RANGE_PATH = "weapon.influx_waver.target_range";
-    public static final double TARGET_RANGE_DEFAULT = 24.0;
-    public static final double TARGET_RANGE_MIN = 1.0;
-    public static final double TARGET_RANGE_MAX = 64.0;
-
+    public static final ConfigFloat DAMAGE = new ConfigFloat(
+        "weapon.influx_waver.damage",
+        "influx_waver_damage",
+        12.0f,
+        0.0f,
+        8388600.0f
+    );
+    public static final ConfigInt MAX_COUNT = new ConfigInt(
+        "weapon.influx_waver.max_count",
+        "influx_waver_max_count",
+        2,
+        0,
+        10
+    );
+    public static final ConfigDouble SPEED = new ConfigDouble(
+        "weapon.influx_waver.speed",
+        "influx_waver_speed",
+        1.0,
+        0.0,
+        10.0
+    );
+    public static final ConfigDouble SPAWN_RANGE = new ConfigDouble(
+        "weapon.influx_waver.spawn_range",
+        "influx_waver_spawn_range",
+        8.0,
+        1.0,
+        64.0
+    );
+    public static final ConfigDouble TARGET_RANGE = new ConfigDouble(
+        "weapon.influx_waver.target_range",
+        "influx_waver_target_range",
+        24.0,
+        1.0,
+        64.0
+    );
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("influx_waver_damage"), configTooltip("influx_waver_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
-            ConfigFactory.loadIntConfig(MAX_COUNT_PATH, configText("influx_waver_max_count"), configTooltip("influx_waver_max_count"), MAX_COUNT_DEFAULT, MAX_COUNT_MIN, MAX_COUNT_MAX);
-            ConfigFactory.loadDoubleConfig(SPEED_PATH, configText("influx_waver_speed"), configTooltip("influx_waver_speed"), SPEED_DEFAULT, SPEED_MIN, SPEED_MAX);
-            ConfigFactory.loadDoubleConfig(SPAWN_RANGE_PATH, configText("influx_waver_spawn_range"), configTooltip("influx_waver_spawn_range"), SPAWN_RANGE_DEFAULT, SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
-            ConfigFactory.loadDoubleConfig(TARGET_RANGE_PATH, configText("influx_waver_target_range"), configTooltip("influx_waver_target_range"), TARGET_RANGE_DEFAULT, TARGET_RANGE_MIN, TARGET_RANGE_MAX);
+            ConfigStruct.loadAll(
+                DAMAGE,
+                MAX_COUNT,
+                SPEED,
+                SPAWN_RANGE,
+                TARGET_RANGE
+            );
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static float getDamage() {
-        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
-    }
-
-    public static int getMaxCount() {
-        return Math.clamp(ConfigUtil.readInt(MAX_COUNT_PATH, MAX_COUNT_DEFAULT), MAX_COUNT_MIN, MAX_COUNT_MAX);
-    }
-
-    public static double getSpeed() {
-        return Math.clamp(ConfigUtil.readDouble(SPEED_PATH, SPEED_DEFAULT), SPEED_MIN, SPEED_MAX);
-    }
-
-    public static double getSpawnRange() {
-        return Math.clamp(ConfigUtil.readDouble(SPAWN_RANGE_PATH, SPAWN_RANGE_DEFAULT), SPAWN_RANGE_MIN, SPAWN_RANGE_MAX);
-    }
-
-    public static double getTargetRange() {
-        return Math.clamp(ConfigUtil.readDouble(TARGET_RANGE_PATH, TARGET_RANGE_DEFAULT), TARGET_RANGE_MIN, TARGET_RANGE_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "influx_waver",
@@ -178,23 +162,23 @@ public class InfluxWaver extends MeleeWeapon {
                 checkEntity = false;
             }else {
                 if(idx == 0) {
-                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(getSpeed()));
+                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(SPEED.get()));
                 }else {
                     checkBlock = false;
                     if(customData.contains("target")) {
                         Entity target = summon.level().getEntity(customData.getInt("target"));
                         if(target == null || !target.isAlive()) {
-                            //summon.setDeltaMovement(summon.getLookAngle().normalize().scale(getSpeed()));
+                            //summon.setDeltaMovement(summon.getLookAngle().normalize().scale(SPEED.get()));
                             checkEntity = false;
                         }else {
                             //Vec3 targetPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ());
-                            //summon.setDeltaMovement(targetPos.subtract(summon.position()).normalize().scale(getSpeed()));
+                            //summon.setDeltaMovement(targetPos.subtract(summon.position()).normalize().scale(SPEED.get()));
                         }
                     }else {
-                        //summon.setDeltaMovement(summon.getLookAngle().normalize().scale(getSpeed()));
+                        //summon.setDeltaMovement(summon.getLookAngle().normalize().scale(SPEED.get()));
                         checkEntity = false;
                     }
-                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(getSpeed()));
+                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(SPEED.get()));
                 }
             }
 
@@ -224,7 +208,7 @@ public class InfluxWaver extends MeleeWeapon {
                         Entity target = customData.contains("target") ? summon.level().getEntity(customData.getInt("target")) : null;
                         if(target != null && !hitTarget.getUUID().equals(target.getUUID())) return;
                         if(summon.getOwner() instanceof Player player && FilterUtil.createTargetFilter(player).test(hitTarget)) {
-                            if(DamageUtil.meleeAttack(summon, hitTarget, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getDamage(), 1.0f)) {
+                            if(DamageUtil.meleeAttack(summon, hitTarget, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f)) {
                                 hitTarget.invulnerableTime = 2;
                             }
                             customData.putBoolean("dead", false);
@@ -240,12 +224,12 @@ public class InfluxWaver extends MeleeWeapon {
         public void onDied(StaticSummon summon) {
             if(!summon.level().isClientSide()) {
                 CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-                if(customData.contains("dead") && !customData.getBoolean("dead") && customData.contains("idx") && customData.getInt("idx") < getMaxCount()) {
+                if(customData.contains("dead") && !customData.getBoolean("dead") && customData.contains("idx") && customData.getInt("idx") < MAX_COUNT.get()) {
                     if(summon.getOwner() instanceof Player player) {
                         Entity target = InfluxWaver.search(player, summon.position());
                         if(target != null) {
                             Vec3 targetPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ());
-                            Vec3 summonPos = MathUtil.getRandomPosOnRadius(targetPos, getSpawnRange());
+                            Vec3 summonPos = MathUtil.getRandomPosOnRadius(targetPos, SPAWN_RANGE.get());
                             InfluxWaver.summon(player, summonPos, targetPos.subtract(summonPos).normalize(), target, customData.getInt("idx") + 1);
                         }
                     }
@@ -292,8 +276,8 @@ public class InfluxWaver extends MeleeWeapon {
 
     public static Entity search(Player player, Vec3 pos) {
         AABB searchBox = new AABB(
-            pos.x - getTargetRange(), pos.y - getTargetRange(), pos.z - getTargetRange(),
-            pos.x + getTargetRange(), pos.y + getTargetRange(), pos.z + getTargetRange()
+            pos.x - TARGET_RANGE.get(), pos.y - TARGET_RANGE.get(), pos.z - TARGET_RANGE.get(),
+            pos.x + TARGET_RANGE.get(), pos.y + TARGET_RANGE.get(), pos.z + TARGET_RANGE.get()
         );
         List<Entity> entities = CollisionUtil.searchEnemies(player.level(), searchBox, player, player);
         Entity target = null;

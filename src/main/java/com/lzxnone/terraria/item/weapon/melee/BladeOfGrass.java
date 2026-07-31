@@ -35,101 +35,81 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import net.minecraft.network.chat.Component;
 
 import java.util.Comparator;
 import java.util.List;
 
 public class BladeOfGrass extends MeleeWeapon {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String PROJECTILE_DAMAGE_PATH = "weapon.blade_of_grass.projectile_damage";
-    public static final float PROJECTILE_DAMAGE_DEFAULT = 2.0f;
-    public static final float PROJECTILE_DAMAGE_MIN = 0.0f;
-    public static final float PROJECTILE_DAMAGE_MAX = 8388600.0f;
-
-    public static final String EFFECT_DURATION_PATH = "weapon.blade_of_grass.effect_duration";
-    public static final int EFFECT_DURATION_DEFAULT = 140;
-    public static final int EFFECT_DURATION_MIN = 0;
-    public static final int EFFECT_DURATION_MAX = 72000;
-
-    public static final String TARGET_RANGE_PATH = "weapon.blade_of_grass.target_range";
-    public static final double TARGET_RANGE_DEFAULT = 8.0;
-    public static final double TARGET_RANGE_MIN = 1.0;
-    public static final double TARGET_RANGE_MAX = 64.0;
-
-    public static final String PROJECTILE_LIFETIME_PATH = "weapon.blade_of_grass.projectile_lifetime";
-    public static final int PROJECTILE_LIFETIME_DEFAULT = 60;
-    public static final int PROJECTILE_LIFETIME_MIN = 1;
-    public static final int PROJECTILE_LIFETIME_MAX = 600;
-
-    public static final String PROJECTILE_MAX_HIT_COUNT_PATH = "weapon.blade_of_grass.projectile_max_hit_count";
-    public static final int PROJECTILE_MAX_HIT_COUNT_DEFAULT = 2;
-    public static final int PROJECTILE_MAX_HIT_COUNT_MIN = 0;
-    public static final int PROJECTILE_MAX_HIT_COUNT_MAX = 100;
-
-    public static final String RADIUS_GROWTH_PATH = "weapon.blade_of_grass.radius_growth";
-    public static final double RADIUS_GROWTH_DEFAULT = 0.05;
-    public static final double RADIUS_GROWTH_MIN = 0.0;
-    public static final double RADIUS_GROWTH_MAX = 1.0;
-
-    public static final String ROTATION_SPEED_PATH = "weapon.blade_of_grass.rotation_speed";
-    public static final double ROTATION_SPEED_DEFAULT = 0.2;
-    public static final double ROTATION_SPEED_MIN = 0.0;
-    public static final double ROTATION_SPEED_MAX = 1.0;
-
+    public static final ConfigFloat PROJECTILE_DAMAGE = new ConfigFloat(
+        "weapon.blade_of_grass.projectile_damage",
+        "blade_of_grass_projectile_damage",
+        2.0f,
+        0.0f,
+        8388600.0f
+    );
+    public static final ConfigInt EFFECT_DURATION = new ConfigInt(
+        "weapon.blade_of_grass.effect_duration",
+        "blade_of_grass_effect_duration",
+        140,
+        0,
+        72000
+    );
+    public static final ConfigDouble TARGET_RANGE = new ConfigDouble(
+        "weapon.blade_of_grass.target_range",
+        "blade_of_grass_target_range",
+        8.0,
+        1.0,
+        64.0
+    );
+    public static final ConfigInt PROJECTILE_LIFETIME = new ConfigInt(
+        "weapon.blade_of_grass.projectile_lifetime",
+        "blade_of_grass_projectile_lifetime",
+        60,
+        1,
+        600
+    );
+    public static final ConfigInt PROJECTILE_MAX_HIT_COUNT = new ConfigInt(
+        "weapon.blade_of_grass.projectile_max_hit_count",
+        "blade_of_grass_projectile_max_hit_count",
+        2,
+        0,
+        100
+    );
+    public static final ConfigDouble RADIUS_GROWTH = new ConfigDouble(
+        "weapon.blade_of_grass.radius_growth",
+        "blade_of_grass_radius_growth",
+        0.05,
+        0.0,
+        1.0
+    );
+    public static final ConfigDouble ROTATION_SPEED = new ConfigDouble(
+        "weapon.blade_of_grass.rotation_speed",
+        "blade_of_grass_rotation_speed",
+        0.2,
+        0.0,
+        1.0
+    );
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadFloatConfig(PROJECTILE_DAMAGE_PATH, configText("blade_of_grass_projectile_damage"), configTooltip("blade_of_grass_projectile_damage"), PROJECTILE_DAMAGE_DEFAULT, PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
-            ConfigFactory.loadIntConfig(EFFECT_DURATION_PATH, configText("blade_of_grass_effect_duration"), configTooltip("blade_of_grass_effect_duration"), EFFECT_DURATION_DEFAULT, EFFECT_DURATION_MIN, EFFECT_DURATION_MAX);
-            ConfigFactory.loadDoubleConfig(TARGET_RANGE_PATH, configText("blade_of_grass_target_range"), configTooltip("blade_of_grass_target_range"), TARGET_RANGE_DEFAULT, TARGET_RANGE_MIN, TARGET_RANGE_MAX);
-            ConfigFactory.loadIntConfig(PROJECTILE_LIFETIME_PATH, configText("blade_of_grass_projectile_lifetime"), configTooltip("blade_of_grass_projectile_lifetime"), PROJECTILE_LIFETIME_DEFAULT, PROJECTILE_LIFETIME_MIN, PROJECTILE_LIFETIME_MAX);
-            ConfigFactory.loadIntConfig(PROJECTILE_MAX_HIT_COUNT_PATH, configText("blade_of_grass_projectile_max_hit_count"), configTooltip("blade_of_grass_projectile_max_hit_count"), PROJECTILE_MAX_HIT_COUNT_DEFAULT, PROJECTILE_MAX_HIT_COUNT_MIN, PROJECTILE_MAX_HIT_COUNT_MAX);
-            ConfigFactory.loadDoubleConfig(RADIUS_GROWTH_PATH, configText("blade_of_grass_radius_growth"), configTooltip("blade_of_grass_radius_growth"), RADIUS_GROWTH_DEFAULT, RADIUS_GROWTH_MIN, RADIUS_GROWTH_MAX);
-            ConfigFactory.loadDoubleConfig(ROTATION_SPEED_PATH, configText("blade_of_grass_rotation_speed"), configTooltip("blade_of_grass_rotation_speed"), ROTATION_SPEED_DEFAULT, ROTATION_SPEED_MIN, ROTATION_SPEED_MAX);
+            ConfigStruct.loadAll(
+                PROJECTILE_DAMAGE,
+                EFFECT_DURATION,
+                TARGET_RANGE,
+                PROJECTILE_LIFETIME,
+                PROJECTILE_MAX_HIT_COUNT,
+                RADIUS_GROWTH,
+                ROTATION_SPEED
+            );
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static float getProjectileDamage() {
-        return Math.clamp(ConfigUtil.readFloat(PROJECTILE_DAMAGE_PATH, PROJECTILE_DAMAGE_DEFAULT), PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
-    }
-
-    public static int getEffectDuration() {
-        return Math.clamp(ConfigUtil.readInt(EFFECT_DURATION_PATH, EFFECT_DURATION_DEFAULT), EFFECT_DURATION_MIN, EFFECT_DURATION_MAX);
-    }
-
-    public static double getTargetRange() {
-        return Math.clamp(ConfigUtil.readDouble(TARGET_RANGE_PATH, TARGET_RANGE_DEFAULT), TARGET_RANGE_MIN, TARGET_RANGE_MAX);
-    }
-
-    public static int getProjectileLifetime() {
-        return Math.clamp(ConfigUtil.readInt(PROJECTILE_LIFETIME_PATH, PROJECTILE_LIFETIME_DEFAULT), PROJECTILE_LIFETIME_MIN, PROJECTILE_LIFETIME_MAX);
-    }
-
-    public static int getProjectileMaxHitCount() {
-        return Math.clamp(ConfigUtil.readInt(PROJECTILE_MAX_HIT_COUNT_PATH, PROJECTILE_MAX_HIT_COUNT_DEFAULT), PROJECTILE_MAX_HIT_COUNT_MIN, PROJECTILE_MAX_HIT_COUNT_MAX);
-    }
-
-    public static double getRadiusGrowth() {
-        return Math.clamp(ConfigUtil.readDouble(RADIUS_GROWTH_PATH, RADIUS_GROWTH_DEFAULT), RADIUS_GROWTH_MIN, RADIUS_GROWTH_MAX);
-    }
-
-    public static double getRotationSpeed() {
-        return Math.clamp(ConfigUtil.readDouble(ROTATION_SPEED_PATH, ROTATION_SPEED_DEFAULT), ROTATION_SPEED_MIN, ROTATION_SPEED_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "blade_of_grass",
@@ -173,19 +153,19 @@ public class BladeOfGrass extends MeleeWeapon {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
-                if(!customData.contains("hitCount") || customData.getInt("hitCount") >= getProjectileMaxHitCount()) return;
+                if(!customData.contains("hitCount") || customData.getInt("hitCount") >= PROJECTILE_MAX_HIT_COUNT.get()) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) getProjectileDamage(), 1.0f)) {
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) PROJECTILE_DAMAGE.get(), 1.0f)) {
                     int count = customData.getInt("hitCount");
                     count++;
                     if(target instanceof LivingEntity livingEntity && projectile.getRandom().nextInt(4) == 0) {
                         livingEntity.addEffect(new MobEffectInstance(
                             MobEffects.POISON,
-                            getEffectDuration(),
+                            EFFECT_DURATION.get(),
                             0
                         ));
                     }
-                    if(count >= getProjectileMaxHitCount()) onDied(projectile);
+                    if(count >= PROJECTILE_MAX_HIT_COUNT.get()) onDied(projectile);
                     else customData.putInt("hitCount", count);
                 }
             }
@@ -211,7 +191,7 @@ public class BladeOfGrass extends MeleeWeapon {
         if(!level.isClientSide()) {
              List<Entity> targets = CollisionUtil.searchEnemies(
                 player.level(),
-                AABB.ofSize(player.getBoundingBox().getCenter(), getTargetRange() * 2, getTargetRange() * 2, getTargetRange() * 2),
+                AABB.ofSize(player.getBoundingBox().getCenter(), TARGET_RANGE.get() * 2, TARGET_RANGE.get() * 2, TARGET_RANGE.get() * 2),
                 player,
                 player
             );
@@ -248,9 +228,9 @@ public class BladeOfGrass extends MeleeWeapon {
             projectile.getEntityData().set(StaticProjectile.RXP, -90);
             projectile.getEntityData().set(StaticProjectile.RZP, -90);
             projectile.getEntityData().set(StaticProjectile.RYPS, 10);
-            projectile.getEntityData().set(StaticProjectile.LIFETIME, getProjectileLifetime());
-            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("(%.3f+%.3f*t)*cos(%.3f*t+%.3f)", radius, getRadiusGrowth(), getRotationSpeed(), angleRad));
-            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Y, String.format("(%.3f+%.3f*t)*sin(%.3f*t+%.3f)", radius, getRadiusGrowth(), getRotationSpeed(), angleRad));
+            projectile.getEntityData().set(StaticProjectile.LIFETIME, PROJECTILE_LIFETIME.get());
+            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("(%.3f+%.3f*t)*cos(%.3f*t+%.3f)", radius, RADIUS_GROWTH.get(), ROTATION_SPEED.get(), angleRad));
+            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Y, String.format("(%.3f+%.3f*t)*sin(%.3f*t+%.3f)", radius, RADIUS_GROWTH.get(), ROTATION_SPEED.get(), angleRad));
 
             CompoundTag customData = new CompoundTag();
             customData.putInt("hitCount", 0);

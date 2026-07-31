@@ -5,12 +5,12 @@ import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.RangedWeapon;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
@@ -32,7 +32,6 @@ public class AmmoUtil {
         summon.setOwner(player);
         summon.setPos(pos);
         summon.getEntityData().set(StaticSummon.STACK_SOURCE, stack.copy());
-        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
 
         float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
         summon.setXRot(xyRot[0]);
@@ -41,7 +40,8 @@ public class AmmoUtil {
         summon.yRotO = xyRot[1];
         summon.noPhysics = true;
 
-        String ammo = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getString(RangedWeapon.AMMO_KEY);
+        ResourceLocation ammoId = RangedWeapon.getAmmo(stack);
+        String ammo = ammoId == null ? "" : ammoId.toString();
         if(ammo.equals("lzxnoneterraria:musket_ball")) setMusketBall(summon);
         else if(ammo.equals("lzxnoneterraria:silver_bullet")) setSilverBullet(summon);
         else if(ammo.equals("lzxnoneterraria:crystal_bullet")) setCrystalBullet(summon);
@@ -58,6 +58,9 @@ public class AmmoUtil {
         else if(ammo.equals("lzxnoneterraria:luminite_bullet")) setLuminiteBullet(summon);
         else if(ammo.equals("lzxnoneterraria:tungsten_bullet")) setTungstenBullet(summon);
         else if(ammo.equals("lzxnoneterraria:meteor_shot")) setMeteorShot(summon);
+        else if(ammo.equals("minecraft:snowball")) setSnowball(summon);
+        else if(ammo.equals("lzxnoneterraria:fallen_star")) setFallenStar(summon);
+        else if(ammo.equals("minecraft:slime_ball")) setSlimeBall(summon);
         return summon;
     }
 
@@ -71,6 +74,7 @@ public class AmmoUtil {
 
     public static void setMusketBall(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.MUSKET_BALL);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.BULLET_PROJECTILE.get()));
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
@@ -81,6 +85,7 @@ public class AmmoUtil {
 
     public static void setSilverBullet(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.SILVER_BULLET);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.SILVER_BULLET_PROJECTILE.get()));
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
@@ -91,6 +96,7 @@ public class AmmoUtil {
 
     public static void setCrystalBullet(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.CRYSTAL_BULLET);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.CRYSTAL_BULLET_PROJECTILE.get()));
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
@@ -101,6 +107,7 @@ public class AmmoUtil {
 
     public static void setCursedBullet(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.CURSED_BULLET);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.CURSED_BULLET_PROJECTILE.get()));
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
@@ -111,6 +118,7 @@ public class AmmoUtil {
 
     public static void setChlorophyteBullet(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.CHLOROPHYTE_BULLET);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.CHLOROPHYTE_BULLET_PROJECTILE.get()));
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
@@ -122,6 +130,7 @@ public class AmmoUtil {
 
     public static void setHighVelocityBullet(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.HIGH_VELOCITY_BULLET);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.HIGH_VELOCITY_BULLET_PROJECTILE.get()));
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
@@ -135,6 +144,7 @@ public class AmmoUtil {
 
     public static void setIchorBullet(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.ICHOR_BULLET);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.ICHOR_BULLET_PROJECTILE.get()));
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
@@ -146,6 +156,7 @@ public class AmmoUtil {
 
     public static void setVenomBullet(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.VENOM_BULLET);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.VENOM_BULLET_PROJECTILE.get()));
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
@@ -156,6 +167,7 @@ public class AmmoUtil {
 
     public static void setPartyBullet(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.PARTY_BULLET);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.PARTY_BULLET_PROJECTILE.get()));
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
@@ -166,6 +178,7 @@ public class AmmoUtil {
 
     public static void setNanoBullet(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.NANO_BULLET);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.NANO_BULLET_PROJECTILE.get()));
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
@@ -180,6 +193,7 @@ public class AmmoUtil {
 
     public static void setExplodingBullet(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.EXPLODING_BULLET);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.EXPLODING_BULLET_PROJECTILE.get()));
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
@@ -190,6 +204,7 @@ public class AmmoUtil {
 
     public static void setGoldenBullet(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.GOLDEN_BULLET);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.GOLDEN_BULLET_PROJECTILE.get()));
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
@@ -200,6 +215,7 @@ public class AmmoUtil {
 
     public static void setLuminiteBullet(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.LUMINITE_BULLET);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.LUMINITE_BULLET_PROJECTILE.get()));
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
@@ -214,6 +230,7 @@ public class AmmoUtil {
 
     public static void setTungstenBullet(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.TUNGSTEN_BULLET);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.BULLET_PROJECTILE.get()));
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
@@ -224,6 +241,7 @@ public class AmmoUtil {
 
     public static void setMeteorShot(StaticSummon summon) {
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.METEOR_SHOT);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.METEOR_SHOT_PROJECTILE.get()));
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
         summon.getEntityData().set(StaticSummon.SCALE_X, 1.0f);
@@ -232,6 +250,30 @@ public class AmmoUtil {
         CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
         customData.putInt("hit", 0);
         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+        summon.setNoGravity(true);
+    }
+
+    public static void setSnowball(StaticSummon summon) {
+        summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.SNOWBALL);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "item");
+        summon.getEntityData().set(StaticSummon.ITEM, Items.SNOWBALL.getDefaultInstance());
+        summon.getEntityData().set(StaticSummon.LIFETIME, 100);
+        summon.setNoGravity(true);
+    }
+
+    public static void setFallenStar(StaticSummon summon) {
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
+        summon.getEntityData().set(StaticSummon.LIFETIME, 100);
+        summon.getEntityData().set(StaticSummon.SCALE_X, 0.5f);
+        summon.getEntityData().set(StaticSummon.SCALE_Y, 0.5f);
+        summon.getEntityData().set(StaticSummon.SCALE_Z, 0.5f);
+        summon.getEntityData().set(StaticSummon.GLOW, true);
+        summon.setNoGravity(true);
+    }
+
+    public static void setSlimeBall(StaticSummon summon) {
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
+        summon.getEntityData().set(StaticSummon.GLOW, true);
         summon.setNoGravity(true);
     }
 }

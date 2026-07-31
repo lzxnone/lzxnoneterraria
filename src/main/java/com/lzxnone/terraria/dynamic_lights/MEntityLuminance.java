@@ -59,7 +59,9 @@ public class MEntityLuminance implements EntityLuminance {
 					 StaticSummonBehaviors.DEVILS_DEVASTATION_MARK_LIGHTNING,
 					 StaticSummonBehaviors.LAST_PRISM_TRI,
 					 StaticSummonBehaviors.LAST_PRISM_BEAM,
-					 StaticSummonBehaviors.TERRAPRISMA -> {
+					 StaticSummonBehaviors.TERRAPRISMA,
+					 StaticSummonBehaviors.FLAMETHROWER_FLAME,
+					 StaticSummonBehaviors.ELF_MELTER_FLAME -> {
 					return 15;
 				}
 				case StaticSummonBehaviors.CHLOROPHYTE_BULLET,

@@ -1,16 +1,24 @@
 package com.lzxnone.terraria.item.ammo;
 
+import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
+
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,44 +32,26 @@ import java.util.List;
 
 public class NanoBullet extends BulletAmmo {
     public static final String ID = "nano_bullet";
-    public static final float BASE_DAMAGE_DEFAULT = 2.5f;
-    public static final double SPEED_DEFAULT = 3.0D;
-    public static final float DAMAGE_DECAY_DEFAULT = 0.67f;
-    public static final int MAX_HIT_DEFAULT = 2;
-    public static final int EFFECT_TIME_DEFAULT = 40;
+
+    public static final ConfigFloat BASE_DAMAGE = new ConfigFloat("ammo.nano_bullet.base_damage", "nano_bullet_base_damage", 2.5f, 0.0f, 8388600.0f);
+    public static final ConfigDouble SPEED = new ConfigDouble("ammo.nano_bullet.speed", "nano_bullet_speed", 3.0D, 0.0D, 24.0D);
+    public static final ConfigFloat DAMAGE_DECAY = new ConfigFloat("ammo.nano_bullet.damage_decay", "nano_bullet_damage_decay", 0.67f, 0.0f, 1.0f);
+    public static final ConfigInt MAX_HIT = new ConfigInt("ammo.nano_bullet.max_hit", "nano_bullet_max_hit", 2, 1, 100);
+    public static final ConfigInt EFFECT_TIME = new ConfigInt("ammo.nano_bullet.effect_time", "nano_bullet_effect_time", 40, 0, 72000);
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            AmmoConfig.loadFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
-            AmmoConfig.loadDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
-            AmmoConfig.loadFloat(ID, "damage_decay", DAMAGE_DECAY_DEFAULT, 0.0f, 1.0f);
-            AmmoConfig.loadInt(ID, "max_hit", MAX_HIT_DEFAULT, 1, 100);
-            AmmoConfig.loadInt(ID, "effect_time", EFFECT_TIME_DEFAULT, 0, 72000);
+            ConfigStruct.loadAll(BASE_DAMAGE, SPEED, DAMAGE_DECAY, MAX_HIT, EFFECT_TIME);
         }
     };
 
-    public static final ConfigListItem CONFIG_LIST_ITEM = AmmoConfig.createListItem(ID, CONFIG_DATA);
-
-    public static float getBaseDamage() {
-        return AmmoConfig.readFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
-    }
-
-    public static double getSpeed() {
-        return AmmoConfig.readDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
-    }
-
-    public static float getDamageDecay() {
-        return AmmoConfig.readFloat(ID, "damage_decay", DAMAGE_DECAY_DEFAULT, 0.0f, 1.0f);
-    }
-
-    public static int getMaxHit() {
-        return AmmoConfig.readInt(ID, "max_hit", MAX_HIT_DEFAULT, 1, 100);
-    }
-
-    public static int getEffectTime() {
-        return AmmoConfig.readInt(ID, "effect_time", EFFECT_TIME_DEFAULT, 0, 72000);
-    }
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        ID,
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/" + ID + ".png"),
+        Component.translatable("item.lzxnoneterraria." + ID),
+        CONFIG_DATA
+    );
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
@@ -69,7 +59,7 @@ public class NanoBullet extends BulletAmmo {
             this.checkBeforeTick(summon);
             if(summon.isRemoved()) return;
 
-            double speed = getSpeed();
+            double speed = SPEED.get();
             Vec3 motion = summon.getLookAngle().normalize().scale(speed);
             Vec3 start = summon.position();
             Vec3 end = start.add(motion);
@@ -95,10 +85,10 @@ public class NanoBullet extends BulletAmmo {
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 Entity target = targets.getFirst();
                 int hit = customData.getInt("hit");
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, hit > 0 ? (getBaseDamage() + damage) * getDamageDecay() : getBaseDamage() + damage, knockbackScale)) {
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, hit > 0 ? (BASE_DAMAGE.get() + damage) * DAMAGE_DECAY.get() : BASE_DAMAGE.get() + damage, knockbackScale)) {
                     target.invulnerableTime = invulnerableTime;
                     if(target instanceof LivingEntity livingEntity) {
-                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.CONFUSED, getEffectTime(), 0);
+                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.CONFUSED, EFFECT_TIME.get(), 0);
                         livingEntity.addEffect(effectInstance);
                     }
                     onDied(summon);
@@ -109,7 +99,7 @@ public class NanoBullet extends BulletAmmo {
             //方块检测
             BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, end);
             if(blockHitResult.getType() != HitResult.Type.MISS) {
-                if(incrementHit(summon) >= getMaxHit()) {
+                if(incrementHit(summon) >= MAX_HIT.get()) {
                     this.onDied(summon);
                     return;
                 }

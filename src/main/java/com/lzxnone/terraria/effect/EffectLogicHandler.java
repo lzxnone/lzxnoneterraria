@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.effect;
 
-import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.utils.SoundUtil;
@@ -12,10 +11,8 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 
-@EventBusSubscriber(modid = LzxnoneTerraria.MODID)
 public class EffectLogicHandler {
 
     @SubscribeEvent

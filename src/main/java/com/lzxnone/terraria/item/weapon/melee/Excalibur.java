@@ -34,58 +34,45 @@ import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import net.minecraft.network.chat.Component;
 
 public class Excalibur extends MeleeWeapon {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String ROTATE_RANGE_PATH = "weapon.excalibur.rotate_range";
-    public static final int ROTATE_RANGE_DEFAULT = 45;
-    public static final int ROTATE_RANGE_MIN = 0;
-    public static final int ROTATE_RANGE_MAX = 90;
-
-    public static final String MAX_HIT_COUNT_PATH = "weapon.excalibur.max_hit_count";
-    public static final int MAX_HIT_COUNT_DEFAULT = 3;
-    public static final int MAX_HIT_COUNT_MIN = 0;
-    public static final int MAX_HIT_COUNT_MAX = 100;
-
-    public static final String DAMAGE_PATH = "weapon.excalibur.damage";
-    public static final float DAMAGE_DEFAULT = 8.0f;
-    public static final float DAMAGE_MIN = 0.0f;
-    public static final float DAMAGE_MAX = 8388600.0f;
-
+    public static final ConfigInt ROTATE_RANGE = new ConfigInt(
+        "weapon.excalibur.rotate_range",
+        "excalibur_rotate_range",
+        45,
+        0,
+        90
+    );
+    public static final ConfigInt MAX_HIT_COUNT = new ConfigInt(
+        "weapon.excalibur.max_hit_count",
+        "excalibur_max_hit_count",
+        3,
+        0,
+        100
+    );
+    public static final ConfigFloat DAMAGE = new ConfigFloat(
+        "weapon.excalibur.damage",
+        "excalibur_damage",
+        8.0f,
+        0.0f,
+        8388600.0f
+    );
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadIntConfig(ROTATE_RANGE_PATH, configText("excalibur_rotate_range"), configTooltip("excalibur_rotate_range"), ROTATE_RANGE_DEFAULT, ROTATE_RANGE_MIN, ROTATE_RANGE_MAX);
-            ConfigFactory.loadIntConfig(MAX_HIT_COUNT_PATH, configText("excalibur_max_hit_count"), configTooltip("excalibur_max_hit_count"), MAX_HIT_COUNT_DEFAULT, MAX_HIT_COUNT_MIN, MAX_HIT_COUNT_MAX);
-            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("excalibur_damage"), configTooltip("excalibur_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
+            ConfigStruct.loadAll(
+                ROTATE_RANGE,
+                MAX_HIT_COUNT,
+                DAMAGE
+            );
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static int getRotateRange() {
-        return Math.clamp(ConfigUtil.readInt(ROTATE_RANGE_PATH, ROTATE_RANGE_DEFAULT), ROTATE_RANGE_MIN, ROTATE_RANGE_MAX);
-    }
-
-    public static int getMaxHitCount() {
-        return Math.clamp(ConfigUtil.readInt(MAX_HIT_COUNT_PATH, MAX_HIT_COUNT_DEFAULT), MAX_HIT_COUNT_MIN, MAX_HIT_COUNT_MAX);
-    }
-
-    public static float getDamage() {
-        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "excalibur",
@@ -151,8 +138,8 @@ public class Excalibur extends MeleeWeapon {
                     CompoundTag custom_data = beam.getEntityData().get(SwordBeam.CUSTOM_DATA);
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
-                        if(count < getMaxHitCount()) {
-                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) getDamage(), 1.0f)) {
+                        if(count < MAX_HIT_COUNT.get()) {
+                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) DAMAGE.get(), 1.0f)) {
                                 target.invulnerableTime = 20;
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
@@ -171,7 +158,7 @@ public class Excalibur extends MeleeWeapon {
 
         @Override
         public void generate(Entity entity, CompoundTag beamData) {
-            beamData.putInt("rotate", (int) (getRotateRange() * (Math.random() * 2 - 1)));
+            beamData.putInt("rotate", (int) (ROTATE_RANGE.get() * (Math.random() * 2 - 1)));
             ISwordBeamBehavior.super.generate(entity, beamData);
         }
     };

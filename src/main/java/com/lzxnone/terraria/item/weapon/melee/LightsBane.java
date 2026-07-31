@@ -10,10 +10,11 @@ import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.IItemWaveBehavior;
 import com.lzxnone.terraria.particle.DustParticleOptions;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
@@ -42,23 +43,27 @@ import java.util.Comparator;
 import java.util.List;
 
 public class LightsBane extends MeleeWeapon {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String BIG_DAMAGE_PATH = "weapon.lights_bane.big_damage";
-    public static final float BIG_DAMAGE_DEFAULT = 4.0f;
-    public static final float BIG_DAMAGE_MIN = 0.0f;
-    public static final float BIG_DAMAGE_MAX = 8388600.0f;
-
-    public static final String SMALL_DAMAGE_PATH = "weapon.lights_bane.small_damage";
-    public static final float SMALL_DAMAGE_DEFAULT = 2.0f;
-    public static final float SMALL_DAMAGE_MIN = 0.0f;
-    public static final float SMALL_DAMAGE_MAX = 8388600.0f;
-
-    public static final String TARGET_RANGE_PATH = "weapon.lights_bane.target_range";
-    public static final double TARGET_RANGE_DEFAULT = 2.0;
-    public static final double TARGET_RANGE_MIN = 1.0;
-    public static final double TARGET_RANGE_MAX = 64.0;
-
+    public static final ConfigFloat BIG_DAMAGE = new ConfigFloat(
+        "weapon.lights_bane.big_damage",
+        "lights_bane_big_damage",
+        4.0f,
+        0.0f,
+        8388600.0f
+    );
+    public static final ConfigFloat SMALL_DAMAGE = new ConfigFloat(
+        "weapon.lights_bane.small_damage",
+        "lights_bane_small_damage",
+        2.0f,
+        0.0f,
+        8388600.0f
+    );
+    public static final ConfigDouble TARGET_RANGE = new ConfigDouble(
+        "weapon.lights_bane.target_range",
+        "lights_bane_target_range",
+        2.0,
+        1.0,
+        64.0
+    );
     public LightsBane() {
         super(Tiers.IRON, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
@@ -74,31 +79,13 @@ public class LightsBane extends MeleeWeapon {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadFloatConfig(BIG_DAMAGE_PATH, configText("lights_bane_big_damage"), configTooltip("lights_bane_big_damage"), BIG_DAMAGE_DEFAULT, BIG_DAMAGE_MIN, BIG_DAMAGE_MAX);
-            ConfigFactory.loadFloatConfig(SMALL_DAMAGE_PATH, configText("lights_bane_small_damage"), configTooltip("lights_bane_small_damage"), SMALL_DAMAGE_DEFAULT, SMALL_DAMAGE_MIN, SMALL_DAMAGE_MAX);
-            ConfigFactory.loadDoubleConfig(TARGET_RANGE_PATH, configText("lights_bane_target_range"), configTooltip("lights_bane_target_range"), TARGET_RANGE_DEFAULT, TARGET_RANGE_MIN, TARGET_RANGE_MAX);
+            ConfigStruct.loadAll(
+                BIG_DAMAGE,
+                SMALL_DAMAGE,
+                TARGET_RANGE
+            );
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static float getBigDamage() {
-        return Math.clamp(ConfigUtil.readFloat(BIG_DAMAGE_PATH, BIG_DAMAGE_DEFAULT), BIG_DAMAGE_MIN, BIG_DAMAGE_MAX);
-    }
-
-    public static float getSmallDamage() {
-        return Math.clamp(ConfigUtil.readFloat(SMALL_DAMAGE_PATH, SMALL_DAMAGE_DEFAULT), SMALL_DAMAGE_MIN, SMALL_DAMAGE_MAX);
-    }
-
-    public static double getTargetRange() {
-        return Math.clamp(ConfigUtil.readDouble(TARGET_RANGE_PATH, TARGET_RANGE_DEFAULT), TARGET_RANGE_MIN, TARGET_RANGE_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "lights_bane",
@@ -156,7 +143,7 @@ public class LightsBane extends MeleeWeapon {
             if(!summon.level().isClientSide() && summon.getOwner() instanceof Player player) {
                 List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                 for(Entity target : targets) {
-                    float damage = customData.contains("big") && customData.getBoolean("big") ? (float) getBigDamage() : (float) getSmallDamage();
+                    float damage = customData.contains("big") && customData.getBoolean("big") ? (float) BIG_DAMAGE.get() : (float) SMALL_DAMAGE.get();
                     if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), damage, 1.0f)) {
 
                     }
@@ -177,7 +164,7 @@ public class LightsBane extends MeleeWeapon {
                     if(!player.getCooldowns().isOnCooldown(item)) {
                         Entity target = event.getTarget();
                         Vec3 pos = target.position();
-                        double targetRange = getTargetRange();
+                        double targetRange = TARGET_RANGE.get();
                         AABB searchBox = new AABB(
                             pos.x - targetRange, pos.y - targetRange, pos.z - targetRange,
                             pos.x + targetRange, pos.y + targetRange, pos.z + targetRange

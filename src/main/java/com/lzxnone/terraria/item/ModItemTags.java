@@ -7,6 +7,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
 public class ModItemTags {
+    public static final TagKey<Item> AMMO = create("ammo");
     public static final TagKey<Item> BULLET_AMMO = create("bullet_ammo");
 
     private static TagKey<Item> create(String name) {

@@ -1,14 +1,22 @@
 package com.lzxnone.terraria.item.ammo;
 
+import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
+
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,38 +30,30 @@ import java.util.List;
 
 public class IchorBullet extends BulletAmmo {
     public static final String ID = "ichor_bullet";
-    public static final float BASE_DAMAGE_DEFAULT = 2.25f;
-    public static final double SPEED_DEFAULT = 3.0D;
-    public static final int EFFECT_TIME_DEFAULT = 200;
+
+    public static final ConfigFloat BASE_DAMAGE = new ConfigFloat("ammo.ichor_bullet.base_damage", "ichor_bullet_base_damage", 2.25f, 0.0f, 8388600.0f);
+    public static final ConfigDouble SPEED = new ConfigDouble("ammo.ichor_bullet.speed", "ichor_bullet_speed", 3.0D, 0.0D, 24.0D);
+    public static final ConfigInt EFFECT_TIME = new ConfigInt("ammo.ichor_bullet.effect_time", "ichor_bullet_effect_time", 200, 0, 72000);
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            AmmoConfig.loadFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
-            AmmoConfig.loadDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
-            AmmoConfig.loadInt(ID, "effect_time", EFFECT_TIME_DEFAULT, 0, 72000);
+            ConfigStruct.loadAll(BASE_DAMAGE, SPEED, EFFECT_TIME);
         }
     };
 
-    public static final ConfigListItem CONFIG_LIST_ITEM = AmmoConfig.createListItem(ID, CONFIG_DATA);
-
-    public static float getBaseDamage() {
-        return AmmoConfig.readFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
-    }
-
-    public static double getSpeed() {
-        return AmmoConfig.readDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
-    }
-
-    public static int getEffectTime() {
-        return AmmoConfig.readInt(ID, "effect_time", EFFECT_TIME_DEFAULT, 0, 72000);
-    }
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        ID,
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/" + ID + ".png"),
+        Component.translatable("item.lzxnoneterraria." + ID),
+        CONFIG_DATA
+    );
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
-            Vec3 motion = summon.getLookAngle().normalize().scale(getSpeed());
+            Vec3 motion = summon.getLookAngle().normalize().scale(SPEED.get());
             Vec3 start = summon.position();
             Vec3 end = start.add(motion);
 
@@ -77,10 +77,10 @@ public class IchorBullet extends BulletAmmo {
 
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 Entity target = targets.getFirst();
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, getBaseDamage() + damage, knockbackScale)) {
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, BASE_DAMAGE.get() + damage, knockbackScale)) {
                     target.invulnerableTime = invulnerableTime;
                     if(target instanceof LivingEntity livingEntity) {
-                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.ICHOR, getEffectTime(), 0);
+                        MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.ICHOR, EFFECT_TIME.get(), 0);
                         livingEntity.addEffect(effectInstance);
                     }
                     this.onDied(summon);

@@ -1,11 +1,12 @@
 package com.lzxnone.terraria.client.entity.projectile;
 
-import com.lzxnone.terraria.client.item.ammo.ClientCrystalFragment;
 import com.lzxnone.terraria.client.item.melee.ClientBladeOfGrass;
 import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
 import com.lzxnone.terraria.client.item.melee.ClientMace;
 import com.lzxnone.terraria.client.item.melee.ClientMuramasa;
 import com.lzxnone.terraria.client.item.melee.ClientZenith;
+import com.lzxnone.terraria.client.item.ranged.ClientFlamethrower;
+import com.lzxnone.terraria.client.item.ranged.ClientSuperStarShooter;
 import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
 
 import java.util.HashMap;
@@ -28,7 +29,8 @@ public class ClientStaticProjectileRenderBehaviors {
         BEHAVIORS.put(StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE, ClientDevilsDevastation.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE2, ClientDevilsDevastation.PROJECTILE_BEHAVIOR2);
         BEHAVIORS.put(StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE3, ClientDevilsDevastation.PROJECTILE_BEHAVIOR3);
-        BEHAVIORS.put(StaticProjectileBehaviors.CRYSTAL_FRAGMENT, ClientCrystalFragment.PROJECTILE_BEHAVIOR);
+        BEHAVIORS.put(StaticProjectileBehaviors.CRYSTAL_FRAGMENT, DEFAULT_BEHAVIOR);
+        BEHAVIORS.put(StaticProjectileBehaviors.SUPER_STAR_PRISMATIC_BOLT, ClientSuperStarShooter.PROJECTILE_BEHAVIOR);
     }
 
     public static IStaticProjectileRenderBehavior getBehavior(String id) {

@@ -95,6 +95,13 @@ Example mod description.
     ordering="NONE"
     side="CLIENT"
 
+[[dependencies.${mod_id}]]
+    modId="curios"
+    type="required"
+    versionRange="[9.5.1,)"
+    ordering="AFTER"
+    side="BOTH"
+
 #Optional dependency for dynamic lighting
 [[dependencies.${mod_id}]]
     modId="lambdynlights"

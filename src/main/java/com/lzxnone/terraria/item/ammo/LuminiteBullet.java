@@ -1,15 +1,22 @@
 package com.lzxnone.terraria.item.ammo;
 
+import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.ParticleUtil;
+
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -17,38 +24,31 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
 import org.joml.Vector3f;
 
 import java.util.List;
 
 public class LuminiteBullet extends BulletAmmo {
     public static final String ID = "luminite_bullet";
-    public static final float BASE_DAMAGE_DEFAULT = 3.0f;
-    public static final double SPEED_DEFAULT = 3.5D;
-    public static final float DAMAGE_DECAY_DEFAULT = 0.96f;
+
+    public static final ConfigFloat BASE_DAMAGE = new ConfigFloat("ammo.luminite_bullet.base_damage", "luminite_bullet_base_damage", 3.0f, 0.0f, 8388600.0f);
+    public static final ConfigDouble SPEED = new ConfigDouble("ammo.luminite_bullet.speed", "luminite_bullet_speed", 3.5D, 0.0D, 24.0D);
+    public static final ConfigFloat DAMAGE_DECAY = new ConfigFloat("ammo.luminite_bullet.damage_decay", "luminite_bullet_damage_decay", 0.96f, 0.0f, 1.0f);
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            AmmoConfig.loadFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
-            AmmoConfig.loadDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
-            AmmoConfig.loadFloat(ID, "damage_decay", DAMAGE_DECAY_DEFAULT, 0.0f, 1.0f);
+            ConfigStruct.loadAll(BASE_DAMAGE, SPEED, DAMAGE_DECAY);
         }
     };
 
-    public static final ConfigListItem CONFIG_LIST_ITEM = AmmoConfig.createListItem(ID, CONFIG_DATA);
-
-    public static float getBaseDamage() {
-        return AmmoConfig.readFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
-    }
-
-    public static double getSpeed() {
-        return AmmoConfig.readDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
-    }
-
-    public static float getDamageDecay() {
-        return AmmoConfig.readFloat(ID, "damage_decay", DAMAGE_DECAY_DEFAULT, 0.0f, 1.0f);
-    }
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        ID,
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/" + ID + ".png"),
+        Component.translatable("item.lzxnoneterraria." + ID),
+        CONFIG_DATA
+    );
 
     public static final DustParticleOptions PARTICLE = new DustParticleOptions(
         0.025f, 0.5f, 40, true, new Vector3f[]{
@@ -61,7 +61,7 @@ public class LuminiteBullet extends BulletAmmo {
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
-            Vec3 motion = summon.getLookAngle().normalize().scale(getSpeed());
+            Vec3 motion = summon.getLookAngle().normalize().scale(SPEED.get());
             Vec3 start = summon.position();
             Vec3 end = start.add(motion);
 
@@ -87,7 +87,7 @@ public class LuminiteBullet extends BulletAmmo {
 
                 for(Entity target : targets) {
                     int hit = customData.getInt("hit");
-                    if(DamageUtil.rangedAttack(summon, target, sourceStack, (getBaseDamage() + damage) * (float) Math.pow(getDamageDecay(), hit), knockbackScale)) {
+                    if(DamageUtil.rangedAttack(summon, target, sourceStack, (BASE_DAMAGE.get() + damage) * (float) Math.pow(DAMAGE_DECAY.get(), hit), knockbackScale)) {
                         target.invulnerableTime = invulnerableTime;
                         hit++;
                         customData.putInt("hit", hit);

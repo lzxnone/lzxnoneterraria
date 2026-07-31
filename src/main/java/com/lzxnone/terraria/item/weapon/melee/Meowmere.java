@@ -9,10 +9,11 @@ import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.particle.DustParticleOptions;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.*;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -36,23 +37,27 @@ import org.joml.Vector3f;
 import java.util.List;
 
 public class Meowmere extends MeleeWeapon {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String DAMAGE_PATH = "weapon.meowmere.damage";
-    public static final float DAMAGE_DEFAULT = 20.0f;
-    public static final float DAMAGE_MIN = 0.0f;
-    public static final float DAMAGE_MAX = 8388600.0f;
-
-    public static final String GRAVITY_PATH = "weapon.meowmere.gravity";
-    public static final double GRAVITY_DEFAULT = 0.025;
-    public static final double GRAVITY_MIN = 0.0;
-    public static final double GRAVITY_MAX = 1.0;
-
-    public static final String INITIAL_SPEED_PATH = "weapon.meowmere.initial_speed";
-    public static final double INITIAL_SPEED_DEFAULT = 1.5;
-    public static final double INITIAL_SPEED_MIN = 0.0;
-    public static final double INITIAL_SPEED_MAX = 10.0;
-
+    public static final ConfigFloat DAMAGE = new ConfigFloat(
+        "weapon.meowmere.damage",
+        "meowmere_damage",
+        20.0f,
+        0.0f,
+        8388600.0f
+    );
+    public static final ConfigDouble GRAVITY = new ConfigDouble(
+        "weapon.meowmere.gravity",
+        "meowmere_gravity",
+        0.025,
+        0.0,
+        1.0
+    );
+    public static final ConfigDouble INITIAL_SPEED = new ConfigDouble(
+        "weapon.meowmere.initial_speed",
+        "meowmere_initial_speed",
+        1.5,
+        0.0,
+        10.0
+    );
     public Meowmere() {
         super(Tiers.DIAMOND, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
@@ -68,31 +73,13 @@ public class Meowmere extends MeleeWeapon {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("meowmere_damage"), configTooltip("meowmere_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
-            ConfigFactory.loadDoubleConfig(GRAVITY_PATH, configText("meowmere_gravity"), configTooltip("meowmere_gravity"), GRAVITY_DEFAULT, GRAVITY_MIN, GRAVITY_MAX);
-            ConfigFactory.loadDoubleConfig(INITIAL_SPEED_PATH, configText("meowmere_initial_speed"), configTooltip("meowmere_initial_speed"), INITIAL_SPEED_DEFAULT, INITIAL_SPEED_MIN, INITIAL_SPEED_MAX);
+            ConfigStruct.loadAll(
+                DAMAGE,
+                GRAVITY,
+                INITIAL_SPEED
+            );
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static float getDamage() {
-        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
-    }
-
-    public static double getGravity() {
-        return Math.clamp(ConfigUtil.readDouble(GRAVITY_PATH, GRAVITY_DEFAULT), GRAVITY_MIN, GRAVITY_MAX);
-    }
-
-    public static double getInitialSpeed() {
-        return Math.clamp(ConfigUtil.readDouble(INITIAL_SPEED_PATH, INITIAL_SPEED_DEFAULT), INITIAL_SPEED_MIN, INITIAL_SPEED_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "meowmere",
@@ -134,7 +121,7 @@ public class Meowmere extends MeleeWeapon {
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
             Vec3 motion = summon.getDeltaMovement();
-            motion = motion.add(0, -getGravity(), 0);
+            motion = motion.add(0, -GRAVITY.get(), 0);
             Vec3 up = MathUtil.toVec3(MathUtil.computeCoordinateSystem(motion.toVector3f(), 0)[1]).normalize();
 
             summon.trailPositions.addFirst(summon.position().add(up.scale(0.5)));
@@ -147,7 +134,7 @@ public class Meowmere extends MeleeWeapon {
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
                 if(summon.getOwner() instanceof Player player) {
-                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getDamage(), 1.0f)) {
+                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f)) {
                         if(customData.contains("hitEntity") && customData.getInt("hitEntity") < 4) {
                             customData.putInt("hitEntity", customData.getInt("hitEntity") + 1);
                             summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
@@ -200,7 +187,7 @@ public class Meowmere extends MeleeWeapon {
                                 ),
                                 FilterUtil.createLivingTargetFilter(summon.getOwner())
                             );
-                            for(LivingEntity livingEntity : hitEntities) livingEntity.hurt(summon.damageSources().playerAttack(player), (float) getDamage());
+                            for(LivingEntity livingEntity : hitEntities) livingEntity.hurt(summon.damageSources().playerAttack(player), (float) DAMAGE.get());
                         }
                     }
 
@@ -301,7 +288,7 @@ public class Meowmere extends MeleeWeapon {
             float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
             summon.setXRot(xyRot[0]);
             summon.setYRot(xyRot[1]);
-            summon.setDeltaMovement(player.getLookAngle().normalize().scale(getInitialSpeed()));
+            summon.setDeltaMovement(player.getLookAngle().normalize().scale(INITIAL_SPEED.get()));
             level.addFreshEntity(summon);
         }else {
             ParticleUtil.addParticles(

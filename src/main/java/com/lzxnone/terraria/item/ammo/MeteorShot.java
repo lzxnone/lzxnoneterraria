@@ -3,14 +3,17 @@ package com.lzxnone.terraria.item.ammo;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
+
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -25,51 +28,18 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class MeteorShot extends BulletAmmo {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
+    public static final ConfigFloat BASE_DAMAGE = new ConfigFloat("ammo.meteor_shot.base_damage", "meteor_shot_base_damage", 1.0f, 0.0f, 8388600.0f);
 
-    public static final String BASE_DAMAGE_PATH = "ammo.meteor_shot.base_damage";
-    public static final float BASE_DAMAGE_DEFAULT = 1.0f;
-    public static final float BASE_DAMAGE_MIN = 0.0f;
-    public static final float BASE_DAMAGE_MAX = 8388600.0f;
+    public static final ConfigDouble SPEED = new ConfigDouble("ammo.meteor_shot.speed", "meteor_shot_speed", 3.0D, 0.0D, 24.0D);
 
-    public static final String SPEED_PATH = "ammo.meteor_shot.speed";
-    public static final double SPEED_DEFAULT = 3.0D;
-    public static final double SPEED_MIN = 0.0D;
-    public static final double SPEED_MAX = 24.0D;
-
-    public static final String MAX_HIT_PATH = "ammo.meteor_shot.max_hit";
-    public static final int MAX_HIT_DEFAULT = 2;
-    public static final int MAX_HIT_MIN = 1;
-    public static final int MAX_HIT_MAX = 256;
+    public static final ConfigInt MAX_HIT = new ConfigInt("ammo.meteor_shot.max_hit", "meteor_shot_max_hit", 2, 1, 256);
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadFloatConfig(BASE_DAMAGE_PATH, configText("meteor_shot_base_damage"), configTooltip("meteor_shot_base_damage"), BASE_DAMAGE_DEFAULT, BASE_DAMAGE_MIN, BASE_DAMAGE_MAX);
-            ConfigFactory.loadDoubleConfig(SPEED_PATH, configText("meteor_shot_speed"), configTooltip("meteor_shot_speed"), SPEED_DEFAULT, SPEED_MIN, SPEED_MAX);
-            ConfigFactory.loadIntConfig(MAX_HIT_PATH, configText("meteor_shot_max_hit"), configTooltip("meteor_shot_max_hit"), MAX_HIT_DEFAULT, MAX_HIT_MIN, MAX_HIT_MAX);
+            ConfigStruct.loadAll(BASE_DAMAGE, SPEED, MAX_HIT);
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static float getBaseDamage() {
-        return Math.clamp(ConfigUtil.readFloat(BASE_DAMAGE_PATH, BASE_DAMAGE_DEFAULT), BASE_DAMAGE_MIN, BASE_DAMAGE_MAX);
-    }
-
-    public static double getSpeed() {
-        return Math.clamp(ConfigUtil.readDouble(SPEED_PATH, SPEED_DEFAULT), SPEED_MIN, SPEED_MAX);
-    }
-
-    public static int getMaxHit() {
-        return Math.clamp(ConfigUtil.readInt(MAX_HIT_PATH, MAX_HIT_DEFAULT), MAX_HIT_MIN, MAX_HIT_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "meteor_shot",
@@ -84,7 +54,7 @@ public class MeteorShot extends BulletAmmo {
             this.checkBeforeTick(summon);
             if(summon.isRemoved()) return;
 
-            double speed = getSpeed();
+            double speed = SPEED.get();
             Vec3 motion = summon.getLookAngle().normalize().scale(speed);
             Vec3 start = summon.position();
             Vec3 end = start.add(motion);
@@ -109,9 +79,9 @@ public class MeteorShot extends BulletAmmo {
 
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 for(Entity target : targets) {
-                    if(DamageUtil.rangedAttack(summon, target, sourceStack, (getBaseDamage() + damage), knockbackScale)) {
+                    if(DamageUtil.rangedAttack(summon, target, sourceStack, (BASE_DAMAGE.get() + damage), knockbackScale)) {
                         target.invulnerableTime = invulnerableTime;
-                        if(incrementHit(summon) >= getMaxHit()) {
+                        if(incrementHit(summon) >= MAX_HIT.get()) {
                             this.onDied(summon);
                             return;
                         }
@@ -122,7 +92,7 @@ public class MeteorShot extends BulletAmmo {
             //方块检测
             BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, end);
             if(blockHitResult.getType() != HitResult.Type.MISS) {
-                if(MeteorShot.incrementHit(summon) >= getMaxHit()) {
+                if(MeteorShot.incrementHit(summon) >= MAX_HIT.get()) {
                     this.onDied(summon);
                     return;
                 }

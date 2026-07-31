@@ -36,80 +36,64 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
 public class Mace extends MeleeWeapon {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String PROJECTILE_SPEED_PATH = "weapon.mace.projectile_speed";
-    public static final double PROJECTILE_SPEED_DEFAULT = 2.0;
-    public static final double PROJECTILE_SPEED_MIN = 0.0;
-    public static final double PROJECTILE_SPEED_MAX = 10.0;
-
-    public static final String GRAVITY_PATH = "weapon.mace.gravity";
-    public static final double GRAVITY_DEFAULT = 0.75;
-    public static final double GRAVITY_MIN = 0.0;
-    public static final double GRAVITY_MAX = 5.0;
-
-    public static final String DAMAGE_PATH = "weapon.mace.damage";
-    public static final float DAMAGE_DEFAULT = 4.0f;
-    public static final float DAMAGE_MIN = 0.0f;
-    public static final float DAMAGE_MAX = 8388600.0f;
-
-    public static final String FLY_TIME_PATH = "weapon.mace.fly_time";
-    public static final int FLY_TIME_DEFAULT = 10;
-    public static final int FLY_TIME_MIN = 1;
-    public static final int FLY_TIME_MAX = 100;
-
-    public static final String MAX_RANGE_PATH = "weapon.mace.max_range";
-    public static final double MAX_RANGE_DEFAULT = 32.0;
-    public static final double MAX_RANGE_MIN = 1.0;
-    public static final double MAX_RANGE_MAX = 512.0;
-
+    public static final ConfigDouble PROJECTILE_SPEED = new ConfigDouble(
+        "weapon.mace.projectile_speed",
+        "mace_projectile_speed",
+        2.0,
+        0.0,
+        10.0
+    );
+    public static final ConfigDouble GRAVITY = new ConfigDouble(
+        "weapon.mace.gravity",
+        "mace_gravity",
+        0.75,
+        0.0,
+        5.0
+    );
+    public static final ConfigFloat DAMAGE = new ConfigFloat(
+        "weapon.mace.damage",
+        "mace_damage",
+        4.0f,
+        0.0f,
+        8388600.0f
+    );
+    public static final ConfigInt FLY_TIME = new ConfigInt(
+        "weapon.mace.fly_time",
+        "mace_fly_time",
+        10,
+        1,
+        100
+    );
+    public static final ConfigDouble MAX_RANGE = new ConfigDouble(
+        "weapon.mace.max_range",
+        "mace_max_range",
+        32.0,
+        1.0,
+        512.0
+    );
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadDoubleConfig(PROJECTILE_SPEED_PATH, configText("mace_projectile_speed"), configTooltip("mace_projectile_speed"), PROJECTILE_SPEED_DEFAULT, PROJECTILE_SPEED_MIN, PROJECTILE_SPEED_MAX);
-            ConfigFactory.loadDoubleConfig(GRAVITY_PATH, configText("mace_gravity"), configTooltip("mace_gravity"), GRAVITY_DEFAULT, GRAVITY_MIN, GRAVITY_MAX);
-            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("mace_damage"), configTooltip("mace_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
-            ConfigFactory.loadIntConfig(FLY_TIME_PATH, configText("mace_fly_time"), configTooltip("mace_fly_time"), FLY_TIME_DEFAULT, FLY_TIME_MIN, FLY_TIME_MAX);
-            ConfigFactory.loadDoubleConfig(MAX_RANGE_PATH, configText("mace_max_range"), configTooltip("mace_max_range"), MAX_RANGE_DEFAULT, MAX_RANGE_MIN, MAX_RANGE_MAX);
+            ConfigStruct.loadAll(
+                PROJECTILE_SPEED,
+                GRAVITY,
+                DAMAGE,
+                FLY_TIME,
+                MAX_RANGE
+            );
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static double getProjectileSpeed() {
-        return Math.clamp(ConfigUtil.readDouble(PROJECTILE_SPEED_PATH, PROJECTILE_SPEED_DEFAULT), PROJECTILE_SPEED_MIN, PROJECTILE_SPEED_MAX);
-    }
-
-    public static double getGravity() {
-        return Math.clamp(ConfigUtil.readDouble(GRAVITY_PATH, GRAVITY_DEFAULT), GRAVITY_MIN, GRAVITY_MAX);
-    }
-
-    public static float getDamage() {
-        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
-    }
-
-    public static int getFlyTime() {
-        return Math.clamp(ConfigUtil.readInt(FLY_TIME_PATH, FLY_TIME_DEFAULT), FLY_TIME_MIN, FLY_TIME_MAX);
-    }
-
-    public static double getMaxRange() {
-        return Math.clamp(ConfigUtil.readDouble(MAX_RANGE_PATH, MAX_RANGE_DEFAULT), MAX_RANGE_MIN, MAX_RANGE_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "mace",
@@ -184,7 +168,7 @@ public class Mace extends MeleeWeapon {
                         FilterUtil.createTargetFilter(projectile, player)
                     );
                     for(Entity target : targets) {
-                        if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) getDamage(), 1.0f)) {
+                        if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) DAMAGE.get(), 1.0f)) {
                             target.invulnerableTime = 15;
                         }
                     }
@@ -243,7 +227,7 @@ public class Mace extends MeleeWeapon {
                 int flyTime = customData.contains("flyTime") ? customData.getInt("flyTime") : 0;
                 int age = summon.getEntityData().get(StaticSummon.AGE);
                 if(age < flyTime) {
-                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(getProjectileSpeed()));
+                    summon.setDeltaMovement(summon.getLookAngle().normalize().scale(PROJECTILE_SPEED.get()));
                     BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, summon.position().add(summon.getDeltaMovement()));
                     if(blockHitResult.getType() != HitResult.Type.MISS) {
                         summon.getEntityData().set(StaticSummon.AGE, flyTime);
@@ -260,7 +244,7 @@ public class Mace extends MeleeWeapon {
                 }else {
                     Vec3 moveDir = player.getEyePosition().subtract(summon.position());
                     double dist = moveDir.length();
-                    summon.setDeltaMovement(moveDir.normalize().scale(getProjectileSpeed()));
+                    summon.setDeltaMovement(moveDir.normalize().scale(PROJECTILE_SPEED.get()));
                     if(dist < 2.0f) {
                         onDied(summon);
                         return;
@@ -288,7 +272,7 @@ public class Mace extends MeleeWeapon {
                     }
                 }
                 double dist = summon.position().subtract(player.position()).length();
-                if(dist > getMaxRange()) {
+                if(dist > MAX_RANGE.get()) {
                     CustomData.update(DataComponents.CUSTOM_DATA, stack,
                             tag -> tag.putInt("state", State.THROWING_BACK.ordinal()));
                 }
@@ -296,16 +280,16 @@ public class Mace extends MeleeWeapon {
                     EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(summon.getDeltaMovement()), 1.0);
                     if(entityHitResult != null) {
                         Entity target = entityHitResult.getEntity();
-                        if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getDamage(), 1.0f)) {
+                        if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f)) {
                             target.invulnerableTime = 10;
                         }
                     }
                 }
             }else if(state == State.DROPPING.ordinal()) {
                 Vec3 g = new Vec3(0, -1, 0);
-                summon.setDeltaMovement(g.scale(getGravity()));
+                summon.setDeltaMovement(g.scale(GRAVITY.get()));
                 double dist = summon.position().subtract(player.position()).length();
-                if(dist > getMaxRange()) {
+                if(dist > MAX_RANGE.get()) {
                     CustomData.update(DataComponents.CUSTOM_DATA, stack,
                             tag -> tag.putInt("state", State.THROWING_BACK.ordinal()));
                 }
@@ -315,12 +299,12 @@ public class Mace extends MeleeWeapon {
                     FilterUtil.createTargetFilter(summon, summon.getOwner())
                 );
                 for(Entity target : targets) {
-                    DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getDamage(), 1.0f);
+                    DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f);
                 }
             }else if(state == State.THROWING_BACK.ordinal()){
                 Vec3 moveDir = player.getEyePosition().subtract(summon.position());
                 double dist = moveDir.length();
-                summon.setDeltaMovement(moveDir.normalize().scale(getProjectileSpeed()));
+                summon.setDeltaMovement(moveDir.normalize().scale(PROJECTILE_SPEED.get()));
                 if(!summon.noPhysics) {
                     CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
                     BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, summon.position().add(summon.getDeltaMovement()));
@@ -346,7 +330,7 @@ public class Mace extends MeleeWeapon {
                 EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(summon.getDeltaMovement()), 1.0);
                 if(entityHitResult != null) {
                     Entity target = entityHitResult.getEntity();
-                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getDamage(), 1.0f)) {
+                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f)) {
                         target.invulnerableTime = 10;
                     }
                 }
@@ -442,7 +426,7 @@ public class Mace extends MeleeWeapon {
                 summon.yRotO = xyRot[1];
 
                 CompoundTag customData = new CompoundTag();
-                customData.putInt("flyTime", getFlyTime());
+                customData.putInt("flyTime", FLY_TIME.get());
                 summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
 
                 summon.setNoGravity(true);

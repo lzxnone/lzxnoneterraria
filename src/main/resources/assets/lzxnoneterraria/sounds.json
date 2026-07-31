@@ -23,6 +23,9 @@
   "star_collide": {
     "sounds": ["lzxnoneterraria:star_collide"]
   },
+  "snow_break": {
+    "sounds": ["lzxnoneterraria:snow_break"]
+  },
   "summon_terraprisma": {
     "sounds": ["lzxnoneterraria:summon_terraprisma"]
   },
@@ -49,6 +52,9 @@
   },
   "shot8": {
     "sounds": ["lzxnoneterraria:shot8"]
+  },
+  "shot9": {
+    "sounds": ["lzxnoneterraria:shot9"]
   },
   "boom": {
     "sounds": ["lzxnoneterraria:boom"]

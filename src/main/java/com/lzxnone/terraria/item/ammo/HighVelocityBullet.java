@@ -1,13 +1,21 @@
 package com.lzxnone.terraria.item.ammo;
 
+import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
+
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
@@ -19,44 +27,31 @@ import java.util.List;
 
 public class HighVelocityBullet extends BulletAmmo {
     public static final String ID = "high_velocity_bullet";
-    public static final float BASE_DAMAGE_DEFAULT = 1.5f;
-    public static final double SPEED_DEFAULT = 4.0D;
-    public static final float DAMAGE_DECAY_DEFAULT = 0.85f;
-    public static final int MAX_HIT_DEFAULT = 3;
+
+    public static final ConfigFloat BASE_DAMAGE = new ConfigFloat("ammo.high_velocity_bullet.base_damage", "high_velocity_bullet_base_damage", 1.5f, 0.0f, 8388600.0f);
+    public static final ConfigDouble SPEED = new ConfigDouble("ammo.high_velocity_bullet.speed", "high_velocity_bullet_speed", 4.0D, 0.0D, 24.0D);
+    public static final ConfigFloat DAMAGE_DECAY = new ConfigFloat("ammo.high_velocity_bullet.damage_decay", "high_velocity_bullet_damage_decay", 0.85f, 0.0f, 1.0f);
+    public static final ConfigInt MAX_HIT = new ConfigInt("ammo.high_velocity_bullet.max_hit", "high_velocity_bullet_max_hit", 3, 1, 100);
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            AmmoConfig.loadFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
-            AmmoConfig.loadDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
-            AmmoConfig.loadFloat(ID, "damage_decay", DAMAGE_DECAY_DEFAULT, 0.0f, 1.0f);
-            AmmoConfig.loadInt(ID, "max_hit", MAX_HIT_DEFAULT, 1, 100);
+            ConfigStruct.loadAll(BASE_DAMAGE, SPEED, DAMAGE_DECAY, MAX_HIT);
         }
     };
 
-    public static final ConfigListItem CONFIG_LIST_ITEM = AmmoConfig.createListItem(ID, CONFIG_DATA);
-
-    public static float getBaseDamage() {
-        return AmmoConfig.readFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
-    }
-
-    public static double getSpeed() {
-        return AmmoConfig.readDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
-    }
-
-    public static float getDamageDecay() {
-        return AmmoConfig.readFloat(ID, "damage_decay", DAMAGE_DECAY_DEFAULT, 0.0f, 1.0f);
-    }
-
-    public static int getMaxHit() {
-        return AmmoConfig.readInt(ID, "max_hit", MAX_HIT_DEFAULT, 1, 100);
-    }
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        ID,
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/" + ID + ".png"),
+        Component.translatable("item.lzxnoneterraria." + ID),
+        CONFIG_DATA
+    );
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
-            Vec3 motion = summon.getLookAngle().normalize().scale(getSpeed());
+            Vec3 motion = summon.getLookAngle().normalize().scale(SPEED.get());
             Vec3 start = summon.position();
             Vec3 end = start.add(motion);
 
@@ -82,9 +77,9 @@ public class HighVelocityBullet extends BulletAmmo {
 
                 for(Entity target : targets) {
                     int hit = customData.getInt("hit");
-                    if(DamageUtil.rangedAttack(summon, target, sourceStack, (getBaseDamage() + damage) * (float) Math.pow(getDamageDecay(), hit), knockbackScale)) {
+                    if(DamageUtil.rangedAttack(summon, target, sourceStack, (BASE_DAMAGE.get() + damage) * (float) Math.pow(DAMAGE_DECAY.get(), hit), knockbackScale)) {
                         target.invulnerableTime = invulnerableTime;
-                        if(incrementHit(summon) >= getMaxHit()) {
+                        if(incrementHit(summon) >= MAX_HIT.get()) {
                             this.onDied(summon);
                             return;
                         }

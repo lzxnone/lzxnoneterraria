@@ -38,128 +38,103 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigBoolean;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
 public class NightsEdge extends MeleeWeapon {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String PROJECTILE_ALIGN_TO_BLADE_PATH = "weapon.nights_edge.projectile_align_to_blade";
-    public static final boolean PROJECTILE_ALIGN_TO_BLADE_DEFAULT = true;
-
-    public static final String ROTATE_RANGE_PATH = "weapon.nights_edge.rotate_range";
-    public static final int ROTATE_RANGE_DEFAULT = 45;
-    public static final int ROTATE_RANGE_MIN = 0;
-    public static final int ROTATE_RANGE_MAX = 90;
-
-    public static final String PROJECTILE_ROTATE_RANGE_PATH = "weapon.nights_edge.projectile_rotate_range";
-    public static final int PROJECTILE_ROTATE_RANGE_DEFAULT = 40;
-    public static final int PROJECTILE_ROTATE_RANGE_MIN = 0;
-    public static final int PROJECTILE_ROTATE_RANGE_MAX = 90;
-
-    public static final String MAX_HIT_COUNT_PATH = "weapon.nights_edge.max_hit_count";
-    public static final int MAX_HIT_COUNT_DEFAULT = 2;
-    public static final int MAX_HIT_COUNT_MIN = 0;
-    public static final int MAX_HIT_COUNT_MAX = 100;
-
-    public static final String PROJECTILE_MAX_HIT_COUNT_PATH = "weapon.nights_edge.projectile_max_hit_count";
-    public static final int PROJECTILE_MAX_HIT_COUNT_DEFAULT = 2;
-    public static final int PROJECTILE_MAX_HIT_COUNT_MIN = 0;
-    public static final int PROJECTILE_MAX_HIT_COUNT_MAX = 100;
-
-    public static final String DAMAGE_PATH = "weapon.nights_edge.damage";
-    public static final float DAMAGE_DEFAULT = 7.0f;
-    public static final float DAMAGE_MIN = 0.0f;
-    public static final float DAMAGE_MAX = 8388600.0f;
-
-    public static final String PROJECTILE_DAMAGE_PATH = "weapon.nights_edge.projectile_damage";
-    public static final float PROJECTILE_DAMAGE_DEFAULT = 7.0f;
-    public static final float PROJECTILE_DAMAGE_MIN = 0.0f;
-    public static final float PROJECTILE_DAMAGE_MAX = 8388600.0f;
-
-    public static final String PROJECTILE_SPEED_PATH = "weapon.nights_edge.projectile_speed";
-    public static final double PROJECTILE_SPEED_DEFAULT = 0.25;
-    public static final double PROJECTILE_SPEED_MIN = 0.0;
-    public static final double PROJECTILE_SPEED_MAX = 10.0;
-
-    public static final String PROJECTILE_LIFETIME_PATH = "weapon.nights_edge.projectile_lifetime";
-    public static final int PROJECTILE_LIFETIME_DEFAULT = 10;
-    public static final int PROJECTILE_LIFETIME_MIN = 1;
-    public static final int PROJECTILE_LIFETIME_MAX = 1200;
-
-    public static final String PROJECTILE_ROTATION_SPEED_PATH = "weapon.nights_edge.projectile_rotation_speed";
-    public static final int PROJECTILE_ROTATION_SPEED_DEFAULT = 36;
-    public static final int PROJECTILE_ROTATION_SPEED_MIN = 0;
-    public static final int PROJECTILE_ROTATION_SPEED_MAX = 360;
-
+    public static final ConfigBoolean PROJECTILE_ALIGN_TO_BLADE = new ConfigBoolean(
+        "weapon.nights_edge.projectile_align_to_blade",
+        "nights_edge_projectile_align_to_blade",
+        true
+    );
+    public static final ConfigInt ROTATE_RANGE = new ConfigInt(
+        "weapon.nights_edge.rotate_range",
+        "nights_edge_rotate_range",
+        45,
+        0,
+        90
+    );
+    public static final ConfigInt PROJECTILE_ROTATE_RANGE = new ConfigInt(
+        "weapon.nights_edge.projectile_rotate_range",
+        "nights_edge_projectile_rotate_range",
+        40,
+        0,
+        90
+    );
+    public static final ConfigInt MAX_HIT_COUNT = new ConfigInt(
+        "weapon.nights_edge.max_hit_count",
+        "nights_edge_max_hit_count",
+        2,
+        0,
+        100
+    );
+    public static final ConfigInt PROJECTILE_MAX_HIT_COUNT = new ConfigInt(
+        "weapon.nights_edge.projectile_max_hit_count",
+        "nights_edge_projectile_max_hit_count",
+        2,
+        0,
+        100
+    );
+    public static final ConfigFloat DAMAGE = new ConfigFloat(
+        "weapon.nights_edge.damage",
+        "nights_edge_damage",
+        7.0f,
+        0.0f,
+        8388600.0f
+    );
+    public static final ConfigFloat PROJECTILE_DAMAGE = new ConfigFloat(
+        "weapon.nights_edge.projectile_damage",
+        "nights_edge_projectile_damage",
+        7.0f,
+        0.0f,
+        8388600.0f
+    );
+    public static final ConfigDouble PROJECTILE_SPEED = new ConfigDouble(
+        "weapon.nights_edge.projectile_speed",
+        "nights_edge_projectile_speed",
+        0.25,
+        0.0,
+        10.0
+    );
+    public static final ConfigInt PROJECTILE_LIFETIME = new ConfigInt(
+        "weapon.nights_edge.projectile_lifetime",
+        "nights_edge_projectile_lifetime",
+        10,
+        1,
+        1200
+    );
+    public static final ConfigInt PROJECTILE_ROTATION_SPEED = new ConfigInt(
+        "weapon.nights_edge.projectile_rotation_speed",
+        "nights_edge_projectile_rotation_speed",
+        36,
+        0,
+        360
+    );
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadBooleanConfig(PROJECTILE_ALIGN_TO_BLADE_PATH, configText("nights_edge_projectile_align_to_blade"), configTooltip("nights_edge_projectile_align_to_blade"), PROJECTILE_ALIGN_TO_BLADE_DEFAULT);
-            ConfigFactory.loadIntConfig(ROTATE_RANGE_PATH, configText("nights_edge_rotate_range"), configTooltip("nights_edge_rotate_range"), ROTATE_RANGE_DEFAULT, ROTATE_RANGE_MIN, ROTATE_RANGE_MAX);
-            ConfigFactory.loadIntConfig(PROJECTILE_ROTATE_RANGE_PATH, configText("nights_edge_projectile_rotate_range"), configTooltip("nights_edge_projectile_rotate_range"), PROJECTILE_ROTATE_RANGE_DEFAULT, PROJECTILE_ROTATE_RANGE_MIN, PROJECTILE_ROTATE_RANGE_MAX);
-            ConfigFactory.loadIntConfig(MAX_HIT_COUNT_PATH, configText("nights_edge_max_hit_count"), configTooltip("nights_edge_max_hit_count"), MAX_HIT_COUNT_DEFAULT, MAX_HIT_COUNT_MIN, MAX_HIT_COUNT_MAX);
-            ConfigFactory.loadIntConfig(PROJECTILE_MAX_HIT_COUNT_PATH, configText("nights_edge_projectile_max_hit_count"), configTooltip("nights_edge_projectile_max_hit_count"), PROJECTILE_MAX_HIT_COUNT_DEFAULT, PROJECTILE_MAX_HIT_COUNT_MIN, PROJECTILE_MAX_HIT_COUNT_MAX);
-            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("nights_edge_damage"), configTooltip("nights_edge_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
-            ConfigFactory.loadFloatConfig(PROJECTILE_DAMAGE_PATH, configText("nights_edge_projectile_damage"), configTooltip("nights_edge_projectile_damage"), PROJECTILE_DAMAGE_DEFAULT, PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
-            ConfigFactory.loadDoubleConfig(PROJECTILE_SPEED_PATH, configText("nights_edge_projectile_speed"), configTooltip("nights_edge_projectile_speed"), PROJECTILE_SPEED_DEFAULT, PROJECTILE_SPEED_MIN, PROJECTILE_SPEED_MAX);
-            ConfigFactory.loadIntConfig(PROJECTILE_LIFETIME_PATH, configText("nights_edge_projectile_lifetime"), configTooltip("nights_edge_projectile_lifetime"), PROJECTILE_LIFETIME_DEFAULT, PROJECTILE_LIFETIME_MIN, PROJECTILE_LIFETIME_MAX);
-            ConfigFactory.loadIntConfig(PROJECTILE_ROTATION_SPEED_PATH, configText("nights_edge_projectile_rotation_speed"), configTooltip("nights_edge_projectile_rotation_speed"), PROJECTILE_ROTATION_SPEED_DEFAULT, PROJECTILE_ROTATION_SPEED_MIN, PROJECTILE_ROTATION_SPEED_MAX);
+            ConfigStruct.loadAll(
+                PROJECTILE_ALIGN_TO_BLADE,
+                ROTATE_RANGE,
+                PROJECTILE_ROTATE_RANGE,
+                MAX_HIT_COUNT,
+                PROJECTILE_MAX_HIT_COUNT,
+                DAMAGE,
+                PROJECTILE_DAMAGE,
+                PROJECTILE_SPEED,
+                PROJECTILE_LIFETIME,
+                PROJECTILE_ROTATION_SPEED
+            );
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static boolean isProjectileAlignToBlade() {
-        return ConfigUtil.readBoolean(PROJECTILE_ALIGN_TO_BLADE_PATH, PROJECTILE_ALIGN_TO_BLADE_DEFAULT);
-    }
-
-    public static int getRotateRange() {
-        return Math.clamp(ConfigUtil.readInt(ROTATE_RANGE_PATH, ROTATE_RANGE_DEFAULT), ROTATE_RANGE_MIN, ROTATE_RANGE_MAX);
-    }
-
-    public static int getProjectileRotateRange() {
-        return Math.clamp(ConfigUtil.readInt(PROJECTILE_ROTATE_RANGE_PATH, PROJECTILE_ROTATE_RANGE_DEFAULT), PROJECTILE_ROTATE_RANGE_MIN, PROJECTILE_ROTATE_RANGE_MAX);
-    }
-
-    public static int getMaxHitCount() {
-        return Math.clamp(ConfigUtil.readInt(MAX_HIT_COUNT_PATH, MAX_HIT_COUNT_DEFAULT), MAX_HIT_COUNT_MIN, MAX_HIT_COUNT_MAX);
-    }
-
-    public static int getProjectileMaxHitCount() {
-        return Math.clamp(ConfigUtil.readInt(PROJECTILE_MAX_HIT_COUNT_PATH, PROJECTILE_MAX_HIT_COUNT_DEFAULT), PROJECTILE_MAX_HIT_COUNT_MIN, PROJECTILE_MAX_HIT_COUNT_MAX);
-    }
-
-    public static float getDamage() {
-        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
-    }
-
-    public static float getProjectileDamage() {
-        return Math.clamp(ConfigUtil.readFloat(PROJECTILE_DAMAGE_PATH, PROJECTILE_DAMAGE_DEFAULT), PROJECTILE_DAMAGE_MIN, PROJECTILE_DAMAGE_MAX);
-    }
-
-    public static double getProjectileSpeed() {
-        return Math.clamp(ConfigUtil.readDouble(PROJECTILE_SPEED_PATH, PROJECTILE_SPEED_DEFAULT), PROJECTILE_SPEED_MIN, PROJECTILE_SPEED_MAX);
-    }
-
-    public static int getProjectileLifetime() {
-        return Math.clamp(ConfigUtil.readInt(PROJECTILE_LIFETIME_PATH, PROJECTILE_LIFETIME_DEFAULT), PROJECTILE_LIFETIME_MIN, PROJECTILE_LIFETIME_MAX);
-    }
-
-    public static int getProjectileRotationSpeed() {
-        return Math.clamp(ConfigUtil.readInt(PROJECTILE_ROTATION_SPEED_PATH, PROJECTILE_ROTATION_SPEED_DEFAULT), PROJECTILE_ROTATION_SPEED_MIN, PROJECTILE_ROTATION_SPEED_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "nights_edge",
@@ -226,8 +201,8 @@ public class NightsEdge extends MeleeWeapon {
                     CompoundTag custom_data = beam.getEntityData().get(SwordBeam.CUSTOM_DATA);
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
-                        if(count < getMaxHitCount()) {
-                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) getDamage(), 1.0f)) {
+                        if(count < MAX_HIT_COUNT.get()) {
+                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) DAMAGE.get(), 1.0f)) {
                                 ParticleUtil.addParticles(
                                     (ServerLevel) target.level(), ModParticles.NIGHTS_EDGE_HIT_PARTICLE.get(),
                                     new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2.0, target.getZ()), new Vec3(0, 0, 0),
@@ -246,7 +221,7 @@ public class NightsEdge extends MeleeWeapon {
 
         @Override
         public void generate(Entity entity, CompoundTag beamData) {
-            int randomAngle = (int) (getRotateRange() * (Math.random() * 2 - 1));
+            int randomAngle = (int) (ROTATE_RANGE.get() * (Math.random() * 2 - 1));
             beamData.putInt("rotate", randomAngle);
             ISwordBeamBehavior.super.generate(entity, beamData);
             if(entity instanceof Player player) summon(player, randomAngle);
@@ -281,11 +256,11 @@ public class NightsEdge extends MeleeWeapon {
             //碰撞计算
             if(!summon.level().isClientSide() && customData.contains("hitCount") && summon.getOwner() instanceof Player player) {
                 int count = customData.getInt("hitCount");
-                if(count < getProjectileMaxHitCount()) {
+                if(count < PROJECTILE_MAX_HIT_COUNT.get()) {
                     List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                     for(Entity target : targets) {
-                        if(count >= getProjectileMaxHitCount()) break;
-                        if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getProjectileDamage(), 1.0f)) {
+                        if(count >= PROJECTILE_MAX_HIT_COUNT.get()) break;
+                        if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PROJECTILE_DAMAGE.get(), 1.0f)) {
                             count++;
                             ParticleUtil.addParticles(
                                 (ServerLevel) target.level(), ModParticles.NIGHTS_EDGE_HIT_PARTICLE.get(),
@@ -297,7 +272,7 @@ public class NightsEdge extends MeleeWeapon {
                     }
                     if(!targets.isEmpty()) customData.putInt("hitCount", count);
                 }
-                if(count >= getProjectileMaxHitCount()) this.onDied(summon);
+                if(count >= PROJECTILE_MAX_HIT_COUNT.get()) this.onDied(summon);
             }
 
             ClipContext context = new ClipContext(
@@ -330,7 +305,7 @@ public class NightsEdge extends MeleeWeapon {
         Vec3 pos = new Vec3(player.getX(), player.getEyeY() - 0.1, player.getZ());
         summon.setPos(pos);
 
-        if(!isProjectileAlignToBlade()) randomAngle = (int) (getProjectileRotateRange() * (Math.random() * 2 - 1));
+        if(!PROJECTILE_ALIGN_TO_BLADE.get()) randomAngle = (int) (PROJECTILE_ROTATE_RANGE.get() * (Math.random() * 2 - 1));
 
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
         dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], randomAngle);
@@ -342,9 +317,9 @@ public class NightsEdge extends MeleeWeapon {
 
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.NIGHTS_EDGE_BEAM);
         summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-        summon.getEntityData().set(StaticSummon.LIFETIME, getProjectileLifetime());
+        summon.getEntityData().set(StaticSummon.LIFETIME, PROJECTILE_LIFETIME.get());
         summon.getEntityData().set(StaticSummon.RZP, randomAngle);
-        summon.getEntityData().set(StaticSummon.RZPS, getProjectileRotationSpeed());
+        summon.getEntityData().set(StaticSummon.RZPS, PROJECTILE_ROTATION_SPEED.get());
         summon.getEntityData().set(StaticSummon.GLOW, true);
         summon.setNoGravity(true);
         summon.noPhysics = true;
@@ -381,7 +356,7 @@ public class NightsEdge extends MeleeWeapon {
         customData.putFloat("rightZ", dirs[2].z);
         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
 
-        summon.setDeltaMovement(player.getLookAngle().normalize().scale(getProjectileSpeed()));
+        summon.setDeltaMovement(player.getLookAngle().normalize().scale(PROJECTILE_SPEED.get()));
 
         player.level().addFreshEntity(summon);
     }

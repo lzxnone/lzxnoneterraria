@@ -20,6 +20,11 @@
     "lzxnoneterraria:tactical_shotgun",
     "lzxnoneterraria:sniper_rifle",
     "lzxnoneterraria:chain_gun",
-    "lzxnoneterraria:sdmg"
+    "lzxnoneterraria:sdmg",
+    "lzxnoneterraria:snowball_cannon",
+    "lzxnoneterraria:star_cannon",
+    "lzxnoneterraria:super_star_shooter",
+    "lzxnoneterraria:flamethrower",
+    "lzxnoneterraria:elf_melter"
   ]
 }

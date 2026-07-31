@@ -29,38 +29,28 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.joml.Vector3f;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import net.minecraft.network.chat.Component;
 
 public class Muramasa extends MeleeWeapon {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String BEAM_DAMAGE_PATH = "weapon.muramasa.beam_damage";
-    public static final float BEAM_DAMAGE_DEFAULT = 2.5f;
-    public static final float BEAM_DAMAGE_MIN = 0.0f;
-    public static final float BEAM_DAMAGE_MAX = 8388600.0f;
-
+    public static final ConfigFloat BEAM_DAMAGE = new ConfigFloat(
+        "weapon.muramasa.beam_damage",
+        "muramasa_beam_damage",
+        2.5f,
+        0.0f,
+        8388600.0f
+    );
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadFloatConfig(BEAM_DAMAGE_PATH, configText("muramasa_beam_damage"), configTooltip("muramasa_beam_damage"), BEAM_DAMAGE_DEFAULT, BEAM_DAMAGE_MIN, BEAM_DAMAGE_MAX);
+            ConfigStruct.loadAll(
+                BEAM_DAMAGE
+            );
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static float getBeamDamage() {
-        return Math.clamp(ConfigUtil.readFloat(BEAM_DAMAGE_PATH, BEAM_DAMAGE_DEFAULT), BEAM_DAMAGE_MIN, BEAM_DAMAGE_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "muramasa",
@@ -206,7 +196,7 @@ public class Muramasa extends MeleeWeapon {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) getBeamDamage(), 1.0f)) {
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) BEAM_DAMAGE.get(), 1.0f)) {
 
                 }
             }

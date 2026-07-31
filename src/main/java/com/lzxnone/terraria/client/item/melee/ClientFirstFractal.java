@@ -29,7 +29,7 @@ public class ClientFirstFractal {
     public static final IStaticSummonRenderBehavior SUMMON_BEHAVIOR = new IStaticSummonRenderBehavior() {
 
         public static final ResourceLocation RES = ResourceLocation.parse("lzxnoneterraria:textures/vfx/beam_sparkle.png");
-        public static final ResourceLocation RES2 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/first_fractal_star.png");
+        public static final ResourceLocation RES2 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/star_wave.png");
 
         @Override
         public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {

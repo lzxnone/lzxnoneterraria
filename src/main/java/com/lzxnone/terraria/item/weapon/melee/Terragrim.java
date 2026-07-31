@@ -7,10 +7,12 @@ import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
-import com.lzxnone.terraria.ui.config.ConfigFactory;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
-import com.lzxnone.terraria.ui.config.ConfigUtil;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
@@ -42,23 +44,27 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 
 public class Terragrim extends MeleeWeapon {
-    private static final String CONFIG_TRANSLATION_PREFIX = "lzxnoneterraria.configuration.";
-
-    public static final String HIT_RANGE_PATH = "weapon.terragrim.hit_range";
-    public static final double HIT_RANGE_DEFAULT = 2.5;
-    public static final double HIT_RANGE_MIN = 0.5;
-    public static final double HIT_RANGE_MAX = 10.0;
-
-    public static final String DAMAGE_PATH = "weapon.terragrim.damage";
-    public static final float DAMAGE_DEFAULT = 0.25f;
-    public static final float DAMAGE_MIN = 0.0f;
-    public static final float DAMAGE_MAX = 8388600.0f;
-
-    public static final String ROTATE_RANGE_PATH = "weapon.terragrim.rotate_range";
-    public static final int ROTATE_RANGE_DEFAULT = 45;
-    public static final int ROTATE_RANGE_MIN = 0;
-    public static final int ROTATE_RANGE_MAX = 90;
-
+    public static final ConfigDouble HIT_RANGE = new ConfigDouble(
+        "weapon.terragrim.hit_range",
+        "terragrim_hit_range",
+        2.5,
+        0.5,
+        10.0
+    );
+    public static final ConfigFloat DAMAGE = new ConfigFloat(
+        "weapon.terragrim.damage",
+        "terragrim_damage",
+        0.25f,
+        0.0f,
+        8388600.0f
+    );
+    public static final ConfigInt ROTATE_RANGE = new ConfigInt(
+        "weapon.terragrim.rotate_range",
+        "terragrim_rotate_range",
+        45,
+        0,
+        90
+    );
     public Terragrim() {
         super(Tiers.DIAMOND, new Item.Properties().attributes(ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE,
@@ -74,31 +80,13 @@ public class Terragrim extends MeleeWeapon {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigFactory.loadDoubleConfig(HIT_RANGE_PATH, configText("terragrim_hit_range"), configTooltip("terragrim_hit_range"), HIT_RANGE_DEFAULT, HIT_RANGE_MIN, HIT_RANGE_MAX);
-            ConfigFactory.loadFloatConfig(DAMAGE_PATH, configText("terragrim_damage"), configTooltip("terragrim_damage"), DAMAGE_DEFAULT, DAMAGE_MIN, DAMAGE_MAX);
-            ConfigFactory.loadIntConfig(ROTATE_RANGE_PATH, configText("terragrim_rotate_range"), configTooltip("terragrim_rotate_range"), ROTATE_RANGE_DEFAULT, ROTATE_RANGE_MIN, ROTATE_RANGE_MAX);
+            ConfigStruct.loadAll(
+                HIT_RANGE,
+                DAMAGE,
+                ROTATE_RANGE
+            );
         }
     };
-
-    private static Component configText(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key);
-    }
-
-    private static Component configTooltip(String key) {
-        return Component.translatable(CONFIG_TRANSLATION_PREFIX + key + ".tooltip");
-    }
-
-    public static double getHitRange() {
-        return Math.clamp(ConfigUtil.readDouble(HIT_RANGE_PATH, HIT_RANGE_DEFAULT), HIT_RANGE_MIN, HIT_RANGE_MAX);
-    }
-
-    public static float getDamage() {
-        return Math.clamp(ConfigUtil.readFloat(DAMAGE_PATH, DAMAGE_DEFAULT), DAMAGE_MIN, DAMAGE_MAX);
-    }
-
-    public static int getRotateRange() {
-        return Math.clamp(ConfigUtil.readInt(ROTATE_RANGE_PATH, ROTATE_RANGE_DEFAULT), ROTATE_RANGE_MIN, ROTATE_RANGE_MAX);
-    }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "terragrim",
@@ -150,7 +138,7 @@ public class Terragrim extends MeleeWeapon {
             if(summon.getOwner() != null) {
                 summon.setPos(summon.getOwner().getX(), summon.getOwner().getY() + summon.getOwner().getBbHeight() * 0.5, summon.getOwner().getZ());
             }
-            double hitRange = getHitRange();
+            double hitRange = HIT_RANGE.get();
             summon.setBoundingBox(new AABB(
                 summon.getX() - hitRange, summon.getY() - hitRange, summon.getZ() - hitRange,
                 summon.getX() + hitRange, summon.getY() + hitRange, summon.getZ() + hitRange
@@ -164,7 +152,7 @@ public class Terragrim extends MeleeWeapon {
                     );
                     for(Entity target : targets) {
                         if(target instanceof LivingEntity livingEntity) {
-                            if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) getDamage(), 0.05f)) target.invulnerableTime = 0;
+                            if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 0.05f)) target.invulnerableTime = 0;
                         }
                     }
                 }
@@ -194,7 +182,7 @@ public class Terragrim extends MeleeWeapon {
             summon.setPos(pos);
             summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.TERRAGRIM_BEAM);
             summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-            summon.getEntityData().set(StaticSummon.RZP, (int) ((Math.random() * 2 - 1) * getRotateRange()));
+            summon.getEntityData().set(StaticSummon.RZP, (int) ((Math.random() * 2 - 1) * ROTATE_RANGE.get()));
             summon.getEntityData().set(StaticSummon.LIFETIME, 1);
             summon.getEntityData().set(StaticSummon.GLOW, true);
 

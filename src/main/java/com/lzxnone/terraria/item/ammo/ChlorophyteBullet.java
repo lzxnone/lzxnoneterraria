@@ -1,13 +1,19 @@
 package com.lzxnone.terraria.item.ammo;
 
+import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.particle.DustParticleOptions;
-import com.lzxnone.terraria.particle.ModParticles;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.*;
+
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -16,15 +22,13 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
 import org.joml.Vector3f;
 
 import java.util.List;
 
 public class ChlorophyteBullet extends BulletAmmo {
     public static final String ID = "chlorophyte_bullet";
-    public static final float BASE_DAMAGE_DEFAULT = 1.5f;
-    public static final double SPEED_DEFAULT = 3.0D;
-    public static final double TARGET_RANGE_DEFAULT = 24.0D;
 
     public static final double AVOID_CHECK_DISTANCE = 3.0D;
     public static final double TURN_RATE = 0.35D;
@@ -33,28 +37,23 @@ public class ChlorophyteBullet extends BulletAmmo {
     public static final double TARGET_WEIGHT = 1.0D;
     public static final double AVOID_WEIGHT = 0.8D;
 
+    public static final ConfigFloat BASE_DAMAGE = new ConfigFloat("ammo.chlorophyte_bullet.base_damage", "chlorophyte_bullet_base_damage", 1.5f, 0.0f, 8388600.0f);
+    public static final ConfigDouble SPEED = new ConfigDouble("ammo.chlorophyte_bullet.speed", "chlorophyte_bullet_speed", 3.0D, 0.0D, 24.0D);
+    public static final ConfigDouble TARGET_RANGE = new ConfigDouble("ammo.chlorophyte_bullet.target_range", "chlorophyte_bullet_target_range", 24.0D, 0.0D, 128.0D);
+
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            AmmoConfig.loadFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
-            AmmoConfig.loadDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
-            AmmoConfig.loadDouble(ID, "target_range", TARGET_RANGE_DEFAULT, 0.0D, 128.0D);
+            ConfigStruct.loadAll(BASE_DAMAGE, SPEED, TARGET_RANGE);
         }
     };
 
-    public static final ConfigListItem CONFIG_LIST_ITEM = AmmoConfig.createListItem(ID, CONFIG_DATA);
-
-    public static float getBaseDamage() {
-        return AmmoConfig.readFloat(ID, "base_damage", BASE_DAMAGE_DEFAULT, 0.0f, 8388600.0f);
-    }
-
-    public static double getSpeed() {
-        return AmmoConfig.readDouble(ID, "speed", SPEED_DEFAULT, 0.0D, 24.0D);
-    }
-
-    public static double getTargetRange() {
-        return AmmoConfig.readDouble(ID, "target_range", TARGET_RANGE_DEFAULT, 0.0D, 128.0D);
-    }
+    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
+        ID,
+        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/" + ID + ".png"),
+        Component.translatable("item.lzxnoneterraria." + ID),
+        CONFIG_DATA
+    );
 
     private static final double[][] CANDIDATE_OFFSETS = new double[][]{
         {0.0D, 0.0D},
@@ -85,7 +84,7 @@ public class ChlorophyteBullet extends BulletAmmo {
             this.checkBeforeTick(summon);
 
             Vec3 currentDir = getCurrentDirection(summon);
-            Vec3 oldMotion = currentDir.normalize().scale(getSpeed());
+            Vec3 oldMotion = currentDir.normalize().scale(SPEED.get());
 
             Entity target = findTarget(summon);
             Vec3 nextDir = currentDir;
@@ -102,7 +101,7 @@ public class ChlorophyteBullet extends BulletAmmo {
                 nextDir = steer(currentDir, findBestClearDirection(summon, currentDir, currentDir));
             }
 
-            Vec3 motion = nextDir.normalize().scale(getSpeed());
+            Vec3 motion = nextDir.normalize().scale(SPEED.get());
             Vec3 start = summon.position();
             Vec3 end = start.add(motion);
 
@@ -145,7 +144,7 @@ public class ChlorophyteBullet extends BulletAmmo {
 
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 Entity hitTarget = targets.getFirst();
-                if(DamageUtil.rangedAttack(summon, hitTarget, sourceStack, getBaseDamage() + damage, knockbackScale)) {
+                if(DamageUtil.rangedAttack(summon, hitTarget, sourceStack, BASE_DAMAGE.get() + damage, knockbackScale)) {
                     hitTarget.invulnerableTime = invulnerableTime;
                     this.onDied(summon);
                     return;
@@ -162,7 +161,7 @@ public class ChlorophyteBullet extends BulletAmmo {
     };
 
     private static Entity findTarget(StaticSummon summon) {
-        AABB searchBox = summon.getBoundingBox().inflate(getTargetRange());
+        AABB searchBox = summon.getBoundingBox().inflate(TARGET_RANGE.get());
         List<Entity> targets = CollisionUtil.searchEnemies(summon.level(), searchBox, summon, summon.getOwner());
         Entity bestTarget = null;
         double bestDistance = Double.MAX_VALUE;

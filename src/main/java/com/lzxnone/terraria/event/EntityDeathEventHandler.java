@@ -24,12 +24,14 @@ public class EntityDeathEventHandler {
     public static void onEntityDeath(LivingDeathEvent event) {
         LivingEntity livingEntity = event.getEntity();
 
-        //消耗插入的破灭魔王剑
+
         if(livingEntity.level() instanceof ServerLevel serverLevel) {
+            //迈达斯生成绿宝石
             if(livingEntity.hasEffect(ModEffects.MIDAS) && livingEntity.getRandom().nextFloat() < MidasEffect.getDropChance()) {
                 livingEntity.spawnAtLocation(new ItemStack(Items.EMERALD));
             }
 
+            //消耗插入的破灭魔王剑
             List<UUID> stuckList = livingEntity.getData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE);
             while(!stuckList.isEmpty()) {
                 UUID uuid = stuckList.getLast();
