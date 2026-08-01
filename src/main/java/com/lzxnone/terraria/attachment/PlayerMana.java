@@ -59,6 +59,16 @@ public class PlayerMana {
         this.mana = Math.min(mana, this.maxMana);
     }
 
+    public int increaseMaxMana(int amount, int maxLimit) {
+        if(amount <= 0 || maxMana >= maxLimit) return 0;
+
+        int oldMaxMana = maxMana;
+        setMaxMana(Math.min(maxMana + amount, maxLimit));
+        int increase = maxMana - oldMaxMana;
+        setMana(mana + increase);
+        return increase;
+    }
+
     public double getConsumeProgress() {
         return consumeProgress;
     }

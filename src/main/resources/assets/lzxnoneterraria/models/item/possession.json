@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/whip",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/possession"
+  }
+}

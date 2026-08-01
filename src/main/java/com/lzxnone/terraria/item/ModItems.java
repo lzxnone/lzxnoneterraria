@@ -4,6 +4,7 @@ import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.item.ammo.*;
 import com.lzxnone.terraria.item.accessory.ManaFlower;
 import com.lzxnone.terraria.item.accessory.NaturesGift;
+import com.lzxnone.terraria.item.food.ManaCrystal;
 import com.lzxnone.terraria.item.weapon.ranged.ElfMelter;
 import com.lzxnone.terraria.item.weapon.magic.*;
 import com.lzxnone.terraria.item.weapon.melee.*;
@@ -13,6 +14,7 @@ import com.lzxnone.terraria.item.weapon.ranged.StarCannon;
 import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
 import com.lzxnone.terraria.item.weapon.ranged.gun.*;
 import com.lzxnone.terraria.item.weapon.summon.*;
+import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -78,6 +80,7 @@ public class ModItems {
 
     //召唤武器
     public static final DeferredItem<Item> TERRAPRISMA = ITEMS.register("terraprisma", Terraprisma::new);
+    public static final DeferredItem<Item> POSSESSION = ITEMS.register("possession", Possession::new);
 
     //近战武器 灾厄
     public static final DeferredItem<Item> DEVILS_DEVASTATION = ITEMS.register("devils_devastation", DevilsDevastation::new);
@@ -104,6 +107,9 @@ public class ModItems {
     //饰品
     public static final DeferredItem<Item> NATURES_GIFT = ITEMS.register("natures_gift", NaturesGift::new);
     public static final DeferredItem<Item> MANA_FLOWER = ITEMS.register("mana_flower", ManaFlower::new);
+
+    //食物
+    public static final DeferredItem<Item> MANA_CRYSTAL = ITEMS.register("mana_crystal", ManaCrystal::new);
 
     //弹射物
     public static final DeferredItem<Item> BULLET_PROJECTILE = ITEMS.register("bullet_projectile", () -> new Item(new Item.Properties()));

@@ -34,6 +34,7 @@
   "item.lzxnoneterraria.devils_devastation": "Devil's Devastation",
   "item.lzxnoneterraria.last_prism": "Last Prism",
   "item.lzxnoneterraria.terraprisma": "Terraprisma",
+  "item.lzxnoneterraria.possession": "Possession",
   "item.lzxnoneterraria.musket": "Musket",
   "item.lzxnoneterraria.minishark": "Minishark",
   "item.lzxnoneterraria.flintlock_pistol": "Flintlock Pistol",
@@ -78,6 +79,7 @@
   "item.lzxnoneterraria.fallen_star": "Fallen Star",
   "item.lzxnoneterraria.natures_gift": "Nature's Gift",
   "item.lzxnoneterraria.mana_flower": "Mana Flower",
+  "item.lzxnoneterraria.mana_crystal": "Mana Crystal",
 
   "enchantment.lzxnoneterraria.mana_leak": "Mana Leak",
   "enchantment.lzxnoneterraria.mana_efficiency": "Mana Efficiency",
@@ -105,6 +107,7 @@
   "tooltip.lzxnoneterraria.natures_gift.0": "6% reduced mana cost",
   "tooltip.lzxnoneterraria.mana_flower.0": "8% reduced mana cost",
   "tooltip.lzxnoneterraria.mana_flower.1": "Automatically uses mana potions when mana runs out",
+  "tooltip.lzxnoneterraria.mana_crystal.0": "Permanently increases maximum mana by 20, up to 200",
 
   "entity.lzxnoneterraria.static_projectile": "Projectile",
   "entity.lzxnoneterraria.static_summon": "Summon",

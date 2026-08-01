@@ -9,6 +9,7 @@ import com.lzxnone.terraria.item.weapon.ranged.SnowballCannon;
 import com.lzxnone.terraria.item.weapon.ranged.StarCannon;
 import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
 import com.lzxnone.terraria.item.weapon.summon.Terraprisma;
+import com.lzxnone.terraria.item.weapon.summon.whip.Whip;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +39,7 @@ public class StaticSummonBehaviors {
     public static final String LAST_PRISM_TRI = "last_prism_tri";
     public static final String LAST_PRISM_BEAM = "last_prism_beam";
     public static final String TERRAPRISMA = "terraprisma";
+    public static final String POSSESSION = "possession";
 
     //通用子弹实体
     public static final String MUSKET_BALL = "musket_ball";
@@ -85,6 +87,7 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(LAST_PRISM_TRI, LastPrism.SUMMON_BEHAVIOR);
         BEHAVIORS.put(LAST_PRISM_BEAM, LastPrism.SUMMON_BEHAVIOR2);
         BEHAVIORS.put(TERRAPRISMA, Terraprisma.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(POSSESSION, Whip.SUMMON_BEHAVIOR);
 
         BEHAVIORS.put(MUSKET_BALL, MusketBall.SUMMON_BEHAVIOR);
         BEHAVIORS.put(METEOR_SHOT, MeteorShot.SUMMON_BEHAVIOR);

@@ -34,6 +34,7 @@
   "item.lzxnoneterraria.devils_devastation": "破灭魔王剑",
   "item.lzxnoneterraria.last_prism": "终极棱镜",
   "item.lzxnoneterraria.terraprisma": "泰拉棱镜",
+  "item.lzxnoneterraria.possession": "支配之鞭",
   "item.lzxnoneterraria.musket": "火枪",
   "item.lzxnoneterraria.minishark": "迷你鲨",
   "item.lzxnoneterraria.flintlock_pistol": "燧发枪",
@@ -78,6 +79,7 @@
   "item.lzxnoneterraria.fallen_star": "坠落之星",
   "item.lzxnoneterraria.natures_gift": "大自然的恩赐",
   "item.lzxnoneterraria.mana_flower": "魔力花",
+  "item.lzxnoneterraria.mana_crystal": "魔力水晶",
 
   "enchantment.lzxnoneterraria.mana_leak": "魔力泄漏",
   "enchantment.lzxnoneterraria.mana_efficiency": "魔力效率",
@@ -105,6 +107,7 @@
   "tooltip.lzxnoneterraria.natures_gift.0": "魔力花费降低 6%",
   "tooltip.lzxnoneterraria.mana_flower.0": "魔力花费降低 8%",
   "tooltip.lzxnoneterraria.mana_flower.1": "魔力枯竭时自动使用魔力药水",
+  "tooltip.lzxnoneterraria.mana_crystal.0": "永久提升 20 点最大魔力，最高提升到 200",
 
   "entity.lzxnoneterraria.static_projectile": "弹射物",
   "entity.lzxnoneterraria.static_summon": "召唤物",

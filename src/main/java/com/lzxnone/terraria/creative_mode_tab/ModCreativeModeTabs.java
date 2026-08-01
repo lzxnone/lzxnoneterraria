@@ -53,6 +53,7 @@ public class ModCreativeModeTabs {
             .icon(() -> ModItems.LAST_PRISM.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 output.accept(ModItems.LAST_PRISM.get());
+                output.accept(ModItems.MANA_CRYSTAL.get());
             }).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> ACCESSORY_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_accessory_0", () -> CreativeModeTab.builder()
@@ -116,5 +117,6 @@ public class ModCreativeModeTabs {
             .icon(() -> ModItems.TERRAPRISMA.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 output.accept(ModItems.TERRAPRISMA.get());
+                output.accept(ModItems.POSSESSION.get());
             }).build());
 }
