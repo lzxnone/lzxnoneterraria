@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon.summon.whip;
 
+import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
@@ -8,6 +9,7 @@ import com.lzxnone.terraria.item.weapon.SummonWeapon;
 import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.MathUtil;
+import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -68,6 +70,10 @@ public abstract class Whip extends SummonWeapon {
         return 0;
     }
 
+    protected void onTick(StaticSummon summon) {}
+
+    protected void onHitTarget(StaticSummon summon, Entity target) {}
+
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
         public void tick(StaticSummon summon) {
@@ -83,7 +89,17 @@ public abstract class Whip extends SummonWeapon {
                 owner.getY() + dirs[0].y * SUMMON_OFFSET_Z + dirs[1].y * SUMMON_OFFSET_Y + dirs[2].y * SUMMON_OFFSET_X,
                 owner.getZ() + dirs[0].z * SUMMON_OFFSET_Z + dirs[1].z * SUMMON_OFFSET_Y + dirs[2].z * SUMMON_OFFSET_X
             ));
+            Whip whip = getWhip(summon);
+            if(whip != null) whip.onTick(summon);
             hurtTargets(summon);
+        }
+
+        @Override
+        public void onDied(StaticSummon summon) {
+            if(!summon.level().isClientSide()) {
+                SoundUtil.playServerSound(summon.level(), ModSounds.WHIP.get(), summon.position());
+                summon.discard();
+            }
         }
 
         @Override
@@ -100,7 +116,7 @@ public abstract class Whip extends SummonWeapon {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-
+        SoundUtil.playClientSound(player, ModSounds.WHIP_USE.get());
         if(!level.isClientSide()) {
             Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
             StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), level);
@@ -140,7 +156,6 @@ public abstract class Whip extends SummonWeapon {
             float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
             summon.setXRot(xyRot[0]);
             summon.setYRot(xyRot[1]);
-            summon.setDeltaMovement(Vec3.ZERO);
             level.addFreshEntity(summon);
         }
 
@@ -152,7 +167,8 @@ public abstract class Whip extends SummonWeapon {
         if(summon.level().isClientSide()) return;
 
         ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
-        if(!(sourceStack.getItem() instanceof Whip whip)) return;
+        Whip whip = getWhip(summon);
+        if(whip == null) return;
 
         CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
         int lifetime = Math.max(1, summon.getEntityData().get(StaticSummon.LIFETIME));
@@ -177,8 +193,14 @@ public abstract class Whip extends SummonWeapon {
             if(!intersectsWhip(points, target)) continue;
             if(DamageUtil.summonAttack(summon, target, sourceStack, whip.getDamage(), whip.getKnockbackScale())) {
                 target.invulnerableTime = whip.getInvulnerableTime();
+                whip.onHitTarget(summon, target);
             }
         }
+    }
+
+    private static Whip getWhip(StaticSummon summon) {
+        ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
+        return sourceStack.getItem() instanceof Whip whip ? whip : null;
     }
 
     private static boolean intersectsWhip(List<Vec3> points, Entity target) {

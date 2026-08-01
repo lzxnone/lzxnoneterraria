@@ -29,6 +29,12 @@
   "summon_terraprisma": {
     "sounds": ["lzxnoneterraria:summon_terraprisma"]
   },
+  "whip_use": {
+    "sounds": ["lzxnoneterraria:whip_use"]
+  },
+  "whip": {
+    "sounds": ["lzxnoneterraria:whip"]
+  },
   "shot": {
     "sounds": ["lzxnoneterraria:shot"]
   },

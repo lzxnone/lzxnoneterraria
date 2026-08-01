@@ -7,6 +7,7 @@ import com.lzxnone.terraria.client.item.melee.ClientMuramasa;
 import com.lzxnone.terraria.client.item.melee.ClientZenith;
 import com.lzxnone.terraria.client.item.ranged.ClientFlamethrower;
 import com.lzxnone.terraria.client.item.ranged.ClientSuperStarShooter;
+import com.lzxnone.terraria.client.item.summon.ClientPossession;
 import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
 
 import java.util.HashMap;
@@ -31,6 +32,7 @@ public class ClientStaticProjectileRenderBehaviors {
         BEHAVIORS.put(StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE3, ClientDevilsDevastation.PROJECTILE_BEHAVIOR3);
         BEHAVIORS.put(StaticProjectileBehaviors.CRYSTAL_FRAGMENT, DEFAULT_BEHAVIOR);
         BEHAVIORS.put(StaticProjectileBehaviors.SUPER_STAR_PRISMATIC_BOLT, ClientSuperStarShooter.PROJECTILE_BEHAVIOR);
+        BEHAVIORS.put(StaticProjectileBehaviors.POSSESSION_PROJECTILE, ClientPossession.PROJECTILE_BEHAVIOR);
     }
 
     public static IStaticProjectileRenderBehavior getBehavior(String id) {

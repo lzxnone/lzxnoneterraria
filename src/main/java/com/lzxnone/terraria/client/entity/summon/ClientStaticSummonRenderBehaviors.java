@@ -48,6 +48,7 @@ public class ClientStaticSummonRenderBehaviors {
         BEHAVIORS.put(StaticSummonBehaviors.LAST_PRISM_BEAM, ClientLastPrism.SUMMON_BEHAVIOR2);
         BEHAVIORS.put(StaticSummonBehaviors.TERRAPRISMA, ClientTerraprisma.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.POSSESSION, ClientWhip.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.POSSESSION_VISION, DEFAULT_BEHAVIOR);
 
         BEHAVIORS.put(StaticSummonBehaviors.MUSKET_BALL, ClientBulletAmmo.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.METEOR_SHOT, ClientBulletAmmo.SUMMON_BEHAVIOR);

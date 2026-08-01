@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.item;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.block.ModBlocks;
 import com.lzxnone.terraria.item.ammo.*;
 import com.lzxnone.terraria.item.accessory.ManaFlower;
 import com.lzxnone.terraria.item.accessory.NaturesGift;
@@ -15,6 +16,7 @@ import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
 import com.lzxnone.terraria.item.weapon.ranged.gun.*;
 import com.lzxnone.terraria.item.weapon.summon.*;
 import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -110,6 +112,9 @@ public class ModItems {
 
     //食物
     public static final DeferredItem<Item> MANA_CRYSTAL = ITEMS.register("mana_crystal", ManaCrystal::new);
+
+    //方块
+    public static final DeferredItem<Item> VISION = ITEMS.register("vision", () -> new BlockItem(ModBlocks.VISION.get(), new Item.Properties()));
 
     //弹射物
     public static final DeferredItem<Item> BULLET_PROJECTILE = ITEMS.register("bullet_projectile", () -> new Item(new Item.Properties()));

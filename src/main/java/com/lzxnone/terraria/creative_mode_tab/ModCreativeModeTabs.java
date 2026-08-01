@@ -118,5 +118,6 @@ public class ModCreativeModeTabs {
             .displayItems((parameters, output) -> {
                 output.accept(ModItems.TERRAPRISMA.get());
                 output.accept(ModItems.POSSESSION.get());
+                output.accept(ModItems.VISION.get());
             }).build());
 }

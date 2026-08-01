@@ -4,6 +4,7 @@ import com.lzxnone.terraria.item.ammo.CrystalBullet;
 import com.lzxnone.terraria.item.weapon.melee.*;
 import com.lzxnone.terraria.item.weapon.ranged.Flamethrower;
 import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
+import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
@@ -27,6 +28,7 @@ public class StaticProjectileBehaviors {
     public static final String DEVILS_DEVASTATION_PROJECTILE3 = "devils_devastation_projectile3";
     public static final String CRYSTAL_FRAGMENT = "crystal_fragment";
     public static final String SUPER_STAR_PRISMATIC_BOLT = "super_star_prismatic_blot";
+    public static final String POSSESSION_PROJECTILE = "possession_projectile";
 
     static {
         BEHAVIORS.put(DEFAULT, new IStaticProjectileBehavior() {
@@ -56,6 +58,7 @@ public class StaticProjectileBehaviors {
         BEHAVIORS.put(DEVILS_DEVASTATION_PROJECTILE3, DevilsDevastation.PROJECTILE_BEHAVIOR3);
         BEHAVIORS.put(CRYSTAL_FRAGMENT, CrystalBullet.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(SUPER_STAR_PRISMATIC_BOLT, SuperStarShooter.PROJECTILE_BEHAVIOR);
+        BEHAVIORS.put(POSSESSION_PROJECTILE, Possession.PROJECTILE_BEHAVIOR);
     }
 
     public static IStaticProjectileBehavior getBehavior(String id) {
