@@ -505,7 +505,7 @@ public class StardustDragonStaff extends MinionWeapon {
                         summonData.setMinionSlots(slots);
                         player.setData(ModAttachments.PLAYER_SUMMON, summonData);
                         player.displayClientMessage(
-                            Component.translatable("message.lzxnoneterraria.current_summons", slots.size(), maxSummonCount)
+                            Component.translatable("message.lzxnoneterraria.current_minions", slots.size(), maxSummonCount)
                                 .withStyle(net.minecraft.ChatFormatting.RED),
                             true
                         );
@@ -570,7 +570,7 @@ public class StardustDragonStaff extends MinionWeapon {
                 summonData.setMinionSlots(slots);
                 player.setData(ModAttachments.PLAYER_SUMMON, summonData);
                 player.displayClientMessage(
-                    Component.translatable("message.lzxnoneterraria.current_summons", slots.size(), maxSummonCount)
+                    Component.translatable("message.lzxnoneterraria.current_minions", slots.size(), maxSummonCount)
                         .withStyle(slots.size() < maxSummonCount ? net.minecraft.ChatFormatting.GREEN : net.minecraft.ChatFormatting.RED),
                     true
                 );
@@ -590,7 +590,7 @@ public class StardustDragonStaff extends MinionWeapon {
         summon.setPos(player.position());
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.STARDUST_DRAGON);
         summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-        summon.getEntityData().set(StaticSummon.LIFETIME, 72000);
+        summon.getEntityData().set(StaticSummon.LIFETIME, -114514);
         summon.getEntityData().set(StaticSummon.GLOW, true);
         summon.setNoGravity(true);
         summon.noPhysics = true;

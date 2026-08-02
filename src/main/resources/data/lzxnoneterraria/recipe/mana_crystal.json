@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:fallen_star"
+    },
+    {
+      "item": "lzxnoneterraria:fallen_star"
+    },
+    {
+      "item": "lzxnoneterraria:fallen_star"
+    },
+    {
+      "item": "lzxnoneterraria:fallen_star"
+    },
+    {
+      "item": "lzxnoneterraria:fallen_star"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:mana_crystal",
+    "count": 1
+  }
+}

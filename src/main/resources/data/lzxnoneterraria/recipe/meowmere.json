@@ -9,7 +9,7 @@
   "key": {
     "A": { "item": "minecraft:diamond_block" },
     "B": { "item": "minecraft:nether_star" },
-    "C": { "item": "minecraft:dragon_egg" },
+    "C": { "item": "minecraft:dragon_head" },
     "D": { "item": "minecraft:stick" },
     "E": { "item": "minecraft:mace" },
     "F": { "item": "minecraft:ominous_bottle" }

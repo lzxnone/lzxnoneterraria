@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "CCC",
+    "DBA",
+    "CCC"
+  ],
+  "key": {
+    "A": { "item": "minecraft:netherite_block" },
+    "B": { "item": "lzxnoneterraria:star_cannon" },
+    "C": { "item": "lzxnoneterraria:mana_crystal"},
+    "D": { "item": "minecraft:conduit"}
+  },
+  "result": {
+    "id": "lzxnoneterraria:super_star_shooter",
+    "count": 1
+  }
+}

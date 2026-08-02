@@ -34,7 +34,8 @@ public class MEntityLuminance implements EntityLuminance {
 					 StaticProjectileBehaviors.MURAMASA_PROJECTILE,
 					 StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE,
 					 StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE2,
-					 StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE3 -> {
+					 StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE3,
+					 StaticProjectileBehaviors.POSSESSION_PROJECTILE -> {
 					return 15;
 				}
 				default -> {
@@ -61,7 +62,8 @@ public class MEntityLuminance implements EntityLuminance {
 					 StaticSummonBehaviors.LAST_PRISM_BEAM,
 					 StaticSummonBehaviors.TERRAPRISMA,
 					 StaticSummonBehaviors.FLAMETHROWER_FLAME,
-					 StaticSummonBehaviors.ELF_MELTER_FLAME -> {
+					 StaticSummonBehaviors.ELF_MELTER_FLAME,
+					 StaticSummonBehaviors.STARDUST_DRAGON -> {
 					return 15;
 				}
 				case StaticSummonBehaviors.CHLOROPHYTE_BULLET,

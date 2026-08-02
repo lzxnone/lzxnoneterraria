@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "ECE",
+    "BAB",
+    "EDE"
+  ],
+  "key": {
+    "A": { "item": "minecraft:netherite_upgrade_smithing_template" },
+    "B": { "item": "minecraft:silence_armor_trim_smithing_template" },
+    "C": { "item": "minecraft:conduit" },
+    "D": { "item": "minecraft:heavy_core" },
+    "E": { "item": "minecraft:netherite_block" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:possession",
+    "count": 1
+  }
+}

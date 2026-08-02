@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "BBB",
+    "AAA",
+    "CDE"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:clockwork_assault_rifle" },
+    "B": { "item": "minecraft:flint_and_steel" },
+    "C": { "item": "minecraft:lava_bucket"},
+    "D": { "item": "minecraft:slime_ball"},
+    "E": { "item": "minecraft:netherite_ingot"}
+  },
+  "result": {
+    "id": "lzxnoneterraria:flamethrower",
+    "count": 1
+  }
+}

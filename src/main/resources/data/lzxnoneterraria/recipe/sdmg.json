@@ -12,7 +12,7 @@
     "C": { "item": "lzxnoneterraria:tactical_shotgun" },
     "D": { "item": "lzxnoneterraria:sniper_rifle" },
     "E": { "item": "lzxnoneterraria:sniper_rifle" },
-    "F": { "item": "minecraft:dragon_egg" },
+    "F": { "item": "minecraft:netherite_upgrade_smithing_template" },
     "G": { "item": "minecraft:nether_star" }
   },
   "result": {

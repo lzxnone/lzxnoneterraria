@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "CCC",
+    "BAA",
+    "CCC"
+  ],
+  "key": {
+    "A": { "item": "minecraft:netherite_ingot" },
+    "B": { "item": "minecraft:heavy_core" },
+    "C": { "item": "lzxnoneterraria:fallen_star"}
+  },
+  "result": {
+    "id": "lzxnoneterraria:star_cannon",
+    "count": 1
+  }
+}

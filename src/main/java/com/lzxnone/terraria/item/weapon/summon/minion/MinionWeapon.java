@@ -64,7 +64,7 @@ public class MinionWeapon extends SummonWeapon {
         summonData.setMinionSlots(slots);
         player.setData(ModAttachments.PLAYER_SUMMON, summonData);
         player.displayClientMessage(
-            Component.translatable("message.lzxnoneterraria.current_summons", slots.size(), maxSummonCount)
+            Component.translatable("message.lzxnoneterraria.current_minions", slots.size(), maxSummonCount)
                 .withStyle(slots.size() < maxSummonCount ? net.minecraft.ChatFormatting.GREEN : net.minecraft.ChatFormatting.RED),
             true
         );

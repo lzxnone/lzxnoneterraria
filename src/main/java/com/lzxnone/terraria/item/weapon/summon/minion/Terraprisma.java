@@ -471,7 +471,7 @@ public class Terraprisma extends MinionWeapon {
             summon.getEntityData().set(StaticSummon.SCALE_X, 2.0f);
             summon.getEntityData().set(StaticSummon.SCALE_Y, 1.0f);
             summon.getEntityData().set(StaticSummon.SCALE_Z, 1.0f);
-            summon.getEntityData().set(StaticSummon.LIFETIME, 72000);
+            summon.getEntityData().set(StaticSummon.LIFETIME, -114514);
             summon.getEntityData().set(StaticSummon.GLOW, true);
             CompoundTag summonData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA).copy();
             summonData.putFloat("damage", DAMAGE.get());

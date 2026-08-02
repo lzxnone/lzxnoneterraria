@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "CCC",
+    "BAB",
+    "DDE"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:flamethrower" },
+    "B": { "item": "minecraft:conduit" },
+    "C": { "item": "minecraft:blue_ice"},
+    "D": { "item": "minecraft:slime_ball"},
+    "E": { "item": "minecraft:netherite_block"}
+  },
+  "result": {
+    "id": "lzxnoneterraria:elf_melter",
+    "count": 1
+  }
+}

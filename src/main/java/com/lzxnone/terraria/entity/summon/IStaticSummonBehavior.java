@@ -12,7 +12,7 @@ public interface IStaticSummonBehavior {
         if(summon.getEntityData().get(StaticSummon.AGE) > summon.getEntityData().get(StaticSummon.LIFETIME)) {
             onDied(summon);
         }else {
-            summon.getEntityData().set(StaticSummon.AGE, summon.getEntityData().get(StaticSummon.AGE) + 1);
+            if(summon.getEntityData().get(StaticSummon.AGE) != -114514) summon.getEntityData().set(StaticSummon.AGE, summon.getEntityData().get(StaticSummon.AGE) + 1);
         }
     }
 
