@@ -19,7 +19,9 @@ public class ManaHudRenderer {
     );
     private static final int TEXTURE_WIDTH = 22;
     private static final int TEXTURE_HEIGHT = 24;
-    private static final int MAX_SEGMENT_COUNT = 10;
+    private static final int MANA_PER_STAR = 20;
+    private static final int MAX_SEGMENT_COUNT = 20;
+    private static final int SEGMENTS_PER_COLUMN = 10;
     private static final int SLOT_WIDTH = 8;
     private static final int SLOT_HEIGHT = 9;
     private static final int SLOT_GAP = 1;
@@ -31,23 +33,21 @@ public class ManaHudRenderer {
         int maxMana = Math.max(0, mana.getMaxMana());
         if(maxMana <= 0) return;
 
-        int segmentCount = Math.min(MAX_SEGMENT_COUNT, maxMana);
-        float segmentMana = maxMana < MAX_SEGMENT_COUNT ? 1.0F : maxMana / (float)MAX_SEGMENT_COUNT;
+        int segmentCount = Mth.clamp(Mth.ceil(maxMana / (float)MANA_PER_STAR), 0, MAX_SEGMENT_COUNT);
         int currentMana = Mth.clamp(mana.getMana(), 0, maxMana);
-        if(currentMana >= maxMana) return;
 
         manaBarX = RenderConfigs.MANA_BAR_X.get();
         manaBarY = RenderConfigs.MANA_BAR_Y.get();
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        float missingMana = maxMana - currentMana;
         for(int i = 0; i < segmentCount; i++) {
-            int bottomIndex = segmentCount - 1 - i;
-            float drained = Mth.clamp(missingMana - bottomIndex * segmentMana, 0.0F, segmentMana);
-            float fill = 1.0F - drained / segmentMana;
-            int slotY = manaBarY + i * (SLOT_HEIGHT + SLOT_GAP);
-            renderSegment(guiGraphics, manaBarX, slotY, fill);
+            float fill = Mth.clamp((currentMana - i * MANA_PER_STAR) / (float)MANA_PER_STAR, 0.0F, 1.0F);
+            int column = i / SEGMENTS_PER_COLUMN;
+            int row = i % SEGMENTS_PER_COLUMN;
+            int slotX = manaBarX + column * (SLOT_WIDTH + SLOT_GAP);
+            int slotY = manaBarY + row * (SLOT_HEIGHT + SLOT_GAP);
+            renderSegment(guiGraphics, slotX, slotY, fill);
         }
         guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         renderManaText(guiGraphics, currentMana, maxMana, segmentCount);
@@ -87,9 +87,12 @@ public class ManaHudRenderer {
         Font font = Minecraft.getInstance().font;
         String text = currentMana + "/" + maxMana;
         int textWidth = font.width(text);
-        int barCenterX = manaBarX + SLOT_WIDTH / 2;
+        int columnCount = Mth.ceil(segmentCount / (float)SEGMENTS_PER_COLUMN);
+        int rowCount = Math.min(segmentCount, SEGMENTS_PER_COLUMN);
+        int barWidth = columnCount * SLOT_WIDTH + Math.max(0, columnCount - 1) * SLOT_GAP;
+        int barCenterX = manaBarX + barWidth / 2;
         int textX = Mth.clamp(barCenterX - textWidth / 2, 2, guiGraphics.guiWidth() - textWidth - 2);
-        int textY = manaBarY + segmentCount * SLOT_HEIGHT + (segmentCount - 1) * SLOT_GAP + 2;
+        int textY = manaBarY + rowCount * SLOT_HEIGHT + Math.max(0, rowCount - 1) * SLOT_GAP + 2;
 
         guiGraphics.drawString(font, text, textX, textY, 0x66CCFF, true);
     }

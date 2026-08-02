@@ -63,7 +63,9 @@ public class MEntityLuminance implements EntityLuminance {
 					 StaticSummonBehaviors.TERRAPRISMA,
 					 StaticSummonBehaviors.FLAMETHROWER_FLAME,
 					 StaticSummonBehaviors.ELF_MELTER_FLAME,
-					 StaticSummonBehaviors.STARDUST_DRAGON -> {
+					 StaticSummonBehaviors.STARDUST_DRAGON,
+					 StaticSummonBehaviors.FALLEN_STAR,
+					 StaticSummonBehaviors.FALLEN_STAR_SUPER -> {
 					return 15;
 				}
 				case StaticSummonBehaviors.CHLOROPHYTE_BULLET,
