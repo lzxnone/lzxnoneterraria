@@ -86,7 +86,7 @@ public class LastPrism extends MagicWeapon {
     public static final ConfigInt MANA_CONSUME_RATE = new ConfigInt(
         "weapon.last_prism.mana_consume_rate",
         "last_prism_mana_consume_rate",
-        7,
+        144,
         0,
         72000
     );

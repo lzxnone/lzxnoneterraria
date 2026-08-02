@@ -23,6 +23,14 @@ public class ModSounds {
             SOUND_EVENTS.register("max_mana",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "max_mana")));
+    public static final Supplier<SoundEvent> GET_MANA =
+            SOUND_EVENTS.register("get_mana",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "get_mana")));
+    public static final Supplier<SoundEvent> DRINK =
+            SOUND_EVENTS.register("drink",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "drink")));
     public static final Supplier<SoundEvent> WAVE =
             SOUND_EVENTS.register("wave",
                     () -> SoundEvent.createVariableRangeEvent(

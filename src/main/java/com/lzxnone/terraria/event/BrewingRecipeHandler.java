@@ -1,35 +1,30 @@
 package com.lzxnone.terraria.event;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
-import com.lzxnone.terraria.effect.ModPotions;
+import com.lzxnone.terraria.item.ModItems;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
 
 @EventBusSubscriber(modid = LzxnoneTerraria.MODID)
 public class BrewingRecipeHandler {
     @SubscribeEvent
     public static void onRegisterBrewingRecipes(RegisterBrewingRecipesEvent event) {
-        event.getBuilder().addMix(Potions.AWKWARD, Items.NETHERITE_SCRAP, ModPotions.SHORT_SUMMON_0);
-        event.getBuilder().addMix(ModPotions.SHORT_SUMMON_0, Items.NETHERITE_SCRAP, ModPotions.MEDIUM_SUMMON_0);
-        event.getBuilder().addMix(ModPotions.MEDIUM_SUMMON_0, Items.NETHERITE_SCRAP, ModPotions.LONG_SUMMON_0);
-
-        event.getBuilder().addMix(ModPotions.LONG_SUMMON_0, Items.NETHERITE_SCRAP, ModPotions.SHORT_SUMMON_1);
-        event.getBuilder().addMix(ModPotions.SHORT_SUMMON_1, Items.NETHERITE_SCRAP, ModPotions.MEDIUM_SUMMON_1);
-        event.getBuilder().addMix(ModPotions.MEDIUM_SUMMON_1, Items.NETHERITE_SCRAP, ModPotions.LONG_SUMMON_1);
-
-        event.getBuilder().addMix(ModPotions.LONG_SUMMON_1, Items.NETHERITE_INGOT, ModPotions.SHORT_SUMMON_2);
-        event.getBuilder().addMix(ModPotions.SHORT_SUMMON_2, Items.NETHERITE_INGOT, ModPotions.MEDIUM_SUMMON_2);
-        event.getBuilder().addMix(ModPotions.MEDIUM_SUMMON_2, Items.NETHERITE_INGOT, ModPotions.LONG_SUMMON_2);
-
-        event.getBuilder().addMix(ModPotions.LONG_SUMMON_2, Items.NETHERITE_INGOT, ModPotions.SHORT_SUMMON_3);
-        event.getBuilder().addMix(ModPotions.SHORT_SUMMON_3, Items.NETHERITE_INGOT, ModPotions.MEDIUM_SUMMON_3);
-        event.getBuilder().addMix(ModPotions.MEDIUM_SUMMON_3, Items.NETHERITE_INGOT, ModPotions.LONG_SUMMON_3);
-
-        event.getBuilder().addMix(ModPotions.LONG_SUMMON_3, Items.NETHERITE_BLOCK, ModPotions.SHORT_SUMMON_4);
-        event.getBuilder().addMix(ModPotions.SHORT_SUMMON_4, Items.NETHERITE_BLOCK, ModPotions.MEDIUM_SUMMON_4);
-        event.getBuilder().addMix(ModPotions.MEDIUM_SUMMON_4, Items.NETHERITE_BLOCK, ModPotions.LONG_SUMMON_4);
+        event.getBuilder().addRecipe(
+            DataComponentIngredient.of(false, PotionContents.createItemStack(Items.POTION, Potions.AWKWARD)),
+            Ingredient.of(Items.SADDLE),
+            new ItemStack(ModItems.SUMMONING_POTION.get())
+        );
+        event.getBuilder().addRecipe(
+            Ingredient.of(ModItems.LESSER_MANA_POTION.get()),
+            Ingredient.of(Items.BROWN_MUSHROOM, Items.RED_MUSHROOM),
+            new ItemStack(ModItems.MANA_POTION.get())
+        );
     }
 }

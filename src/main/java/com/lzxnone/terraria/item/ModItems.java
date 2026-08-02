@@ -6,6 +6,7 @@ import com.lzxnone.terraria.item.ammo.*;
 import com.lzxnone.terraria.item.accessory.ManaFlower;
 import com.lzxnone.terraria.item.accessory.NaturesGift;
 import com.lzxnone.terraria.item.food.ManaCrystal;
+import com.lzxnone.terraria.item.potion.*;
 import com.lzxnone.terraria.item.weapon.ranged.ElfMelter;
 import com.lzxnone.terraria.item.weapon.magic.*;
 import com.lzxnone.terraria.item.weapon.melee.*;
@@ -114,6 +115,13 @@ public class ModItems {
 
     //食物
     public static final DeferredItem<Item> MANA_CRYSTAL = ITEMS.register("mana_crystal", ManaCrystal::new);
+
+    //药水
+    public static final DeferredItem<Item> SUMMONING_POTION = ITEMS.register("summoning_potion", SummoningPotion::new);
+    public static final DeferredItem<Item> LESSER_MANA_POTION = ITEMS.register("lesser_mana_potion", LesserManaPotion::new);
+    public static final DeferredItem<Item> MANA_POTION = ITEMS.register("mana_potion", ManaPotion::new);
+    public static final DeferredItem<Item> GREATER_MANA_POTION = ITEMS.register("greater_mana_potion", GreaterManaPotion::new);
+    public static final DeferredItem<Item> SUPER_MANA_POTION = ITEMS.register("super_mana_potion", SuperManaPotion::new);
 
     //方块
     public static final DeferredItem<Item> VISION = ITEMS.register("vision", () -> new BlockItem(ModBlocks.VISION.get(), new Item.Properties()));

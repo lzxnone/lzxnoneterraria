@@ -11,6 +11,12 @@
   "max_mana": {
     "sounds": ["lzxnoneterraria:max_mana"]
   },
+  "get_mana": {
+    "sounds": ["lzxnoneterraria:get_mana"]
+  },
+  "drink": {
+    "sounds": ["lzxnoneterraria:drink"]
+  },
   "beam": {
     "sounds": ["lzxnoneterraria:beam"]
   },

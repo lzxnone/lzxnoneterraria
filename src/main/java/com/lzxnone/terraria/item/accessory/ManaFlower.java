@@ -29,7 +29,7 @@ public class ManaFlower extends AccessoryItem implements ManaCostModifier, AutoM
     );
 
     public ManaFlower() {
-        super(new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
+        super(new Item.Properties().stacksTo(1).rarity(Rarity.COMMON));
     }
 
     @Override

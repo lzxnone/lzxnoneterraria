@@ -21,6 +21,8 @@ import org.jspecify.annotations.NonNull;
 import java.util.*;
 
 public class StaticSummon extends Entity {
+    public static final int INFINITE_LIFETIME = -114514;
+
     public static final EntityDataAccessor<String> BEHAVIOR =
             SynchedEntityData.defineId(StaticSummon.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> RENDER_MODE =

@@ -41,7 +41,7 @@ public class RangedWeaponGuiHandler {
     public static void onRenderGui(RenderGuiEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
-        if(player == null || minecraft.options.hideGui) return;
+        if(player == null || minecraft.options.hideGui || player.isSpectator()) return;
 
         GuiGraphics guiGraphics = event.getGuiGraphics();
         int centerX = guiGraphics.guiWidth() / 2;

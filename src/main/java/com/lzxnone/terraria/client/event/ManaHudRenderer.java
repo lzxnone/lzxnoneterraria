@@ -35,6 +35,7 @@ public class ManaHudRenderer {
 
         int segmentCount = Mth.clamp(Mth.ceil(maxMana / (float)MANA_PER_STAR), 0, MAX_SEGMENT_COUNT);
         int currentMana = Mth.clamp(mana.getMana(), 0, maxMana);
+        if(currentMana >= maxMana) return;
 
         manaBarX = RenderConfigs.MANA_BAR_X.get();
         manaBarY = RenderConfigs.MANA_BAR_Y.get();

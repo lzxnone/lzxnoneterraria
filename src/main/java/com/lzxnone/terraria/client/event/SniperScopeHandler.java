@@ -45,7 +45,7 @@ public class SniperScopeHandler {
     private static ItemStack getActiveSniperStack() {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
-        if(player == null || !player.isUsingItem()) return ItemStack.EMPTY;
+        if(player == null || player.isSpectator() || !player.isUsingItem()) return ItemStack.EMPTY;
 
         ItemStack stack = player.getUseItem();
         if(stack.is(ModItems.SNIPER_RIFLE)) return stack;

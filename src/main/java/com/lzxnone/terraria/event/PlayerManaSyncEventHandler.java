@@ -1,11 +1,13 @@
 package com.lzxnone.terraria.event;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.attachment.PlayerMana;
 import com.lzxnone.terraria.item.weapon.MagicWeapon;
 import com.lzxnone.terraria.network.payload.ManaSyncPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -52,6 +54,7 @@ public class PlayerManaSyncEventHandler {
 
         player.setData(ModAttachments.PLAYER_MANA, mana);
         if(mana.getMana() != oldMana) {
+            playMaxManaSoundIfRecovered(player, oldMana, mana);
             sync(player);
         }
     }
@@ -59,6 +62,12 @@ public class PlayerManaSyncEventHandler {
     public static void sync(ServerPlayer player) {
         PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
         PacketDistributor.sendToPlayer(player, new ManaSyncPayload(mana.getMana(), mana.getMaxMana()));
+    }
+
+    public static void playMaxManaSoundIfRecovered(ServerPlayer player, int oldMana, PlayerMana mana) {
+        if(oldMana < mana.getMaxMana() && mana.getMana() >= mana.getMaxMana()) {
+            player.playNotifySound(ModSounds.MAX_MANA.get(), SoundSource.PLAYERS, 4.0F, 1.0F);
+        }
     }
 
     private static boolean isUsingMagicWeapon(ServerPlayer player) {

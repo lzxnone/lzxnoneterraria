@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.client.entity.summon;
 
+import com.lzxnone.terraria.client.item.ClientDropFallenStar;
 import com.lzxnone.terraria.client.item.ranged.ClientBulletAmmo;
 import com.lzxnone.terraria.client.item.magic.ClientLastPrism;
 import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
@@ -28,6 +29,8 @@ public class ClientStaticSummonRenderBehaviors {
 
     static {
         BEHAVIORS.put(StaticSummonBehaviors.DEFAULT, DEFAULT_BEHAVIOR);
+
+        BEHAVIORS.put(StaticSummonBehaviors.DROP_FALLEN_STAR, ClientDropFallenStar.SUMMON_BEHAVIOR);
 
         BEHAVIORS.put(StaticSummonBehaviors.SEEDLER_NUT, DEFAULT_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.THE_HORSEMANS_BLADE_JACK, DEFAULT_BEHAVIOR);

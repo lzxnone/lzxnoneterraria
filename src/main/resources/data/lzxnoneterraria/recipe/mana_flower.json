@@ -6,13 +6,7 @@
       "item": "lzxnoneterraria:natures_gift"
     },
     {
-      "type": "neoforge:components",
-      "items": "minecraft:potion",
-      "components": {
-        "minecraft:potion_contents": {
-          "potion": "lzxnoneterraria:mana_0"
-        }
-      }
+      "item": "lzxnoneterraria:mana_potion"
     }
   ],
   "result": {

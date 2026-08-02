@@ -56,6 +56,7 @@ public class ClientStarCannon {
             poseStack.popPose();
 
             poseStack.pushPose();
+
             float starHalfWidth = 45 * 0.06f;
             float starHalfHeight = 17 * 0.06f;
             VertexConsumer starConsumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES));

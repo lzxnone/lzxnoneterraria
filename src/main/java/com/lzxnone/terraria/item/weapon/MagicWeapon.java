@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon;
 
+import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.attachment.PlayerMana;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
@@ -10,6 +11,7 @@ import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.accessory.effect.AutoManaPotionUser;
 import com.lzxnone.terraria.item.accessory.effect.ManaCostModifier;
 import com.lzxnone.terraria.utils.ManaPotionUtil;
+import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
@@ -121,7 +123,11 @@ public class MagicWeapon extends Weapon {
 
     private static boolean tryAutoUseManaPotion(ServerPlayer player) {
         if(!canAutoUseManaPotion(player)) return false;
-        return ManaPotionUtil.tryUseManaPotion(player);
+        boolean res = ManaPotionUtil.tryUseManaPotion(player);
+        if(res) {
+            SoundUtil.playServerSound(player, ModSounds.DRINK.get(), 0.5f, 1.0f);
+        }
+        return res;
     }
 
 }

@@ -20,7 +20,7 @@ public class GuiRenderHandler {
     public static void onRenderGui(RenderGuiEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
-        if(player == null || minecraft.options.hideGui) return;
+        if(player == null || minecraft.options.hideGui || player.isSpectator()) return;
 
         ManaHudRenderer.render(event.getGuiGraphics(), player);
 

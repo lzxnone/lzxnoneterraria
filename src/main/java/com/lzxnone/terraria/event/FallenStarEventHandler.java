@@ -2,14 +2,16 @@ package com.lzxnone.terraria.event;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
+import com.lzxnone.terraria.entity.ModEntities;
+import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
-import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -21,12 +23,13 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 @EventBusSubscriber(modid = LzxnoneTerraria.MODID)
 public class FallenStarEventHandler {
     private static final int CHECK_INTERVAL = 20;
-    private static final double SPAWN_CHANCE = 0.004D;
+    private static final double SPAWN_CHANCE = 0.01D;
     private static final int MIN_SPAWN_RADIUS = 24;
     private static final int MAX_SPAWN_RADIUS = 64;
     private static final int SPAWN_HEIGHT = 48;
     private static final int MAX_ATTEMPTS = 8;
     private static final double FALL_SPEED = -0.65D;
+    private static final int FALLEN_STAR_LIFETIME = 10 * 60 * 20;
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
@@ -42,11 +45,16 @@ public class FallenStarEventHandler {
         Vec3 spawnPos = getSpawnPos(serverLevel, player, random);
         if(spawnPos == null) return;
 
-        ItemEntity fallenStar = new ItemEntity(serverLevel, spawnPos.x, spawnPos.y, spawnPos.z, new ItemStack(ModItems.FALLEN_STAR.get()));
+        StaticSummon fallenStar = new StaticSummon(ModEntities.STATIC_SUMMON.get(), serverLevel);
+        fallenStar.setPos(spawnPos);
+        fallenStar.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.DROP_FALLEN_STAR);
+        fallenStar.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
+        fallenStar.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.FALLEN_STAR.get()));
+        fallenStar.getEntityData().set(StaticSummon.LIFETIME, FALLEN_STAR_LIFETIME);
+        fallenStar.getEntityData().set(StaticSummon.GLOW, true);
         fallenStar.setDeltaMovement(0.0D, FALL_SPEED, 0.0D);
-        fallenStar.setDefaultPickUpDelay();
         serverLevel.addFreshEntity(fallenStar);
-        SoundUtil.playServerSound(fallenStar, ModSounds.STAR_FALL.get(), 2.0f, 1.0f);
+        player.playNotifySound(ModSounds.STAR_FALL.get(), SoundSource.PLAYERS, 4.0f, 1.0f);
     }
 
     private static Vec3 getSpawnPos(ServerLevel level, ServerPlayer player, RandomSource random) {

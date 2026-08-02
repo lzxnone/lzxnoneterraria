@@ -1,11 +1,14 @@
 package com.lzxnone.terraria.item.food;
 
+import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.attachment.PlayerMana;
 import com.lzxnone.terraria.event.PlayerManaSyncEventHandler;
+import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -16,11 +19,12 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class ManaCrystal extends Food {
+    public static final int USE_DURATION = 10;
     public static final int MANA_INCREASE = 20;
     public static final int MAX_MANA = 200;
 
     public ManaCrystal() {
-        super(new Item.Properties().rarity(Rarity.UNCOMMON));
+        super(new Item.Properties().rarity(Rarity.UNCOMMON), USE_DURATION);
     }
 
     @Override
@@ -36,6 +40,7 @@ public class ManaCrystal extends Food {
         player.setData(ModAttachments.PLAYER_MANA, mana);
         if(player instanceof ServerPlayer serverPlayer) {
             PlayerManaSyncEventHandler.sync(serverPlayer);
+            SoundUtil.playServerSound(player, ModSounds.GET_MANA.get(), 0.5f, 1.0f);
         }
         return true;
     }

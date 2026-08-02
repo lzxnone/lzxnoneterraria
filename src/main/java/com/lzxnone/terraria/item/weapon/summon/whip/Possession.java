@@ -51,7 +51,7 @@ public class Possession extends Whip {
     public static final ConfigInt MAX_PROPHETIC_MARK_STACKS = new ConfigInt("weapon.possession.max_prophetic_mark_stacks", "possession_max_prophetic_mark_stacks", 3, 0, 1024);
 
     public Possession() {
-        super(Tiers.NETHERITE, new Item.Properties().stacksTo(1).fireResistant().rarity(Rarity.RARE));
+        super(Tiers.NETHERITE, new Item.Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC));
     }
 
     @Override

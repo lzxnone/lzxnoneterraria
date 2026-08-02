@@ -590,7 +590,7 @@ public class StardustDragonStaff extends MinionWeapon {
         summon.setPos(player.position());
         summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.STARDUST_DRAGON);
         summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-        summon.getEntityData().set(StaticSummon.LIFETIME, -114514);
+        summon.getEntityData().set(StaticSummon.LIFETIME, StaticSummon.INFINITE_LIFETIME);
         summon.getEntityData().set(StaticSummon.GLOW, true);
         summon.setNoGravity(true);
         summon.noPhysics = true;

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "CBC",
+    "AAA",
+    "BAB"
+  ],
+  "key": {
+    "A": { "item": "lzxnoneterraria:greater_mana_potion" },
+    "B": { "item": "lzxnoneterraria:fallen_star" },
+    "C": { "item": "minecraft:amethyst_shard" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:super_mana_potion",
+    "count": 4
+  }
+}

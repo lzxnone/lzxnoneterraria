@@ -21,6 +21,9 @@ public class StaticSummonBehaviors {
 
     public static final String DEFAULT = "default";
 
+    //掉落实体
+    public static final String DROP_FALLEN_STAR = "drop_fallen_star";
+
     //弹射实体
     public static final String SEEDLER_NUT = "seedler_nut";
     public static final String THE_HORSEMANS_BLADE_JACK = "the_horsemans_blade_jack";
@@ -71,6 +74,8 @@ public class StaticSummonBehaviors {
 
     static {
         BEHAVIORS.put(DEFAULT, new IStaticSummonBehavior() {});
+
+        BEHAVIORS.put(DROP_FALLEN_STAR, FallenStar.SUMMON_BEHAVIOR);
 
         BEHAVIORS.put(SEEDLER_NUT, Seedler.SUMMON_BEHAVIOR);
         BEHAVIORS.put(THE_HORSEMANS_BLADE_JACK, TheHorsemansBlade.SUMMON_BEHAVIOR);

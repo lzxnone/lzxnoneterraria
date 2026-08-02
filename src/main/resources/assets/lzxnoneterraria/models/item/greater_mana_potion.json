@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/item",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/greater_mana_potion"
+  }
+}

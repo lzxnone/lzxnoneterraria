@@ -4,7 +4,6 @@ import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.block.ModBlocks;
 import com.lzxnone.terraria.creative_mode_tab.ModCreativeModeTabs;
 import com.lzxnone.terraria.effect.ModEffects;
-import com.lzxnone.terraria.effect.ModPotions;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.summon.BeeSummon;
 import com.lzxnone.terraria.item.ModItems;
@@ -27,7 +26,6 @@ public class LzxnoneTerraria {
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModEffects.MOB_EFFECTS.register(modEventBus);
-        ModPotions.POTIONS.register(modEventBus);
         ModEntities.ENTITY_TYPES.register(modEventBus);
         ModParticles.PARTICLE_TYPES.register(modEventBus);
         ModSounds.SOUND_EVENTS.register(modEventBus);

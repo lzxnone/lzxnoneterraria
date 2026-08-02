@@ -76,7 +76,7 @@ public class Flamethrower extends RangedWeapon {
     public static final ConfigListItem CONFIG_LIST_ITEM = Gun.createConfigListItem(ID, CONFIG_DATA);
 
     public Flamethrower() {
-        super(Tiers.IRON, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
+        super(Tiers.IRON, new Item.Properties().stacksTo(1).rarity(Rarity.COMMON));
     }
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {

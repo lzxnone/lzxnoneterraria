@@ -9,10 +9,11 @@ public interface IStaticSummonBehavior {
             onDied(summon);
             return;
         }
-        if(summon.getEntityData().get(StaticSummon.AGE) > summon.getEntityData().get(StaticSummon.LIFETIME)) {
+        int lifetime = summon.getEntityData().get(StaticSummon.LIFETIME);
+        if(lifetime != StaticSummon.INFINITE_LIFETIME && summon.getEntityData().get(StaticSummon.AGE) > lifetime) {
             onDied(summon);
         }else {
-            if(summon.getEntityData().get(StaticSummon.AGE) != -114514) summon.getEntityData().set(StaticSummon.AGE, summon.getEntityData().get(StaticSummon.AGE) + 1);
+            summon.getEntityData().set(StaticSummon.AGE, summon.getEntityData().get(StaticSummon.AGE) + 1);
         }
     }
 

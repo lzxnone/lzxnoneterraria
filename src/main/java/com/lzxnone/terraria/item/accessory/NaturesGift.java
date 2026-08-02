@@ -28,7 +28,7 @@ public class NaturesGift extends AccessoryItem implements ManaCostModifier {
     );
 
     public NaturesGift() {
-        super(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
+        super(new Item.Properties().stacksTo(1));
     }
 
     @Override
