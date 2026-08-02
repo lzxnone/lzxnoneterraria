@@ -19,7 +19,7 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.*;
 import net.minecraft.world.phys.Vec3;
 import com.lzxnone.terraria.client.entity.summon.IStaticSummonRenderBehavior;
-import static com.lzxnone.terraria.item.weapon.summon.Terraprisma.*;
+import static com.lzxnone.terraria.item.weapon.summon.minion.Terraprisma.*;
 
 public class ClientTerraprisma {
     public static final IStaticSummonRenderBehavior SUMMON_BEHAVIOR = new IStaticSummonRenderBehavior() {

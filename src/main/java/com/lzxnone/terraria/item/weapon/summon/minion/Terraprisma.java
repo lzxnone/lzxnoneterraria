@@ -1,13 +1,13 @@
-package com.lzxnone.terraria.item.weapon.summon;
+package com.lzxnone.terraria.item.weapon.summon.minion;
 
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.attachment.ModAttachments;
+import com.lzxnone.terraria.attachment.PlayerSummon;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
-import com.lzxnone.terraria.item.weapon.SummonWeapon;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
@@ -36,7 +36,7 @@ import org.joml.Vector3f;
 import java.util.List;
 import java.util.UUID;
 
-public class Terraprisma extends SummonWeapon {
+public class Terraprisma extends MinionWeapon {
     public static final ConfigDouble TARGET_RANGE = new ConfigDouble(
         "weapon.terraprisma.target_range",
         "terraprisma_target_range",
@@ -143,11 +143,15 @@ public class Terraprisma extends SummonWeapon {
     );
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
-        public static final ResourceLocation RES = ResourceLocation.parse("lzxnoneterraria:textures/vfx/sword_trail.png");
-
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
+            if(summon.getOwner() != null) {
+                double dist = summon.getOwner().position().subtract(summon.position()).length();
+                if(dist > MinionWeapon.MAX_RANGE) {
+                    summon.setPos(summon.getOwner().position());
+                }
+            }
             if(summon.getOwner() instanceof Player player && !summon.level().isClientSide()) {
                 onState(summon, player);
             }
@@ -476,28 +480,25 @@ public class Terraprisma extends SummonWeapon {
             summon.setNoGravity(true);
             summon.noPhysics = true;
 
-            SummonWeapon.addFreshSummon(player, summon);
+            MinionWeapon.addFreshSummon(player, StaticSummonBehaviors.TERRAPRISMA, List.of(summon));
 
-            List<UUID> summons = player.getData(ModAttachments.SUMMON_WEAPON_SUMMONS);
             int idx = 0;
-            for(UUID uuid : summons) {
-                Entity entity = serverLevel.getEntity(uuid);
-                if(entity instanceof StaticSummon terraSummon && terraSummon.getEntityData().get(StaticSummon.BEHAVIOR).equals(StaticSummonBehaviors.TERRAPRISMA)) {
-                    if(terraSummon.isAlive()) {
-                        CompoundTag customData = terraSummon.getEntityData().get(StaticSummon.CUSTOM_DATA).copy();
-                        customData.putInt("idx", idx);
-                        terraSummon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
-                        idx++;
+            for(PlayerSummon.SummonSlot slot : player.getData(ModAttachments.PLAYER_SUMMON).getMinionSlots()) {
+                if(!slot.getId().equals(StaticSummonBehaviors.TERRAPRISMA)) continue;
+                for(UUID uuid : slot.getSummons()) {
+                    Entity entity = serverLevel.getEntity(uuid);
+                    if(entity instanceof StaticSummon terraSummon) {
+                        if(terraSummon.isAlive()) {
+                            CompoundTag customData = terraSummon.getEntityData().get(StaticSummon.CUSTOM_DATA).copy();
+                            customData.putInt("idx", idx);
+                            terraSummon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+                            idx++;
+                        }
                     }
                 }
             }
         }
         SoundUtil.playClientSound(player, ModSounds.SUMMON_TERRAPRISMA.get());
         return InteractionResultHolder.consume(stack);
-    }
-
-    @Override
-    public String getSummonId() {
-        return StaticSummonBehaviors.TERRAPRISMA;
     }
 }

@@ -87,7 +87,11 @@
 }
 
 .nav-img-ammo {
-    background: sprite(lzxnoneterraria:textures/item/musket_ball.png);
+    background: sprite(lzxnoneterraria:textures/ui/nav_ammo_icon.png);
+}
+
+.nav-img-accessory {
+    background: sprite(lzxnoneterraria:textures/ui/nav_accessory_icon.png);
 }
 
 .nav-img-effect {
@@ -96,6 +100,10 @@
 
 .nav-img-enchantment {
     background: sprite(lzxnoneterraria:textures/ui/nav_enchantment_icon.png);
+}
+
+.nav-img-render {
+    background: sprite(lzxnoneterraria:textures/ui/nav_render_icon.png);
 }
 
 .main {

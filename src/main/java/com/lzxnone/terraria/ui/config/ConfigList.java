@@ -9,7 +9,10 @@ import com.lzxnone.terraria.effect.ManaSicknessEffect;
 import com.lzxnone.terraria.effect.MidasEffect;
 import com.lzxnone.terraria.effect.SummonEffect;
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
+import com.lzxnone.terraria.client.config.RenderConfigs;
 import com.lzxnone.terraria.item.ammo.*;
+import com.lzxnone.terraria.item.accessory.ManaFlower;
+import com.lzxnone.terraria.item.accessory.NaturesGift;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.item.weapon.melee.BladeOfGrass;
@@ -40,7 +43,9 @@ import com.lzxnone.terraria.item.weapon.ranged.SnowballCannon;
 import com.lzxnone.terraria.item.weapon.ranged.StarCannon;
 import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
 import com.lzxnone.terraria.item.weapon.ranged.gun.*;
-import com.lzxnone.terraria.item.weapon.summon.Terraprisma;
+import com.lzxnone.terraria.item.weapon.summon.minion.StardustDragonStaff;
+import com.lzxnone.terraria.item.weapon.summon.minion.Terraprisma;
+import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,8 +53,10 @@ import java.util.Map;
 public class ConfigList {
     public static final String WEAPON = "weapon";
     public static final String AMMO = "ammo";
+    public static final String ACCESSORY = "accessory";
     public static final String EFFECT = "effect";
     public static final String ENCHANTMENT = "enchantment";
+    public static final String RENDER = "render";
 
     private static final Map<String, ConfigListItem[]> ITEMS = new HashMap<>();
 
@@ -79,6 +86,8 @@ public class ConfigList {
             Mace.CONFIG_LIST_ITEM,
             DevilsDevastation.CONFIG_LIST_ITEM,
             Terraprisma.CONFIG_LIST_ITEM,
+            StardustDragonStaff.CONFIG_LIST_ITEM,
+            Possession.CONFIG_LIST_ITEM,
             LastPrism.CONFIG_LIST_ITEM,
             Minishark.CONFIG_LIST_ITEM,
             FlintlockPistol.CONFIG_LIST_ITEM,
@@ -133,6 +142,10 @@ public class ConfigList {
             LuminiteBullet.CONFIG_LIST_ITEM,
             TungstenBullet.CONFIG_LIST_ITEM
         });
+        ITEMS.put(ACCESSORY, new ConfigListItem[]{
+            NaturesGift.CONFIG_LIST_ITEM,
+            ManaFlower.CONFIG_LIST_ITEM
+        });
         ITEMS.put(ENCHANTMENT, new ConfigListItem[]{
             ModEnchantmentConfigs.MANA_LEAK_CONFIG_LIST_ITEM,
             ModEnchantmentConfigs.MANA_EFFICIENCY_CONFIG_LIST_ITEM,
@@ -142,6 +155,9 @@ public class ConfigList {
             ModEnchantmentConfigs.BULLET_HELL_CONFIG_LIST_ITEM,
             ModEnchantmentConfigs.GUNPOWDER_CONFIG_LIST_ITEM,
             ModEnchantmentConfigs.STEADY_BREATH_CONFIG_LIST_ITEM
+        });
+        ITEMS.put(RENDER, new ConfigListItem[]{
+            RenderConfigs.CONFIG_LIST_ITEM
         });
     }
 

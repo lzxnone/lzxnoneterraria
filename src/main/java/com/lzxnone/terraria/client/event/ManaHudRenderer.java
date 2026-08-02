@@ -3,6 +3,7 @@ package com.lzxnone.terraria.client.event;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.attachment.PlayerMana;
+import com.lzxnone.terraria.client.config.RenderConfigs;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -22,11 +23,8 @@ public class ManaHudRenderer {
     private static final int SLOT_WIDTH = 8;
     private static final int SLOT_HEIGHT = 9;
     private static final int SLOT_GAP = 1;
-    private static final int LEFT_MARGIN = 10;
-    private static final int TOP_MARGIN = 28;
-
     public static int manaBarX;
-    public static int manaBarY = TOP_MARGIN;
+    public static int manaBarY = RenderConfigs.MANA_BAR_Y.get();
 
     public static void render(GuiGraphics guiGraphics, LocalPlayer player) {
         PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
@@ -38,8 +36,8 @@ public class ManaHudRenderer {
         int currentMana = Mth.clamp(mana.getMana(), 0, maxMana);
         if(currentMana >= maxMana) return;
 
-        manaBarX = LEFT_MARGIN;
-        manaBarY = TOP_MARGIN;
+        manaBarX = RenderConfigs.MANA_BAR_X.get();
+        manaBarY = RenderConfigs.MANA_BAR_Y.get();
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();

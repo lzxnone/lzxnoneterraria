@@ -14,6 +14,7 @@ import com.lzxnone.terraria.client.item.melee.ClientTrueNightsEdge;
 import com.lzxnone.terraria.client.item.ranged.ClientFlamethrower;
 import com.lzxnone.terraria.client.item.ranged.ClientStarCannon;
 import com.lzxnone.terraria.client.item.ranged.ClientSuperStarShooter;
+import com.lzxnone.terraria.client.item.summon.ClientStardustDragonStaff;
 import com.lzxnone.terraria.client.item.summon.ClientTerraprisma;
 import com.lzxnone.terraria.client.item.summon.ClientWhip;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
@@ -49,6 +50,7 @@ public class ClientStaticSummonRenderBehaviors {
         BEHAVIORS.put(StaticSummonBehaviors.TERRAPRISMA, ClientTerraprisma.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.POSSESSION, ClientWhip.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.POSSESSION_VISION, DEFAULT_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.STARDUST_DRAGON, ClientStardustDragonStaff.SUMMON_BEHAVIOR);
 
         BEHAVIORS.put(StaticSummonBehaviors.MUSKET_BALL, ClientBulletAmmo.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.METEOR_SHOT, ClientBulletAmmo.SUMMON_BEHAVIOR);

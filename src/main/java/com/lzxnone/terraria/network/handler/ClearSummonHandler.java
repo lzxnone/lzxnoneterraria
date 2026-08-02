@@ -1,9 +1,8 @@
 package com.lzxnone.terraria.network.handler;
 
+import com.lzxnone.terraria.attachment.PlayerSummon;
 import com.lzxnone.terraria.attachment.ModAttachments;
-import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
-import com.lzxnone.terraria.item.weapon.SummonWeapon;
 import com.lzxnone.terraria.network.payload.ClearSummonPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -25,21 +24,31 @@ public class ClearSummonHandler {
             Player player = context.player();
             String id = payload.id();
             boolean clearAll = id.isEmpty();
-            List<UUID> summons = SummonWeapon.getSummons(player);
-            List<UUID> remainingSummons = new ArrayList<>();
+            List<PlayerSummon.SummonSlot> slots = player.getData(ModAttachments.PLAYER_SUMMON).getMinionSlots();
+            List<PlayerSummon.SummonSlot> remainingSlots = new ArrayList<>();
 
-            for(UUID uuid : summons) {
-                Entity entity = serverLevel.getEntity(uuid);
-                if(entity == null || !entity.isAlive()) continue;
+            for(PlayerSummon.SummonSlot slot : slots) {
+                boolean clearSlot = clearAll || slot.getId().equals(id);
 
-                if(clearAll || (entity instanceof StaticSummon summon && summon.getEntityData().get(StaticSummon.BEHAVIOR).equals(id))) {
-                    entity.discard();
+                if(clearSlot) {
+                    for(UUID uuid : slot.getSummons()) {
+                        Entity entity = serverLevel.getEntity(uuid);
+                        if(entity != null) entity.discard();
+                    }
                 }else {
-                    remainingSummons.add(uuid);
+                    List<UUID> aliveSlot = slot.getSummons().stream()
+                        .filter(uuid -> {
+                            Entity entity = serverLevel.getEntity(uuid);
+                            return entity != null && entity.isAlive();
+                        })
+                        .toList();
+                    if(!aliveSlot.isEmpty()) remainingSlots.add(new PlayerSummon.SummonSlot(slot.getId(), aliveSlot));
                 }
             }
 
-            player.setData(ModAttachments.SUMMON_WEAPON_SUMMONS, remainingSummons);
+            PlayerSummon summonData = player.getData(ModAttachments.PLAYER_SUMMON);
+            summonData.setMinionSlots(remainingSlots);
+            player.setData(ModAttachments.PLAYER_SUMMON, summonData);
             player.displayClientMessage(
                 getClearMessage(clearAll, id),
                 true
@@ -59,6 +68,9 @@ public class ClearSummonHandler {
     private static Component getSummonName(String id) {
         if(StaticSummonBehaviors.TERRAPRISMA.equals(id)) {
             return Component.translatable("item.lzxnoneterraria.terraprisma");
+        }
+        if(StaticSummonBehaviors.STARDUST_DRAGON.equals(id)) {
+            return Component.translatable("item.lzxnoneterraria.stardust_dragon_staff");
         }
         return Component.literal(id);
     }

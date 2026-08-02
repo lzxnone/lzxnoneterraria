@@ -64,6 +64,17 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.MANA_FLOWER.get());
             }).build());
 
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> BLOCK_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_block_0", () -> CreativeModeTab.builder()
+            .title(Component.translatable("itemGroup.lzxnoneterraria.block"))
+            .icon(() -> ModItems.VISION.get().getDefaultInstance())
+            .displayItems((parameters, output) -> {
+                output.accept(ModItems.VISION.get());
+                output.accept(ModItems.STARDUST_DRAGON_HEAD.get());
+                output.accept(ModItems.STARDUST_DRAGON_BODY_A.get());
+                output.accept(ModItems.STARDUST_DRAGON_BODY_B.get());
+                output.accept(ModItems.STARDUST_DRAGON_TAIL.get());
+            }).build());
+
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> RANGED_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_ranged_0", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.lzxnoneterraria.ranged"))
             .icon(() -> ModItems.SDMG.get().getDefaultInstance())
@@ -117,7 +128,7 @@ public class ModCreativeModeTabs {
             .icon(() -> ModItems.TERRAPRISMA.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 output.accept(ModItems.TERRAPRISMA.get());
+                output.accept(ModItems.STARDUST_DRAGON_STAFF.get());
                 output.accept(ModItems.POSSESSION.get());
-                output.accept(ModItems.VISION.get());
             }).build());
 }

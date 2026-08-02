@@ -209,12 +209,4 @@ public class RangedWeapon extends Weapon {
                 ammoStack.getHoverName()
         ).withStyle(style -> style.withColor(0x55FF55)));
     }
-
-    protected static int getEnchantmentLevel(LivingEntity entity, ItemStack stack, ResourceKey<Enchantment> enchantment) {
-        return entity.registryAccess()
-            .lookupOrThrow(Registries.ENCHANTMENT)
-            .get(enchantment)
-            .map(stack::getEnchantmentLevel)
-            .orElse(0);
-    }
 }

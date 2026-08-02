@@ -14,7 +14,8 @@ import com.lzxnone.terraria.item.weapon.ranged.SnowballCannon;
 import com.lzxnone.terraria.item.weapon.ranged.StarCannon;
 import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
 import com.lzxnone.terraria.item.weapon.ranged.gun.*;
-import com.lzxnone.terraria.item.weapon.summon.*;
+import com.lzxnone.terraria.item.weapon.summon.minion.StardustDragonStaff;
+import com.lzxnone.terraria.item.weapon.summon.minion.Terraprisma;
 import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -82,6 +83,7 @@ public class ModItems {
 
     //召唤武器
     public static final DeferredItem<Item> TERRAPRISMA = ITEMS.register("terraprisma", Terraprisma::new);
+    public static final DeferredItem<Item> STARDUST_DRAGON_STAFF = ITEMS.register("stardust_dragon_staff", StardustDragonStaff::new);
     public static final DeferredItem<Item> POSSESSION = ITEMS.register("possession", Possession::new);
 
     //近战武器 灾厄
@@ -115,6 +117,10 @@ public class ModItems {
 
     //方块
     public static final DeferredItem<Item> VISION = ITEMS.register("vision", () -> new BlockItem(ModBlocks.VISION.get(), new Item.Properties()));
+    public static final DeferredItem<Item> STARDUST_DRAGON_HEAD = ITEMS.register("stardust_dragon_head", () -> new BlockItem(ModBlocks.STARDUST_DRAGON_HEAD.get(), new Item.Properties()));
+    public static final DeferredItem<Item> STARDUST_DRAGON_BODY_A = ITEMS.register("stardust_dragon_body_a", () -> new BlockItem(ModBlocks.STARDUST_DRAGON_BODY_A.get(), new Item.Properties()));
+    public static final DeferredItem<Item> STARDUST_DRAGON_BODY_B = ITEMS.register("stardust_dragon_body_b", () -> new BlockItem(ModBlocks.STARDUST_DRAGON_BODY_B.get(), new Item.Properties()));
+    public static final DeferredItem<Item> STARDUST_DRAGON_TAIL = ITEMS.register("stardust_dragon_tail", () -> new BlockItem(ModBlocks.STARDUST_DRAGON_TAIL.get(), new Item.Properties()));
 
     //弹射物
     public static final DeferredItem<Item> BULLET_PROJECTILE = ITEMS.register("bullet_projectile", () -> new Item(new Item.Properties()));

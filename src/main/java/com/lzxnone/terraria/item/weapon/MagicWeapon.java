@@ -124,12 +124,4 @@ public class MagicWeapon extends Weapon {
         return ManaPotionUtil.tryUseManaPotion(player);
     }
 
-    private static int getEnchantmentLevel(LivingEntity entity, ItemStack stack, ResourceKey<Enchantment> enchantment) {
-        return entity.registryAccess()
-            .lookupOrThrow(Registries.ENCHANTMENT)
-            .get(enchantment)
-            .map(stack::getEnchantmentLevel)
-            .orElse(0);
-    }
-
 }

@@ -51,6 +51,10 @@ public class ModSounds {
             SOUND_EVENTS.register("summon_terraprisma",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "summon_terraprisma")));
+    public static final Supplier<SoundEvent> SUMMON =
+            SOUND_EVENTS.register("summon",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "summon")));
     public static final Supplier<SoundEvent> WHIP_USE =
             SOUND_EVENTS.register("whip_use",
                     () -> SoundEvent.createVariableRangeEvent(

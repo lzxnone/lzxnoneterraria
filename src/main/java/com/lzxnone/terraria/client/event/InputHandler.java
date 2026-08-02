@@ -4,12 +4,12 @@ import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModKeyBindings;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.item.ModItems;
-import com.lzxnone.terraria.item.weapon.SummonWeapon;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.item.weapon.melee.FirstFractal;
 import com.lzxnone.terraria.item.weapon.melee.TrueCopperShortsword;
 import com.lzxnone.terraria.item.weapon.melee.Zenith;
 import com.lzxnone.terraria.item.weapon.ranged.gun.SniperRifle;
+import com.lzxnone.terraria.item.weapon.summon.minion.MinionWeapon;
 import com.lzxnone.terraria.network.payload.ClearSummonPayload;
 import com.lzxnone.terraria.network.payload.DevilsDevastationKillModePayload;
 import com.lzxnone.terraria.network.payload.FirstFractalScrollPayload;
@@ -19,6 +19,7 @@ import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -141,8 +142,8 @@ public class InputHandler {
             if(mc.player != null) {
                 Player player = mc.player;
                 ItemStack stack = player.getMainHandItem();
-                if(stack.getItem() instanceof SummonWeapon weapon) {
-                    PacketDistributor.sendToServer(new ClearSummonPayload(weapon.getSummonId()));
+                if(stack.getItem() instanceof MinionWeapon) {
+                    PacketDistributor.sendToServer(new ClearSummonPayload(BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath()));
                 }
             }
         }

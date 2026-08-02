@@ -29,6 +29,9 @@
   "summon_terraprisma": {
     "sounds": ["lzxnoneterraria:summon_terraprisma"]
   },
+  "summon": {
+    "sounds": ["lzxnoneterraria:summon"]
+  },
   "whip_use": {
     "sounds": ["lzxnoneterraria:whip_use"]
   },

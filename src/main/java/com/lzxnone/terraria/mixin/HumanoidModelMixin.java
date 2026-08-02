@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.mixin;
 
+import com.lzxnone.terraria.client.config.RenderConfigs;
 import com.lzxnone.terraria.item.weapon.RangedWeapon;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -22,6 +23,7 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> {
     @Inject(method = "setupAnim", at = @At("RETURN"))
     private void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks,
                            float netHeadYaw, float headPitch, CallbackInfo ci) {
+        if(!RenderConfigs.ENABLE_SETUP_ANIM.get()) return;
         if(!(entity instanceof Player player)) return;
         if(!player.isUsingItem()) return;
 

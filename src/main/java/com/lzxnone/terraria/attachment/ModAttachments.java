@@ -30,7 +30,13 @@ public class ModAttachments {
     public static final Supplier<AttachmentType<Integer>> SUMMON_ATTACK_MODE =
         ATTACHMENT_TYPES.register("summon_attack_mode", () -> AttachmentType.builder(() -> 2).serialize(Codec.INT).build());
 
+    public static final Supplier<AttachmentType<PlayerSummon>> PLAYER_SUMMON =
+        ATTACHMENT_TYPES.register("player_summon", () -> AttachmentType.builder(PlayerSummon::new).serialize(PlayerSummon.CODEC).copyOnDeath().build());
+
     public static final Supplier<AttachmentType<PlayerMana>> PLAYER_MANA =
         ATTACHMENT_TYPES.register("player_mana", () -> AttachmentType.builder(PlayerMana::new).serialize(PlayerMana.CODEC).copyOnDeath().build());
+
+    public static final Supplier<AttachmentType<TargetMarks>> TARGET_MARKS =
+        ATTACHMENT_TYPES.register("target_marks", () -> AttachmentType.builder((Supplier<TargetMarks>) TargetMarks::new).serialize(TargetMarks.CODEC).build());
 
 }

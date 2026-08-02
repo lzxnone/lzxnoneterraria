@@ -24,6 +24,13 @@
                     </button>
                     <element class="nav-indicator"/>
                 </element>
+                <element id="nav-item-accessory" class="nav-item">
+                    <button id="nav-button-accessory" class="nav-button" text="">
+                        <element class="nav-img nav-img-accessory"/>
+                        <label class="nav-label"><lang key="lzxnoneterraria.configuration.nav_accessory"/></label>
+                    </button>
+                    <element class="nav-indicator"/>
+                </element>
                 <element id="nav-item-effect" class="nav-item">
                     <button id="nav-button-effect" class="nav-button" text="">
                         <element class="nav-img nav-img-effect"/>
@@ -35,6 +42,13 @@
                     <button id="nav-button-enchantment" class="nav-button" text="">
                         <element class="nav-img nav-img-enchantment"/>
                         <label class="nav-label"><lang key="lzxnoneterraria.configuration.nav_enchantment"/></label>
+                    </button>
+                    <element class="nav-indicator"/>
+                </element>
+                <element id="nav-item-render" class="nav-item">
+                    <button id="nav-button-render" class="nav-button" text="">
+                        <element class="nav-img nav-img-render"/>
+                        <label class="nav-label"><lang key="lzxnoneterraria.configuration.nav_render"/></label>
                     </button>
                     <element class="nav-indicator"/>
                 </element>

@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.mixin;
 
 import com.lzxnone.terraria.effect.ModEffects;
+import com.lzxnone.terraria.client.config.RenderConfigs;
 import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
 import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.item.ModItems;
@@ -38,6 +39,7 @@ public class ItemInHandRenderMixin {
                                          InteractionHand hand, float swingProgress, ItemStack stack,
                                          float equippedProgress, PoseStack poseStack,
                                          MultiBufferSource buffer, int combinedLight, CallbackInfo ci) {
+        if(!RenderConfigs.ENABLE_RENDER_HAND.get()) return;
         if(!player.isScoping()) {
             if(stack.is(ModItems.ZENITH.get())
                 || stack.is(ModItems.TRUE_COPPER_SHORTSWORD.get())
@@ -102,6 +104,7 @@ public class ItemInHandRenderMixin {
     private void renderItem(LivingEntity entity, ItemStack itemStack, ItemDisplayContext displayContext,
                                          boolean leftHand, PoseStack poseStack, MultiBufferSource buffer,
                                          int seed, CallbackInfo ci) {
+        if(!RenderConfigs.ENABLE_RENDER_ITEM.get()) return;
 
         if((itemStack.is(ModItems.ZENITH.get())
             || itemStack.is(ModItems.TRUE_COPPER_SHORTSWORD.get())
@@ -137,6 +140,7 @@ public class ItemInHandRenderMixin {
     private void renderItemPost(LivingEntity entity, ItemStack itemStack, ItemDisplayContext displayContext,
                                 boolean leftHand, PoseStack poseStack, MultiBufferSource buffer,
                                 int seed, CallbackInfo ci) {
+        if(!RenderConfigs.ENABLE_RENDER_ITEM.get()) return;
         if(itemStack.is(ModItems.DEVILS_DEVASTATION.get()) && entity instanceof Player player) {
             if(entity.getEffect(ModEffects.KILL_MODE) != null && !player.getCooldowns().isOnCooldown(itemStack.getItem())) {
                 poseStack.pushPose();
