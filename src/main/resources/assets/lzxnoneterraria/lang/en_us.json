@@ -135,7 +135,7 @@
   "tooltip.lzxnoneterraria.minion_weapon_minion_count": "Minion Count: %s",
 
   "jei.lzxnoneterraria.info.fallen_star": "Has a chance to fall from the sky at night. Fallen Stars spawn in open areas near players and can be picked up after landing.",
-  "jei.lzxnoneterraria.info.natures_gift": "Can be found in dungeon chests.",
+  "jei.lzxnoneterraria.info.natures_gift": "Can be found in ordinary loot chests from various structures.",
 
   "entity.lzxnoneterraria.static_projectile": "Projectile",
   "entity.lzxnoneterraria.static_summon": "Summon",

@@ -42,11 +42,11 @@ import java.util.Locale;
 
 public class Possession extends Whip {
     private static final ConfigDouble RANGE = new ConfigDouble("weapon.possession.range", "possession_range", 32.0D, 1.0D, 256.0D);
-    private static final ConfigFloat DAMAGE = new ConfigFloat("weapon.possession.damage", "possession_damage", 5.0F, 0.0F, 8388600.0F);
+    private static final ConfigFloat DAMAGE = new ConfigFloat("weapon.possession.damage", "possession_damage", 10.0F, 0.0F, 8388600.0F);
     private static final ConfigInt ROTATE = new ConfigInt("weapon.possession.rotate", "possession_rotate", 60, 0, 360);
     private static final ConfigDouble BEAM_SPEED = new ConfigDouble("weapon.possession.beam_speed", "possession_beam_speed", 1.5D, 0.01D, 32.0D);
     private static final double BEAM_HEIGHT = 4.0D;
-    private static final ConfigFloat BEAM_DAMAGE = new ConfigFloat("weapon.possession.beam_damage", "possession_beam_damage", 5.0F, 0.0F, 8388600.0F);
+    private static final ConfigFloat BEAM_DAMAGE = new ConfigFloat("weapon.possession.beam_damage", "possession_beam_damage", 10.0F, 0.0F, 8388600.0F);
     private static final ConfigInt PROPHETIC_MARK_DURATION = new ConfigInt("weapon.possession.prophetic_mark_duration", "possession_prophetic_mark_duration", 80, 1, 72000);
     public static final ConfigInt MAX_PROPHETIC_MARK_STACKS = new ConfigInt("weapon.possession.max_prophetic_mark_stacks", "possession_max_prophetic_mark_stacks", 3, 0, 1024);
 

@@ -135,7 +135,7 @@
   "tooltip.lzxnoneterraria.minion_weapon_minion_count": "仆从数量: %s",
 
   "jei.lzxnoneterraria.info.fallen_star": "夜晚时有概率从天空坠落。坠落之星会在玩家附近的露天区域生成，落地后可以拾取。",
-  "jei.lzxnoneterraria.info.natures_gift": "可在地牢箱子中找到。",
+  "jei.lzxnoneterraria.info.natures_gift": "可在各类普通结构战利品箱中找到。",
 
   "entity.lzxnoneterraria.static_projectile": "弹射物",
   "entity.lzxnoneterraria.static_summon": "召唤物",
