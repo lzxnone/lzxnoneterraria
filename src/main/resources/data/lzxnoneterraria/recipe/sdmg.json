@@ -4,7 +4,7 @@
   "pattern": [
     "ABC",
     "DFE",
-    "GGG"
+    "GHG"
   ],
   "key": {
     "A": { "item": "lzxnoneterraria:chain_gun" },
@@ -13,7 +13,8 @@
     "D": { "item": "lzxnoneterraria:sniper_rifle" },
     "E": { "item": "lzxnoneterraria:sniper_rifle" },
     "F": { "item": "minecraft:netherite_upgrade_smithing_template" },
-    "G": { "item": "minecraft:nether_star" }
+    "G": { "item": "minecraft:nether_star" },
+    "H": { "item": "minecraft:dragon_head" }
   },
   "result": {
     "id": "lzxnoneterraria:sdmg",

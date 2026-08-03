@@ -988,14 +988,6 @@ public class DevilsDevastation extends MeleeWeapon {
         );
     }
 
-
-
-    public static Vec3 computeRingDir(Vec3 n, Vec3 b, float ang) {
-        return n.scale(Math.cos(ang)).add(b.scale(Math.sin(ang)));
-    }
-
-
-
     public static final IItemWaveBehavior ITEM_WAVE_BEHAVIOR = new IItemWaveBehavior() {
         @Override
         public void onLeftClickAir(PlayerInteractEvent.LeftClickEmpty event) {

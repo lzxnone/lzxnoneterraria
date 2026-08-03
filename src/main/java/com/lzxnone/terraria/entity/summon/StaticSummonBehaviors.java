@@ -44,7 +44,7 @@ public class StaticSummonBehaviors {
     public static final String LAST_PRISM_TRI = "last_prism_tri";
     public static final String LAST_PRISM_BEAM = "last_prism_beam";
     public static final String TERRAPRISMA = "terraprisma";
-    public static final String STARDUST_DRAGON = "stardust_dragon_staff";
+    public static final String STARDUST_DRAGON_STAFF = "stardust_dragon_staff";
     public static final String POSSESSION = "possession";
     public static final String POSSESSION_VISION = "possession_vision";
 
@@ -96,7 +96,7 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(LAST_PRISM_TRI, LastPrism.SUMMON_BEHAVIOR);
         BEHAVIORS.put(LAST_PRISM_BEAM, LastPrism.SUMMON_BEHAVIOR2);
         BEHAVIORS.put(TERRAPRISMA, Terraprisma.SUMMON_BEHAVIOR);
-        BEHAVIORS.put(STARDUST_DRAGON, StardustDragonStaff.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(STARDUST_DRAGON_STAFF, StardustDragonStaff.SUMMON_BEHAVIOR);
         BEHAVIORS.put(POSSESSION, Whip.SUMMON_BEHAVIOR);
         BEHAVIORS.put(POSSESSION_VISION, Possession.SUMMON_BEHAVIOR);
 

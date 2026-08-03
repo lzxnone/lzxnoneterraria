@@ -11,7 +11,7 @@
     "B": { "item": "minecraft:conduit" },
     "C": { "item": "minecraft:blue_ice"},
     "D": { "item": "minecraft:slime_ball"},
-    "E": { "item": "minecraft:netherite_block"}
+    "E": { "item": "minecraft:netherite_ingot"}
   },
   "result": {
     "id": "lzxnoneterraria:elf_melter",

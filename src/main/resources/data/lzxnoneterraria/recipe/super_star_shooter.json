@@ -7,7 +7,7 @@
     "CCC"
   ],
   "key": {
-    "A": { "item": "minecraft:netherite_block" },
+    "A": { "item": "minecraft:netherite_ingot" },
     "B": { "item": "lzxnoneterraria:star_cannon" },
     "C": { "item": "lzxnoneterraria:mana_crystal"},
     "D": { "item": "minecraft:conduit"}

@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.item.potion;
 
 import com.lzxnone.terraria.effect.ModEffects;
+import com.lzxnone.terraria.effect.SummonEffect;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
@@ -16,6 +17,11 @@ public class SummoningPotion extends Potion {
 
     @Override
     protected String getTooltipKey() {
-        return "tooltip.lzxnoneterraria.summoning_potion.0";
+        return "tooltip.lzxnoneterraria.summoning_potion";
+    }
+
+    @Override
+    protected Object[] getTooltipArgs() {
+        return new Object[]{SummonEffect.getSummonCountPerLevel()};
     }
 }

@@ -48,6 +48,6 @@ public class ManaCrystal extends Food {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        tooltipComponents.add(Component.translatable("tooltip.lzxnoneterraria.mana_crystal.0").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.lzxnoneterraria.mana_crystal").withStyle(ChatFormatting.GRAY));
     }
 }

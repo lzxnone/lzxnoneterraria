@@ -25,6 +25,11 @@ public class RenderConfigs {
         "render_mixin_setup_anim",
         true
     );
+    public static final ConfigBoolean MANA_BAR_ALWAYS_DISPLAY = new ConfigBoolean(
+        "render.mana_bar.always_display",
+        "render_mana_bar_always_display",
+        false
+    );
     public static final ConfigInt MANA_BAR_X = new ConfigInt(
         "render.mana_bar.x",
         "render_mana_bar_x",
@@ -47,6 +52,7 @@ public class RenderConfigs {
                 ENABLE_RENDER_HAND,
                 ENABLE_RENDER_ITEM,
                 ENABLE_SETUP_ANIM,
+                MANA_BAR_ALWAYS_DISPLAY,
                 MANA_BAR_X,
                 MANA_BAR_Y
             );

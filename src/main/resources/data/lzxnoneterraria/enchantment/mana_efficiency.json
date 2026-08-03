@@ -1,17 +1,17 @@
 {
-  "anvil_cost": 4,
+  "anvil_cost": 5,
   "description": {
     "translate": "enchantment.lzxnoneterraria.mana_efficiency"
   },
   "exclusive_set": "#lzxnoneterraria:exclusive_set/mana_consume",
   "max_cost": {
-    "base": 55,
-    "per_level_above_first": 12
+    "base": 30,
+    "per_level_above_first": 10
   },
   "max_level": 3,
   "min_cost": {
     "base": 10,
-    "per_level_above_first": 12
+    "per_level_above_first": 10
   },
   "primary_items": "#lzxnoneterraria:magic_weapons",
   "slots": [

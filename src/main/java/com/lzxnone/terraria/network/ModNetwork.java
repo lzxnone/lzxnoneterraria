@@ -58,5 +58,10 @@ public class ModNetwork {
                 ManaSyncPayload.CODEC,
                 ManaSyncHandler::handle
         );
+        registrar.playToClient(
+                PlayerSummonSyncPayload.TYPE,
+                PlayerSummonSyncPayload.CODEC,
+                PlayerSummonSyncHandler::handle
+        );
     }
 }

@@ -8,7 +8,7 @@
   ],
   "key": {
     "A": { "item": "lzxnoneterraria:shotgun" },
-    "B": { "item": "minecraft:netherite_block" },
+    "B": { "item": "minecraft:netherite_ingot" },
     "C": { "item": "minecraft:mace" },
     "D": { "item": "minecraft:silence_armor_trim_smithing_template" }
   },

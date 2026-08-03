@@ -1,6 +1,6 @@
 package com.lzxnone.terraria.mixin;
 
-import com.lzxnone.terraria.item.ItemNameRenderer;
+import com.lzxnone.terraria.client.item.ItemNameRenderer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

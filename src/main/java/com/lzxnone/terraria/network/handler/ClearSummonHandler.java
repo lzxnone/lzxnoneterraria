@@ -3,6 +3,7 @@ package com.lzxnone.terraria.network.handler;
 import com.lzxnone.terraria.attachment.PlayerSummon;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
+import com.lzxnone.terraria.network.PlayerSummonSync;
 import com.lzxnone.terraria.network.payload.ClearSummonPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -48,7 +49,7 @@ public class ClearSummonHandler {
 
             PlayerSummon summonData = player.getData(ModAttachments.PLAYER_SUMMON);
             summonData.setMinionSlots(remainingSlots);
-            player.setData(ModAttachments.PLAYER_SUMMON, summonData);
+            PlayerSummonSync.setAndSync(player, summonData);
             player.displayClientMessage(
                 getClearMessage(clearAll, id),
                 true
@@ -69,7 +70,7 @@ public class ClearSummonHandler {
         if(StaticSummonBehaviors.TERRAPRISMA.equals(id)) {
             return Component.translatable("item.lzxnoneterraria.terraprisma");
         }
-        if(StaticSummonBehaviors.STARDUST_DRAGON.equals(id)) {
+        if(StaticSummonBehaviors.STARDUST_DRAGON_STAFF.equals(id)) {
             return Component.translatable("item.lzxnoneterraria.stardust_dragon_staff");
         }
         return Component.literal(id);

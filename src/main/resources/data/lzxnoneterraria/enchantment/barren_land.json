@@ -1,21 +1,21 @@
 {
-  "anvil_cost": 8,
+  "anvil_cost": 10,
   "description": {
     "translate": "enchantment.lzxnoneterraria.barren_land"
   },
   "max_cost": {
-    "base": 50,
+    "base": 100,
     "per_level_above_first": 0
   },
   "max_level": 1,
   "min_cost": {
-    "base": 20,
+    "base": 30,
     "per_level_above_first": 0
   },
-  "primary_items": "#lzxnoneterraria:summon_weapons",
+  "primary_items": "#lzxnoneterraria:minion_summon_weapons",
   "slots": [
     "mainhand"
   ],
-  "supported_items": "#lzxnoneterraria:summon_weapons",
+  "supported_items": "#lzxnoneterraria:minion_summon_weapons",
   "weight": 2
 }

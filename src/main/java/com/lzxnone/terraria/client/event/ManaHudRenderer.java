@@ -25,7 +25,7 @@ public class ManaHudRenderer {
     private static final int SLOT_WIDTH = 8;
     private static final int SLOT_HEIGHT = 9;
     private static final int SLOT_GAP = 1;
-    public static int manaBarX;
+    public static int manaBarX = RenderConfigs.MANA_BAR_X.get();
     public static int manaBarY = RenderConfigs.MANA_BAR_Y.get();
 
     public static void render(GuiGraphics guiGraphics, LocalPlayer player) {
@@ -35,7 +35,7 @@ public class ManaHudRenderer {
 
         int segmentCount = Mth.clamp(Mth.ceil(maxMana / (float)MANA_PER_STAR), 0, MAX_SEGMENT_COUNT);
         int currentMana = Mth.clamp(mana.getMana(), 0, maxMana);
-        if(currentMana >= maxMana) return;
+        if(!RenderConfigs.MANA_BAR_ALWAYS_DISPLAY.get() && currentMana >= maxMana) return;
 
         manaBarX = RenderConfigs.MANA_BAR_X.get();
         manaBarY = RenderConfigs.MANA_BAR_Y.get();

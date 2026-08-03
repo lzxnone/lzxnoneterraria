@@ -10,8 +10,8 @@
     "A": { "item": "lzxnoneterraria:excalibur" },
     "B": { "item": "minecraft:echo_shard" },
     "C": { "item": "minecraft:nether_star" },
-    "D": { "item": "minecraft:netherite_ingot" },
-    "E": { "item": "minecraft:dragon_head" }
+    "D": { "item": "minecraft:netherite_scrap" },
+    "E": { "item": "minecraft:dragon_breath" }
   },
   "result": {
     "id": "lzxnoneterraria:true_excalibur",

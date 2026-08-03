@@ -6,9 +6,12 @@ import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.effect.SummonEffect;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.network.PlayerSummonSync;
 import com.lzxnone.terraria.item.weapon.SummonWeapon;
 import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -19,8 +22,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -44,6 +49,15 @@ public class MinionWeapon extends SummonWeapon {
         return 1 + (instance == null ? 0 : (instance.getAmplifier() + 1) * SummonEffect.getSummonCountPerLevel());
     }
 
+    public static int getSummonCount(Player player, String id) {
+        List<PlayerSummon.SummonSlot> slots = player.getData(ModAttachments.PLAYER_SUMMON).getMinionSlots();
+        int count = 0;
+        for(PlayerSummon.SummonSlot slot : slots) {
+            if(slot.getId().equals(id)) count++;
+        }
+        return count;
+    }
+
     public static void addFreshSummon(Player player, String id, List<? extends Entity> slotSummons) {
         if(!(player.level() instanceof ServerLevel serverLevel)) return;
         if(slotSummons.isEmpty()) return;
@@ -62,7 +76,7 @@ public class MinionWeapon extends SummonWeapon {
 
         slots.add(new PlayerSummon.SummonSlot(id, slotSummons.stream().map(Entity::getUUID).toList()));
         summonData.setMinionSlots(slots);
-        player.setData(ModAttachments.PLAYER_SUMMON, summonData);
+        PlayerSummonSync.setAndSync(player, summonData);
         player.displayClientMessage(
             Component.translatable("message.lzxnoneterraria.current_minions", slots.size(), maxSummonCount)
                 .withStyle(slots.size() < maxSummonCount ? net.minecraft.ChatFormatting.GREEN : net.minecraft.ChatFormatting.RED),

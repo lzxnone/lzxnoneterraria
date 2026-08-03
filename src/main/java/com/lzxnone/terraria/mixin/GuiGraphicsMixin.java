@@ -2,7 +2,7 @@ package com.lzxnone.terraria.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.lzxnone.terraria.item.ItemNameRenderer;
+import com.lzxnone.terraria.client.item.ItemNameRenderer;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;

@@ -12,7 +12,7 @@
     "C": { "item": "lzxnoneterraria:megashark" },
     "D": { "item": "minecraft:totem_of_undying" },
     "E": { "item": "minecraft:diamond_block" },
-    "F": { "item": "minecraft:netherite_block" }
+    "F": { "item": "minecraft:netherite_ingot" }
   },
   "result": {
     "id": "lzxnoneterraria:venus_magnum",

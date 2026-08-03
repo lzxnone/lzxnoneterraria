@@ -9,7 +9,7 @@
   "key": {
     "A": { "item": "lzxnoneterraria:true_excalibur" },
     "B": { "item": "lzxnoneterraria:true_nights_edge" },
-    "C": { "item": "minecraft:netherite_block"},
+    "C": { "item": "minecraft:netherite_ingot"},
     "D": { "item": "minecraft:emerald_block"},
     "E": { "item": "minecraft:totem_of_undying" },
     "F": { "item": "minecraft:stick" }

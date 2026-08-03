@@ -22,6 +22,11 @@ public class BrewingRecipeHandler {
             new ItemStack(ModItems.SUMMONING_POTION.get())
         );
         event.getBuilder().addRecipe(
+            DataComponentIngredient.of(false, PotionContents.createItemStack(Items.POTION, Potions.AWKWARD)),
+            Ingredient.of(ModItems.FALLEN_STAR),
+            new ItemStack(ModItems.LESSER_MANA_POTION.get())
+        );
+        event.getBuilder().addRecipe(
             Ingredient.of(ModItems.LESSER_MANA_POTION.get()),
             Ingredient.of(Items.BROWN_MUSHROOM, Items.RED_MUSHROOM),
             new ItemStack(ModItems.MANA_POTION.get())

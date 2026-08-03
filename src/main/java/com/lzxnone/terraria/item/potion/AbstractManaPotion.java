@@ -33,7 +33,7 @@ public abstract class AbstractManaPotion extends Potion {
 
     @Override
     protected String getTooltipKey() {
-        return "tooltip.lzxnoneterraria.mana_potion.0";
+        return "tooltip.lzxnoneterraria.mana_potion";
     }
 
     @Override

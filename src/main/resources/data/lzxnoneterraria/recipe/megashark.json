@@ -9,7 +9,7 @@
   "key": {
     "A": { "item": "lzxnoneterraria:minishark" },
     "B": { "item": "minecraft:diamond_block" },
-    "C": { "item": "minecraft:netherite_ingot" },
+    "C": { "item": "minecraft:netherite_scrap" },
     "D": {
       "type": "neoforge:components",
       "items": "minecraft:potion",

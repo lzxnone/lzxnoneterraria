@@ -11,7 +11,7 @@
     "B": { "item": "minecraft:flint_and_steel" },
     "C": { "item": "minecraft:lava_bucket"},
     "D": { "item": "minecraft:slime_ball"},
-    "E": { "item": "minecraft:netherite_ingot"}
+    "E": { "item": "minecraft:netherite_scrap"}
   },
   "result": {
     "id": "lzxnoneterraria:flamethrower",

@@ -9,6 +9,7 @@ import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.network.PlayerSummonSync;
 import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
@@ -135,7 +136,7 @@ public class StardustDragonStaff extends MinionWeapon {
             if(!customData.contains("head")) {
                 if(customData.contains("uuid")) {
                     Entity entity = serverLevel.getEntity(customData.getUUID("uuid"));
-                    if(!(entity instanceof StaticSummon summon1) || !summon1.isAlive() || !summon1.getEntityData().get(StaticSummon.BEHAVIOR).equals(StaticSummonBehaviors.STARDUST_DRAGON)) onDied(summon);
+                    if(!(entity instanceof StaticSummon summon1) || !summon1.isAlive() || !summon1.getEntityData().get(StaticSummon.BEHAVIOR).equals(StaticSummonBehaviors.STARDUST_DRAGON_STAFF)) onDied(summon);
                 }else {
                     onDied(summon);
                 }
@@ -152,7 +153,7 @@ public class StardustDragonStaff extends MinionWeapon {
                 int stardustDragonSlotCount = 0;
                 if(summon.getOwner() instanceof Player player) {
                     for(PlayerSummon.SummonSlot slot : player.getData(ModAttachments.PLAYER_SUMMON).getMinionSlots()) {
-                        if(slot.getId().equals(StaticSummonBehaviors.STARDUST_DRAGON)) stardustDragonSlotCount++;
+                        if(slot.getId().equals(StaticSummonBehaviors.STARDUST_DRAGON_STAFF)) stardustDragonSlotCount++;
                     }
                 }
                 float damage = DAMAGE.get() + ADD_DAMAGE.get() * Math.max(0, stardustDragonSlotCount - 1);
@@ -167,7 +168,7 @@ public class StardustDragonStaff extends MinionWeapon {
     public static void tickDragonSegments(StaticSummon head, Player player, ServerLevel serverLevel) {
         List<PlayerSummon.SummonSlot> stardustDragonSlots = new ArrayList<>();
         for(PlayerSummon.SummonSlot slot : player.getData(ModAttachments.PLAYER_SUMMON).getMinionSlots()) {
-            if(slot.getId().equals(StaticSummonBehaviors.STARDUST_DRAGON)) stardustDragonSlots.add(slot);
+            if(slot.getId().equals(StaticSummonBehaviors.STARDUST_DRAGON_STAFF)) stardustDragonSlots.add(slot);
         }
         if(stardustDragonSlots.isEmpty()) return;
 
@@ -216,14 +217,14 @@ public class StardustDragonStaff extends MinionWeapon {
 
     private static CompoundTag repairTailPrevious(StaticSummon tailSummon, Player player, ServerLevel serverLevel, CompoundTag customData) {
         Entity previous = customData.contains("uuid") ? serverLevel.getEntity(customData.getUUID("uuid")) : null;
-        if(previous instanceof StaticSummon previousSummon && previousSummon.isAlive() && previousSummon.getEntityData().get(StaticSummon.BEHAVIOR).equals(StaticSummonBehaviors.STARDUST_DRAGON)) {
+        if(previous instanceof StaticSummon previousSummon && previousSummon.isAlive() && previousSummon.getEntityData().get(StaticSummon.BEHAVIOR).equals(StaticSummonBehaviors.STARDUST_DRAGON_STAFF)) {
             return customData;
         }
 
         UUID fallbackUUID = null;
         PlayerSummon.SummonSlot tailSlot = null;
         for(PlayerSummon.SummonSlot slot : player.getData(ModAttachments.PLAYER_SUMMON).getMinionSlots()) {
-            if(!slot.getId().equals(StaticSummonBehaviors.STARDUST_DRAGON)) continue;
+            if(!slot.getId().equals(StaticSummonBehaviors.STARDUST_DRAGON_STAFF)) continue;
             if(slot.getSummons().contains(tailSummon.getUUID())) {
                 tailSlot = slot;
                 continue;
@@ -265,7 +266,6 @@ public class StardustDragonStaff extends MinionWeapon {
     public static void onState(StaticSummon summon, Player player) {
         CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
         int state = customData.contains("state") ? customData.getInt("state") : 0;
-        LzxnoneTerraria.LOGGER.info("{}", state);
         if(state == State.IDLE.ordinal()) {
             storeSummonTarget(summon, findSummonTarget(summon, player, RANGE.get()));
         }else if(state == State.WANDER.ordinal()) {
@@ -376,7 +376,7 @@ public class StardustDragonStaff extends MinionWeapon {
                 int segmentCount = 1;
                 if(summon.getOwner() instanceof Player player) {
                     for(PlayerSummon.SummonSlot slot : player.getData(ModAttachments.PLAYER_SUMMON).getMinionSlots()) {
-                        if(slot.getId().equals(StaticSummonBehaviors.STARDUST_DRAGON)) {
+                        if(slot.getId().equals(StaticSummonBehaviors.STARDUST_DRAGON_STAFF)) {
                             segmentCount = Math.max(segmentCount, slot.getSummons().size());
                             break;
                         }
@@ -445,13 +445,13 @@ public class StardustDragonStaff extends MinionWeapon {
             List<PlayerSummon.SummonSlot> stardustDragonSlots = new ArrayList<>();
             int maxSummonCount = Math.max(1, getMaxSummonCount(player));
             slots.removeIf(slot -> {
-                boolean stardustDragon = slot.getId().equals(StaticSummonBehaviors.STARDUST_DRAGON);
+                boolean stardustDragon = slot.getId().equals(StaticSummonBehaviors.STARDUST_DRAGON_STAFF);
                 if(stardustDragon) stardustDragonSlots.add(slot);
                 return stardustDragon;
             });
             if(stardustDragonSlots.isEmpty()) {
                 summonData.setMinionSlots(slots);
-                player.setData(ModAttachments.PLAYER_SUMMON, summonData);
+                PlayerSummonSync.setAndSync(player, summonData);
             }
             if(stardustDragonSlots.isEmpty()) {
                 StaticSummon headSummon = createSummon(level, player, hand);
@@ -482,14 +482,14 @@ public class StardustDragonStaff extends MinionWeapon {
                 tailCustomData.putUUID("uuid", bodySummonB.getUUID());
                 tailSummon.getEntityData().set(StaticSummon.CUSTOM_DATA, tailCustomData);
 
-                MinionWeapon.addFreshSummon(player, StaticSummonBehaviors.STARDUST_DRAGON, List.of(headSummon, bodySummonA, bodySummonB, tailSummon));
+                MinionWeapon.addFreshSummon(player, StaticSummonBehaviors.STARDUST_DRAGON_STAFF, List.of(headSummon, bodySummonA, bodySummonB, tailSummon));
             }else {
                 PlayerSummon.SummonSlot stardustDragonTailSlot = stardustDragonSlots.getLast();
                 UUID tailUUID = stardustDragonTailSlot.getSummons().getLast();
                 if(!(serverLevel.getEntity(tailUUID) instanceof StaticSummon tailSummon) || !tailSummon.isAlive()) {
                     slots.addAll(stardustDragonSlots);
                     summonData.setMinionSlots(slots);
-                    player.setData(ModAttachments.PLAYER_SUMMON, summonData);
+                    PlayerSummonSync.setAndSync(player, summonData);
                     SoundUtil.playClientSound(player, ModSounds.SUMMON.get());
                     return InteractionResultHolder.consume(stack);
                 }
@@ -503,7 +503,7 @@ public class StardustDragonStaff extends MinionWeapon {
                     }else {
                         slots.addAll(stardustDragonSlots);
                         summonData.setMinionSlots(slots);
-                        player.setData(ModAttachments.PLAYER_SUMMON, summonData);
+                        PlayerSummonSync.setAndSync(player, summonData);
                         player.displayClientMessage(
                             Component.translatable("message.lzxnoneterraria.current_minions", slots.size(), maxSummonCount)
                                 .withStyle(net.minecraft.ChatFormatting.RED),
@@ -524,7 +524,7 @@ public class StardustDragonStaff extends MinionWeapon {
                 if(tailCustomData.contains("uuid")) {
                     UUID tailPreviousUUID = tailCustomData.getUUID("uuid");
                     Entity tailPrevious = serverLevel.getEntity(tailPreviousUUID);
-                    if(tailPrevious instanceof StaticSummon previousSummon && previousSummon.isAlive() && previousSummon.getEntityData().get(StaticSummon.BEHAVIOR).equals(StaticSummonBehaviors.STARDUST_DRAGON)) {
+                    if(tailPrevious instanceof StaticSummon previousSummon && previousSummon.isAlive() && previousSummon.getEntityData().get(StaticSummon.BEHAVIOR).equals(StaticSummonBehaviors.STARDUST_DRAGON_STAFF)) {
                         previousUUID = tailPreviousUUID;
                     }
                 }
@@ -543,7 +543,7 @@ public class StardustDragonStaff extends MinionWeapon {
                 if(previousUUID == null) {
                     slots.addAll(stardustDragonSlots);
                     summonData.setMinionSlots(slots);
-                    player.setData(ModAttachments.PLAYER_SUMMON, summonData);
+                    PlayerSummonSync.setAndSync(player, summonData);
                     SoundUtil.playClientSound(player, ModSounds.SUMMON.get());
                     return InteractionResultHolder.consume(stack);
                 }
@@ -565,10 +565,10 @@ public class StardustDragonStaff extends MinionWeapon {
                 tailCustomData.putUUID("uuid", bodySummonB.getUUID());
                 tailSummon.getEntityData().set(StaticSummon.CUSTOM_DATA, tailCustomData);
 
-                stardustDragonSlots.addFirst(new PlayerSummon.SummonSlot(StaticSummonBehaviors.STARDUST_DRAGON, List.of(bodySummonA.getUUID(), bodySummonB.getUUID())));
+                stardustDragonSlots.addFirst(new PlayerSummon.SummonSlot(StaticSummonBehaviors.STARDUST_DRAGON_STAFF, List.of(bodySummonA.getUUID(), bodySummonB.getUUID())));
                 slots.addAll(stardustDragonSlots);
                 summonData.setMinionSlots(slots);
-                player.setData(ModAttachments.PLAYER_SUMMON, summonData);
+                PlayerSummonSync.setAndSync(player, summonData);
                 player.displayClientMessage(
                     Component.translatable("message.lzxnoneterraria.current_minions", slots.size(), maxSummonCount)
                         .withStyle(slots.size() < maxSummonCount ? net.minecraft.ChatFormatting.GREEN : net.minecraft.ChatFormatting.RED),
@@ -588,7 +588,7 @@ public class StardustDragonStaff extends MinionWeapon {
         summon.setOwner(player);
         summon.getEntityData().set(StaticSummon.STACK_SOURCE, stack.copy());
         summon.setPos(player.position());
-        summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.STARDUST_DRAGON);
+        summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.STARDUST_DRAGON_STAFF);
         summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.LIFETIME, StaticSummon.INFINITE_LIFETIME);
         summon.getEntityData().set(StaticSummon.GLOW, true);

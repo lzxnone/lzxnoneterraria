@@ -9,7 +9,7 @@
   "key": {
     "A": { "item": "lzxnoneterraria:quad_barrel_shotgun" },
     "B": { "item": "minecraft:diamond_block" },
-    "C": { "item": "minecraft:netherite_ingot" },
+    "C": { "item": "minecraft:netherite_scrap" },
     "D": { "item": "minecraft:gold_block" }
   },
   "result": {

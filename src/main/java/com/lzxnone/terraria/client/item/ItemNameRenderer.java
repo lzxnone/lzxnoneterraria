@@ -1,6 +1,7 @@
-package com.lzxnone.terraria.item;
+package com.lzxnone.terraria.client.item;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.item.ModItems;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
