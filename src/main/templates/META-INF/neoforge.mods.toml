@@ -91,7 +91,7 @@ Example mod description.
 [[dependencies.${mod_id}]]
     modId="ldlib2"
     type="required"
-    versionRange="[2.2.29,)"
+    versionRange="[2.1.0,)"
     ordering="NONE"
     side="CLIENT"
 

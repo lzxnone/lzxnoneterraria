@@ -27,7 +27,9 @@ public interface IStaticSummonRenderBehavior {
         poseStack.mulPose(Axis.YP.rotationDegrees(-Mth.lerp(partialTick, summon.yRotO, summon.getYRot())));
         poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTick, summon.xRotO, summon.getXRot())));
 
-        poseStack.mulPose(Axis.YP.rotationDegrees(summon.getEntityData().get(StaticSummon.RYPS) * (summon.getEntityData().get(StaticSummon.AGE) + partialTick)));
+        poseStack.mulPose(Axis.XP.rotationDegrees(summon.getEntityData().get(StaticSummon.RXP) + summon.getEntityData().get(StaticSummon.RXPS) * (summon.getEntityData().get(StaticSummon.AGE) + partialTick)));
+        poseStack.mulPose(Axis.YP.rotationDegrees(summon.getEntityData().get(StaticSummon.RYP) + summon.getEntityData().get(StaticSummon.RYPS) * (summon.getEntityData().get(StaticSummon.AGE) + partialTick)));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(summon.getEntityData().get(StaticSummon.RZP) + summon.getEntityData().get(StaticSummon.RZPS) * (summon.getEntityData().get(StaticSummon.AGE) + partialTick)));
 
         poseStack.scale(
             summon.getEntityData().get(StaticSummon.SCALE_X),

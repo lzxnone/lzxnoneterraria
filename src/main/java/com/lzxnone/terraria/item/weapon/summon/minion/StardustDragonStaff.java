@@ -45,6 +45,7 @@ public class StardustDragonStaff extends MinionWeapon {
 
     public static final double SEGMENT_SPACING = 0.65D;
     public static final float ROTATION_LERP = 0.25f;
+    public static final float TURN_LERP = 0.12f;
 
     public static final ConfigDouble WANDER_SPEED = new ConfigDouble("weapon.stardust_dragon_staff.wander_speed", "stardust_dragon_staff_wander_speed", 0.85D, 0.01D, 32.0D);
     public static final ConfigDouble CHASE_SPEED = new ConfigDouble("weapon.stardust_dragon_staff.chase_speed", "stardust_dragon_staff_chase_speed", 2.0D, 0.01D, 32.0D);
@@ -179,9 +180,11 @@ public class StardustDragonStaff extends MinionWeapon {
         Vec3 previousPos = head.position().add(head.getDeltaMovement());
         Vec3 previousDir = head.getDeltaMovement().lengthSqr() > 1.0E-6D ? head.getDeltaMovement().normalize() : head.getLookAngle().normalize();
         if(previousDir.lengthSqr() < 1.0E-6D) previousDir = new Vec3(0.0D, 0.0D, 1.0D);
+        CompoundTag headCustomData = head.getEntityData().get(StaticSummon.CUSTOM_DATA);
+        int headState = headCustomData.contains("state") ? headCustomData.getInt("state") : State.IDLE.ordinal();
 
         for(int i = 1; i < tailSlotSummons.size() - 1; i++) {
-            StaticSummon segment = tickDragonSegmentTowards(serverLevel, tailSlotSummons.get(i), previousPos, previousDir);
+            StaticSummon segment = tickDragonSegmentTowards(serverLevel, tailSlotSummons.get(i), previousPos, previousDir, headState);
             if(segment != null) {
                 previousDir = previousPos.subtract(segment.position()).normalize();
                 previousPos = segment.position();
@@ -189,7 +192,7 @@ public class StardustDragonStaff extends MinionWeapon {
         }
         for(int i = stardustDragonSlots.size() - 2; i >= 0; i--) {
             for(UUID uuid : stardustDragonSlots.get(i).getSummons()) {
-                StaticSummon segment = tickDragonSegmentTowards(serverLevel, uuid, previousPos, previousDir);
+                StaticSummon segment = tickDragonSegmentTowards(serverLevel, uuid, previousPos, previousDir, headState);
                 if(segment != null) {
                     previousDir = previousPos.subtract(segment.position()).normalize();
                     previousPos = segment.position();
@@ -201,15 +204,15 @@ public class StardustDragonStaff extends MinionWeapon {
         if(tailEntity instanceof StaticSummon tailSummon && tailSummon.isAlive()) {
             repairTailPrevious(tailSummon, player, serverLevel, tailSummon.getEntityData().get(StaticSummon.CUSTOM_DATA));
             tickSegmentTowards(tailSummon, previousPos, previousDir);
-            markChainUpdated(tailSummon, serverLevel);
+            markChainUpdated(tailSummon, serverLevel, headState);
         }
     }
 
-    private static StaticSummon tickDragonSegmentTowards(ServerLevel serverLevel, UUID uuid, Vec3 previousPos, Vec3 fallbackDir) {
+    private static StaticSummon tickDragonSegmentTowards(ServerLevel serverLevel, UUID uuid, Vec3 previousPos, Vec3 fallbackDir, int state) {
         Entity entity = serverLevel.getEntity(uuid);
         if(entity instanceof StaticSummon segment && segment.isAlive()) {
             tickSegmentTowards(segment, previousPos, fallbackDir);
-            markChainUpdated(segment, serverLevel);
+            markChainUpdated(segment, serverLevel, state);
             return segment;
         }
         return null;
@@ -256,9 +259,10 @@ public class StardustDragonStaff extends MinionWeapon {
         return customData.contains("chainTick") && customData.getLong("chainTick") == serverLevel.getGameTime();
     }
 
-    private static void markChainUpdated(StaticSummon summon, ServerLevel serverLevel) {
+    private static void markChainUpdated(StaticSummon summon, ServerLevel serverLevel, int state) {
         if(!summon.isAlive()) return;
         CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA).copy();
+        customData.putInt("state", state);
         customData.putLong("chainTick", serverLevel.getGameTime());
         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
     }
@@ -270,12 +274,17 @@ public class StardustDragonStaff extends MinionWeapon {
             storeSummonTarget(summon, findSummonTarget(summon, player, RANGE.get()));
         }else if(state == State.WANDER.ordinal()) {
             storeSummonTarget(summon, findSummonTarget(summon, player, RANGE.get()));
-
+            customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA).copy();
             int wanderTime = customData.contains("wanderTime") ? customData.getInt("wanderTime") : 0;
+            Vec3 desiredDir = new Vec3(
+                customData.contains("desiredDirX") ? customData.getDouble("desiredDirX") : 0,
+                customData.contains("desiredDirY") ? customData.getDouble("desiredDirY") : 0,
+                customData.contains("desiredDirZ") ? customData.getDouble("desiredDirZ") : 0
+            );
             if(wanderTime > 0) {
                 wanderTime--;
                 customData.putInt("wanderTime", wanderTime);
-                summon.setDeltaMovement(summon.getDeltaMovement().normalize().scale(WANDER_SPEED.get()));
+                summon.setDeltaMovement(getNextDir(summon, desiredDir).normalize().scale(WANDER_SPEED.get()));
             }else {
                 summon.setDeltaMovement(summon.getDeltaMovement().scale(WANDER_FRI.get()));
             }
@@ -288,7 +297,10 @@ public class StardustDragonStaff extends MinionWeapon {
         }else if(state == State.CHASE.ordinal()) {
             Entity target = getStoredSummonTarget(summon);
             if(target != null) {
-                summon.setDeltaMovement(target.getBoundingBox().getCenter().subtract(summon.position()).normalize().scale(CHASE_SPEED.get()));
+                Vec3 desiredDir = target.getBoundingBox().getCenter()
+                    .subtract(summon.position())
+                    .normalize();
+                summon.setDeltaMovement(getNextDir(summon, desiredDir).scale(CHASE_SPEED.get()));
             }
             float[] xyRot = MathUtil.computeXYRot(summon.getDeltaMovement().toVector3f());
             summon.setXRot(Mth.rotLerp(ROTATION_LERP, summon.getXRot(), xyRot[0]));
@@ -298,9 +310,12 @@ public class StardustDragonStaff extends MinionWeapon {
             if(dashTime > 0) {
                 dashTime--;
                 customData.putInt("dashTime", dashTime);
-                summon.setDeltaMovement(summon.getDeltaMovement().normalize().scale(DASH_SPEED.get()));
-            }else {
-                summon.setDeltaMovement(summon.getDeltaMovement().scale(DASH_FRI.get()));
+                Vec3 desiredDir = new Vec3(
+                    customData.contains("desiredDirX") ? customData.getDouble("desiredDirX") : 0,
+                    customData.contains("desiredDirY") ? customData.getDouble("desiredDirY") : 0,
+                    customData.contains("desiredDirZ") ? customData.getDouble("desiredDirZ") : 0
+                );
+                summon.setDeltaMovement(getNextDir(summon, desiredDir).scale(DASH_SPEED.get()));
             }
             float[] xyRot = MathUtil.computeXYRot(summon.getDeltaMovement().toVector3f());
             summon.setXRot(Mth.rotLerp(ROTATION_LERP, summon.getXRot(), xyRot[0]));
@@ -311,9 +326,12 @@ public class StardustDragonStaff extends MinionWeapon {
             if(dashDoneTime > 0) {
                 dashDoneTime--;
                 customData.putInt("dashDoneTime", dashDoneTime);
-                summon.setDeltaMovement(summon.getDeltaMovement().normalize().scale(DASH_SPEED.get()));
-            }else {
-                summon.setDeltaMovement(summon.getDeltaMovement().scale(DASH_FRI.get()));
+                Vec3 desiredDir = new Vec3(
+                    customData.contains("desiredDirX") ? customData.getDouble("desiredDirX") : 0,
+                    customData.contains("desiredDirY") ? customData.getDouble("desiredDirY") : 0,
+                    customData.contains("desiredDirZ") ? customData.getDouble("desiredDirZ") : 0
+                );
+                summon.setDeltaMovement(getNextDir(summon, desiredDir).scale(DASH_SPEED.get()));
             }
             float[] xyRot = MathUtil.computeXYRot(summon.getDeltaMovement().toVector3f());
             summon.setXRot(Mth.rotLerp(ROTATION_LERP, summon.getXRot(), xyRot[0]));
@@ -345,10 +363,15 @@ public class StardustDragonStaff extends MinionWeapon {
             if(target.getBoundingBox().getCenter().subtract(summon.position()).length() < CHASE_SPEED.get() * 1.5) return State.DASH.ordinal();
             else return State.CHASE.ordinal();
         }else if(state == State.DASH.ordinal()) {
-            if(summon.getDeltaMovement().length() < 0.5) return State.DASH_DONE.ordinal();
+            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+            Entity target = getStoredSummonTarget(summon);
+            int dashTime = customData.contains("dashTime") ? customData.getInt("dashTime") : 0;
+            if(target == null || !target.isAlive() || dashTime <= 0) return State.DASH_DONE.ordinal();
             return State.DASH.ordinal();
         }else if(state == State.DASH_DONE.ordinal()) {
-            if(summon.getDeltaMovement().length() < 0.5) return State.FIGHT.ordinal();
+            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+            int dashDoneTime = customData.contains("dashDoneTime") ? customData.getInt("dashDoneTime") : 0;
+            if(dashDoneTime <= 0) return State.FIGHT.ordinal();
             return State.DASH_DONE.ordinal();
         }
         return State.IDLE.ordinal();
@@ -368,35 +391,53 @@ public class StardustDragonStaff extends MinionWeapon {
             int wanderTime = (int) (dist / WANDER_SPEED.get());
             customData.putInt("wanderTime", wanderTime);
             Vec3 wanderDir = targetPos.subtract(summon.position()).normalize();
-            summon.setDeltaMovement(wanderDir.scale(WANDER_SPEED.get()));
+            customData.putDouble("desiredDirX", wanderDir.x);
+            customData.putDouble("desiredDirY", wanderDir.y);
+            customData.putDouble("desiredDirZ", wanderDir.z);
+            summon.setDeltaMovement(getNextDir(summon, wanderDir).scale(WANDER_SPEED.get()));
         }else if(to == State.DASH.ordinal()) {
             Entity target = getStoredSummonTarget(summon);
             if(target != null) {
                 Vec3 targetPos = target.getBoundingBox().getCenter();
                 int segmentCount = 1;
                 if(summon.getOwner() instanceof Player player) {
+                    segmentCount = 0;
                     for(PlayerSummon.SummonSlot slot : player.getData(ModAttachments.PLAYER_SUMMON).getMinionSlots()) {
                         if(slot.getId().equals(StaticSummonBehaviors.STARDUST_DRAGON_STAFF)) {
-                            segmentCount = Math.max(segmentCount, slot.getSummons().size());
-                            break;
+                            segmentCount += slot.getSummons().size();
                         }
                     }
+                    segmentCount = Math.max(1, segmentCount);
                 }
                 double passDistance = (segmentCount - 1) * SEGMENT_SPACING + target.getBbWidth() + 1.0D;
                 int dashTime = Math.max(1, (int)Math.ceil((passDistance) / DASH_SPEED.get()));
                 customData.putInt("dashTime", dashTime);
                 Vec3 dashDir = targetPos.subtract(summon.position()).normalize();
-                summon.setDeltaMovement(dashDir.scale(DASH_SPEED.get()));
+                customData.putDouble("desiredDirX", dashDir.x);
+                customData.putDouble("desiredDirY", dashDir.y);
+                customData.putDouble("desiredDirZ", dashDir.z);
+                summon.setDeltaMovement(getNextDir(summon, dashDir).scale(DASH_SPEED.get()));
             }
         }else if(to ==State.DASH_DONE.ordinal()) {
-            Vec3 targetPos = MathUtil.getRandomPosInRadius(summon.position(), 4);
+            Vec3 targetPos = MathUtil.getRandomPosOnRadius(summon.position(), 8);
             double dist = targetPos.subtract(summon.position()).length();
             int dashDoneTime = (int) (dist / DASH_SPEED.get());
             customData.putInt("dashDoneTime", dashDoneTime);
             Vec3 dashDoneDir = targetPos.subtract(summon.position()).normalize();
-            summon.setDeltaMovement(dashDoneDir.scale(DASH_SPEED.get()));
+            customData.putDouble("desiredDirX", dashDoneDir.x);
+            customData.putDouble("desiredDirY", dashDoneDir.y);
+            customData.putDouble("desiredDirZ", dashDoneDir.z);
+            summon.setDeltaMovement(getNextDir(summon, dashDoneDir).scale(DASH_SPEED.get()));
         }
         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+    }
+
+    public static Vec3 getNextDir(StaticSummon summon, Vec3 desiredDir) {
+        Vec3 currentVel = summon.getDeltaMovement();
+        Vec3 currentDir = currentVel.lengthSqr() > 1.0E-6D
+            ? currentVel.normalize()
+            : desiredDir;
+        return currentDir.lerp(desiredDir, TURN_LERP).normalize();
     }
 
     public static void tickSegment(StaticSummon summon, CompoundTag customData) {

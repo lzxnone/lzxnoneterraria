@@ -53,7 +53,7 @@ public class ClientStardustDragonStaff {
                         summon.getEntityData().get(StaticSummon.COLOR_B),
                         summon.getEntityData().get(StaticSummon.COLOR_A));
                 },
-                summon.getEntityData().get(StaticSummon.GLOW) ? LightTexture.FULL_BRIGHT : packedLight,
+                LightTexture.FULL_BRIGHT,
                 OverlayTexture.NO_OVERLAY,
                 ModelData.EMPTY,
                 null
