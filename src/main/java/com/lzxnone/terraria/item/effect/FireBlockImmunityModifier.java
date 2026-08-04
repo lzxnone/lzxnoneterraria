@@ -5,5 +5,5 @@ import net.minecraft.world.item.ItemStack;
 
 public interface FireBlockImmunityModifier {
     //火块（火/灵魂火/岩浆块）免疫
-    default boolean isFireBlockImmunity(ItemStack stack, LivingEntity entity) { return false; }
+    boolean isFireBlockImmunity(ItemStack stack, LivingEntity entity);
 }

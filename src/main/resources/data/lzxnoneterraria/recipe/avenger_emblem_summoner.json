@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "ABC",
+    "DFD",
+    "DED"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:zombie_head"
+    },
+    "B": {
+      "item": "minecraft:skeleton_skull"
+    },
+    "C": {
+      "item": "minecraft:creeper_head"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "E": {
+      "item": "minecraft:netherite_scrap"
+    },
+    "F": {
+      "item": "lzxnoneterraria:summoner_emblem"
+    }
+  },
+  "result": {
+    "id": "lzxnoneterraria:avenger_emblem",
+    "count": 1
+  }
+}

@@ -76,6 +76,11 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.COBALT_SHIELD.get());
                 output.accept(ModItems.OBSIDIAN_SHIELD.get());
                 output.accept(ModItems.ANKH_SHIELD.get());
+                output.accept(ModItems.AVENGER_EMBLEM.get());
+                output.accept(ModItems.CROSS_NECKLACE.get());
+                output.accept(ModItems.STAR_CLOAK.get());
+                output.accept(ModItems.STAR_VEIL.get());
+                output.accept(ModItems.HAND_WARMER.get());
                 output.accept(ModItems.BEZOAR.get());
                 output.accept(ModItems.BLINDFOLD.get());
                 output.accept(ModItems.FAST_CLOCK.get());

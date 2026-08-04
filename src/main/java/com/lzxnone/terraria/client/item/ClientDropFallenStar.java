@@ -5,6 +5,7 @@ import com.lzxnone.terraria.client.entity.summon.IStaticSummonRenderBehavior;
 import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.TintedVertexConsumer;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.utils.MathUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -91,13 +92,12 @@ public class ClientDropFallenStar {
         if(summon.onGround()) return;
 
         Vec3 dir = summon.getDeltaMovement().normalize();
-        float yRot = (float)(Mth.atan2(dir.x, dir.z) * Mth.RAD_TO_DEG);
-        float xRot = (float)(Mth.atan2(dir.y, Math.sqrt(dir.x * dir.x + dir.z * dir.z)) * Mth.RAD_TO_DEG);
+        float[] xyRot = MathUtil.computeXYRot(dir.toVector3f());
 
         poseStack.pushPose();
         poseStack.translate(-dir.x * 2, -dir.y * 2, -dir.z * 2);
-        poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
-        poseStack.mulPose(Axis.XP.rotationDegrees(-xRot));
+        poseStack.mulPose(Axis.YP.rotationDegrees(-xyRot[1]));
+        poseStack.mulPose(Axis.XP.rotationDegrees(xyRot[0]));
         poseStack.mulPose(Axis.YP.rotationDegrees(270.0F));
 
         VertexConsumer consumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(STAR_WAVE_RES));

@@ -166,7 +166,7 @@ public class Starfury extends MeleeWeapon {
 
             StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), level);
             projectile.setOwner(player);
-            projectile.getEntityData().set(StaticProjectile.STACK_SOURCE, player.getWeaponItem().copy());
+            projectile.getEntityData().set(StaticProjectile.STACK_SOURCE, itemstack.copy());
             projectile.setPos(spawnPos);
             projectile.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.STARFURY_STAR);
             projectile.getEntityData().set(StaticProjectile.RENDER_MODE, "item");

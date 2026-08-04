@@ -3,6 +3,7 @@ package com.lzxnone.terraria.event;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.effect.ModEffects;
+import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.core.Holder;
@@ -25,7 +26,7 @@ public class EffectLogicHandler {
         if(!entity.level().isClientSide()) {
             MobEffectInstance instance = event.getEffectInstance();
             if(instance == null) return;
-            if(AccessoryEventHandler.isImmuneToEffect(entity, instance.getEffect())) {
+            if(AccessoryUtil.isImmuneToEffect(entity, instance.getEffect())) {
                 event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
             }
         }

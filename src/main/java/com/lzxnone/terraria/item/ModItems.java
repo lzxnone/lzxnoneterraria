@@ -121,6 +121,11 @@ public class ModItems {
     public static final DeferredItem<Item> COBALT_SHIELD = ITEMS.register("cobalt_shield", CobaltShield::new);
     public static final DeferredItem<Item> OBSIDIAN_SHIELD = ITEMS.register("obsidian_shield", ObsidianShield::new);
     public static final DeferredItem<Item> ANKH_SHIELD = ITEMS.register("ankh_shield", AnkhShield::new);
+    public static final DeferredItem<Item> AVENGER_EMBLEM = ITEMS.register("avenger_emblem", AvengerEmblem::new);
+    public static final DeferredItem<Item> CROSS_NECKLACE = ITEMS.register("cross_necklace", CrossNecklace::new);
+    public static final DeferredItem<Item> STAR_CLOAK = ITEMS.register("star_cloak", StarCloak::new);
+    public static final DeferredItem<Item> STAR_VEIL = ITEMS.register("star_veil", StarVeil::new);
+    public static final DeferredItem<Item> HAND_WARMER = ITEMS.register("hand_warmer", HandWarmer::new);
     public static final DeferredItem<Item> BEZOAR = ITEMS.register("bezoar", Bezoar::new);
     public static final DeferredItem<Item> BLINDFOLD = ITEMS.register("blindfold", Blindfold::new);
     public static final DeferredItem<Item> FAST_CLOCK = ITEMS.register("fast_clock", FastClock::new);

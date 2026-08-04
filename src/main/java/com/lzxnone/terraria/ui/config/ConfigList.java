@@ -19,6 +19,9 @@ import com.lzxnone.terraria.item.accessory.AnkhCharm;
 import com.lzxnone.terraria.item.accessory.CobaltShield;
 import com.lzxnone.terraria.item.accessory.ObsidianShield;
 import com.lzxnone.terraria.item.accessory.AnkhShield;
+import com.lzxnone.terraria.item.accessory.StarCloak;
+import com.lzxnone.terraria.item.accessory.CrossNecklace;
+import com.lzxnone.terraria.item.accessory.StarVeil;
 import com.lzxnone.terraria.item.accessory.HerculesBeetle;
 import com.lzxnone.terraria.item.accessory.NecromanticScroll;
 import com.lzxnone.terraria.item.accessory.PapyrusScarab;
@@ -164,6 +167,9 @@ public class ConfigList {
             CobaltShield.CONFIG_LIST_ITEM,
             ObsidianShield.CONFIG_LIST_ITEM,
             AnkhShield.CONFIG_LIST_ITEM,
+            StarCloak.CONFIG_LIST_ITEM,
+            CrossNecklace.CONFIG_LIST_ITEM,
+            StarVeil.CONFIG_LIST_ITEM,
             ManaFlower.CONFIG_LIST_ITEM,
             HerculesBeetle.CONFIG_LIST_ITEM,
             NecromanticScroll.CONFIG_LIST_ITEM,

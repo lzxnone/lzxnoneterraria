@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:cross_necklace"
+    },
+    {
+      "item": "lzxnoneterraria:star_cloak"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:star_veil",
+    "count": 1
+  }
+}

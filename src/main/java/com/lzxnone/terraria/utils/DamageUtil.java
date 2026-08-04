@@ -3,14 +3,11 @@ package com.lzxnone.terraria.utils;
 import com.lzxnone.terraria.damage.ModDamageTypes;
 import com.lzxnone.terraria.effect.IchorEffect;
 import com.lzxnone.terraria.effect.ModEffects;
-import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
-import com.lzxnone.terraria.enchantment.ModEnchantments;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.BeeSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.weapon.*;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -21,7 +18,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 
@@ -29,12 +25,18 @@ import java.util.Objects;
 
 public class DamageUtil {
     public enum DamageCategory {
+        NORMAL,
         MELEE,
         RANGED,
         SUMMON,
         MAGIC,
         REAL
     }
+
+    public static boolean normalAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
+        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.NORMAL);
+    }
+
     public static boolean meleeAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
         return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.MELEE);
     }
