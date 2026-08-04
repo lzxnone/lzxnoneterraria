@@ -30,7 +30,7 @@ public class SorcererEmblem extends AccessoryItem implements MagicDamageModifier
         super(new Item.Properties().stacksTo(1));
     }
 
-    public double getMagicDamageModifier(ItemStack stack, LivingEntity entity) {
+    public double getMagicDamageMultiplier(ItemStack stack, LivingEntity entity) {
         return MAGIC_DAMAGE_MULTIPLIER.get();
     }
 

@@ -30,7 +30,7 @@ public class RangerEmblem extends AccessoryItem implements RangedDamageModifier 
         super(new Item.Properties().stacksTo(1));
     }
 
-    public double getRangedDamageModifier(ItemStack stack, LivingEntity entity) {
+    public double getRangedDamageMultiplier(ItemStack stack, LivingEntity entity) {
         return RANGED_DAMAGE_MULTIPLIER.get();
     }
 

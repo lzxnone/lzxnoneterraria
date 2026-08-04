@@ -79,7 +79,7 @@ public class MagicWeapon extends Weapon {
         double[] multiplier = {1.0D};
         AccessoryUtil.forEachAccessory(entity, (accessory, accessoryStack) -> {
             if(accessory instanceof MagicDamageModifier modifier) {
-                multiplier[0] *= modifier.getMagicDamageModifier(accessoryStack, entity);
+                multiplier[0] *= modifier.getMagicDamageMultiplier(accessoryStack, entity);
             }
         });
         finalDamage *= multiplier[0];

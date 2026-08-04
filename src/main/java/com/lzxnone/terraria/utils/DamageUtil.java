@@ -9,10 +9,7 @@ import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.BeeSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
-import com.lzxnone.terraria.item.weapon.MagicWeapon;
-import com.lzxnone.terraria.item.weapon.MeleeWeapon;
-import com.lzxnone.terraria.item.weapon.RangedWeapon;
-import com.lzxnone.terraria.item.weapon.SummonWeapon;
+import com.lzxnone.terraria.item.weapon.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -77,7 +74,8 @@ public class DamageUtil {
         float finalDamage = category == DamageCategory.REAL ? Math.max(0.0F, damage) : applyPlayerDamageEffects(player, damage);
         float knockbackLevel = (float) player.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
         //
-        //应用附魔
+        //应用
+        finalDamage = Weapon.applyDamageBonus(itemSource, player, finalDamage);
         if(category == DamageCategory.MELEE && !itemSource.isEmpty()) {
             finalDamage = EnchantmentHelper.modifyDamage(serverLevel, itemSource, target, source, finalDamage);
             finalDamage = MeleeWeapon.applyMeleeDamageBonus(itemSource, player, finalDamage);

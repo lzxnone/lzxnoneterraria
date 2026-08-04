@@ -21,7 +21,7 @@ public class MeleeWeapon extends Weapon {
         double[] multiplier = {1.0D};
         AccessoryUtil.forEachAccessory(entity, (accessory, accessoryStack) -> {
             if(accessory instanceof MeleeDamageModifier modifier) {
-                multiplier[0] *= modifier.getMeleeDamageModifier(accessoryStack, entity);
+                multiplier[0] *= modifier.getMeleeDamageMultiplier(accessoryStack, entity);
             }
         });
         finalDamage *= multiplier[0];

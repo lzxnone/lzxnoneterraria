@@ -3,6 +3,6 @@ package com.lzxnone.terraria.item.effect;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
-public interface MagicDamageModifier {
-    double getMagicDamageMultiplier(ItemStack stack, LivingEntity entity);
+public interface DamageModifier {
+    double getDamageMultiplier(ItemStack stack, LivingEntity entity);
 }

@@ -62,7 +62,7 @@ public class RangedWeapon extends Weapon {
         double[] multiplier = {1.0D};
         AccessoryUtil.forEachAccessory(entity, (accessory, accessoryStack) -> {
             if(accessory instanceof RangedDamageModifier modifier) {
-                multiplier[0] *= modifier.getRangedDamageModifier(accessoryStack, entity);
+                multiplier[0] *= modifier.getRangedDamageMultiplier(accessoryStack, entity);
             }
         });
         finalDamage *= multiplier[0];

@@ -37,7 +37,7 @@ public class WarriorEmblem extends AccessoryItem implements MeleeDamageModifier 
         super(new Item.Properties().stacksTo(1));
     }
 
-    public double getMeleeDamageModifier(ItemStack stack, LivingEntity entity) {
+    public double getMeleeDamageMultiplier(ItemStack stack, LivingEntity entity) {
         return MELEE_DAMAGE_MULTIPLIER.get();
     }
 
