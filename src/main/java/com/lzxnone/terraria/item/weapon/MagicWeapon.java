@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.item.weapon;
 
-import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.attachment.PlayerMana;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
@@ -8,18 +7,16 @@ import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
 import com.lzxnone.terraria.event.PlayerManaSyncEventHandler;
 import com.lzxnone.terraria.effect.ManaSicknessEffect;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
-import com.lzxnone.terraria.item.accessory.effect.AutoManaPotionUser;
-import com.lzxnone.terraria.item.accessory.effect.ManaCostModifier;
-import com.lzxnone.terraria.utils.ManaPotionUtil;
-import com.lzxnone.terraria.utils.SoundUtil;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
+import com.lzxnone.terraria.item.effect.AutoManaPotionUser;
+import com.lzxnone.terraria.item.effect.MagicDamageModifier;
+import com.lzxnone.terraria.item.effect.ManaCostModifier;
+import com.lzxnone.terraria.item.effect.SummonDamageModifier;
+import com.lzxnone.terraria.item.potion.AbstractManaPotion;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 
 public class MagicWeapon extends Weapon {
@@ -44,47 +41,60 @@ public class MagicWeapon extends Weapon {
         onMagicUseTick(level, entity, stack, count);
     }
 
-    protected void onMagicUseTick(Level level, LivingEntity entity, ItemStack stack, int count) {
-    }
+    //使用魔法武器时
+    protected void onMagicUseTick(Level level, LivingEntity entity, ItemStack stack, int count) {}
 
-    protected double getManaConsumeRate(ItemStack stack, LivingEntity entity) {
-        return 0.0D;
-    }
+    //提供基础魔力消耗
+    protected double getManaConsumeRate(ItemStack stack, LivingEntity entity) { return 0.0D; }
 
+    //获取最终魔力消耗
     protected double getFinalManaConsumeRate(ItemStack stack, LivingEntity entity) {
         double rate = getManaConsumeRate(stack, entity);
+        //魔力泄漏
         int leakLevel = getEnchantmentLevel(entity, stack, ModEnchantments.MANA_LEAK);
-        int efficiencyLevel = getEnchantmentLevel(entity, stack, ModEnchantments.MANA_EFFICIENCY);
-
         rate *= Math.pow(ModEnchantmentConfigs.getManaLeakConsumeMultiplier(), leakLevel);
+        //魔力效率
+        int efficiencyLevel = getEnchantmentLevel(entity, stack, ModEnchantments.MANA_EFFICIENCY);
         rate *= Math.pow(ModEnchantmentConfigs.getManaEfficiencyConsumeMultiplier(), efficiencyLevel);
-        rate *= getAccessoryManaCostMultiplier(entity);
+        //饰品
+        double[] multiplier = {1.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, itemStack) -> {
+            if(accessory instanceof ManaCostModifier modifier) {
+                multiplier[0] *= modifier.getManaCostMultiplier(itemStack, entity);
+            }
+        });
+        rate *= multiplier[0];
         return Math.max(0.0D, rate);
     }
 
+    //获取最终造成的伤害
     public static float applyMagicDamageBonus(ItemStack stack, LivingEntity entity, float damage) {
         double finalDamage = damage;
+        //奥术增幅
         int amplificationLevel = getEnchantmentLevel(entity, stack, ModEnchantments.ARCANE_AMPLIFICATION);
-
         finalDamage *= Math.pow(ModEnchantmentConfigs.getArcaneAmplificationDamageMultiplier(), amplificationLevel);
+        //耐魔性
         finalDamage *= ManaSicknessEffect.getMagicDamageMultiplier(entity);
+        //饰品
+        double[] multiplier = {1.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, accessoryStack) -> {
+            if(accessory instanceof MagicDamageModifier modifier) {
+                multiplier[0] *= modifier.getMagicDamageModifier(accessoryStack, entity);
+            }
+        });
+        finalDamage *= multiplier[0];
         return (float) Math.max(0.0D, finalDamage);
     }
 
+    //是否可以继续使用魔法武器
     protected boolean canUseMagic(ItemStack stack, LivingEntity entity) {
         if(entity.hasInfiniteMaterials()) return true;
-        if(!isManaEmpty(entity)) return true;
-        if(entity instanceof ServerPlayer player) {
-            return tryAutoUseManaPotion(player);
-        }
-        return entity instanceof Player player && canAutoUseManaPotion(player) && ManaPotionUtil.hasManaPotion(player);
+        if(entity instanceof ServerPlayer player && player.getData(ModAttachments.PLAYER_MANA).hasMana()) return true;
+        if(entity instanceof ServerPlayer player) return tryAutoUseManaPotion(player);
+        return entity instanceof Player player && canAutoUseManaPotion(player) && findManaPotionSlot(player) >= 0;
     }
 
-    protected boolean isManaEmpty(LivingEntity entity) {
-        if(!(entity instanceof Player player)) return false;
-        return !player.getData(ModAttachments.PLAYER_MANA).hasMana();
-    }
-
+    //进行魔力消耗
     protected boolean tryConsumeMana(Level level, LivingEntity entity, ItemStack stack, double amount) {
         if(amount <= 0.0D || entity.hasInfiniteMaterials()) return true;
         if(!(entity instanceof ServerPlayer player)) return true;
@@ -101,14 +111,14 @@ public class MagicWeapon extends Weapon {
         return tryAutoUseManaPotion(player);
     }
 
-    private static double getAccessoryManaCostMultiplier(LivingEntity entity) {
-        double[] multiplier = {1.0D};
-        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
-            if(accessory instanceof ManaCostModifier modifier) {
-                multiplier[0] *= modifier.getManaCostMultiplier(stack, entity);
+    private static int findManaPotionSlot(Player player) {
+        for(int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if(stack.getItem() instanceof AbstractManaPotion potion) {
+                if(potion.getRecoverAmount() > 0) return i;
             }
-        });
-        return multiplier[0];
+        }
+        return -1;
     }
 
     private static boolean canAutoUseManaPotion(LivingEntity entity) {
@@ -123,11 +133,11 @@ public class MagicWeapon extends Weapon {
 
     private static boolean tryAutoUseManaPotion(ServerPlayer player) {
         if(!canAutoUseManaPotion(player)) return false;
-        boolean res = ManaPotionUtil.tryUseManaPotion(player);
-        if(res) {
-            SoundUtil.playServerSound(player, ModSounds.DRINK.get(), 0.5f, 1.0f);
-        }
-        return res;
+        int slot = findManaPotionSlot(player);
+        if(slot < 0) return false;
+        ItemStack stack = player.getInventory().getItem(slot);
+        if(!(stack.getItem() instanceof AbstractManaPotion potion)) return false;
+        return potion.tryDrink(player, stack);
     }
 
 }

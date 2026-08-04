@@ -226,8 +226,9 @@ public class Terraprisma extends MinionWeapon {
                 FilterUtil.createTargetFilter(summon, player)
             );
             ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
+            float knockback = MinionWeapon.applyMinionKnockback(player, 1.0f);
             for(Entity target : targets) {
-                if(DamageUtil.summonAttack(summon, target, sourceStack, customData.contains("damage") ? customData.getFloat("damage") : DAMAGE.get(), 1.0f)) target.invulnerableTime = 15;
+                if(DamageUtil.summonAttack(summon, target, sourceStack, customData.contains("damage") ? customData.getFloat("damage") : DAMAGE.get(), knockback)) target.invulnerableTime = 15;
             }
         }else if(state == State.ROTATE.ordinal()) {
             int time = customData.contains("rotateTime") ? customData.getInt("rotateTime") : 0;
@@ -277,8 +278,9 @@ public class Terraprisma extends MinionWeapon {
             );
 
             ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
+            float knockback = MinionWeapon.applyMinionKnockback(player, 1.0f);
             for(Entity target : targets) {
-                if(DamageUtil.summonAttack(summon, target, sourceStack, customData.contains("damage") ? customData.getFloat("damage") : DAMAGE.get(), 1.0f)) target.invulnerableTime = 15;
+                if(DamageUtil.summonAttack(summon, target, sourceStack, customData.contains("damage") ? customData.getFloat("damage") : DAMAGE.get(), knockback)) target.invulnerableTime = 15;
             }
 
             customData.putInt("rotateTime", time + 1);

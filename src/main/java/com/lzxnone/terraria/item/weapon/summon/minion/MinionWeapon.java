@@ -7,11 +7,12 @@ import com.lzxnone.terraria.effect.SummonEffect;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.network.PlayerSummonSync;
+import com.lzxnone.terraria.item.accessory.AccessoryUtil;
+import com.lzxnone.terraria.item.effect.MinionCountModifier;
+import com.lzxnone.terraria.item.effect.MinionKnockbackModifier;
 import com.lzxnone.terraria.item.weapon.SummonWeapon;
 import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -22,10 +23,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -46,7 +45,24 @@ public class MinionWeapon extends SummonWeapon {
 
     public static int getMaxSummonCount(Player player) {
         MobEffectInstance instance = player.getEffect(ModEffects.SUMMON);
-        return 1 + (instance == null ? 0 : (instance.getAmplifier() + 1) * SummonEffect.getSummonCountPerLevel());
+        int summonCount = 1 + (instance == null ? 0 : (instance.getAmplifier() + 1) * SummonEffect.getSummonCountPerLevel());
+        int[] accessoryBonus = {0};
+        AccessoryUtil.forEachAccessory(player, (accessory, stack) -> {
+            if(accessory instanceof MinionCountModifier modifier) {
+                accessoryBonus[0] += modifier.getMinionCountBonus(stack, player);
+            }
+        });
+        return summonCount + accessoryBonus[0];
+    }
+
+    public static float applyMinionKnockback(Player player, float knockbackScale) {
+        double[] multiplier = {1.0D};
+        AccessoryUtil.forEachAccessory(player, (accessory, stack) -> {
+            if(accessory instanceof MinionKnockbackModifier modifier) {
+                multiplier[0] *= modifier.getMinionKnockbackMultiplier(stack, player);
+            }
+        });
+        return knockbackScale * (float) multiplier[0];
     }
 
     public static int getSummonCount(Player player, String id) {

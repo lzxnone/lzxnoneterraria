@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:armor_bracing"
+    },
+    {
+      "item": "lzxnoneterraria:medicated_bandage"
+    },
+    {
+      "item": "lzxnoneterraria:the_plan"
+    },
+    {
+      "item": "lzxnoneterraria:countercurse_mantra"
+    },
+    {
+      "item": "lzxnoneterraria:reflective_shades"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:ankh_charm",
+    "count": 1
+  }
+}

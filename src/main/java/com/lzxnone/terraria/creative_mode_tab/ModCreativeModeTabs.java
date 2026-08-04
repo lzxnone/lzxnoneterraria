@@ -64,8 +64,36 @@ public class ModCreativeModeTabs {
             .title(Component.translatable("itemGroup.lzxnoneterraria.accessory"))
             .icon(() -> ModItems.MANA_FLOWER.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
+                output.accept(ModItems.ARMOR_POLISH.get());
+                output.accept(ModItems.MEGAPHONE.get());
+                output.accept(ModItems.NAZAR.get());
+                output.accept(ModItems.POCKET_MIRROR.get());
+                output.accept(ModItems.REFLECTIVE_SHADES.get());
+                output.accept(ModItems.ARMOR_BRACING.get());
+                output.accept(ModItems.COUNTERCURSE_MANTRA.get());
+                output.accept(ModItems.ANKH_CHARM.get());
+                output.accept(ModItems.OBSIDIAN_SKULL.get());
+                output.accept(ModItems.COBALT_SHIELD.get());
+                output.accept(ModItems.OBSIDIAN_SHIELD.get());
+                output.accept(ModItems.ANKH_SHIELD.get());
+                output.accept(ModItems.BEZOAR.get());
+                output.accept(ModItems.BLINDFOLD.get());
+                output.accept(ModItems.FAST_CLOCK.get());
+                output.accept(ModItems.VITAMINS.get());
+                output.accept(ModItems.ADHESIVE_BANDAGE.get());
+                output.accept(ModItems.MEDICATED_BANDAGE.get());
+                output.accept(ModItems.TRIFOLD_MAP.get());
+                output.accept(ModItems.THE_PLAN.get());
                 output.accept(ModItems.NATURES_GIFT.get());
                 output.accept(ModItems.MANA_FLOWER.get());
+                output.accept(ModItems.HERCULES_BEETLE.get());
+                output.accept(ModItems.NECROMANTIC_SCROLL.get());
+                output.accept(ModItems.PAPYRUS_SCARAB.get());
+                output.accept(ModItems.PYGMY_NECKLACE.get());
+                output.accept(ModItems.WARRIOR_EMBLEM.get());
+                output.accept(ModItems.SUMMONER_EMBLEM.get());
+                output.accept(ModItems.RANGER_EMBLEM.get());
+                output.accept(ModItems.SORCERER_EMBLEM.get());
             }).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> BLOCK_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_block_0", () -> CreativeModeTab.builder()

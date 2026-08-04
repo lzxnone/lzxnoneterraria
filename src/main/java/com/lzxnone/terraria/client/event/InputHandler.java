@@ -18,6 +18,7 @@ import com.lzxnone.terraria.network.payload.ZenithScrollPayload;
 import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.component.DataComponents;
@@ -33,6 +34,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = LzxnoneTerraria.MODID, value = Dist.CLIENT)
@@ -152,6 +154,23 @@ public class InputHandler {
         }
         while(ModKeyBindings.TOGGLE_SUMMON_ATTACK_MODE.consumeClick()) {
             PacketDistributor.sendToServer(new ToggleSummonAttackModePayload());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onMovementInput(MovementInputUpdateEvent event) {
+        Player player = event.getEntity();
+        if(player.hasEffect(ModEffects.CONFUSED)) {
+            Input input = event.getInput();
+            boolean tmp = input.left;
+            input.left = input.right;
+            input.right = tmp;
+            input.leftImpulse = -input.leftImpulse;
+
+            tmp = input.up;
+            input.up = input.down;
+            input.down = tmp;
+            input.forwardImpulse = -input.forwardImpulse;
         }
     }
 }

@@ -1,7 +1,35 @@
 {
   "replace": false,
   "values": [
+    "lzxnoneterraria:armor_polish",
+    "lzxnoneterraria:megaphone",
+    "lzxnoneterraria:nazar",
+    "lzxnoneterraria:pocket_mirror",
+    "lzxnoneterraria:reflective_shades",
+    "lzxnoneterraria:armor_bracing",
+    "lzxnoneterraria:countercurse_mantra",
+    "lzxnoneterraria:ankh_charm",
+    "lzxnoneterraria:obsidian_skull",
+    "lzxnoneterraria:cobalt_shield",
+    "lzxnoneterraria:obsidian_shield",
+    "lzxnoneterraria:ankh_shield",
+    "lzxnoneterraria:bezoar",
+    "lzxnoneterraria:blindfold",
+    "lzxnoneterraria:fast_clock",
+    "lzxnoneterraria:vitamins",
+    "lzxnoneterraria:adhesive_bandage",
+    "lzxnoneterraria:medicated_bandage",
+    "lzxnoneterraria:trifold_map",
+    "lzxnoneterraria:the_plan",
     "lzxnoneterraria:natures_gift",
-    "lzxnoneterraria:mana_flower"
+    "lzxnoneterraria:mana_flower",
+    "lzxnoneterraria:hercules_beetle",
+    "lzxnoneterraria:necromantic_scroll",
+    "lzxnoneterraria:papyrus_scarab",
+    "lzxnoneterraria:pygmy_necklace",
+    "lzxnoneterraria:warrior_emblem",
+    "lzxnoneterraria:summoner_emblem",
+    "lzxnoneterraria:ranger_emblem",
+    "lzxnoneterraria:sorcerer_emblem"
   ]
 }

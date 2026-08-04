@@ -1,6 +1,8 @@
-package com.lzxnone.terraria.effect;
+package com.lzxnone.terraria.event;
 
+import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
+import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.core.Holder;
@@ -11,9 +13,23 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 
+
+@EventBusSubscriber(modid = LzxnoneTerraria.MODID)
 public class EffectLogicHandler {
+    @SubscribeEvent
+    public static void onEffectApplicable(MobEffectEvent.Applicable event) {
+        LivingEntity entity = event.getEntity();
+        if(!entity.level().isClientSide()) {
+            MobEffectInstance instance = event.getEffectInstance();
+            if(instance == null) return;
+            if(AccessoryEventHandler.isImmuneToEffect(entity, instance.getEffect())) {
+                event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
+            }
+        }
+    }
 
     @SubscribeEvent
     public static void onEffectAdded(MobEffectEvent.Added event) {

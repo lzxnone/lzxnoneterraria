@@ -13,6 +13,20 @@ import com.lzxnone.terraria.client.config.RenderConfigs;
 import com.lzxnone.terraria.item.ammo.*;
 import com.lzxnone.terraria.item.accessory.ManaFlower;
 import com.lzxnone.terraria.item.accessory.NaturesGift;
+import com.lzxnone.terraria.item.accessory.ArmorPolish;
+import com.lzxnone.terraria.item.accessory.ArmorBracing;
+import com.lzxnone.terraria.item.accessory.AnkhCharm;
+import com.lzxnone.terraria.item.accessory.CobaltShield;
+import com.lzxnone.terraria.item.accessory.ObsidianShield;
+import com.lzxnone.terraria.item.accessory.AnkhShield;
+import com.lzxnone.terraria.item.accessory.HerculesBeetle;
+import com.lzxnone.terraria.item.accessory.NecromanticScroll;
+import com.lzxnone.terraria.item.accessory.PapyrusScarab;
+import com.lzxnone.terraria.item.accessory.PygmyNecklace;
+import com.lzxnone.terraria.item.accessory.WarriorEmblem;
+import com.lzxnone.terraria.item.accessory.SummonerEmblem;
+import com.lzxnone.terraria.item.accessory.RangerEmblem;
+import com.lzxnone.terraria.item.accessory.SorcererEmblem;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.item.weapon.melee.BladeOfGrass;
@@ -144,7 +158,21 @@ public class ConfigList {
         });
         ITEMS.put(ACCESSORY, new ConfigListItem[]{
             NaturesGift.CONFIG_LIST_ITEM,
-            ManaFlower.CONFIG_LIST_ITEM
+            ArmorPolish.CONFIG_LIST_ITEM,
+            ArmorBracing.CONFIG_LIST_ITEM,
+            AnkhCharm.CONFIG_LIST_ITEM,
+            CobaltShield.CONFIG_LIST_ITEM,
+            ObsidianShield.CONFIG_LIST_ITEM,
+            AnkhShield.CONFIG_LIST_ITEM,
+            ManaFlower.CONFIG_LIST_ITEM,
+            HerculesBeetle.CONFIG_LIST_ITEM,
+            NecromanticScroll.CONFIG_LIST_ITEM,
+            PapyrusScarab.CONFIG_LIST_ITEM,
+            PygmyNecklace.CONFIG_LIST_ITEM,
+            WarriorEmblem.CONFIG_LIST_ITEM,
+            SummonerEmblem.CONFIG_LIST_ITEM,
+            RangerEmblem.CONFIG_LIST_ITEM,
+            SorcererEmblem.CONFIG_LIST_ITEM
         });
         ITEMS.put(ENCHANTMENT, new ConfigListItem[]{
             ModEnchantmentConfigs.MANA_LEAK_CONFIG_LIST_ITEM,

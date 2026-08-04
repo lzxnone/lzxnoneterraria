@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:armor_polish"
+    },
+    {
+      "item": "lzxnoneterraria:vitamins"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:armor_bracing",
+    "count": 1
+  }
+}

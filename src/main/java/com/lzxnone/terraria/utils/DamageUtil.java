@@ -10,6 +10,8 @@ import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.BeeSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.weapon.MagicWeapon;
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
+import com.lzxnone.terraria.item.weapon.RangedWeapon;
 import com.lzxnone.terraria.item.weapon.SummonWeapon;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -78,13 +80,14 @@ public class DamageUtil {
         //应用附魔
         if(category == DamageCategory.MELEE && !itemSource.isEmpty()) {
             finalDamage = EnchantmentHelper.modifyDamage(serverLevel, itemSource, target, source, finalDamage);
+            finalDamage = MeleeWeapon.applyMeleeDamageBonus(itemSource, player, finalDamage);
             knockbackLevel = EnchantmentHelper.modifyKnockback(serverLevel, itemSource, target, source, knockbackLevel);
         }else if(category == DamageCategory.SUMMON && !itemSource.isEmpty()) {
             finalDamage = SummonWeapon.applySummonDamageBonus(itemSource, player, finalDamage);
         }else if(category == DamageCategory.MAGIC && !itemSource.isEmpty()) {
             finalDamage = MagicWeapon.applyMagicDamageBonus(itemSource, player, finalDamage);
         }else if(category == DamageCategory.RANGED && !itemSource.isEmpty()) {
-            finalDamage = applyRangedDamageBonus(itemSource, player, finalDamage);
+            finalDamage = RangedWeapon.applyRangedDamageBonus(itemSource, player, finalDamage);
         }
         if(category != DamageCategory.REAL) {
             finalDamage = applyTargetDamageEffects(target, finalDamage);
@@ -135,14 +138,6 @@ public class DamageUtil {
         return Math.max(0.0F, finalDamage);
     }
 
-    private static float applyRangedDamageBonus(ItemStack stack, LivingEntity entity, float damage) {
-        double finalDamage = damage;
-        int gunpowderLevel = getEnchantmentLevel(entity, stack, ModEnchantments.GUNPOWDER);
-
-        finalDamage *= Math.pow(ModEnchantmentConfigs.getGunpowderDamageMultiplier(), gunpowderLevel);
-        return (float)Math.max(0.0D, finalDamage);
-    }
-
     private static float applyTargetDamageEffects(Entity target, float damage) {
         if(!(target instanceof LivingEntity livingTarget)) return damage;
 
@@ -152,14 +147,6 @@ public class DamageUtil {
             finalDamage *= 1.0f + IchorEffect.getDamageBonusPerLevel() * (amplifier + 1);
         }
         return Math.max(0.0F, finalDamage);
-    }
-
-    private static int getEnchantmentLevel(LivingEntity entity, ItemStack stack, ResourceKey<Enchantment> enchantment) {
-        return entity.registryAccess()
-            .lookupOrThrow(Registries.ENCHANTMENT)
-            .get(enchantment)
-            .map(stack::getEnchantmentLevel)
-            .orElse(0);
     }
 
     private static Player getAttackOwner(Entity attackEntity) {

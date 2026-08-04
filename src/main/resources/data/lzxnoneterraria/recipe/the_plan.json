@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:trifold_map"
+    },
+    {
+      "item": "lzxnoneterraria:fast_clock"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:the_plan",
+    "count": 1
+  }
+}

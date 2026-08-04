@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:obsidian_shield"
+    },
+    {
+      "item": "lzxnoneterraria:ankh_charm"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:ankh_shield",
+    "count": 1
+  }
+}

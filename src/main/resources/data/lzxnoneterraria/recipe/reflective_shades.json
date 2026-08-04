@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:blindfold"
+    },
+    {
+      "item": "lzxnoneterraria:pocket_mirror"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:reflective_shades",
+    "count": 1
+  }
+}

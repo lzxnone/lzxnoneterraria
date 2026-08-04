@@ -2,9 +2,8 @@ package com.lzxnone.terraria.item;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.block.ModBlocks;
+import com.lzxnone.terraria.item.accessory.*;
 import com.lzxnone.terraria.item.ammo.*;
-import com.lzxnone.terraria.item.accessory.ManaFlower;
-import com.lzxnone.terraria.item.accessory.NaturesGift;
 import com.lzxnone.terraria.item.food.ManaCrystal;
 import com.lzxnone.terraria.item.potion.*;
 import com.lzxnone.terraria.item.weapon.ranged.ElfMelter;
@@ -110,8 +109,36 @@ public class ModItems {
     public static final DeferredItem<Item> FALLEN_STAR = ITEMS.register("fallen_star", FallenStar::new);
 
     //饰品
+    public static final DeferredItem<Item> ARMOR_POLISH = ITEMS.register("armor_polish", ArmorPolish::new);
+    public static final DeferredItem<Item> MEGAPHONE = ITEMS.register("megaphone", Megaphone::new);
+    public static final DeferredItem<Item> NAZAR = ITEMS.register("nazar", Nazar::new);
+    public static final DeferredItem<Item> POCKET_MIRROR = ITEMS.register("pocket_mirror", PocketMirror::new);
+    public static final DeferredItem<Item> REFLECTIVE_SHADES = ITEMS.register("reflective_shades", ReflectiveShades::new);
+    public static final DeferredItem<Item> ARMOR_BRACING = ITEMS.register("armor_bracing", ArmorBracing::new);
+    public static final DeferredItem<Item> COUNTERCURSE_MANTRA = ITEMS.register("countercurse_mantra", CountercurseMantra::new);
+    public static final DeferredItem<Item> ANKH_CHARM = ITEMS.register("ankh_charm", AnkhCharm::new);
+    public static final DeferredItem<Item> OBSIDIAN_SKULL = ITEMS.register("obsidian_skull", ObsidianSkull::new);
+    public static final DeferredItem<Item> COBALT_SHIELD = ITEMS.register("cobalt_shield", CobaltShield::new);
+    public static final DeferredItem<Item> OBSIDIAN_SHIELD = ITEMS.register("obsidian_shield", ObsidianShield::new);
+    public static final DeferredItem<Item> ANKH_SHIELD = ITEMS.register("ankh_shield", AnkhShield::new);
+    public static final DeferredItem<Item> BEZOAR = ITEMS.register("bezoar", Bezoar::new);
+    public static final DeferredItem<Item> BLINDFOLD = ITEMS.register("blindfold", Blindfold::new);
+    public static final DeferredItem<Item> FAST_CLOCK = ITEMS.register("fast_clock", FastClock::new);
+    public static final DeferredItem<Item> VITAMINS = ITEMS.register("vitamins", Vitamins::new);
+    public static final DeferredItem<Item> ADHESIVE_BANDAGE = ITEMS.register("adhesive_bandage", AdhesiveBandage::new);
+    public static final DeferredItem<Item> MEDICATED_BANDAGE = ITEMS.register("medicated_bandage", MedicatedBandage::new);
+    public static final DeferredItem<Item> TRIFOLD_MAP = ITEMS.register("trifold_map", TrifoldMap::new);
+    public static final DeferredItem<Item> THE_PLAN = ITEMS.register("the_plan", ThePlan::new);
     public static final DeferredItem<Item> NATURES_GIFT = ITEMS.register("natures_gift", NaturesGift::new);
     public static final DeferredItem<Item> MANA_FLOWER = ITEMS.register("mana_flower", ManaFlower::new);
+    public static final DeferredItem<Item> HERCULES_BEETLE = ITEMS.register("hercules_beetle", HerculesBeetle::new);
+    public static final DeferredItem<Item> NECROMANTIC_SCROLL = ITEMS.register("necromantic_scroll", NecromanticScroll::new);
+    public static final DeferredItem<Item> PAPYRUS_SCARAB = ITEMS.register("papyrus_scarab", PapyrusScarab::new);
+    public static final DeferredItem<Item> PYGMY_NECKLACE = ITEMS.register("pygmy_necklace", PygmyNecklace::new);
+    public static final DeferredItem<Item> WARRIOR_EMBLEM = ITEMS.register("warrior_emblem", WarriorEmblem::new);
+    public static final DeferredItem<Item> SUMMONER_EMBLEM = ITEMS.register("summoner_emblem", SummonerEmblem::new);
+    public static final DeferredItem<Item> RANGER_EMBLEM = ITEMS.register("ranger_emblem", RangerEmblem::new);
+    public static final DeferredItem<Item> SORCERER_EMBLEM = ITEMS.register("sorcerer_emblem", SorcererEmblem::new);
 
     //食物
     public static final DeferredItem<Item> MANA_CRYSTAL = ITEMS.register("mana_crystal", ManaCrystal::new);

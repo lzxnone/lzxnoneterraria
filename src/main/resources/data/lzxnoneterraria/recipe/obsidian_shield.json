@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:obsidian_skull"
+    },
+    {
+      "item": "lzxnoneterraria:cobalt_shield"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:obsidian_shield",
+    "count": 1
+  }
+}

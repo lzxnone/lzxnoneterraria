@@ -3,6 +3,9 @@ package com.lzxnone.terraria.item.weapon;
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
 import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.item.accessory.AccessoryUtil;
+import com.lzxnone.terraria.item.effect.RangedDamageModifier;
+import com.lzxnone.terraria.item.effect.SummonDamageModifier;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -48,6 +51,22 @@ public class RangedWeapon extends Weapon {
 
     protected ResourceLocation getDefaultAmmo(ItemStack weaponStack) {
         return null;
+    }
+
+    public static float applyRangedDamageBonus(ItemStack stack, LivingEntity entity, float damage) {
+        double finalDamage = damage;
+        //火药
+        int gunpowderLevel = getEnchantmentLevel(entity, stack, ModEnchantments.GUNPOWDER);
+        finalDamage *= Math.pow(ModEnchantmentConfigs.getGunpowderDamageMultiplier(), gunpowderLevel);
+        //饰品
+        double[] multiplier = {1.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, accessoryStack) -> {
+            if(accessory instanceof RangedDamageModifier modifier) {
+                multiplier[0] *= modifier.getRangedDamageModifier(accessoryStack, entity);
+            }
+        });
+        finalDamage *= multiplier[0];
+        return (float)Math.max(0.0D, finalDamage);
     }
 
     public int getFinalAmmoConsumeAmount(ItemStack weaponStack, LivingEntity entity, int amount) {

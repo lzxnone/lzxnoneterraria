@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:adhesive_bandage"
+    },
+    {
+      "item": "lzxnoneterraria:bezoar"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:medicated_bandage",
+    "count": 1
+  }
+}

@@ -87,7 +87,7 @@ public class ElfMelter extends RangedWeapon {
             for(Entity target : targets) {
                 if(target.getBoundingBox().inflate(1.0).clip(collisionStart, end).isEmpty()) continue;
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, DAMAGE.get(), 0.25f)) {
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, DAMAGE.get(), -0.25f)) {
                     target.invulnerableTime = 12;
                     if(target instanceof LivingEntity livingTarget) {
                         livingTarget.setTicksFrozen(Math.max(livingTarget.getTicksFrozen(), FREEZE_TICKS.get()));
