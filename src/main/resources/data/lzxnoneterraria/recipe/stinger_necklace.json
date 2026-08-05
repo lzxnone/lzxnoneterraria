@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:shark_tooth_necklace"
+    },
+    {
+      "item": "lzxnoneterraria:honey_comb"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:stinger_necklace",
+    "count": 1
+  }
+}

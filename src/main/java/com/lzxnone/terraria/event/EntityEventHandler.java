@@ -9,6 +9,7 @@ import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -33,10 +34,21 @@ public class EntityEventHandler {
         LivingEntity entity = event.getEntity();
         if(entity.level().isClientSide()) return;
         DamageSource source = event.getSource();
-        if(!source.is(DamageTypes.IN_FIRE) && !source.is(DamageTypes.HOT_FLOOR) && !source.is(DamageTypes.CAMPFIRE)) return;
-        if(AccessoryUtil.isFireBlockImmune(entity)) {
-            event.setCanceled(true);
+        Entity attacker = event.getSource().getEntity();
+        //免疫火块
+        if(source.is(DamageTypes.IN_FIRE) || source.is(DamageTypes.HOT_FLOOR) || source.is(DamageTypes.CAMPFIRE)) {
+            if(AccessoryUtil.isFireBlockImmune(entity)) event.setCanceled(true);
         }
+        //进行护甲修饰
+        if(!source.is(DamageTypeTags.BYPASSES_ARMOR)) {
+            if(attacker instanceof LivingEntity livingEntity) AccessoryUtil.applyTargetArmorModifiers(livingEntity, entity);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onArmorPierceRemove(LivingDamageEvent.Pre event) {
+        //移除护甲
+        AccessoryUtil.removeTargetArmorModifiers(event.getEntity());
     }
 
     @SubscribeEvent
@@ -44,8 +56,11 @@ public class EntityEventHandler {
         //支配之鞭 预兆标记
         Possession.markEvent(event);
 
-        AccessoryUtil.applyInvulnerableTimeModifier(event.getEntity());
-        AccessoryUtil.applyFallenStarSummoner(event.getEntity());
+        if(event.getEntity() instanceof Player player) {
+            AccessoryUtil.applyInvulnerableTimeModifier(player);
+            AccessoryUtil.applyFallenStarSummoner(player);
+            AccessoryUtil.applyBeeSummoner(player);
+        }
     }
 
     @SubscribeEvent

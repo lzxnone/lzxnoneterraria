@@ -74,10 +74,6 @@ public class BeeKeeper extends MeleeWeapon {
         }
     };
 
-    public static float getBeeDamage() {
-        return BEE_DAMAGE.get();
-    }
-
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
         "bee_keeper",
         ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/bee_keeper.png"),
@@ -110,6 +106,7 @@ public class BeeKeeper extends MeleeWeapon {
                         if(bee != null) {
                             bee.owner = player;
                             bee.stackSource = itemStack.copy();
+                            bee.damage = BEE_DAMAGE.get();
                             bee.setPos(new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ()));
                             player.level().addFreshEntity(bee);
                         }

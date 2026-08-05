@@ -1,23 +1,25 @@
 package com.lzxnone.terraria.item.accessory;
 
 import com.lzxnone.terraria.ModSounds;
+import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
+import com.lzxnone.terraria.entity.summon.BeeSummon;
 import com.lzxnone.terraria.item.ModItems;
-import com.lzxnone.terraria.item.effect.FallenStarSummoner;
-import com.lzxnone.terraria.item.effect.FireBlockImmunityModifier;
-import com.lzxnone.terraria.item.effect.FreezingImmunityModifier;
-import com.lzxnone.terraria.item.effect.InvulnerableTimeModifier;
-import com.lzxnone.terraria.item.effect.MobEffectImmunityModifier;
+import com.lzxnone.terraria.item.effect.*;
 import com.lzxnone.terraria.utils.MathUtil;
 import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -113,6 +115,46 @@ public class AccessoryUtil {
         return result[0];
     }
 
+    //为目标挂载护甲/护甲韧性减小修饰符（返回是否实际挂载了）
+    public static boolean applyTargetArmorModifiers(LivingEntity attacker, LivingEntity target) {
+        double[] armorReduction = {0.0D};
+        double[] toughnessReduction = {0.0D};
+        AccessoryUtil.forEachAccessory(attacker, (accessory, stack) -> {
+            if(accessory instanceof TargetArmorModifier modifier) {
+                armorReduction[0] += modifier.getTargetArmorReduction(stack, attacker, target);
+                toughnessReduction[0] += modifier.getTargetArmorToughnessReduction(stack, attacker, target);
+            }
+        });
+
+        boolean applied = false;
+        if(armorReduction[0] > 0.0D) {
+            AttributeInstance armor = target.getAttribute(Attributes.ARMOR);
+            if(armor != null) {
+                armor.addTransientModifier(new AttributeModifier(TARGET_ARMOR_PIERCE_ID, -armorReduction[0], AttributeModifier.Operation.ADD_VALUE));
+                applied = true;
+            }
+        }
+        if(toughnessReduction[0] > 0.0D) {
+            AttributeInstance toughness = target.getAttribute(Attributes.ARMOR_TOUGHNESS);
+            if(toughness != null) {
+                toughness.addTransientModifier(new AttributeModifier(TARGET_ARMOR_TOUGHNESS_PIERCE_ID, -toughnessReduction[0], AttributeModifier.Operation.ADD_VALUE));
+                applied = true;
+            }
+        }
+        return applied;
+    }
+
+    //移除为目标挂载的护甲/护甲韧性减小修饰符（幂等）
+    public static void removeTargetArmorModifiers(LivingEntity target) {
+        AttributeInstance armor = target.getAttribute(Attributes.ARMOR);
+        if(armor != null) armor.removeModifier(TARGET_ARMOR_PIERCE_ID);
+        AttributeInstance toughness = target.getAttribute(Attributes.ARMOR_TOUGHNESS);
+        if(toughness != null) toughness.removeModifier(TARGET_ARMOR_TOUGHNESS_PIERCE_ID);
+    }
+
+    private static final ResourceLocation TARGET_ARMOR_PIERCE_ID = ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "target_armor_pierce");
+    private static final ResourceLocation TARGET_ARMOR_TOUGHNESS_PIERCE_ID = ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "target_armor_toughness_pierce");
+
     public static void applyInvulnerableTimeModifier(LivingEntity entity) {
         double finalTime = entity.invulnerableTime;
         double[] rate = {1.0D};
@@ -167,6 +209,29 @@ public class AccessoryUtil {
 
                 projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
                 entity.level().addFreshEntity(projectile);
+            }
+        }
+    }
+
+
+    public static void applyBeeSummoner(LivingEntity entity) {
+        int[] maxCount = {0};
+        double[] damage = {0.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof BeeSummoner summoner) {
+                maxCount[0] = Math.max(summoner.getBeeSummonMaxCount(stack, entity), maxCount[0]);
+                damage[0] = Math.max(summoner.getBeeSummonDamage(stack, entity), damage[0]);
+            }
+        });
+        int count = maxCount[0] > 0 ? entity.level().random.nextInt(maxCount[0]) + 1 : 0;
+        while(count-- > 0) {
+            BeeSummon bee = ModEntities.BEE_SUMMON.get().create(entity.level());
+            if(bee != null) {
+                bee.owner = entity;
+                bee.stackSource = ItemStack.EMPTY;
+                bee.damage = damage[0];
+                bee.setPos(new Vec3(entity.getX(), entity.getY() + entity.getBbHeight() / 2, entity.getZ()));
+                entity.level().addFreshEntity(bee);
             }
         }
     }

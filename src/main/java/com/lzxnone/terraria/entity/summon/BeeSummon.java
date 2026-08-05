@@ -36,6 +36,7 @@ public class BeeSummon extends Bee {
 
     public LivingEntity owner = null;
     public ItemStack stackSource = ItemStack.EMPTY;
+    public double damage = 0.0D;
 
     public BeeSummon(EntityType<? extends Bee> entityType, Level level) {
         super(entityType, level);
@@ -126,10 +127,10 @@ public class BeeSummon extends Bee {
         if(owner == null) return false;
         boolean isHurt;
         if(owner instanceof Player) {
-            isHurt = DamageUtil.meleeAttack(this, target, stackSource, (float) BeeKeeper.getBeeDamage(), 1.0f);
+            isHurt = DamageUtil.meleeAttack(this, target, stackSource, (float) damage, 1.0f);
         }else {
             DamageSource damageSource = this.damageSources().mobAttack(owner);
-            isHurt = target.hurt(damageSource, (float) BeeKeeper.getBeeDamage());
+            isHurt = target.hurt(damageSource, (float) damage);
         }
 
         if(isHurt) {

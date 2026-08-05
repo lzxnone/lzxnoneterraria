@@ -30,6 +30,10 @@ import com.lzxnone.terraria.item.accessory.WarriorEmblem;
 import com.lzxnone.terraria.item.accessory.SummonerEmblem;
 import com.lzxnone.terraria.item.accessory.RangerEmblem;
 import com.lzxnone.terraria.item.accessory.SorcererEmblem;
+import com.lzxnone.terraria.item.accessory.SharkToothNecklace;
+import com.lzxnone.terraria.item.accessory.HoneyComb;
+import com.lzxnone.terraria.item.accessory.StingerNecklace;
+import com.lzxnone.terraria.item.accessory.BeeCloak;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.item.weapon.melee.BladeOfGrass;
@@ -178,7 +182,11 @@ public class ConfigList {
             WarriorEmblem.CONFIG_LIST_ITEM,
             SummonerEmblem.CONFIG_LIST_ITEM,
             RangerEmblem.CONFIG_LIST_ITEM,
-            SorcererEmblem.CONFIG_LIST_ITEM
+            SorcererEmblem.CONFIG_LIST_ITEM,
+            SharkToothNecklace.CONFIG_LIST_ITEM,
+            HoneyComb.CONFIG_LIST_ITEM,
+            StingerNecklace.CONFIG_LIST_ITEM,
+            BeeCloak.CONFIG_LIST_ITEM
         });
         ITEMS.put(ENCHANTMENT, new ConfigListItem[]{
             ModEnchantmentConfigs.MANA_LEAK_CONFIG_LIST_ITEM,

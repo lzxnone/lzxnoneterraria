@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:star_cloak"
+    },
+    {
+      "item": "lzxnoneterraria:honey_comb"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:bee_cloak",
+    "count": 1
+  }
+}

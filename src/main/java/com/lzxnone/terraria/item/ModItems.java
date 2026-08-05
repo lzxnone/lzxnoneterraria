@@ -144,6 +144,10 @@ public class ModItems {
     public static final DeferredItem<Item> SUMMONER_EMBLEM = ITEMS.register("summoner_emblem", SummonerEmblem::new);
     public static final DeferredItem<Item> RANGER_EMBLEM = ITEMS.register("ranger_emblem", RangerEmblem::new);
     public static final DeferredItem<Item> SORCERER_EMBLEM = ITEMS.register("sorcerer_emblem", SorcererEmblem::new);
+    public static final DeferredItem<Item> SHARK_TOOTH_NECKLACE = ITEMS.register("shark_tooth_necklace", SharkToothNecklace::new);
+    public static final DeferredItem<Item> HONEY_COMB = ITEMS.register("honey_comb", HoneyComb::new);
+    public static final DeferredItem<Item> STINGER_NECKLACE = ITEMS.register("stinger_necklace", StingerNecklace::new);
+    public static final DeferredItem<Item> BEE_CLOAK = ITEMS.register("bee_cloak", BeeCloak::new);
 
     //食物
     public static final DeferredItem<Item> MANA_CRYSTAL = ITEMS.register("mana_crystal", ManaCrystal::new);

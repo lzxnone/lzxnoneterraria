@@ -40,7 +40,7 @@ public interface FallenStarSummoner {
                 double[] fallenStarDamage = {0.0D};
                 AccessoryUtil.forEachAccessory(player, (accessory, accessoryStack) -> {
                     if(accessory instanceof FallenStarSummoner summoner) {
-                        fallenStarDamage[0] = summoner.getFallenStarDamage(accessoryStack, player);
+                        fallenStarDamage[0] = Math.max(summoner.getFallenStarDamage(accessoryStack, player), fallenStarDamage[0]);
                     }
                 });
                 if(DamageUtil.meleeAttack(projectile, target, stack, (float) fallenStarDamage[0], 1.0f)) {
