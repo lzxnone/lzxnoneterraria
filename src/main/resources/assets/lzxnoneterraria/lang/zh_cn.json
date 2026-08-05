@@ -124,6 +124,7 @@
   "item.lzxnoneterraria.honey_comb": "蜂窝",
   "item.lzxnoneterraria.stinger_necklace": "毒刺项链",
   "item.lzxnoneterraria.bee_cloak": "蜜蜂斗篷",
+  "item.lzxnoneterraria.black_belt": "黑腰带",
   "item.lzxnoneterraria.mana_crystal": "魔力水晶",
   "item.lzxnoneterraria.summoning_potion": "召唤药水",
   "item.lzxnoneterraria.lesser_mana_potion": "弱效魔力药水",
@@ -190,6 +191,7 @@
   "tooltip.lzxnoneterraria.invulnerable_time_bonus": "延长受伤后的无敌状态时间 x%s",
   "tooltip.lzxnoneterraria.armor_pierce_bonus": "护甲穿透 +%s",
   "tooltip.lzxnoneterraria.bee_summon": "受到伤害后释放蜜蜂",
+  "tooltip.lzxnoneterraria.damage_immunity_chance": "有 %s%% 几率抵消承受的伤害",
 
   "tooltip.lzxnoneterraria.melee_damage_increase": "近战伤害 +%s%%",
   "tooltip.lzxnoneterraria.melee_damage_decrease": "近战伤害 -%s%%",
@@ -211,6 +213,8 @@
   "lzxnoneterraria.configuration.bee_summon_max_count.tooltip": "受到伤害后释放的最大蜜蜂数",
   "lzxnoneterraria.configuration.bee_summon_damage": "蜜蜂伤害",
   "lzxnoneterraria.configuration.bee_summon_damage.tooltip": "每只蜜蜂的攻击伤害",
+  "lzxnoneterraria.configuration.damage_immunity_chance": "伤害免疫概率",
+  "lzxnoneterraria.configuration.damage_immunity_chance.tooltip": "抵消承受伤害的概率",
   "lzxnoneterraria.configuration.invulnerable_time_multiplier": "无敌时间倍率",
   "lzxnoneterraria.configuration.invulnerable_time_multiplier.tooltip": "受伤后的无敌时间乘以该倍率",
 

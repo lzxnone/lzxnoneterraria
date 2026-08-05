@@ -35,6 +35,11 @@ public class EntityEventHandler {
         if(entity.level().isClientSide()) return;
         DamageSource source = event.getSource();
         Entity attacker = event.getSource().getEntity();
+        //免疫伤害
+        if(Math.random() <= AccessoryUtil.applyDamageImmunity(entity)) {
+            event.setCanceled(true);
+            return;
+        }
         //免疫火块
         if(source.is(DamageTypes.IN_FIRE) || source.is(DamageTypes.HOT_FLOOR) || source.is(DamageTypes.CAMPFIRE)) {
             if(AccessoryUtil.isFireBlockImmune(entity)) event.setCanceled(true);

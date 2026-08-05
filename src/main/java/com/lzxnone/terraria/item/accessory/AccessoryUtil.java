@@ -44,6 +44,16 @@ public class AccessoryUtil {
             });
     }
 
+    public static double applyDamageImmunity(LivingEntity entity) {
+        double[] chance = {0.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof DamageImmunityModifier modifier) {
+                chance[0] = Math.max(modifier.getDamageImmunityChance(stack, entity), chance[0]);
+            }
+        });
+        return chance[0];
+    }
+
     public static boolean isImmuneToEffect(LivingEntity entity, Holder<MobEffect> effect) {
         boolean[] result = {false};
         AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {

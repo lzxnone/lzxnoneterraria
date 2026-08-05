@@ -103,6 +103,7 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.HONEY_COMB.get());
                 output.accept(ModItems.STINGER_NECKLACE.get());
                 output.accept(ModItems.BEE_CLOAK.get());
+                output.accept(ModItems.BLACK_BELT.get());
             }).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> BLOCK_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_block_0", () -> CreativeModeTab.builder()

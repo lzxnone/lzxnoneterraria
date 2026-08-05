@@ -34,6 +34,7 @@ import com.lzxnone.terraria.item.accessory.SharkToothNecklace;
 import com.lzxnone.terraria.item.accessory.HoneyComb;
 import com.lzxnone.terraria.item.accessory.StingerNecklace;
 import com.lzxnone.terraria.item.accessory.BeeCloak;
+import com.lzxnone.terraria.item.accessory.BlackBelt;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.item.weapon.melee.BladeOfGrass;
@@ -186,7 +187,8 @@ public class ConfigList {
             SharkToothNecklace.CONFIG_LIST_ITEM,
             HoneyComb.CONFIG_LIST_ITEM,
             StingerNecklace.CONFIG_LIST_ITEM,
-            BeeCloak.CONFIG_LIST_ITEM
+            BeeCloak.CONFIG_LIST_ITEM,
+            BlackBelt.CONFIG_LIST_ITEM
         });
         ITEMS.put(ENCHANTMENT, new ConfigListItem[]{
             ModEnchantmentConfigs.MANA_LEAK_CONFIG_LIST_ITEM,

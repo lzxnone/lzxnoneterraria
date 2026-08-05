@@ -148,6 +148,7 @@ public class ModItems {
     public static final DeferredItem<Item> HONEY_COMB = ITEMS.register("honey_comb", HoneyComb::new);
     public static final DeferredItem<Item> STINGER_NECKLACE = ITEMS.register("stinger_necklace", StingerNecklace::new);
     public static final DeferredItem<Item> BEE_CLOAK = ITEMS.register("bee_cloak", BeeCloak::new);
+    public static final DeferredItem<Item> BLACK_BELT = ITEMS.register("black_belt", BlackBelt::new);
 
     //食物
     public static final DeferredItem<Item> MANA_CRYSTAL = ITEMS.register("mana_crystal", ManaCrystal::new);
