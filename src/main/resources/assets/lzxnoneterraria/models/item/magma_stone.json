@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/item",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/magma_stone"
+  }
+}

@@ -159,6 +159,17 @@ public class ModItems {
     public static final DeferredItem<Item> HERO_SHIELD = ITEMS.register("hero_shield", HeroShield::new);
     public static final DeferredItem<Item> FROZEN_TURTLE_SHELL = ITEMS.register("frozen_turtle_shell", FrozenTurtleShell::new);
     public static final DeferredItem<Item> FROZEN_SHIELD = ITEMS.register("frozen_shield", FrozenShield::new);
+    public static final DeferredItem<Item> MAGMA_STONE = ITEMS.register("magma_stone", MagmaStone::new);
+    public static final DeferredItem<Item> FIRE_GAUNTLET = ITEMS.register("fire_gauntlet", FireGauntlet::new);
+    public static final DeferredItem<Item> EYE_OF_GOLEM = ITEMS.register("eye_of_the_golem", EyeOfGolem::new);
+    public static final DeferredItem<Item> DESTROYER_EMBLEM = ITEMS.register("destroyer_emblem", DestroyerEmblem::new);
+    public static final DeferredItem<Item> MOON_STONE = ITEMS.register("moon_stone", MoonStone::new);
+    public static final DeferredItem<Item> SUN_STONE = ITEMS.register("sun_stone", SunStone::new);
+    public static final DeferredItem<Item> CELESTIAL_STONE = ITEMS.register("celestial_stone", CelestialStone::new);
+    public static final DeferredItem<Item> MOON_CHARM = ITEMS.register("moon_charm", MoonCharm::new);
+    public static final DeferredItem<Item> NEPTUNES_SHELL = ITEMS.register("neptunes_shell", NeptunesShell::new);
+    public static final DeferredItem<Item> MOON_SHELL = ITEMS.register("moon_shell", MoonShell::new);
+    public static final DeferredItem<Item> CELESTIAL_SHELL = ITEMS.register("celestial_shell", CelestialShell::new);
 
     //食物
     public static final DeferredItem<Item> MANA_CRYSTAL = ITEMS.register("mana_crystal", ManaCrystal::new);

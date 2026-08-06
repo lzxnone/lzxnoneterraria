@@ -48,6 +48,16 @@ import com.lzxnone.terraria.item.accessory.PaladinsShield;
 import com.lzxnone.terraria.item.accessory.HeroShield;
 import com.lzxnone.terraria.item.accessory.FrozenTurtleShell;
 import com.lzxnone.terraria.item.accessory.FrozenShield;
+import com.lzxnone.terraria.item.accessory.FireGauntlet;
+import com.lzxnone.terraria.item.accessory.EyeOfGolem;
+import com.lzxnone.terraria.item.accessory.DestroyerEmblem;
+import com.lzxnone.terraria.item.accessory.MoonStone;
+import com.lzxnone.terraria.item.accessory.SunStone;
+import com.lzxnone.terraria.item.accessory.CelestialStone;
+import com.lzxnone.terraria.item.accessory.MoonCharm;
+import com.lzxnone.terraria.item.accessory.NeptunesShell;
+import com.lzxnone.terraria.item.accessory.MoonShell;
+import com.lzxnone.terraria.item.accessory.CelestialShell;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.item.weapon.melee.BladeOfGrass;
@@ -214,7 +224,17 @@ public class ConfigList {
             PaladinsShield.CONFIG_LIST_ITEM,
             HeroShield.CONFIG_LIST_ITEM,
             FrozenTurtleShell.CONFIG_LIST_ITEM,
-            FrozenShield.CONFIG_LIST_ITEM
+            FrozenShield.CONFIG_LIST_ITEM,
+            FireGauntlet.CONFIG_LIST_ITEM,
+            EyeOfGolem.CONFIG_LIST_ITEM,
+            DestroyerEmblem.CONFIG_LIST_ITEM,
+            MoonStone.CONFIG_LIST_ITEM,
+            SunStone.CONFIG_LIST_ITEM,
+            CelestialStone.CONFIG_LIST_ITEM,
+            MoonCharm.CONFIG_LIST_ITEM,
+            NeptunesShell.CONFIG_LIST_ITEM,
+            MoonShell.CONFIG_LIST_ITEM,
+            CelestialShell.CONFIG_LIST_ITEM
         });
         ITEMS.put(ENCHANTMENT, new ConfigListItem[]{
             ModEnchantmentConfigs.MANA_LEAK_CONFIG_LIST_ITEM,

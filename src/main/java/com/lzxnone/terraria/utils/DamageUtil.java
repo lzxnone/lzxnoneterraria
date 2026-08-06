@@ -7,6 +7,7 @@ import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.BeeSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.weapon.*;
 import com.lzxnone.terraria.item.weapon.summon.minion.MinionWeapon;
 import net.minecraft.resources.ResourceKey;
@@ -31,6 +32,8 @@ public class DamageUtil {
         RANGED,
         SUMMON,
         MAGIC,
+        MINION,
+        SENTRY,
         REAL
     }
 
@@ -48,6 +51,14 @@ public class DamageUtil {
 
     public static boolean summonAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
         return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.SUMMON);
+    }
+
+    public static boolean minionAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
+        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.MINION);
+    }
+
+    public static boolean sentryAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
+        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.SENTRY);
     }
 
     public static boolean magicAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
@@ -87,23 +98,39 @@ public class DamageUtil {
             knockbackLevel = MeleeWeapon.applyMeleeKnockbackBonus(itemSource, player, knockbackLevel);
         }else if(category == DamageCategory.SUMMON && !itemSource.isEmpty()) {
             finalDamage = SummonWeapon.applySummonDamageBonus(itemSource, player, finalDamage);
-            if(itemSource.getItem() instanceof MinionWeapon) MinionWeapon.applyMinionKnockback(player, knockbackLevel);
         }else if(category == DamageCategory.MAGIC && !itemSource.isEmpty()) {
             finalDamage = MagicWeapon.applyMagicDamageBonus(itemSource, player, finalDamage);
         }else if(category == DamageCategory.RANGED && !itemSource.isEmpty()) {
             finalDamage = RangedWeapon.applyRangedDamageBonus(itemSource, player, finalDamage);
+        }else if(category == DamageCategory.MINION && !itemSource.isEmpty()) {
+            finalDamage = SummonWeapon.applySummonDamageBonus(itemSource, player, finalDamage);
+            knockbackLevel = MinionWeapon.applyMinionKnockback(player, knockbackLevel);
+        }else if(category == DamageCategory.SENTRY && !itemSource.isEmpty()) {
+            finalDamage = SummonWeapon.applySummonDamageBonus(itemSource, player, finalDamage);
         }
         if(category != DamageCategory.REAL) {
             finalDamage = applyTargetDamageEffects(target, finalDamage);
         }
         finalDamage = Math.max(0.0F, finalDamage);
 
+        //近战暴击（月光护身符等饰品的近战暴击率，触发后伤害提升 1.5 倍）
+        if(category == DamageCategory.MELEE) {
+            double meleeCritChance = AccessoryUtil.getMeleeCritChance(player);
+            if(meleeCritChance > 0.0D && player.getRandom().nextDouble() < meleeCritChance) {
+                finalDamage *= 1.5F;
+            }
+        }
+
         Vec3 beforeHurtMovement = target instanceof LivingEntity livingTarget ? livingTarget.getDeltaMovement() : Vec3.ZERO;
         boolean hasHurt = target.hurt(source, finalDamage);
 
         if(hasHurt) {
-            if(category != DamageCategory.SUMMON && target instanceof LivingEntity livingTarget) {
+            if(category != DamageCategory.MINION && category != DamageCategory.SENTRY && target instanceof LivingEntity livingTarget) {
                 player.setLastHurtMob(livingTarget);
+            }
+            if(category == DamageCategory.MELEE) {
+                //近战着火
+                if(AccessoryUtil.canApplyIgnite(player)) target.igniteForTicks(AccessoryUtil.getIgniteTicks(player));
             }
             if(target instanceof LivingEntity livingTarget) {
                 Vec3 hurtKnockback = livingTarget.getDeltaMovement().subtract(beforeHurtMovement);

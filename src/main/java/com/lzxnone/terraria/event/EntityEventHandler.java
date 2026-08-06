@@ -20,10 +20,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
@@ -55,14 +57,29 @@ public class EntityEventHandler {
         if(!source.is(DamageTypeTags.BYPASSES_ARMOR)) {
             if(attacker instanceof LivingEntity livingEntity) AccessoryUtil.applyTargetArmorModifiers(livingEntity, entity);
         }
+        //近战攻击命中时点燃目标
+        if(attacker instanceof LivingEntity livingAttacker && livingAttacker != entity) {
+            if(source.is(DamageTypes.PLAYER_ATTACK) || source.is(DamageTypes.MOB_ATTACK) || source.is(DamageTypes.MOB_ATTACK_NO_AGGRO)) {
+                if(AccessoryUtil.canApplyIgnite(livingAttacker)) entity.igniteForTicks(AccessoryUtil.getIgniteTicks(livingAttacker));
+            }
+        }
     }
 
     @SubscribeEvent
     public static void onLivingDamagePre(LivingDamageEvent.Pre event) {
         LivingEntity target = event.getEntity();
         if(!(target.level() instanceof ServerLevel serverLevel)) return;
+        DamageSource source = event.getSource();
+        Entity attacker = source.getEntity();
         //移除饰品加成护甲穿透
         AccessoryUtil.removeTargetArmorModifiers(event.getEntity());
+        //暴击
+        if(attacker instanceof LivingEntity livingEntity && attacker != target) {
+            double critChance = AccessoryUtil.getCritChance(livingEntity);
+            if(critChance > 0.0D && attacker.getRandom().nextDouble() < critChance) {
+                event.setNewDamage(event.getNewDamage() * 1.5F);
+            }
+        }
         //冰障
         if(target.hasEffect(ModEffects.ICE_BARRIER)) {
             MobEffectInstance instance = target.getEffect(ModEffects.ICE_BARRIER);
@@ -83,6 +100,21 @@ public class EntityEventHandler {
                 }
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void onLivingJump(LivingEvent.LivingJumpEvent event) {
+        LivingEntity entity = event.getEntity();
+        if(entity.level().isClientSide()) return;
+        double heightMultiplier = AccessoryUtil.getJumpHeightMultiplier(entity);
+        double speedMultiplier = AccessoryUtil.getJumpSpeedMultiplier(entity);
+        if(heightMultiplier <= 1.0D && speedMultiplier <= 1.0D) return;
+        Vec3 motion = entity.getDeltaMovement();
+        entity.setDeltaMovement(
+            motion.x * speedMultiplier,
+            motion.y * heightMultiplier,
+            motion.z * speedMultiplier
+        );
     }
 
     @SubscribeEvent
@@ -121,6 +153,12 @@ public class EntityEventHandler {
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
         if(player.level().isClientSide()) return;
+        //水下呼吸
+        if(player.isInWater() && player.getAirSupply() < player.getMaxAirSupply() && AccessoryUtil.isWaterBreathing(player)) {
+            player.setAirSupply(player.getMaxAirSupply());
+        }
+        //同步昼夜限定饰品的动态属性
+        if(player.tickCount % 20 == 0) AccessoryUtil.syncConditionalModifiers(player);
         //免疫冰冻
         if(player.getTicksFrozen() > 0 && AccessoryUtil.isFreezeImmune(player)) {
             player.setTicksFrozen(0);

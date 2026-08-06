@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:moon_charm"
+    },
+    {
+      "item": "lzxnoneterraria:neptunes_shell"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:moon_shell",
+    "count": 1
+  }
+}

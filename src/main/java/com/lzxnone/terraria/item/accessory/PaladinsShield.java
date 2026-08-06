@@ -60,7 +60,7 @@ public class PaladinsShield extends AccessoryItem implements GuardianShieldModif
     }
 
     @Override
-    public boolean applyGuardianShield(ItemStack stack, LivingEntity entity) {
+    public boolean canApplyGuardianShield(ItemStack stack, LivingEntity entity) {
         return entity.getHealth() / entity.getMaxHealth() > MIN_HEALTH_RATIO.get();
     }
 

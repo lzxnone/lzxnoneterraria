@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:moon_stone"
+    },
+    {
+      "item": "lzxnoneterraria:sun_stone"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:celestial_stone",
+    "count": 1
+  }
+}

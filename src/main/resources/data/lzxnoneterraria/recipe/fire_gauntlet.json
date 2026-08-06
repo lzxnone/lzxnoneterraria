@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:mechanical_glove"
+    },
+    {
+      "item": "lzxnoneterraria:magma_stone"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:fire_gauntlet",
+    "count": 1
+  }
+}

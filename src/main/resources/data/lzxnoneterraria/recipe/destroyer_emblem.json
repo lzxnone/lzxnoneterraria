@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:avenger_emblem"
+    },
+    {
+      "item": "lzxnoneterraria:eye_of_the_golem"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:destroyer_emblem",
+    "count": 1
+  }
+}

@@ -114,6 +114,17 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.HERO_SHIELD.get());
                 output.accept(ModItems.FROZEN_SHIELD.get());
                 output.accept(ModItems.FROZEN_TURTLE_SHELL.get());
+                output.accept(ModItems.MAGMA_STONE.get());
+                output.accept(ModItems.FIRE_GAUNTLET.get());
+                output.accept(ModItems.EYE_OF_GOLEM.get());
+                output.accept(ModItems.DESTROYER_EMBLEM.get());
+                output.accept(ModItems.MOON_STONE.get());
+                output.accept(ModItems.SUN_STONE.get());
+                output.accept(ModItems.CELESTIAL_STONE.get());
+                output.accept(ModItems.MOON_CHARM.get());
+                output.accept(ModItems.NEPTUNES_SHELL.get());
+                output.accept(ModItems.MOON_SHELL.get());
+                output.accept(ModItems.CELESTIAL_SHELL.get());
             }).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> BLOCK_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_block_0", () -> CreativeModeTab.builder()

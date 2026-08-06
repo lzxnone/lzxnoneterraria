@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.accessory;
 
+import com.google.common.collect.Multimap;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.effect.ModEffects;
@@ -17,6 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -44,6 +46,28 @@ public class AccessoryUtil {
             });
     }
 
+    //同步条件限定饰品的动态属性：按当前生效集合与全集 diff（状态切换/值变化才增删，平时只读零开销）
+    public static void syncConditionalModifiers(LivingEntity entity) {
+        forEachAccessory(entity, (accessory, stack) -> {
+            if(!(accessory instanceof ConditionalAttributeModifier modifier)) return;
+            Multimap<Holder<Attribute>, AttributeModifier> current = modifier.getConditionalModifiers(stack, entity);
+            modifier.getAllConditionalModifiers(stack, entity).forEach((attribute, attributeModifier) -> {
+                AttributeInstance instance = entity.getAttribute(attribute);
+                if(instance == null) return;
+                AttributeModifier existing = instance.getModifier(attributeModifier.id());
+                if(current.containsEntry(attribute, attributeModifier)) {
+                    if(existing == null) {
+                        instance.addTransientModifier(attributeModifier);
+                    }else if(existing.amount() != attributeModifier.amount() || existing.operation() != attributeModifier.operation()) {
+                        instance.addOrUpdateTransientModifier(attributeModifier);
+                    }
+                }else if(existing != null) {
+                    instance.removeModifier(attributeModifier.id());
+                }
+            });
+        });
+    }
+
     public static double applyDamageImmunity(LivingEntity entity) {
         double[] chance = {0.0D};
         AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
@@ -68,7 +92,7 @@ public class AccessoryUtil {
         double[] range = {0.0D};
         AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
             if(accessory instanceof GuardianShieldModifier modifier) {
-                if(modifier.applyGuardianShield(stack, entity)) range[0] = Math.max(modifier.getGuardianRange(stack, entity), range[0]);
+                if(modifier.canApplyGuardianShield(stack, entity)) range[0] = Math.max(modifier.getGuardianRange(stack, entity), range[0]);
             }
         });
         return range[0];
@@ -78,7 +102,7 @@ public class AccessoryUtil {
         double[] ratio = {1.0D};
         AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
             if(accessory instanceof GuardianShieldModifier modifier) {
-                if(modifier.applyGuardianShield(stack, entity)) ratio[0] = Math.min(modifier.getMinHealthRatio(stack, entity), ratio[0]);
+                if(modifier.canApplyGuardianShield(stack, entity)) ratio[0] = Math.min(modifier.getMinHealthRatio(stack, entity), ratio[0]);
             }
         });
         return ratio[0];
@@ -89,7 +113,7 @@ public class AccessoryUtil {
         AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
             if(result[0]) return;
             if(accessory instanceof GuardianShieldModifier modifier) {
-                result[0] = modifier.applyGuardianShield(stack, entity);
+                result[0] = modifier.canApplyGuardianShield(stack, entity);
             }
         });
         return result[0];
@@ -99,7 +123,7 @@ public class AccessoryUtil {
         double[] ratio = {1.0D};
         AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
             if(accessory instanceof IceBarrierModifier modifier) {
-                if(modifier.applyIceBarrier(stack, entity)) ratio[0] = Math.max(modifier.getMaxHealthRatio(stack, entity), ratio[0]);
+                if(modifier.canApplyIceBarrier(stack, entity)) ratio[0] = Math.max(modifier.getMaxHealthRatio(stack, entity), ratio[0]);
             }
         });
         return ratio[0];
@@ -110,7 +134,7 @@ public class AccessoryUtil {
         AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
             if(result[0]) return;
             if(accessory instanceof IceBarrierModifier modifier) {
-                result[0] = modifier.applyIceBarrier(stack, entity);
+                result[0] = modifier.canApplyIceBarrier(stack, entity);
             }
         });
         return result[0];
@@ -226,6 +250,86 @@ public class AccessoryUtil {
 
     private static final ResourceLocation TARGET_ARMOR_PIERCE_ID = ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "target_armor_pierce");
     private static final ResourceLocation TARGET_ARMOR_TOUGHNESS_PIERCE_ID = ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "target_armor_toughness_pierce");
+
+    //近战暴击率：累加所有饰品的近战暴击率加成
+    public static double getMeleeCritChance(LivingEntity entity) {
+        double[] chance = {0.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof MeleeCritChanceModifier modifier) {
+                chance[0] += modifier.getMeleeCritChance(stack, entity);
+            }
+        });
+        return chance[0];
+    }
+
+    //水下呼吸：是否有饰品提供水下呼吸
+    public static boolean isWaterBreathing(LivingEntity entity) {
+        boolean[] result = {false};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(result[0]) return;
+            if(accessory instanceof WaterBreathingModifier modifier) {
+                result[0] = modifier.canBreatheUnderwater(stack, entity);
+            }
+        });
+        return result[0];
+    }
+
+    //跳跃高度倍率：取所有饰品中的最大值
+    public static double getJumpHeightMultiplier(LivingEntity entity) {
+        double[] multiplier = {1.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof JumpModifier modifier) {
+                multiplier[0] = Math.max(multiplier[0], modifier.getJumpHeightMultiplier(stack, entity));
+            }
+        });
+        return multiplier[0];
+    }
+
+    //跳跃速度倍率：取所有饰品中的最大值
+    public static double getJumpSpeedMultiplier(LivingEntity entity) {
+        double[] multiplier = {1.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof JumpModifier modifier) {
+                multiplier[0] = Math.max(multiplier[0], modifier.getJumpSpeedMultiplier(stack, entity));
+            }
+        });
+        return multiplier[0];
+    }
+
+    //暴击率：累加所有饰品的暴击率加成
+    public static double getCritChance(LivingEntity entity) {
+        double[] chance = {0.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof CriticalStrikeModifier modifier) {
+                chance[0] += modifier.getCritChance(stack, entity);
+            }
+        });
+        return chance[0];
+    }
+
+    //岩浆石：能否对命中目标施加着火
+    public static boolean canApplyIgnite(LivingEntity entity) {
+        boolean[] result = {false};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(result[0]) return;
+            if(accessory instanceof IgniteOnHitModifier modifier) {
+                result[0] = modifier.canApplyIgnite(stack, entity);
+            }
+        });
+        return result[0];
+    }
+
+    //岩浆石：着火持续时间（刻）
+    public static int getIgniteTicks(LivingEntity entity) {
+        int[] ticks = {0};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(ticks[0] > 0) return;
+            if(accessory instanceof IgniteOnHitModifier modifier && modifier.canApplyIgnite(stack, entity)) {
+                ticks[0] = modifier.getIgniteTicks(stack, entity);
+            }
+        });
+        return ticks[0];
+    }
 
     public static void applyInvulnerableTimeModifier(LivingEntity entity) {
         double finalTime = entity.invulnerableTime;
