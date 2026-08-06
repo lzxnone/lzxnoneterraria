@@ -4,6 +4,8 @@ import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.effect.MidasEffect;
 import com.lzxnone.terraria.effect.ModEffects;
+import com.lzxnone.terraria.effect.PaladinsShieldEffect;
+import com.lzxnone.terraria.effect.IceBarrierEffect;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
@@ -12,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -25,6 +28,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @EventBusSubscriber(modid = LzxnoneTerraria.MODID)
@@ -42,22 +46,47 @@ public class EntityEventHandler {
         }
         //免疫火块
         if(source.is(DamageTypes.IN_FIRE) || source.is(DamageTypes.HOT_FLOOR) || source.is(DamageTypes.CAMPFIRE)) {
-            if(AccessoryUtil.isFireBlockImmune(entity)) event.setCanceled(true);
+            if(AccessoryUtil.isFireBlockImmune(entity)) {
+                event.setCanceled(true);
+                return;
+            }
         }
-        //进行护甲修饰
+        //进行护甲穿透
         if(!source.is(DamageTypeTags.BYPASSES_ARMOR)) {
             if(attacker instanceof LivingEntity livingEntity) AccessoryUtil.applyTargetArmorModifiers(livingEntity, entity);
         }
     }
 
     @SubscribeEvent
-    public static void onArmorPierceRemove(LivingDamageEvent.Pre event) {
-        //移除护甲
+    public static void onLivingDamagePre(LivingDamageEvent.Pre event) {
+        LivingEntity target = event.getEntity();
+        if(!(target.level() instanceof ServerLevel serverLevel)) return;
+        //移除饰品加成护甲穿透
         AccessoryUtil.removeTargetArmorModifiers(event.getEntity());
+        //冰障
+        if(target.hasEffect(ModEffects.ICE_BARRIER)) {
+            MobEffectInstance instance = target.getEffect(ModEffects.ICE_BARRIER);
+            if(instance != null) event.setNewDamage(event.getNewDamage() * (float) IceBarrierEffect.getDamageMultiplier(instance.getAmplifier()));
+        }
+        //圣骑士护盾伤害转移
+        if(target.hasEffect(ModEffects.PALADINS_GUARDIAN)) {
+            UUID guardianId = target.getData(ModAttachments.PALADIN_GUARDIAN_SOURCE).orElse(null);
+            if(guardianId != null && !guardianId.equals(target.getUUID())) {
+                if(serverLevel.getEntity(guardianId) instanceof LivingEntity paladin
+                    && paladin.isAlive() && paladin.getHealth() / paladin.getMaxHealth() > AccessoryUtil.getGuardianMinHealthRatio(paladin)) {
+                    float ratio = PaladinsShieldEffect.getDamageAbsorptionRatio();
+                    if(ratio > 0.0F) {
+                        float transferred = event.getNewDamage() * ratio;
+                        event.setNewDamage(event.getNewDamage() - transferred);
+                        paladin.hurt(event.getSource(), transferred);
+                    }
+                }
+            }
+        }
     }
 
     @SubscribeEvent
-    public static void onLivingDamage(LivingDamageEvent.Post event) {
+    public static void onLivingDamagePost(LivingDamageEvent.Post event) {
         //支配之鞭 预兆标记
         Possession.markEvent(event);
 
@@ -92,9 +121,41 @@ public class EntityEventHandler {
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
         if(player.level().isClientSide()) return;
+        //免疫冰冻
         if(player.getTicksFrozen() > 0 && AccessoryUtil.isFreezeImmune(player)) {
             player.setTicksFrozen(0);
         }
+        //圣骑士护盾效果
+        if(player.tickCount % 30 == 0) {
+            if(AccessoryUtil.canApplyGuardianShield(player)) {
+                double range = AccessoryUtil.getGuardianRange(player);
+                player.addEffect(new MobEffectInstance(ModEffects.PALADINS_GUARDIAN, 40, 0, false, false));
+                player.setData(ModAttachments.PALADIN_GUARDIAN_SOURCE, Optional.of(player.getUUID()));
+                if(range > 0) {
+                    List<Player> allies = player.level().getEntitiesOfClass(
+                        Player.class, player.getBoundingBox().inflate(range),
+                        ally -> ally != player && ally.isAlive() && player.isAlliedTo(ally)
+                    );
+                    for(Player ally : allies) {
+                        UUID writeUuid;
+                        if(AccessoryUtil.canApplyGuardianShield(ally)) {
+                            writeUuid = ally.getUUID();
+                        }else {
+                            UUID current = ally.getData(ModAttachments.PALADIN_GUARDIAN_SOURCE).orElse(null);
+                            writeUuid = (current != null && (((ServerLevel) player.level()).getEntity(current) instanceof LivingEntity living && living.isAlive())) ? current : player.getUUID();
+                        }
+                        ally.addEffect(new MobEffectInstance(ModEffects.PALADINS_GUARDIAN, 40, 0, false, false));
+                        ally.setData(ModAttachments.PALADIN_GUARDIAN_SOURCE, Optional.of(writeUuid));
+                    }
+                }
+            }
+        }
+        //冰障效果
+        if(player.tickCount % 30 == 0 && AccessoryUtil.canApplyIceBarrier(player)) {
+            double threshold = AccessoryUtil.getIceBarrierMaxHealthRatio(player);
+            if(threshold > 0.0D && player.getHealth() / player.getMaxHealth() <= threshold) {
+                player.addEffect(new MobEffectInstance(ModEffects.ICE_BARRIER, 40, 0, false, false));
+            }
+        }
     }
-
 }

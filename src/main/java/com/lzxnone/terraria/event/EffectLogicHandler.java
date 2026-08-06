@@ -2,6 +2,7 @@ package com.lzxnone.terraria.event;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
+import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
@@ -40,7 +41,7 @@ public class EffectLogicHandler {
         if(instance != null) {
             currentEffect = instance.getEffect();
         }
-        if(checkEffect(currentEffect)) {
+        if(shouldBroadcast(currentEffect)) {
             if(entity.level() instanceof ServerLevel serverLevel) {
                 serverLevel.getChunkSource().broadcast(entity,
                         new ClientboundUpdateMobEffectPacket(entity.getId(), instance, false));
@@ -56,19 +57,21 @@ public class EffectLogicHandler {
         if(instance != null) {
             currentEffect = instance.getEffect();
         }
-        if(checkEffect(currentEffect)) {
+        if(shouldBroadcast(currentEffect)) {
             if(entity.level() instanceof ServerLevel serverLevel) {
                 if(event.getEffectInstance() != null) {
                     serverLevel.getChunkSource().broadcast(entity,
                             new ClientboundRemoveMobEffectPacket(entity.getId(), currentEffect));
                 }
-                if(currentEffect == ModEffects.KILL_MODE) {
-                    MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, DevilsDevastation.getKillModeCooldownTime(), 0);
-                    entity.addEffect(effectInstance);
-                }else if(currentEffect == ModEffects.KILL_MODE_COOLDOWN) {
-                    SoundUtil.playServerSound(entity, ModSounds.DEMON_SWORD_KILL_MODE_OFF_COOLDOWN.get(), 0.5f, 1.0f);
-                }
             }
+        }
+        if(currentEffect == ModEffects.KILL_MODE) {
+            MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, DevilsDevastation.getKillModeCooldownTime(), 0);
+            entity.addEffect(effectInstance);
+        }else if(currentEffect == ModEffects.KILL_MODE_COOLDOWN) {
+            SoundUtil.playServerSound(entity, ModSounds.DEMON_SWORD_KILL_MODE_OFF_COOLDOWN.get(), 0.5f, 1.0f);
+        }else if(currentEffect == ModEffects.PALADINS_GUARDIAN) {
+            event.getEntity().removeData(ModAttachments.PALADIN_GUARDIAN_SOURCE);
         }
     }
 
@@ -80,31 +83,29 @@ public class EffectLogicHandler {
         if(instance != null) {
             currentEffect = instance.getEffect();
         }
-        if(checkEffect(currentEffect)) {
+        if(shouldBroadcast(currentEffect)) {
             if(entity.level() instanceof ServerLevel serverLevel) {
                 if(event.getEffectInstance() != null) {
                     serverLevel.getChunkSource().broadcast(entity,
                             new ClientboundRemoveMobEffectPacket(entity.getId(), currentEffect));
                 }
-                if(currentEffect == ModEffects.KILL_MODE) {
-                    MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, DevilsDevastation.getKillModeCooldownTime(), 0);
-                    entity.addEffect(effectInstance);
-                }else if(currentEffect == ModEffects.KILL_MODE_COOLDOWN) {
-                    SoundUtil.playServerSound(entity, ModSounds.DEMON_SWORD_KILL_MODE_OFF_COOLDOWN.get(), 0.5f, 1.0f);
-                }
             }
+        }
+        if(currentEffect == ModEffects.KILL_MODE) {
+            MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.KILL_MODE_COOLDOWN, DevilsDevastation.getKillModeCooldownTime(), 0);
+            entity.addEffect(effectInstance);
+        }else if(currentEffect == ModEffects.KILL_MODE_COOLDOWN) {
+            SoundUtil.playServerSound(entity, ModSounds.DEMON_SWORD_KILL_MODE_OFF_COOLDOWN.get(), 0.5f, 1.0f);
+        }else if(currentEffect == ModEffects.PALADINS_GUARDIAN) {
+            event.getEntity().removeData(ModAttachments.PALADIN_GUARDIAN_SOURCE);
         }
     }
 
-    public static boolean checkEffect(Holder<MobEffect> effect) {
+    public static boolean shouldBroadcast(Holder<MobEffect> effect) {
         if(effect == null) return false;
         return
             effect == ModEffects.CONFUSED
             || effect == ModEffects.KILL_MODE
-            || effect == ModEffects.KILL_MODE_COOLDOWN
-            || effect == ModEffects.MIDAS
-            || effect == ModEffects.CURSED_INFERNO
-            || effect == ModEffects.ICHOR
-            || effect == ModEffects.ACID_VENOM;
+            || effect == ModEffects.KILL_MODE_COOLDOWN;
     }
 }

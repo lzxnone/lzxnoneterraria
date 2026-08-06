@@ -39,4 +39,7 @@ public class ModAttachments {
     public static final Supplier<AttachmentType<TargetMarks>> TARGET_MARKS =
         ATTACHMENT_TYPES.register("target_marks", () -> AttachmentType.builder((Supplier<TargetMarks>) TargetMarks::new).serialize(TargetMarks.CODEC).build());
 
+    public static final Supplier<AttachmentType<Optional<UUID>>> PALADIN_GUARDIAN_SOURCE =
+        ATTACHMENT_TYPES.register("paladin_guardian_source", () -> AttachmentType.<Optional<UUID>>builder(Optional::empty).serialize(Codec.STRING.xmap(UUID::fromString, UUID::toString).optionalFieldOf("guardian").codec()).build());
+
 }

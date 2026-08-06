@@ -19,8 +19,8 @@ import java.util.List;
 
 public class BlackBelt extends AccessoryItem implements DamageImmunityModifier {
     public static final ConfigDouble DAMAGE_IMMUNITY_CHANCE = new ConfigDouble(
-        "accessory.black_belt.damage_immunity_chance",
-        "damage_immunity_chance",
+        "accessory.black_belt.damage_immunity",
+        "damage_immunity",
         0.1D,
         0.0D,
         1.0D
@@ -54,8 +54,8 @@ public class BlackBelt extends AccessoryItem implements DamageImmunityModifier {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         if(DAMAGE_IMMUNITY_CHANCE.get() > 0.0D) {
             tooltipComponents.add(Component.translatable(
-                "tooltip.lzxnoneterraria.damage_immunity_chance",
-                EffectTooltipUtil.formatPercent(DAMAGE_IMMUNITY_CHANCE.get())
+                "tooltip.lzxnoneterraria.damage_immunity",
+                EffectTooltipUtil.formatNumber(DAMAGE_IMMUNITY_CHANCE.get() * 100.0D)
             ).withStyle(ChatFormatting.GRAY));
         }
     }

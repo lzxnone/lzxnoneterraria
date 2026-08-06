@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:titan_glove"
+    },
+    {
+      "item": "lzxnoneterraria:feral_claws"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:power_glove",
+    "count": 1
+  }
+}

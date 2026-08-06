@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:power_glove"
+    },
+    {
+      "item": "lzxnoneterraria:avenger_emblem"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:mechanical_glove",
+    "count": 1
+  }
+}

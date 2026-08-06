@@ -2,6 +2,7 @@ package com.lzxnone.terraria.item.weapon;
 
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.effect.MeleeDamageModifier;
+import com.lzxnone.terraria.item.effect.MeleeKnockbackModifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
@@ -26,5 +27,16 @@ public class MeleeWeapon extends Weapon {
         });
         finalDamage *= multiplier[0];
         return (float)Math.max(0.0D, finalDamage);
+    }
+
+    public static float applyMeleeKnockbackBonus(ItemStack stack, LivingEntity entity, float knockback) {
+        //饰品
+        double[] bonus = {0.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, accessoryStack) -> {
+            if(accessory instanceof MeleeKnockbackModifier modifier) {
+                bonus[0] += modifier.getMeleeKnockbackBonus(accessoryStack, entity);
+            }
+        });
+        return knockback + (float) bonus[0];
     }
 }

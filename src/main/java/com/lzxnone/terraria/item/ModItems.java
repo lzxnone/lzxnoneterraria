@@ -149,6 +149,16 @@ public class ModItems {
     public static final DeferredItem<Item> STINGER_NECKLACE = ITEMS.register("stinger_necklace", StingerNecklace::new);
     public static final DeferredItem<Item> BEE_CLOAK = ITEMS.register("bee_cloak", BeeCloak::new);
     public static final DeferredItem<Item> BLACK_BELT = ITEMS.register("black_belt", BlackBelt::new);
+    public static final DeferredItem<Item> TITAN_GLOVE = ITEMS.register("titan_glove", TitanGlove::new);
+    public static final DeferredItem<Item> FERAL_CLAWS = ITEMS.register("feral_claws", FeralClaws::new);
+    public static final DeferredItem<Item> POWER_GLOVE = ITEMS.register("power_glove", PowerGlove::new);
+    public static final DeferredItem<Item> MECHANICAL_GLOVE = ITEMS.register("mechanical_glove", MechanicalGlove::new);
+    public static final DeferredItem<Item> FLESH_KNUCKLES = ITEMS.register("flesh_knuckles", FleshKnuckles::new);
+    public static final DeferredItem<Item> BERSERKERS_GLOVE = ITEMS.register("berserkers_glove", BerserkersGlove::new);
+    public static final DeferredItem<Item> PALADINS_SHIELD = ITEMS.register("paladins_shield", PaladinsShield::new);
+    public static final DeferredItem<Item> HERO_SHIELD = ITEMS.register("hero_shield", HeroShield::new);
+    public static final DeferredItem<Item> FROZEN_TURTLE_SHELL = ITEMS.register("frozen_turtle_shell", FrozenTurtleShell::new);
+    public static final DeferredItem<Item> FROZEN_SHIELD = ITEMS.register("frozen_shield", FrozenShield::new);
 
     //食物
     public static final DeferredItem<Item> MANA_CRYSTAL = ITEMS.register("mana_crystal", ManaCrystal::new);

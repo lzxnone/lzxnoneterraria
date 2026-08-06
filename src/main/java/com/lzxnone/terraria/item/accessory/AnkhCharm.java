@@ -27,7 +27,7 @@ import java.util.List;
 public class AnkhCharm extends AccessoryItem implements MobEffectImmunityModifier {
     public static final ConfigDouble ARMOR_TOUGHNESS = new ConfigDouble(
         "accessory.ankh_charm.armor_toughness",
-        "ankh_charm_armor_toughness",
+        "armor_toughness",
         2.0D,
         0.0D,
         100.0D

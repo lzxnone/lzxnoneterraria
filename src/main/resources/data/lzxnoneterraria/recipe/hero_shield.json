@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:paladins_shield"
+    },
+    {
+      "item": "lzxnoneterraria:flesh_knuckles"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:hero_shield",
+    "count": 1
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/item2",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/berserkers_glove"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:power_glove"
+    },
+    {
+      "item": "lzxnoneterraria:flesh_knuckles"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:berserkers_glove",
+    "count": 1
+  }
+}

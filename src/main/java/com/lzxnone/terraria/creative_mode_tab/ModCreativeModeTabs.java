@@ -104,6 +104,16 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.STINGER_NECKLACE.get());
                 output.accept(ModItems.BEE_CLOAK.get());
                 output.accept(ModItems.BLACK_BELT.get());
+                output.accept(ModItems.TITAN_GLOVE.get());
+                output.accept(ModItems.FERAL_CLAWS.get());
+                output.accept(ModItems.POWER_GLOVE.get());
+                output.accept(ModItems.MECHANICAL_GLOVE.get());
+                output.accept(ModItems.FLESH_KNUCKLES.get());
+                output.accept(ModItems.BERSERKERS_GLOVE.get());
+                output.accept(ModItems.PALADINS_SHIELD.get());
+                output.accept(ModItems.HERO_SHIELD.get());
+                output.accept(ModItems.FROZEN_SHIELD.get());
+                output.accept(ModItems.FROZEN_TURTLE_SHELL.get());
             }).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> BLOCK_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_block_0", () -> CreativeModeTab.builder()

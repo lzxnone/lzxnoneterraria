@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:paladins_shield"
+    },
+    {
+      "item": "lzxnoneterraria:frozen_turtle_shell"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:frozen_shield",
+    "count": 1
+  }
+}

@@ -32,4 +32,8 @@ public class ModEffects {
             MOB_EFFECTS.register("mana_sickness", ManaSicknessEffect::new);
     public static final DeferredHolder<MobEffect, MidasEffect> MIDAS =
             MOB_EFFECTS.register("midas", MidasEffect::new);
+    public static final DeferredHolder<MobEffect, PaladinsShieldEffect> PALADINS_GUARDIAN =
+            MOB_EFFECTS.register("paladins_shield", PaladinsShieldEffect::new);
+    public static final DeferredHolder<MobEffect, IceBarrierEffect> ICE_BARRIER =
+            MOB_EFFECTS.register("ice_barrier", IceBarrierEffect::new);
 }

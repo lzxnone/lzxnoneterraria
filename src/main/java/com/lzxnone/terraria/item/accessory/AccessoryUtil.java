@@ -54,6 +54,68 @@ public class AccessoryUtil {
         return chance[0];
     }
 
+    public static double getVisibilityMultiplier(LivingEntity entity) {
+        double[] multiplier = {1.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof VisibilityModifier modifier) {
+                multiplier[0] *= modifier.getVisibilityMultiplier(stack, entity);
+            }
+        });
+        return multiplier[0];
+    }
+
+    public static double getGuardianRange(LivingEntity entity) {
+        double[] range = {0.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof GuardianShieldModifier modifier) {
+                if(modifier.applyGuardianShield(stack, entity)) range[0] = Math.max(modifier.getGuardianRange(stack, entity), range[0]);
+            }
+        });
+        return range[0];
+    }
+
+    public static double getGuardianMinHealthRatio(LivingEntity entity) {
+        double[] ratio = {1.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof GuardianShieldModifier modifier) {
+                if(modifier.applyGuardianShield(stack, entity)) ratio[0] = Math.min(modifier.getMinHealthRatio(stack, entity), ratio[0]);
+            }
+        });
+        return ratio[0];
+    }
+
+    public static boolean canApplyGuardianShield(LivingEntity entity) {
+        boolean[] result = {false};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(result[0]) return;
+            if(accessory instanceof GuardianShieldModifier modifier) {
+                result[0] = modifier.applyGuardianShield(stack, entity);
+            }
+        });
+        return result[0];
+    }
+
+    public static double getIceBarrierMaxHealthRatio(LivingEntity entity) {
+        double[] ratio = {1.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof IceBarrierModifier modifier) {
+                if(modifier.applyIceBarrier(stack, entity)) ratio[0] = Math.max(modifier.getMaxHealthRatio(stack, entity), ratio[0]);
+            }
+        });
+        return ratio[0];
+    }
+
+    public static boolean canApplyIceBarrier(LivingEntity entity) {
+        boolean[] result = {false};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(result[0]) return;
+            if(accessory instanceof IceBarrierModifier modifier) {
+                result[0] = modifier.applyIceBarrier(stack, entity);
+            }
+        });
+        return result[0];
+    }
+
     public static boolean isImmuneToEffect(LivingEntity entity, Holder<MobEffect> effect) {
         boolean[] result = {false};
         AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {

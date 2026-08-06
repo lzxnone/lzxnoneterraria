@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "lzxnoneterraria:item/item",
   "textures": {
     "layer0": "lzxnoneterraria:item/black_belt"
   }

@@ -158,10 +158,9 @@ public class StardustDragonStaff extends MinionWeapon {
                     }
                 }
                 float damage = DAMAGE.get() + ADD_DAMAGE.get() * Math.max(0, stardustDragonSlotCount - 1);
-                float knockback = summon.getOwner() instanceof Player p ? MinionWeapon.applyMinionKnockback(p, 1.0f) : 1.0f;
 
                 for(Entity target : targets) {
-                    if(DamageUtil.summonAttack(summon, target, sourceStack, damage, knockback)) target.invulnerableTime = 15;
+                    if(DamageUtil.summonAttack(summon, target, sourceStack, damage, 1.0f)) target.invulnerableTime = 15;
                 }
             }
         }

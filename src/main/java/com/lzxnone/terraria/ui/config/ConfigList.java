@@ -7,6 +7,8 @@ import com.lzxnone.terraria.effect.DemonicFlamesEffect;
 import com.lzxnone.terraria.effect.IchorEffect;
 import com.lzxnone.terraria.effect.ManaSicknessEffect;
 import com.lzxnone.terraria.effect.MidasEffect;
+import com.lzxnone.terraria.effect.PaladinsShieldEffect;
+import com.lzxnone.terraria.effect.IceBarrierEffect;
 import com.lzxnone.terraria.effect.SummonEffect;
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
 import com.lzxnone.terraria.client.config.RenderConfigs;
@@ -16,6 +18,7 @@ import com.lzxnone.terraria.item.accessory.NaturesGift;
 import com.lzxnone.terraria.item.accessory.ArmorPolish;
 import com.lzxnone.terraria.item.accessory.ArmorBracing;
 import com.lzxnone.terraria.item.accessory.AnkhCharm;
+import com.lzxnone.terraria.item.accessory.AvengerEmblem;
 import com.lzxnone.terraria.item.accessory.CobaltShield;
 import com.lzxnone.terraria.item.accessory.ObsidianShield;
 import com.lzxnone.terraria.item.accessory.AnkhShield;
@@ -35,6 +38,16 @@ import com.lzxnone.terraria.item.accessory.HoneyComb;
 import com.lzxnone.terraria.item.accessory.StingerNecklace;
 import com.lzxnone.terraria.item.accessory.BeeCloak;
 import com.lzxnone.terraria.item.accessory.BlackBelt;
+import com.lzxnone.terraria.item.accessory.TitanGlove;
+import com.lzxnone.terraria.item.accessory.FeralClaws;
+import com.lzxnone.terraria.item.accessory.PowerGlove;
+import com.lzxnone.terraria.item.accessory.MechanicalGlove;
+import com.lzxnone.terraria.item.accessory.FleshKnuckles;
+import com.lzxnone.terraria.item.accessory.BerserkersGlove;
+import com.lzxnone.terraria.item.accessory.PaladinsShield;
+import com.lzxnone.terraria.item.accessory.HeroShield;
+import com.lzxnone.terraria.item.accessory.FrozenTurtleShell;
+import com.lzxnone.terraria.item.accessory.FrozenShield;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.item.weapon.melee.BladeOfGrass;
@@ -145,7 +158,9 @@ public class ConfigList {
             AcidVenomEffect.CONFIG_LIST_ITEM,
             MidasEffect.CONFIG_LIST_ITEM,
             ManaSicknessEffect.CONFIG_LIST_ITEM,
-            SummonEffect.CONFIG_LIST_ITEM
+            SummonEffect.CONFIG_LIST_ITEM,
+            PaladinsShieldEffect.CONFIG_LIST_ITEM,
+            IceBarrierEffect.CONFIG_LIST_ITEM
         });
         ITEMS.put(AMMO, new ConfigListItem[]{
             MusketBall.CONFIG_LIST_ITEM,
@@ -180,6 +195,7 @@ public class ConfigList {
             NecromanticScroll.CONFIG_LIST_ITEM,
             PapyrusScarab.CONFIG_LIST_ITEM,
             PygmyNecklace.CONFIG_LIST_ITEM,
+            AvengerEmblem.CONFIG_LIST_ITEM,
             WarriorEmblem.CONFIG_LIST_ITEM,
             SummonerEmblem.CONFIG_LIST_ITEM,
             RangerEmblem.CONFIG_LIST_ITEM,
@@ -188,7 +204,17 @@ public class ConfigList {
             HoneyComb.CONFIG_LIST_ITEM,
             StingerNecklace.CONFIG_LIST_ITEM,
             BeeCloak.CONFIG_LIST_ITEM,
-            BlackBelt.CONFIG_LIST_ITEM
+            BlackBelt.CONFIG_LIST_ITEM,
+            TitanGlove.CONFIG_LIST_ITEM,
+            FeralClaws.CONFIG_LIST_ITEM,
+            PowerGlove.CONFIG_LIST_ITEM,
+            MechanicalGlove.CONFIG_LIST_ITEM,
+            FleshKnuckles.CONFIG_LIST_ITEM,
+            BerserkersGlove.CONFIG_LIST_ITEM,
+            PaladinsShield.CONFIG_LIST_ITEM,
+            HeroShield.CONFIG_LIST_ITEM,
+            FrozenTurtleShell.CONFIG_LIST_ITEM,
+            FrozenShield.CONFIG_LIST_ITEM
         });
         ITEMS.put(ENCHANTMENT, new ConfigListItem[]{
             ModEnchantmentConfigs.MANA_LEAK_CONFIG_LIST_ITEM,

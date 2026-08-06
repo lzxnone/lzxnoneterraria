@@ -8,6 +8,7 @@ import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.BeeSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.weapon.*;
+import com.lzxnone.terraria.item.weapon.summon.minion.MinionWeapon;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -75,15 +76,18 @@ public class DamageUtil {
         //应用药水
         float finalDamage = category == DamageCategory.REAL ? Math.max(0.0F, damage) : applyPlayerDamageEffects(player, damage);
         float knockbackLevel = (float) player.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
-        //
+        knockbackLevel -= MeleeWeapon.applyMeleeKnockbackBonus(itemSource, player, 0.0F);
+
         //应用
         finalDamage = Weapon.applyDamageBonus(itemSource, player, finalDamage);
         if(category == DamageCategory.MELEE && !itemSource.isEmpty()) {
             finalDamage = EnchantmentHelper.modifyDamage(serverLevel, itemSource, target, source, finalDamage);
             finalDamage = MeleeWeapon.applyMeleeDamageBonus(itemSource, player, finalDamage);
             knockbackLevel = EnchantmentHelper.modifyKnockback(serverLevel, itemSource, target, source, knockbackLevel);
+            knockbackLevel = MeleeWeapon.applyMeleeKnockbackBonus(itemSource, player, knockbackLevel);
         }else if(category == DamageCategory.SUMMON && !itemSource.isEmpty()) {
             finalDamage = SummonWeapon.applySummonDamageBonus(itemSource, player, finalDamage);
+            if(itemSource.getItem() instanceof MinionWeapon) MinionWeapon.applyMinionKnockback(player, knockbackLevel);
         }else if(category == DamageCategory.MAGIC && !itemSource.isEmpty()) {
             finalDamage = MagicWeapon.applyMagicDamageBonus(itemSource, player, finalDamage);
         }else if(category == DamageCategory.RANGED && !itemSource.isEmpty()) {
