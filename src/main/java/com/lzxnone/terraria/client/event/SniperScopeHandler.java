@@ -2,6 +2,8 @@ package com.lzxnone.terraria.client.event;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.item.accessory.AccessoryUtil;
+import com.lzxnone.terraria.item.weapon.ranged.gun.Gun;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -49,6 +51,7 @@ public class SniperScopeHandler {
 
         ItemStack stack = player.getUseItem();
         if(stack.is(ModItems.SNIPER_RIFLE)) return stack;
+        if(stack.getItem() instanceof Gun && AccessoryUtil.hasScopeZoom(player)) return stack;
         return ItemStack.EMPTY;
     }
 

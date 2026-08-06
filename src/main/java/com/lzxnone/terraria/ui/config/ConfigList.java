@@ -58,6 +58,10 @@ import com.lzxnone.terraria.item.accessory.MoonCharm;
 import com.lzxnone.terraria.item.accessory.NeptunesShell;
 import com.lzxnone.terraria.item.accessory.MoonShell;
 import com.lzxnone.terraria.item.accessory.CelestialShell;
+import com.lzxnone.terraria.item.accessory.PutridScent;
+import com.lzxnone.terraria.item.accessory.Shackle;
+import com.lzxnone.terraria.item.accessory.SniperScope;
+import com.lzxnone.terraria.item.accessory.ReconScope;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.item.weapon.melee.BladeOfGrass;
@@ -234,7 +238,11 @@ public class ConfigList {
             MoonCharm.CONFIG_LIST_ITEM,
             NeptunesShell.CONFIG_LIST_ITEM,
             MoonShell.CONFIG_LIST_ITEM,
-            CelestialShell.CONFIG_LIST_ITEM
+            CelestialShell.CONFIG_LIST_ITEM,
+            PutridScent.CONFIG_LIST_ITEM,
+            Shackle.CONFIG_LIST_ITEM,
+            SniperScope.CONFIG_LIST_ITEM,
+            ReconScope.CONFIG_LIST_ITEM
         });
         ITEMS.put(ENCHANTMENT, new ConfigListItem[]{
             ModEnchantmentConfigs.MANA_LEAK_CONFIG_LIST_ITEM,

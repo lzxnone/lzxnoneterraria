@@ -5,7 +5,6 @@ import com.google.common.collect.MultimapBuilder;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.item.effect.ConditionalAttributeModifier;
 import com.lzxnone.terraria.item.effect.EffectTooltipUtil;
-import com.lzxnone.terraria.item.effect.JumpModifier;
 import com.lzxnone.terraria.item.effect.MeleeCritChanceModifier;
 import com.lzxnone.terraria.item.effect.MeleeDamageModifier;
 import com.lzxnone.terraria.item.effect.WaterBreathingModifier;
@@ -28,7 +27,7 @@ import top.theillusivec4.curios.api.SlotContext;
 
 import java.util.List;
 
-public class MoonShell extends AccessoryItem implements MeleeDamageModifier, MeleeCritChanceModifier, JumpModifier, WaterBreathingModifier, ConditionalAttributeModifier {
+public class MoonShell extends AccessoryItem implements MeleeDamageModifier, MeleeCritChanceModifier, WaterBreathingModifier, ConditionalAttributeModifier {
     public static final ConfigDouble MELEE_DAMAGE_MULTIPLIER = new ConfigDouble(
         "accessory.moon_shell.melee_damage_multiplier",
         "melee_damage_multiplier",
@@ -60,13 +59,13 @@ public class MoonShell extends AccessoryItem implements MeleeDamageModifier, Mel
     public static final ConfigDouble JUMP_HEIGHT = new ConfigDouble(
         "accessory.moon_shell.jump_height",
         "jump_height",
-        1.05D,
+        1.2D,
         1.0D,
         10.0D
     );
-    public static final ConfigDouble JUMP_SPEED = new ConfigDouble(
-        "accessory.moon_shell.jump_speed",
-        "jump_speed",
+    public static final ConfigDouble WOLF_MOVE_SPEED = new ConfigDouble(
+        "accessory.moon_shell.wolf_move_speed",
+        "move_speed",
         1.05D,
         1.0D,
         10.0D
@@ -91,16 +90,6 @@ public class MoonShell extends AccessoryItem implements MeleeDamageModifier, Mel
     @Override
     public double getMeleeCritChance(ItemStack stack, LivingEntity entity) {
         return entity.level().isNight() ? MELEE_CRIT_CHANCE.get() : 0.0D;
-    }
-
-    @Override
-    public double getJumpHeightMultiplier(ItemStack stack, LivingEntity entity) {
-        return entity.level().isNight() ? JUMP_HEIGHT.get() : 1.0D;
-    }
-
-    @Override
-    public double getJumpSpeedMultiplier(ItemStack stack, LivingEntity entity) {
-        return entity.level().isNight() ? JUMP_SPEED.get() : 1.0D;
     }
 
     @Override
@@ -133,7 +122,7 @@ public class MoonShell extends AccessoryItem implements MeleeDamageModifier, Mel
         return modifiers;
     }
 
-    //狼人（夜晚）：近战攻速、防御
+    //狼人（夜晚）：近战攻速、防御、移动速度
     private void buildWolfModifiers(Multimap<Holder<Attribute>, AttributeModifier> modifiers) {
         double attackSpeed = ATTACK_SPEED.get() - 1.0D;
         if(attackSpeed != 0.0D) {
@@ -157,6 +146,28 @@ public class MoonShell extends AccessoryItem implements MeleeDamageModifier, Mel
                 )
             );
         }
+        double wolfMoveSpeed = WOLF_MOVE_SPEED.get() - 1.0D;
+        if(wolfMoveSpeed != 0.0D) {
+            modifiers.put(
+                Attributes.MOVEMENT_SPEED,
+                new AttributeModifier(
+                    ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "moon_shell_wolf_move_speed"),
+                    wolfMoveSpeed,
+                    AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                )
+            );
+        }
+        double jumpStrength = JUMP_HEIGHT.get() - 1.0D;
+        if(jumpStrength != 0.0D) {
+            modifiers.put(
+                Attributes.JUMP_STRENGTH,
+                new AttributeModifier(
+                    ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "moon_shell_wolf_jump_height"),
+                    jumpStrength,
+                    AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                )
+            );
+        }
     }
 
     //人鱼（水中）：移动速度
@@ -177,7 +188,7 @@ public class MoonShell extends AccessoryItem implements MeleeDamageModifier, Mel
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigStruct.loadAll(MELEE_DAMAGE_MULTIPLIER, MELEE_CRIT_CHANCE, ATTACK_SPEED, DEFENSE, JUMP_HEIGHT, JUMP_SPEED, MOVE_SPEED);
+            ConfigStruct.loadAll(MELEE_DAMAGE_MULTIPLIER, MELEE_CRIT_CHANCE, ATTACK_SPEED, DEFENSE, JUMP_HEIGHT, WOLF_MOVE_SPEED, MOVE_SPEED);
         }
     };
 
@@ -191,11 +202,9 @@ public class MoonShell extends AccessoryItem implements MeleeDamageModifier, Mel
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        //狼人（夜晚）
         tooltipComponents.add(Component.translatable(
             "tooltip.lzxnoneterraria.active_at_night"
-        ).withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(Component.translatable(
-            "tooltip.lzxnoneterraria.active_in_water"
         ).withStyle(ChatFormatting.GRAY));
         if(MELEE_CRIT_CHANCE.get() > 0.0D) {
             tooltipComponents.add(Component.translatable(
@@ -221,11 +230,21 @@ public class MoonShell extends AccessoryItem implements MeleeDamageModifier, Mel
                 EffectTooltipUtil.formatNumber(DEFENSE.get())
             ).withStyle(ChatFormatting.GRAY));
         }
-        if(JUMP_HEIGHT.get() > 1.0D || JUMP_SPEED.get() > 1.0D) {
+        if(JUMP_HEIGHT.get() > 1.0D) {
             tooltipComponents.add(Component.translatable(
                 "tooltip.lzxnoneterraria.jump_boost"
             ).withStyle(ChatFormatting.GRAY));
         }
+        if(WOLF_MOVE_SPEED.get() != 1.0D) {
+            tooltipComponents.add(Component.translatable(
+                "tooltip.lzxnoneterraria.move_speed_bonus",
+                EffectTooltipUtil.formatPercent(WOLF_MOVE_SPEED.get())
+            ).withStyle(ChatFormatting.GRAY));
+        }
+        //人鱼（水中）
+        tooltipComponents.add(Component.translatable(
+            "tooltip.lzxnoneterraria.active_in_water"
+        ).withStyle(ChatFormatting.GRAY));
         if(MOVE_SPEED.get() != 1.0D) {
             tooltipComponents.add(Component.translatable(
                 "tooltip.lzxnoneterraria.move_speed_bonus",

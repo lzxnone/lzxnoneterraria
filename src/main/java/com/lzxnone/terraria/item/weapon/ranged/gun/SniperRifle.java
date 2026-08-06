@@ -4,6 +4,7 @@ import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.RangedWeapon;
+import com.lzxnone.terraria.item.effect.ScopeZoomModifier;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
@@ -12,6 +13,7 @@ import com.lzxnone.terraria.utils.AmmoUtil;
 import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +22,7 @@ import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.Level;
 import org.joml.Vector3f;
 
-public class SniperRifle extends Gun {
+public class SniperRifle extends Gun implements ScopeZoomModifier {
     public static final String ID = "sniper_rifle";
     public static final Vector3f OFFSET = new Vector3f(-0.3f, -0.1f, 1.5f);
     public static final float DAMAGE_DEFAULT = 35.0f;
@@ -51,6 +53,11 @@ public class SniperRifle extends Gun {
 
     public static double getZoomScrollSpeed() {
         return ZOOM_SCROLL_SPEED.get();
+    }
+
+    @Override
+    public boolean canZoom(ItemStack stack, LivingEntity entity) {
+        return true;
     }
 
     @Override

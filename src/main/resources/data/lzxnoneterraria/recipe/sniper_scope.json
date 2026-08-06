@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:rifle_scope"
+    },
+    {
+      "item": "lzxnoneterraria:avenger_emblem"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:sniper_scope",
+    "count": 1
+  }
+}

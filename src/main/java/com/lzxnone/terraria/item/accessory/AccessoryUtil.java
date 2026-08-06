@@ -262,6 +262,18 @@ public class AccessoryUtil {
         return chance[0];
     }
 
+    //瞄准放大：是否有饰品提供放大能力（如步枪瞄准镜）
+    public static boolean hasScopeZoom(LivingEntity entity) {
+        boolean[] result = {false};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(result[0]) return;
+            if(accessory instanceof ScopeZoomModifier modifier) {
+                result[0] = modifier.canZoom(stack, entity);
+            }
+        });
+        return result[0];
+    }
+
     //水下呼吸：是否有饰品提供水下呼吸
     public static boolean isWaterBreathing(LivingEntity entity) {
         boolean[] result = {false};
@@ -272,28 +284,6 @@ public class AccessoryUtil {
             }
         });
         return result[0];
-    }
-
-    //跳跃高度倍率：取所有饰品中的最大值
-    public static double getJumpHeightMultiplier(LivingEntity entity) {
-        double[] multiplier = {1.0D};
-        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
-            if(accessory instanceof JumpModifier modifier) {
-                multiplier[0] = Math.max(multiplier[0], modifier.getJumpHeightMultiplier(stack, entity));
-            }
-        });
-        return multiplier[0];
-    }
-
-    //跳跃速度倍率：取所有饰品中的最大值
-    public static double getJumpSpeedMultiplier(LivingEntity entity) {
-        double[] multiplier = {1.0D};
-        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
-            if(accessory instanceof JumpModifier modifier) {
-                multiplier[0] = Math.max(multiplier[0], modifier.getJumpSpeedMultiplier(stack, entity));
-            }
-        });
-        return multiplier[0];
     }
 
     //暴击率：累加所有饰品的暴击率加成

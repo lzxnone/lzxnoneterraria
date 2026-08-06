@@ -20,12 +20,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
@@ -100,21 +98,6 @@ public class EntityEventHandler {
                 }
             }
         }
-    }
-
-    @SubscribeEvent
-    public static void onLivingJump(LivingEvent.LivingJumpEvent event) {
-        LivingEntity entity = event.getEntity();
-        if(entity.level().isClientSide()) return;
-        double heightMultiplier = AccessoryUtil.getJumpHeightMultiplier(entity);
-        double speedMultiplier = AccessoryUtil.getJumpSpeedMultiplier(entity);
-        if(heightMultiplier <= 1.0D && speedMultiplier <= 1.0D) return;
-        Vec3 motion = entity.getDeltaMovement();
-        entity.setDeltaMovement(
-            motion.x * speedMultiplier,
-            motion.y * heightMultiplier,
-            motion.z * speedMultiplier
-        );
     }
 
     @SubscribeEvent

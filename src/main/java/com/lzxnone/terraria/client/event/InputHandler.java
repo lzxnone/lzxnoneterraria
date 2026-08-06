@@ -4,10 +4,12 @@ import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModKeyBindings;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.item.weapon.melee.FirstFractal;
 import com.lzxnone.terraria.item.weapon.melee.TrueCopperShortsword;
 import com.lzxnone.terraria.item.weapon.melee.Zenith;
+import com.lzxnone.terraria.item.weapon.ranged.gun.Gun;
 import com.lzxnone.terraria.item.weapon.ranged.gun.SniperRifle;
 import com.lzxnone.terraria.item.weapon.summon.minion.MinionWeapon;
 import com.lzxnone.terraria.network.payload.ClearSummonPayload;
@@ -73,8 +75,8 @@ public class InputHandler {
                     PacketDistributor.sendToServer(new ZenithScrollPayload(scrollDelta));
                 }
             }
-        }else if(player.getUseItem().getItem() instanceof SniperRifle) {
-            if(player.isUsingItem()) {
+        }else if(player.getUseItem().getItem() instanceof Gun) {
+            if(player.isUsingItem() && (player.getUseItem().is(ModItems.SNIPER_RIFLE) || AccessoryUtil.hasScopeZoom(player))) {
                 double scrollDelta = event.getScrollDeltaY();
                 if(scrollDelta != 0) {
                     event.setCanceled(true);

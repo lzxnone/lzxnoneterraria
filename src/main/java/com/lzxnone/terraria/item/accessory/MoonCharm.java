@@ -5,7 +5,6 @@ import com.google.common.collect.MultimapBuilder;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.item.effect.ConditionalAttributeModifier;
 import com.lzxnone.terraria.item.effect.EffectTooltipUtil;
-import com.lzxnone.terraria.item.effect.JumpModifier;
 import com.lzxnone.terraria.item.effect.MeleeCritChanceModifier;
 import com.lzxnone.terraria.item.effect.MeleeDamageModifier;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
@@ -27,7 +26,7 @@ import top.theillusivec4.curios.api.SlotContext;
 
 import java.util.List;
 
-public class MoonCharm extends AccessoryItem implements MeleeDamageModifier, MeleeCritChanceModifier, JumpModifier, ConditionalAttributeModifier {
+public class MoonCharm extends AccessoryItem implements MeleeDamageModifier, MeleeCritChanceModifier, ConditionalAttributeModifier {
     public static final ConfigDouble MELEE_DAMAGE_MULTIPLIER = new ConfigDouble(
         "accessory.moon_charm.melee_damage_multiplier",
         "melee_damage_multiplier",
@@ -66,14 +65,7 @@ public class MoonCharm extends AccessoryItem implements MeleeDamageModifier, Mel
     public static final ConfigDouble JUMP_HEIGHT = new ConfigDouble(
         "accessory.moon_charm.jump_height",
         "jump_height",
-        1.05D,
-        1.0D,
-        10.0D
-    );
-    public static final ConfigDouble JUMP_SPEED = new ConfigDouble(
-        "accessory.moon_charm.jump_speed",
-        "jump_speed",
-        1.05D,
+        1.2D,
         1.0D,
         10.0D
     );
@@ -90,16 +82,6 @@ public class MoonCharm extends AccessoryItem implements MeleeDamageModifier, Mel
     @Override
     public double getMeleeCritChance(ItemStack stack, LivingEntity entity) {
         return entity.level().isNight() ? MELEE_CRIT_CHANCE.get() : 0.0D;
-    }
-
-    @Override
-    public double getJumpHeightMultiplier(ItemStack stack, LivingEntity entity) {
-        return entity.level().isNight() ? JUMP_HEIGHT.get() : 1.0D;
-    }
-
-    @Override
-    public double getJumpSpeedMultiplier(ItemStack stack, LivingEntity entity) {
-        return entity.level().isNight() ? JUMP_SPEED.get() : 1.0D;
     }
 
     @Override
@@ -156,12 +138,23 @@ public class MoonCharm extends AccessoryItem implements MeleeDamageModifier, Mel
                 )
             );
         }
+        double jumpStrength = JUMP_HEIGHT.get() - 1.0D;
+        if(jumpStrength != 0.0D) {
+            modifiers.put(
+                Attributes.JUMP_STRENGTH,
+                new AttributeModifier(
+                    ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "moon_charm_jump_height"),
+                    jumpStrength,
+                    AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                )
+            );
+        }
     }
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigStruct.loadAll(MELEE_DAMAGE_MULTIPLIER, MELEE_CRIT_CHANCE, ATTACK_SPEED, MOVE_SPEED, DEFENSE, JUMP_HEIGHT, JUMP_SPEED);
+            ConfigStruct.loadAll(MELEE_DAMAGE_MULTIPLIER, MELEE_CRIT_CHANCE, ATTACK_SPEED, MOVE_SPEED, DEFENSE, JUMP_HEIGHT);
         }
     };
 
@@ -208,7 +201,7 @@ public class MoonCharm extends AccessoryItem implements MeleeDamageModifier, Mel
                 EffectTooltipUtil.formatNumber(DEFENSE.get())
             ).withStyle(ChatFormatting.GRAY));
         }
-        if(JUMP_HEIGHT.get() > 1.0D || JUMP_SPEED.get() > 1.0D) {
+        if(JUMP_HEIGHT.get() > 1.0D) {
             tooltipComponents.add(Component.translatable(
                 "tooltip.lzxnoneterraria.jump_boost"
             ).withStyle(ChatFormatting.GRAY));

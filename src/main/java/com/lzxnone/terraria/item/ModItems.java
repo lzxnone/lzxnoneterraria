@@ -170,6 +170,11 @@ public class ModItems {
     public static final DeferredItem<Item> NEPTUNES_SHELL = ITEMS.register("neptunes_shell", NeptunesShell::new);
     public static final DeferredItem<Item> MOON_SHELL = ITEMS.register("moon_shell", MoonShell::new);
     public static final DeferredItem<Item> CELESTIAL_SHELL = ITEMS.register("celestial_shell", CelestialShell::new);
+    public static final DeferredItem<Item> PUTRID_SCENT = ITEMS.register("putrid_scent", PutridScent::new);
+    public static final DeferredItem<Item> SHACKLE = ITEMS.register("shackle", Shackle::new);
+    public static final DeferredItem<Item> RIFLE_SCOPE = ITEMS.register("rifle_scope", RifleScope::new);
+    public static final DeferredItem<Item> SNIPER_SCOPE = ITEMS.register("sniper_scope", SniperScope::new);
+    public static final DeferredItem<Item> RECON_SCOPE = ITEMS.register("recon_scope", ReconScope::new);
 
     //食物
     public static final DeferredItem<Item> MANA_CRYSTAL = ITEMS.register("mana_crystal", ManaCrystal::new);

@@ -65,7 +65,7 @@ public class CelestialStone extends AccessoryItem implements DamageModifier, Cri
     public static final ConfigDouble MINION_KNOCKBACK_MULTIPLIER = new ConfigDouble(
         "accessory.celestial_stone.minion_knockback_multiplier",
         "minion_knockback_multiplier",
-        1.5D,
+        1.15D,
         1.0D,
         10.0D
     );

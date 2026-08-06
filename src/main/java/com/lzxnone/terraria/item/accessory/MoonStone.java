@@ -66,7 +66,7 @@ public class MoonStone extends AccessoryItem implements DamageModifier, Critical
     public static final ConfigDouble MINION_KNOCKBACK_MULTIPLIER = new ConfigDouble(
         "accessory.moon_stone.minion_knockback_multiplier",
         "minion_knockback_multiplier",
-        1.5D,
+        1.15D,
         1.0D,
         10.0D
     );

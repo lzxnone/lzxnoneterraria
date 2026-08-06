@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:sniper_scope"
+    },
+    {
+      "item": "lzxnoneterraria:putrid_scent"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:recon_scope",
+    "count": 1
+  }
+}
