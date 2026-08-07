@@ -1,0 +1,87 @@
+package com.lzxnone.terraria.item.normal;
+
+import com.lzxnone.terraria.attachment.ModAttachments;
+import com.lzxnone.terraria.attachment.PlayerMana;
+import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
+import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.event.PlayerManaSyncEventHandler;
+import com.lzxnone.terraria.item.accessory.AccessoryUtil;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
+
+public class ManaStar extends Item {
+
+    public ManaStar() {
+        super(new Item.Properties());
+    }
+
+    public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
+        private static final double GRAVITY = 0.04D;
+        private static final double AIR_FRICTION = 0.98D;
+        private static final double GROUND_FRICTION = 0.6D;
+        private static final double MAX_FALL_SPEED = -1.5D;
+        private static final double MIN_ATTRACT_RADIUS = 4.0D;
+        private static final double PICKUP_RADIUS = 0.5D;
+        private static final double MAX_PICKUP_RADIUS = 16.0D;
+        private static final double ATTRACT_SPEED = 0.25D;
+
+        @Override
+        public void tick(StaticSummon summon) {
+            Vec3 movement = summon.getDeltaMovement();
+            if(summon.onGround()) {
+                movement = new Vec3(movement.x * GROUND_FRICTION, 0.0D, movement.z * GROUND_FRICTION);
+            }else {
+                movement = movement.add(0.0D, -GRAVITY, 0.0D);
+                movement = movement.multiply(AIR_FRICTION, AIR_FRICTION, AIR_FRICTION);
+                if(movement.y < MAX_FALL_SPEED) movement = new Vec3(movement.x, MAX_FALL_SPEED, movement.z);
+            }
+            summon.setDeltaMovement(movement);
+
+            if(summon.level().isClientSide()) return;
+
+            if(tryPickup(summon)) return;
+
+            int lifetime = summon.getEntityData().get(StaticSummon.LIFETIME);
+            int age = summon.getEntityData().get(StaticSummon.AGE);
+            if(lifetime != StaticSummon.INFINITE_LIFETIME && age > lifetime) {
+                summon.discard();
+                return;
+            }
+            summon.getEntityData().set(StaticSummon.AGE, age + 1);
+        }
+
+         private boolean tryPickup(StaticSummon summon) {
+            List<ServerPlayer> players = summon.level().getEntitiesOfClass(
+                ServerPlayer.class,
+                summon.getBoundingBox().inflate(MAX_PICKUP_RADIUS),
+                player -> !player.isSpectator()
+            );
+            if(players.isEmpty()) return false;
+
+            ServerPlayer player = players.getFirst();
+
+            double attractRange = Math.max(AccessoryUtil.getStarPickupRange(player), MIN_ATTRACT_RADIUS);
+            Vec3 dir = player.position().subtract(summon.position());
+            double dist = dir.length();
+            if(dist <= attractRange) {
+                summon.setDeltaMovement(dir.scale(ATTRACT_SPEED));
+            }
+            if(dist <= PICKUP_RADIUS) {
+                PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
+                CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+                int amount = customData.contains("mana") ? customData.getInt("mana") : 0;
+                if(mana.recoverManaImmediately(amount)) {
+                    player.setData(ModAttachments.PLAYER_MANA, mana);
+                    PlayerManaSyncEventHandler.sync(player);
+                }
+                onDied(summon);
+                return true;
+            }
+            return false;
+        }
+    };
+}

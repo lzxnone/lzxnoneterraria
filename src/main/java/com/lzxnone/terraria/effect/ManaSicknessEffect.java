@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.effect;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
@@ -38,8 +39,10 @@ public class ManaSicknessEffect extends MobEffect {
 
     public static void applyTo(LivingEntity entity) {
         int durationPerUse = DURATION_PER_USE.get();
-        int maxDuration = MAX_DURATION.get();
-        if(durationPerUse <= 0 || maxDuration <= 0) return;
+        if(durationPerUse <= 0 || MAX_DURATION.get() <= 0) return;
+
+        int maxDuration = (int) Math.ceil(MAX_DURATION.get() * AccessoryUtil.getManaSicknessDurationMultiplier(entity));
+        if(maxDuration <= 0) return;
 
         MobEffectInstance current = entity.getEffect(ModEffects.MANA_SICKNESS);
         int duration = Math.min(maxDuration, durationPerUse);

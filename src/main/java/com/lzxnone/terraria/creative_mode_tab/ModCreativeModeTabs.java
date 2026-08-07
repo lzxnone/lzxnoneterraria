@@ -128,6 +128,15 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.REGENERATION_BAND.get());
                 output.accept(ModItems.BAND_OF_STARPOWER.get());
                 output.accept(ModItems.MANA_REGENERATION_BAND.get());
+                output.accept(ModItems.MAGIC_CUFF.get());
+                output.accept(ModItems.CELESTIAL_MAGNET.get());
+                output.accept(ModItems.CELESTIAL_EMBLEM.get());
+                output.accept(ModItems.CELESTIAL_CUFFS.get());
+                output.accept(ModItems.MAGNET_FLOWER.get());
+                output.accept(ModItems.PHILOSOPHERS_STONE.get());
+                output.accept(ModItems.VALENTINE_RING.get());
+                output.accept(ModItems.CHARM_OF_MYTHS.get());
+                output.accept(ModItems.MANA_CLOAK.get());
                 output.accept(ModItems.EYE_OF_GOLEM.get());
                 output.accept(ModItems.DESTROYER_EMBLEM.get());
                 output.accept(ModItems.MOON_STONE.get());

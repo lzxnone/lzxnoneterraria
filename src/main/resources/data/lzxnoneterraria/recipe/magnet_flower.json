@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:mana_flower"
+    },
+    {
+      "item": "lzxnoneterraria:celestial_magnet"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:magnet_flower",
+    "count": 1
+  }
+}

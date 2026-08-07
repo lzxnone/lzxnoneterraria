@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:mana_flower"
+    },
+    {
+      "item": "lzxnoneterraria:star_cloak"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:mana_cloak",
+    "count": 1
+  }
+}

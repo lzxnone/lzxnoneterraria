@@ -68,6 +68,39 @@ public class AccessoryUtil {
         });
     }
 
+    //耐魔性持续时间比例：取所有饰品中的最小值（降低优先）
+    public static double getManaSicknessDurationMultiplier(LivingEntity entity) {
+        double[] multiplier = {1.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof ManaSicknessDurationModifier modifier) {
+                multiplier[0] = Math.min(multiplier[0], modifier.getManaSicknessDurationMultiplier(stack, entity));
+            }
+        });
+        return multiplier[0];
+    }
+
+    //星星拾取范围：取所有饰品中的最大值
+    public static double getStarPickupRange(LivingEntity entity) {
+        double[] range = {0.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof StarPickupRangeModifier modifier) {
+                range[0] = Math.max(range[0], modifier.getStarPickupRange(stack, entity));
+            }
+        });
+        return range[0];
+    }
+
+    //受击魔力恢复倍率：取所有饰品中的最大值（与天界手铐等效果不叠加）
+    public static double getManaOnHurtMultiplier(LivingEntity entity) {
+        double[] multiplier = {0.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof ManaOnHurtModifier modifier) {
+                multiplier[0] = Math.max(multiplier[0], modifier.getManaOnHurtMultiplier(stack, entity));
+            }
+        });
+        return multiplier[0];
+    }
+
     //魔力恢复延迟倍率：取所有饰品中的最小值（减半优先）
     public static double getManaRecoverDelayMultiplier(LivingEntity entity) {
         double[] multiplier = {1.0D};
@@ -412,10 +445,12 @@ public class AccessoryUtil {
 
     public static void applyFallenStarSummoner(LivingEntity entity) {
         boolean[] result = {false};
+        boolean[] summonManaStar = {false};
         AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
             if(result[0]) return;
             if(accessory instanceof FallenStarSummoner summoner) {
                 result[0] = summoner.summonThreeFallenStar(stack, entity);
+                if(summoner.summonManaStarOnLanding(stack, entity)) summonManaStar[0] = true;
             }
         });
         if(result[0]) {
@@ -448,6 +483,7 @@ public class AccessoryUtil {
 
                 CompoundTag customData = new CompoundTag();
                 customData.putInt("targetLifetime", (int) Math.floor(targetPos.distanceTo(spawnPos) / 2.0));
+                if(summonManaStar[0] && i == 0) customData.putBoolean("summonManaStar", true);
                 projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
 
                 projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));

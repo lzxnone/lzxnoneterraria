@@ -1,6 +1,5 @@
-package com.lzxnone.terraria.client.item;
+package com.lzxnone.terraria.client.item.normal;
 
-import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.client.entity.summon.IStaticSummonRenderBehavior;
 import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.TintedVertexConsumer;

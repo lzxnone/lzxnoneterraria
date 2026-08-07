@@ -1,6 +1,8 @@
 package com.lzxnone.terraria.entity.summon;
 
 import com.lzxnone.terraria.item.ammo.*;
+import com.lzxnone.terraria.item.normal.FallenStar;
+import com.lzxnone.terraria.item.normal.ManaStar;
 import com.lzxnone.terraria.item.weapon.ranged.ElfMelter;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.*;
@@ -23,6 +25,7 @@ public class StaticSummonBehaviors {
 
     //掉落实体
     public static final String DROP_FALLEN_STAR = "drop_fallen_star";
+    public static final String MANA_STAR = "mana_star";
 
     //弹射实体
     public static final String SEEDLER_NUT = "seedler_nut";
@@ -76,6 +79,7 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(DEFAULT, new IStaticSummonBehavior() {});
 
         BEHAVIORS.put(DROP_FALLEN_STAR, FallenStar.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(MANA_STAR, ManaStar.SUMMON_BEHAVIOR);
 
         BEHAVIORS.put(SEEDLER_NUT, Seedler.SUMMON_BEHAVIOR);
         BEHAVIORS.put(THE_HORSEMANS_BLADE_JACK, TheHorsemansBlade.SUMMON_BEHAVIOR);

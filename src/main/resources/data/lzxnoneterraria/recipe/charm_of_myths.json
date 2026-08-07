@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:band_of_regeneration"
+    },
+    {
+      "item": "lzxnoneterraria:philosophers_stone"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:charm_of_myths",
+    "count": 1
+  }
+}

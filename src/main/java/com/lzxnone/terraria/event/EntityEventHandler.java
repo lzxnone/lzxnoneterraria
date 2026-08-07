@@ -3,21 +3,30 @@ package com.lzxnone.terraria.event;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.attachment.LavaImmunity;
 import com.lzxnone.terraria.attachment.ModAttachments;
+import com.lzxnone.terraria.attachment.PlayerMana;
+import com.lzxnone.terraria.entity.ModEntities;
+import com.lzxnone.terraria.entity.projectile.StaticProjectile;
+import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.effect.MidasEffect;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.effect.PaladinsShieldEffect;
 import com.lzxnone.terraria.effect.IceBarrierEffect;
+import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.accessory.PanicNecklace;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -35,6 +44,9 @@ import java.util.UUID;
 
 @EventBusSubscriber(modid = LzxnoneTerraria.MODID)
 public class EntityEventHandler {
+    //魔力星掉落概率
+    private static final double MANA_STAR_DROP_CHANCE = 1.0D / 9.0D;
+
     @SubscribeEvent
     public static void onLivingIncomingDamage(LivingIncomingDamageEvent event) {
         LivingEntity entity = event.getEntity();
@@ -73,6 +85,20 @@ public class EntityEventHandler {
         if(attacker instanceof LivingEntity livingAttacker && livingAttacker != entity) {
             if(source.is(DamageTypes.PLAYER_ATTACK) || source.is(DamageTypes.MOB_ATTACK) || source.is(DamageTypes.MOB_ATTACK_NO_AGGRO)) {
                 if(AccessoryUtil.canApplyIgnite(livingAttacker)) entity.igniteForTicks(AccessoryUtil.getIgniteTicks(livingAttacker));
+            }
+        }
+        //受到伤害时恢复魔力
+        if(entity instanceof Player player) {
+            boolean isDebuffDamage = source.is(DamageTypes.DROWN) || source.is(DamageTypes.MAGIC)
+                || source.is(DamageTypes.ON_FIRE) || source.is(DamageTypes.IN_FIRE) || source.is(DamageTypes.WITHER);
+            double manaMultiplier = AccessoryUtil.getManaOnHurtMultiplier(player);
+            if(!isDebuffDamage && manaMultiplier > 0.0D) {
+                PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
+                int recover = (int) Math.round(event.getAmount() * manaMultiplier);
+                if(recover > 0 && mana.recoverManaImmediately(recover)) {
+                    player.setData(ModAttachments.PLAYER_MANA, mana);
+                    PlayerManaSyncEventHandler.sync((ServerPlayer) player);
+                }
             }
         }
     }
@@ -123,7 +149,7 @@ public class EntityEventHandler {
             AccessoryUtil.applyInvulnerableTimeModifier(player);
             AccessoryUtil.applyFallenStarSummoner(player);
             AccessoryUtil.applyBeeSummoner(player);
-            //恐慌项链：受到伤害后触发恐慌加速（重复受击自动刷新持续时间）
+            //受到伤害后触发恐慌加速
             if(AccessoryUtil.canApplyPanic(player) && PanicNecklace.DURATION.get() > 0) {
                 player.addEffect(new MobEffectInstance(ModEffects.PANIC, PanicNecklace.DURATION.get(), 0, false, false));
             }
@@ -133,6 +159,11 @@ public class EntityEventHandler {
     @SubscribeEvent
     public static void onEntityDeath(LivingDeathEvent event) {
         LivingEntity livingEntity = event.getEntity();
+        Entity killer = event.getSource().getEntity();
+        if(killer instanceof Projectile projectile) {
+            Entity owner = projectile.getOwner();
+            if(owner instanceof Player) killer = owner;
+        }
         if(livingEntity.level() instanceof ServerLevel serverLevel) {
             //迈达斯生成绿宝石
             if(livingEntity.hasEffect(ModEffects.MIDAS) && livingEntity.getRandom().nextFloat() < MidasEffect.getDropChance()) {
@@ -146,6 +177,24 @@ public class EntityEventHandler {
                 stuckList.removeLast();
                 Entity stuck = serverLevel.getEntity(uuid);
                 if(stuck instanceof StaticSummon stuckProjectile) DevilsDevastation.summonStuckProjectile(stuckProjectile);
+            }
+
+            //生成魔力星
+            if(killer instanceof Player player
+                    && livingEntity instanceof Monster
+                    && player.getData(ModAttachments.PLAYER_MANA).getMana() < player.getData(ModAttachments.PLAYER_MANA).getMaxMana()
+                    && livingEntity.getRandom().nextFloat() < MANA_STAR_DROP_CHANCE) {
+                StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), livingEntity.level());
+                summon.setPos(livingEntity.position());
+                summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.MANA_STAR);
+                summon.getEntityData().set(StaticSummon.RENDER_MODE, "item");
+                summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.MANA_STAR.get()));
+                summon.getEntityData().set(StaticSummon.LIFETIME, 1200);
+                summon.getEntityData().set(StaticSummon.GLOW, true);
+                CompoundTag customData = new CompoundTag();
+                customData.putInt("mana", 100);
+                summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+                livingEntity.level().addFreshEntity(summon);
             }
         }
     }

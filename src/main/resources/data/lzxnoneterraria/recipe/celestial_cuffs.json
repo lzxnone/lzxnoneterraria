@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:celestial_magnet"
+    },
+    {
+      "item": "lzxnoneterraria:magic_cuffs"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:celestial_cuffs",
+    "count": 1
+  }
+}

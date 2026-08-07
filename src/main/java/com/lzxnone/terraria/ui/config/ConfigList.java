@@ -62,6 +62,15 @@ import com.lzxnone.terraria.item.accessory.ArcaneFlower;
 import com.lzxnone.terraria.item.accessory.RegenerationBand;
 import com.lzxnone.terraria.item.accessory.BandOfStarpower;
 import com.lzxnone.terraria.item.accessory.ManaRegenerationBand;
+import com.lzxnone.terraria.item.accessory.MagicCuff;
+import com.lzxnone.terraria.item.accessory.CelestialMagnet;
+import com.lzxnone.terraria.item.accessory.CelestialEmblem;
+import com.lzxnone.terraria.item.accessory.CelestialCuffs;
+import com.lzxnone.terraria.item.accessory.MagnetFlower;
+import com.lzxnone.terraria.item.accessory.PhilosophersStone;
+import com.lzxnone.terraria.item.accessory.ValentineRing;
+import com.lzxnone.terraria.item.accessory.CharmOfMyths;
+import com.lzxnone.terraria.item.accessory.ManaCloak;
 import com.lzxnone.terraria.item.accessory.EyeOfGolem;
 import com.lzxnone.terraria.item.accessory.DestroyerEmblem;
 import com.lzxnone.terraria.item.accessory.MoonStone;
@@ -256,6 +265,15 @@ public class ConfigList {
             RegenerationBand.CONFIG_LIST_ITEM,
             BandOfStarpower.CONFIG_LIST_ITEM,
             ManaRegenerationBand.CONFIG_LIST_ITEM,
+            MagicCuff.CONFIG_LIST_ITEM,
+            CelestialMagnet.CONFIG_LIST_ITEM,
+            CelestialEmblem.CONFIG_LIST_ITEM,
+            CelestialCuffs.CONFIG_LIST_ITEM,
+            MagnetFlower.CONFIG_LIST_ITEM,
+            PhilosophersStone.CONFIG_LIST_ITEM,
+            ValentineRing.CONFIG_LIST_ITEM,
+            CharmOfMyths.CONFIG_LIST_ITEM,
+            ManaCloak.CONFIG_LIST_ITEM,
             EyeOfGolem.CONFIG_LIST_ITEM,
             DestroyerEmblem.CONFIG_LIST_ITEM,
             MoonStone.CONFIG_LIST_ITEM,

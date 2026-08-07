@@ -1,9 +1,10 @@
-package com.lzxnone.terraria.item.ammo;
+package com.lzxnone.terraria.item.normal;
 
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.particle.ModParticles;
 import com.lzxnone.terraria.utils.ParticleUtil;
 import com.lzxnone.terraria.utils.SoundUtil;
@@ -11,18 +12,26 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class FallenStar extends BulletAmmo {
+public class FallenStar extends Item {
+    public FallenStar() {
+        super(new Item.Properties());
+    }
+
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         private static final double GRAVITY = 0.04D;
         private static final double AIR_FRICTION = 0.98D;
         private static final double GROUND_FRICTION = 0.6D;
         private static final double MAX_FALL_SPEED = -1.5D;
+        private static final double MIN_ATTRACT_RADIUS = 4.0D;
         private static final double PICKUP_RADIUS = 0.35D;
+        private static final double MAX_PICKUP_RADIUS = 16.0D;
+        private static final double ATTRACT_SPEED = 0.25D;
 
         @Override
         public void tick(StaticSummon summon) {
@@ -67,15 +76,22 @@ public class FallenStar extends BulletAmmo {
         private boolean tryPickup(StaticSummon summon) {
             List<ServerPlayer> players = summon.level().getEntitiesOfClass(
                 ServerPlayer.class,
-                summon.getBoundingBox().inflate(PICKUP_RADIUS),
+                summon.getBoundingBox().inflate(MAX_PICKUP_RADIUS),
                 player -> !player.isSpectator()
             );
             if(players.isEmpty()) return false;
 
-            for(ServerPlayer player : players) {
-                ItemStack stack = new ItemStack(ModItems.FALLEN_STAR.get());
-                if(!player.getInventory().add(stack)) continue;
+            ServerPlayer player = players.getFirst();
 
+            double attractRange = Math.max(AccessoryUtil.getStarPickupRange(player), MIN_ATTRACT_RADIUS);
+            Vec3 dir = player.position().subtract(summon.position());
+            double dist = dir.length();
+            if(dist <= attractRange) {
+                summon.setDeltaMovement(dir.scale(ATTRACT_SPEED));
+            }
+            if(dist <= PICKUP_RADIUS) {
+                ItemStack stack = new ItemStack(ModItems.FALLEN_STAR.get());
+                if(!player.getInventory().add(stack)) return false;
                 player.take(summon, 1);
                 player.containerMenu.broadcastChanges();
                 player.playNotifySound(

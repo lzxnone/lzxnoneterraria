@@ -5,6 +5,7 @@ import com.lzxnone.terraria.block.ModBlocks;
 import com.lzxnone.terraria.item.accessory.*;
 import com.lzxnone.terraria.item.ammo.*;
 import com.lzxnone.terraria.item.food.ManaCrystal;
+import com.lzxnone.terraria.item.normal.FallenStar;
 import com.lzxnone.terraria.item.potion.*;
 import com.lzxnone.terraria.item.weapon.ranged.ElfMelter;
 import com.lzxnone.terraria.item.weapon.magic.*;
@@ -173,6 +174,15 @@ public class ModItems {
     public static final DeferredItem<Item> REGENERATION_BAND = ITEMS.register("band_of_regeneration", RegenerationBand::new);
     public static final DeferredItem<Item> BAND_OF_STARPOWER = ITEMS.register("band_of_starpower", BandOfStarpower::new);
     public static final DeferredItem<Item> MANA_REGENERATION_BAND = ITEMS.register("mana_regeneration_band", ManaRegenerationBand::new);
+    public static final DeferredItem<Item> MAGIC_CUFF = ITEMS.register("magic_cuffs", MagicCuff::new);
+    public static final DeferredItem<Item> CELESTIAL_MAGNET = ITEMS.register("celestial_magnet", CelestialMagnet::new);
+    public static final DeferredItem<Item> CELESTIAL_EMBLEM = ITEMS.register("celestial_emblem", CelestialEmblem::new);
+    public static final DeferredItem<Item> CELESTIAL_CUFFS = ITEMS.register("celestial_cuffs", CelestialCuffs::new);
+    public static final DeferredItem<Item> MAGNET_FLOWER = ITEMS.register("magnet_flower", MagnetFlower::new);
+    public static final DeferredItem<Item> PHILOSOPHERS_STONE = ITEMS.register("philosophers_stone", PhilosophersStone::new);
+    public static final DeferredItem<Item> VALENTINE_RING = ITEMS.register("valentine_ring", ValentineRing::new);
+    public static final DeferredItem<Item> CHARM_OF_MYTHS = ITEMS.register("charm_of_myths", CharmOfMyths::new);
+    public static final DeferredItem<Item> MANA_CLOAK = ITEMS.register("mana_cloak", ManaCloak::new);
     public static final DeferredItem<Item> EYE_OF_GOLEM = ITEMS.register("eye_of_the_golem", EyeOfGolem::new);
     public static final DeferredItem<Item> DESTROYER_EMBLEM = ITEMS.register("destroyer_emblem", DestroyerEmblem::new);
     public static final DeferredItem<Item> MOON_STONE = ITEMS.register("moon_stone", MoonStone::new);
@@ -222,6 +232,7 @@ public class ModItems {
     public static final DeferredItem<Item> GOLDEN_BULLET_PROJECTILE = ITEMS.register("golden_bullet_projectile", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> LUMINITE_BULLET_PROJECTILE = ITEMS.register("luminite_bullet_projectile", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> WHITE_STAR = ITEMS.register("white_star", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> MANA_STAR = ITEMS.register("mana_star", () -> new Item(new Item.Properties()));
 
     public static final DeferredItem<Item> ENCHANTED_SWORD_BEAM = ITEMS.register("enchanted_sword_beam", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> STARFURY_STAR = ITEMS.register("starfury_star", () -> new Item(new Item.Properties()));

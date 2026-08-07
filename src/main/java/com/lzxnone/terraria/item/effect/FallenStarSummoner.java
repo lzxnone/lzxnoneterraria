@@ -1,8 +1,12 @@
 package com.lzxnone.terraria.item.effect;
 
 import com.lzxnone.terraria.ModSounds;
+import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.projectile.IStaticProjectileBehavior;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
+import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
+import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.particle.ModParticles;
 import com.lzxnone.terraria.utils.*;
@@ -19,6 +23,11 @@ import net.minecraft.world.phys.Vec3;
 public interface FallenStarSummoner {
     boolean summonThreeFallenStar(ItemStack stack, LivingEntity entity);
     double getFallenStarDamage(ItemStack stack, LivingEntity entity);
+
+    //星星落地时是否变为回复魔力的拾取物（魔力斗篷等）
+    default boolean summonManaStarOnLanding(ItemStack stack, LivingEntity entity) {
+        return false;
+    }
 
     IStaticProjectileBehavior PROJECTILE_BEHAVIOR = new IStaticProjectileBehavior() {
         @Override
@@ -72,6 +81,20 @@ public interface FallenStarSummoner {
         @Override
         public void onDied(StaticProjectile projectile) {
             if(!projectile.level().isClientSide()) {
+                CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
+                if(customData.contains("summonManaStar")) {
+                    StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), projectile.level());
+                    summon.setPos(projectile.position());
+                    summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.MANA_STAR);
+                    summon.getEntityData().set(StaticSummon.RENDER_MODE, "item");
+                    summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.MANA_STAR.get()));
+                    summon.getEntityData().set(StaticSummon.LIFETIME, 100);
+                    summon.getEntityData().set(StaticSummon.GLOW, true);
+                    CompoundTag summonCustomData = new CompoundTag();
+                    summonCustomData.putInt("mana", 50);
+                    summon.getEntityData().set(StaticSummon.CUSTOM_DATA, summonCustomData);
+                    projectile.level().addFreshEntity(summon);
+                }
                 ParticleUtil.addParticles(
                     (ServerLevel) projectile.level(), ModParticles.STAR_PARTICLE.get(),
                     projectile.position(), new Vec3(0.5, 0.5, 0.5),
