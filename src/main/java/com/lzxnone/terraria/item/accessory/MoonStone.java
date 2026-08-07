@@ -92,7 +92,7 @@ public class MoonStone extends AccessoryItem implements DamageModifier, Critical
 
     @Override
     public Multimap<Holder<Attribute>, AttributeModifier> getAttributeModifiers(SlotContext slotContext, ResourceLocation id, ItemStack stack) {
-        return MultimapBuilder.hashKeys().arrayListValues().build();
+        return getConditionalModifiers(stack, slotContext.entity());
     }
 
     @Override
@@ -164,7 +164,7 @@ public class MoonStone extends AccessoryItem implements DamageModifier, Critical
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         tooltipComponents.add(Component.translatable(
             "tooltip.lzxnoneterraria.active_at_night"
-        ).withStyle(ChatFormatting.GRAY));
+        ).withStyle(ChatFormatting.GREEN));
         if(DAMAGE_MULTIPLIER.get() != 1.0D) {
             tooltipComponents.add(Component.translatable(
                 "tooltip.lzxnoneterraria.damage_increase",

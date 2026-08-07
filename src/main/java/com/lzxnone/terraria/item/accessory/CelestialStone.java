@@ -6,6 +6,7 @@ import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.item.effect.CriticalStrikeModifier;
 import com.lzxnone.terraria.item.effect.DamageModifier;
 import com.lzxnone.terraria.item.effect.EffectTooltipUtil;
+import com.lzxnone.terraria.item.effect.LifeRegenerationModifier;
 import com.lzxnone.terraria.item.effect.MinionKnockbackModifier;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
@@ -26,7 +27,7 @@ import top.theillusivec4.curios.api.SlotContext;
 
 import java.util.List;
 
-public class CelestialStone extends AccessoryItem implements DamageModifier, CriticalStrikeModifier, MinionKnockbackModifier {
+public class CelestialStone extends AccessoryItem implements DamageModifier, CriticalStrikeModifier, MinionKnockbackModifier, LifeRegenerationModifier {
     public static final ConfigDouble DAMAGE_MULTIPLIER = new ConfigDouble(
         "accessory.celestial_stone.damage_multiplier",
         "damage_multiplier",
@@ -69,6 +70,13 @@ public class CelestialStone extends AccessoryItem implements DamageModifier, Cri
         1.0D,
         10.0D
     );
+    public static final ConfigDouble LIFE_REGEN = new ConfigDouble(
+        "accessory.celestial_stone.life_regen",
+        "health_per_second",
+        0.2D,
+        0.0D,
+        1000.0D
+    );
 
     public CelestialStone() {
         super(new Item.Properties().stacksTo(1));
@@ -87,6 +95,11 @@ public class CelestialStone extends AccessoryItem implements DamageModifier, Cri
     @Override
     public double getMinionKnockbackMultiplier(ItemStack stack, LivingEntity entity) {
         return MINION_KNOCKBACK_MULTIPLIER.get();
+    }
+
+    @Override
+    public float getHealthPerSecond(ItemStack stack, LivingEntity entity) {
+        return LIFE_REGEN.get().floatValue();
     }
 
     @Override
@@ -131,7 +144,7 @@ public class CelestialStone extends AccessoryItem implements DamageModifier, Cri
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigStruct.loadAll(DAMAGE_MULTIPLIER, CRIT_CHANCE, ATTACK_SPEED, DEFENSE, MINING_SPEED, MINION_KNOCKBACK_MULTIPLIER);
+            ConfigStruct.loadAll(DAMAGE_MULTIPLIER, CRIT_CHANCE, ATTACK_SPEED, DEFENSE, MINING_SPEED, MINION_KNOCKBACK_MULTIPLIER, LIFE_REGEN);
         }
     };
 
@@ -179,6 +192,12 @@ public class CelestialStone extends AccessoryItem implements DamageModifier, Cri
             tooltipComponents.add(Component.translatable(
                 "tooltip.lzxnoneterraria.minion_knockback_increase",
                 EffectTooltipUtil.formatPercent(MINION_KNOCKBACK_MULTIPLIER.get())
+            ).withStyle(ChatFormatting.GRAY));
+        }
+        if(LIFE_REGEN.get() > 0.0D) {
+            tooltipComponents.add(Component.translatable(
+                "tooltip.lzxnoneterraria.life_regen",
+                EffectTooltipUtil.formatNumber(LIFE_REGEN.get())
             ).withStyle(ChatFormatting.GRAY));
         }
     }

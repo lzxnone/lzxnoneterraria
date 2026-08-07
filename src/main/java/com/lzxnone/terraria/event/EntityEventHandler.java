@@ -1,11 +1,13 @@
 package com.lzxnone.terraria.event;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.attachment.LavaImmunity;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.effect.MidasEffect;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.effect.PaladinsShieldEffect;
 import com.lzxnone.terraria.effect.IceBarrierEffect;
+import com.lzxnone.terraria.item.accessory.PanicNecklace;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
@@ -49,6 +51,18 @@ public class EntityEventHandler {
             if(AccessoryUtil.isFireBlockImmune(entity)) {
                 event.setCanceled(true);
                 return;
+            }
+        }
+        //岩浆免疫（仅岩浆，不免疫岩浆块）
+        if(source.is(DamageTypes.LAVA) && entity instanceof Player player) {
+            LavaImmunity lavaImmunity = player.getData(ModAttachments.LAVA_IMMUNITY);
+            if(lavaImmunity.getCurrentTicks() > 0) {
+                event.setCanceled(true);
+                return;
+            }
+            double reduction = AccessoryUtil.getLavaDamageReduction(player);
+            if(reduction > 0.0D) {
+                event.setAmount(event.getAmount() * (float) (1.0D - reduction));
             }
         }
         //进行护甲穿透
@@ -109,6 +123,10 @@ public class EntityEventHandler {
             AccessoryUtil.applyInvulnerableTimeModifier(player);
             AccessoryUtil.applyFallenStarSummoner(player);
             AccessoryUtil.applyBeeSummoner(player);
+            //恐慌项链：受到伤害后触发恐慌加速（重复受击自动刷新持续时间）
+            if(AccessoryUtil.canApplyPanic(player) && PanicNecklace.DURATION.get() > 0) {
+                player.addEffect(new MobEffectInstance(ModEffects.PANIC, PanicNecklace.DURATION.get(), 0, false, false));
+            }
         }
     }
 
@@ -145,6 +163,22 @@ public class EntityEventHandler {
         //免疫冰冻
         if(player.getTicksFrozen() > 0 && AccessoryUtil.isFreezeImmune(player)) {
             player.setTicksFrozen(0);
+        }
+        //岩浆免疫计时：岩浆中递减，离开后逐步恢复（每 tick +1）
+        LavaImmunity lavaImmunity = player.getData(ModAttachments.LAVA_IMMUNITY);
+        if(lavaImmunity.getMaxTicks() > 0) {
+            if(player.isInLava()) {
+                lavaImmunity.setCurrentTicks(Math.max(0, lavaImmunity.getCurrentTicks() - 1));
+            }else {
+                lavaImmunity.setCurrentTicks(Math.min(lavaImmunity.getMaxTicks(), lavaImmunity.getCurrentTicks() + 1));
+            }
+        }
+        //生命再生：每秒统计累加值并回复
+        if(player.tickCount % 20 == 0) {
+            float regen = AccessoryUtil.getHealthPerSecond(player);
+            if(regen > 0.0F) {
+                player.heal(regen);
+            }
         }
         //圣骑士护盾效果
         if(player.tickCount % 30 == 0) {

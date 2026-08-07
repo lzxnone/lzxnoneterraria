@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:putrid_scent"
+    },
+    {
+      "item": "lzxnoneterraria:mana_flower"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:arcane_flower",
+    "count": 1
+  }
+}

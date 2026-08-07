@@ -29,7 +29,8 @@ public class ManaCrystal extends Food {
 
     @Override
     protected boolean canEat(Level level, Player player, ItemStack stack) {
-        return player.getData(ModAttachments.PLAYER_MANA).getMaxMana() < MAX_MANA;
+        //只看基础最大魔力（水晶升级部分），饰品加成不会顶掉水晶使用次数
+        return player.getData(ModAttachments.PLAYER_MANA).getBaseMaxMana() < MAX_MANA;
     }
 
     @Override

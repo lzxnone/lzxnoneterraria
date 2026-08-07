@@ -5,6 +5,7 @@ import com.google.common.collect.MultimapBuilder;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.item.effect.ConditionalAttributeModifier;
 import com.lzxnone.terraria.item.effect.EffectTooltipUtil;
+import com.lzxnone.terraria.item.effect.LifeRegenerationModifier;
 import com.lzxnone.terraria.item.effect.MeleeCritChanceModifier;
 import com.lzxnone.terraria.item.effect.MeleeDamageModifier;
 import com.lzxnone.terraria.item.effect.WaterBreathingModifier;
@@ -27,7 +28,7 @@ import top.theillusivec4.curios.api.SlotContext;
 
 import java.util.List;
 
-public class MoonShell extends AccessoryItem implements MeleeDamageModifier, MeleeCritChanceModifier, WaterBreathingModifier, ConditionalAttributeModifier {
+public class MoonShell extends AccessoryItem implements MeleeDamageModifier, MeleeCritChanceModifier, LifeRegenerationModifier, WaterBreathingModifier, ConditionalAttributeModifier {
     public static final ConfigDouble MELEE_DAMAGE_MULTIPLIER = new ConfigDouble(
         "accessory.moon_shell.melee_damage_multiplier",
         "melee_damage_multiplier",
@@ -70,6 +71,13 @@ public class MoonShell extends AccessoryItem implements MeleeDamageModifier, Mel
         1.0D,
         10.0D
     );
+    public static final ConfigDouble LIFE_REGEN = new ConfigDouble(
+        "accessory.moon_shell.life_regen",
+        "health_per_second",
+        0.1D,
+        0.0D,
+        1000.0D
+    );
     public static final ConfigDouble MOVE_SPEED = new ConfigDouble(
         "accessory.moon_shell.move_speed",
         "move_speed",
@@ -93,13 +101,18 @@ public class MoonShell extends AccessoryItem implements MeleeDamageModifier, Mel
     }
 
     @Override
+    public float getHealthPerSecond(ItemStack stack, LivingEntity entity) {
+        return entity.level().isNight() ? LIFE_REGEN.get().floatValue() : 0.0F;
+    }
+
+    @Override
     public boolean canBreatheUnderwater(ItemStack stack, LivingEntity entity) {
         return true;
     }
 
     @Override
     public Multimap<Holder<Attribute>, AttributeModifier> getAttributeModifiers(SlotContext slotContext, ResourceLocation id, ItemStack stack) {
-        return MultimapBuilder.hashKeys().arrayListValues().build();
+        return getConditionalModifiers(stack, slotContext.entity());
     }
 
     @Override
@@ -188,7 +201,7 @@ public class MoonShell extends AccessoryItem implements MeleeDamageModifier, Mel
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigStruct.loadAll(MELEE_DAMAGE_MULTIPLIER, MELEE_CRIT_CHANCE, ATTACK_SPEED, DEFENSE, JUMP_HEIGHT, WOLF_MOVE_SPEED, MOVE_SPEED);
+            ConfigStruct.loadAll(MELEE_DAMAGE_MULTIPLIER, MELEE_CRIT_CHANCE, ATTACK_SPEED, DEFENSE, JUMP_HEIGHT, WOLF_MOVE_SPEED, LIFE_REGEN, MOVE_SPEED);
         }
     };
 
@@ -205,7 +218,7 @@ public class MoonShell extends AccessoryItem implements MeleeDamageModifier, Mel
         //狼人（夜晚）
         tooltipComponents.add(Component.translatable(
             "tooltip.lzxnoneterraria.active_at_night"
-        ).withStyle(ChatFormatting.GRAY));
+        ).withStyle(ChatFormatting.GREEN));
         if(MELEE_CRIT_CHANCE.get() > 0.0D) {
             tooltipComponents.add(Component.translatable(
                 "tooltip.lzxnoneterraria.melee_crit_chance_bonus",
@@ -235,6 +248,12 @@ public class MoonShell extends AccessoryItem implements MeleeDamageModifier, Mel
                 "tooltip.lzxnoneterraria.jump_boost"
             ).withStyle(ChatFormatting.GRAY));
         }
+        if(LIFE_REGEN.get() > 0.0D) {
+            tooltipComponents.add(Component.translatable(
+                "tooltip.lzxnoneterraria.life_regen",
+                EffectTooltipUtil.formatNumber(LIFE_REGEN.get())
+            ).withStyle(ChatFormatting.GRAY));
+        }
         if(WOLF_MOVE_SPEED.get() != 1.0D) {
             tooltipComponents.add(Component.translatable(
                 "tooltip.lzxnoneterraria.move_speed_bonus",
@@ -244,7 +263,7 @@ public class MoonShell extends AccessoryItem implements MeleeDamageModifier, Mel
         //人鱼（水中）
         tooltipComponents.add(Component.translatable(
             "tooltip.lzxnoneterraria.active_in_water"
-        ).withStyle(ChatFormatting.GRAY));
+        ).withStyle(ChatFormatting.GREEN));
         if(MOVE_SPEED.get() != 1.0D) {
             tooltipComponents.add(Component.translatable(
                 "tooltip.lzxnoneterraria.move_speed_bonus",

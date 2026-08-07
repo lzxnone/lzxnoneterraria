@@ -7,6 +7,7 @@ import com.lzxnone.terraria.item.effect.ConditionalAttributeModifier;
 import com.lzxnone.terraria.item.effect.CriticalStrikeModifier;
 import com.lzxnone.terraria.item.effect.DamageModifier;
 import com.lzxnone.terraria.item.effect.EffectTooltipUtil;
+import com.lzxnone.terraria.item.effect.LifeRegenerationModifier;
 import com.lzxnone.terraria.item.effect.MeleeCritChanceModifier;
 import com.lzxnone.terraria.item.effect.MeleeDamageModifier;
 import com.lzxnone.terraria.item.effect.MinionKnockbackModifier;
@@ -30,7 +31,7 @@ import top.theillusivec4.curios.api.SlotContext;
 
 import java.util.List;
 
-public class CelestialShell extends AccessoryItem implements DamageModifier, CriticalStrikeModifier, MinionKnockbackModifier, MeleeDamageModifier, MeleeCritChanceModifier, WaterBreathingModifier, ConditionalAttributeModifier {
+public class CelestialShell extends AccessoryItem implements DamageModifier, CriticalStrikeModifier, MinionKnockbackModifier, MeleeDamageModifier, MeleeCritChanceModifier, LifeRegenerationModifier, WaterBreathingModifier, ConditionalAttributeModifier {
     //天界石（全天候）
     public static final ConfigDouble DAMAGE_MULTIPLIER = new ConfigDouble(
         "accessory.celestial_shell.damage_multiplier",
@@ -125,6 +126,22 @@ public class CelestialShell extends AccessoryItem implements DamageModifier, Cri
         1.0D,
         10.0D
     );
+    //生命再生：天界石（全天候）
+    public static final ConfigDouble LIFE_REGEN = new ConfigDouble(
+        "accessory.celestial_shell.life_regen",
+        "health_per_second",
+        0.2D,
+        0.0D,
+        1000.0D
+    );
+    //生命再生：狼人（夜晚）
+    public static final ConfigDouble WOLF_LIFE_REGEN = new ConfigDouble(
+        "accessory.celestial_shell.wolf_life_regen",
+        "health_per_second",
+        0.1D,
+        0.0D,
+        1000.0D
+    );
 
     public CelestialShell() {
         super(new Item.Properties().stacksTo(1));
@@ -144,6 +161,15 @@ public class CelestialShell extends AccessoryItem implements DamageModifier, Cri
     @Override
     public double getMinionKnockbackMultiplier(ItemStack stack, LivingEntity entity) {
         return MINION_KNOCKBACK_MULTIPLIER.get();
+    }
+
+    @Override
+    public float getHealthPerSecond(ItemStack stack, LivingEntity entity) {
+        float regen = LIFE_REGEN.get().floatValue();
+        if(entity.level().isNight()) {
+            regen += WOLF_LIFE_REGEN.get().floatValue();
+        }
+        return regen;
     }
 
     //狼人（夜晚）
@@ -200,6 +226,8 @@ public class CelestialShell extends AccessoryItem implements DamageModifier, Cri
                 )
             );
         }
+        //狼人（夜晚）/人鱼（水中）属性：穿戴瞬间按当前条件追加，切换由 syncConditionalModifiers 接管
+        modifiers.putAll(getConditionalModifiers(stack, slotContext.entity()));
         return modifiers;
     }
 
@@ -292,7 +320,7 @@ public class CelestialShell extends AccessoryItem implements DamageModifier, Cri
         public void onConfigLoad() {
             ConfigStruct.loadAll(DAMAGE_MULTIPLIER, CRIT_CHANCE, ATTACK_SPEED, DEFENSE, MINING_SPEED, MINION_KNOCKBACK_MULTIPLIER,
                 MELEE_CRIT_CHANCE, MELEE_DAMAGE_MULTIPLIER, WOLF_ATTACK_SPEED, WOLF_DEFENSE, WOLF_MOVE_SPEED, JUMP_HEIGHT,
-                MOVE_SPEED);
+                MOVE_SPEED, LIFE_REGEN, WOLF_LIFE_REGEN);
         }
     };
 
@@ -343,10 +371,16 @@ public class CelestialShell extends AccessoryItem implements DamageModifier, Cri
                 EffectTooltipUtil.formatPercent(MINION_KNOCKBACK_MULTIPLIER.get())
             ).withStyle(ChatFormatting.GRAY));
         }
+        if(LIFE_REGEN.get() > 0.0D) {
+            tooltipComponents.add(Component.translatable(
+                "tooltip.lzxnoneterraria.life_regen",
+                EffectTooltipUtil.formatNumber(LIFE_REGEN.get())
+            ).withStyle(ChatFormatting.GRAY));
+        }
         //狼人（夜晚）
         tooltipComponents.add(Component.translatable(
             "tooltip.lzxnoneterraria.active_at_night"
-        ).withStyle(ChatFormatting.GRAY));
+        ).withStyle(ChatFormatting.GREEN));
         if(MELEE_CRIT_CHANCE.get() > 0.0D) {
             tooltipComponents.add(Component.translatable(
                 "tooltip.lzxnoneterraria.melee_crit_chance_bonus",
@@ -382,10 +416,16 @@ public class CelestialShell extends AccessoryItem implements DamageModifier, Cri
                 "tooltip.lzxnoneterraria.jump_boost"
             ).withStyle(ChatFormatting.GRAY));
         }
+        if(WOLF_LIFE_REGEN.get() > 0.0D) {
+            tooltipComponents.add(Component.translatable(
+                "tooltip.lzxnoneterraria.life_regen",
+                EffectTooltipUtil.formatNumber(WOLF_LIFE_REGEN.get())
+            ).withStyle(ChatFormatting.GRAY));
+        }
         //人鱼（水中）
         tooltipComponents.add(Component.translatable(
             "tooltip.lzxnoneterraria.active_in_water"
-        ).withStyle(ChatFormatting.GRAY));
+        ).withStyle(ChatFormatting.GREEN));
         if(MOVE_SPEED.get() != 1.0D) {
             tooltipComponents.add(Component.translatable(
                 "tooltip.lzxnoneterraria.move_speed_bonus",

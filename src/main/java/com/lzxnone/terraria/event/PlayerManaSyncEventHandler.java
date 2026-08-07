@@ -4,6 +4,7 @@ import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.attachment.PlayerMana;
+import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.weapon.MagicWeapon;
 import com.lzxnone.terraria.network.payload.ManaSyncPayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -41,16 +42,30 @@ public class PlayerManaSyncEventHandler {
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if(!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        //刷新饰品最大魔力加成（基础/加成分离：水晶升级不受饰品影响）
+        if(player.tickCount % 20 == 0) {
+            PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
+            int bonus = AccessoryUtil.getMaxManaBonus(player);
+            if(mana.getBonusMaxMana() != bonus) {
+                mana.setBonusMaxMana(bonus);
+                player.setData(ModAttachments.PLAYER_MANA, mana);
+                sync(player);
+            }
+        }
+
         if(isUsingMagicWeapon(player)) return;
 
         PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
-        if(mana.tickRecoverDelay()) {
+        double delayMultiplier = AccessoryUtil.getManaRecoverDelayMultiplier(player);
+        if(mana.tickRecoverDelay(delayMultiplier)) {
             player.setData(ModAttachments.PLAYER_MANA, mana);
             return;
         }
 
         int oldMana = mana.getMana();
-        if(!mana.recoverMana(PlayerMana.DEFAULT_RECOVER_RATE)) return;
+        double regenBonus = AccessoryUtil.getManaRegenBonus(player, mana.getMana(), mana.getMaxMana());
+        if(!mana.recoverMana(PlayerMana.DEFAULT_RECOVER_RATE + regenBonus)) return;
 
         player.setData(ModAttachments.PLAYER_MANA, mana);
         if(mana.getMana() != oldMana) {

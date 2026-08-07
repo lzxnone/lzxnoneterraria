@@ -1,6 +1,8 @@
 package com.lzxnone.terraria.event;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.attachment.LavaImmunity;
+import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.item.accessory.AccessoryItem;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.effect.ConditionalAttributeModifier;
@@ -26,5 +28,9 @@ public class AccessoryEventHandler {
                 if(instance != null) instance.removeModifier(attributeModifier.id());
             });
         }
+        //岩浆免疫上限：穿戴/脱下都刷新为当前所有饰品最大值，当前值收敛到上限内（不破坏自恢复机制）
+        LavaImmunity lavaImmunity = entity.getData(ModAttachments.LAVA_IMMUNITY);
+        lavaImmunity.setMaxTicks(AccessoryUtil.getLavaImmunityTicks(entity));
+        lavaImmunity.setCurrentTicks(Math.min(lavaImmunity.getMaxTicks(), lavaImmunity.getCurrentTicks()));
     }
 }

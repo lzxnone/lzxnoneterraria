@@ -36,4 +36,6 @@ public class ModEffects {
             MOB_EFFECTS.register("paladins_shield", PaladinsShieldEffect::new);
     public static final DeferredHolder<MobEffect, IceBarrierEffect> ICE_BARRIER =
             MOB_EFFECTS.register("ice_barrier", IceBarrierEffect::new);
+    public static final DeferredHolder<MobEffect, PanicEffect> PANIC =
+            MOB_EFFECTS.register("panic", PanicEffect::new);
 }

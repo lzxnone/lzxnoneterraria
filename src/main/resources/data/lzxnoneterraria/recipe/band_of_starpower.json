@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:panic_necklace"
+    },
+    {
+      "item": "lzxnoneterraria:mana_crystal"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:band_of_starpower",
+    "count": 1
+  }
+}

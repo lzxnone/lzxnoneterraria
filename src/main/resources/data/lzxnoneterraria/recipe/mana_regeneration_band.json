@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:band_of_starpower"
+    },
+    {
+      "item": "lzxnoneterraria:band_of_regeneration"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:mana_regeneration_band",
+    "count": 1
+  }
+}

@@ -7,10 +7,11 @@ import net.minecraft.util.Mth;
 public class PlayerMana {
     public static final int DEFAULT_MAX_MANA = 20;
     public static final double DEFAULT_RECOVER_RATE = 1.0D;
+    public static final int MAX_TOTAL_MANA = 400;
 
     public static final Codec<PlayerMana> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         Codec.INT.optionalFieldOf("mana", DEFAULT_MAX_MANA).forGetter(PlayerMana::getMana),
-        Codec.INT.optionalFieldOf("max_mana", DEFAULT_MAX_MANA).forGetter(PlayerMana::getMaxMana),
+        Codec.INT.optionalFieldOf("max_mana", DEFAULT_MAX_MANA).forGetter(PlayerMana::getBaseMaxMana),
         Codec.DOUBLE.optionalFieldOf("consume_progress", 0.0D).forGetter(PlayerMana::getConsumeProgress),
         Codec.DOUBLE.optionalFieldOf("recover_progress", 0.0D).forGetter(PlayerMana::getRecoverProgress),
         Codec.INT.optionalFieldOf("recover_delay", 0).forGetter(PlayerMana::getRecoverDelay)
@@ -18,6 +19,7 @@ public class PlayerMana {
 
     private int mana;
     private int maxMana;
+    private int bonusMaxMana;
     private double consumeProgress;
     private double recoverProgress;
     private int recoverDelay;
@@ -47,16 +49,29 @@ public class PlayerMana {
     }
 
     public void setMana(int mana) {
-        this.mana = Mth.clamp(mana, 0, maxMana);
+        this.mana = Mth.clamp(mana, 0, getMaxMana());
     }
 
     public int getMaxMana() {
+        return Math.min(maxMana + bonusMaxMana, MAX_TOTAL_MANA);
+    }
+
+    public int getBaseMaxMana() {
         return maxMana;
     }
 
     public void setMaxMana(int maxMana) {
         this.maxMana = Math.max(0, maxMana);
-        this.mana = Math.min(mana, this.maxMana);
+        this.mana = Math.min(mana, getMaxMana());
+    }
+
+    public int getBonusMaxMana() {
+        return bonusMaxMana;
+    }
+
+    public void setBonusMaxMana(int bonusMaxMana) {
+        this.bonusMaxMana = Math.max(0, bonusMaxMana);
+        this.mana = Math.min(mana, getMaxMana());
     }
 
     public int increaseMaxMana(int amount, int maxLimit) {
@@ -129,10 +144,15 @@ public class PlayerMana {
     }
 
     public boolean tickRecoverDelay() {
+        return tickRecoverDelay(1.0D);
+    }
+
+    public boolean tickRecoverDelay(double delayMultiplier) {
         if(recoverDelay <= 0) return false;
 
-        recoverDelay--;
-        return true;
+        int step = Math.max(1, (int) Math.ceil(1.0D / Math.max(0.01D, delayMultiplier)));
+        recoverDelay = Math.max(0, recoverDelay - step);
+        return recoverDelay > 0;
     }
 
     private int addManaProgress(boolean consume, double amount) {

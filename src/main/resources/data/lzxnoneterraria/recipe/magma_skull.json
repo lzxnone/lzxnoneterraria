@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:obsidian_skull"
+    },
+    {
+      "item": "lzxnoneterraria:lava_charm"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:magma_skull",
+    "count": 1
+  }
+}

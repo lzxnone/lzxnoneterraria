@@ -5,6 +5,7 @@ import com.google.common.collect.MultimapBuilder;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.item.effect.ConditionalAttributeModifier;
 import com.lzxnone.terraria.item.effect.EffectTooltipUtil;
+import com.lzxnone.terraria.item.effect.LifeRegenerationModifier;
 import com.lzxnone.terraria.item.effect.MeleeCritChanceModifier;
 import com.lzxnone.terraria.item.effect.MeleeDamageModifier;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
@@ -26,7 +27,7 @@ import top.theillusivec4.curios.api.SlotContext;
 
 import java.util.List;
 
-public class MoonCharm extends AccessoryItem implements MeleeDamageModifier, MeleeCritChanceModifier, ConditionalAttributeModifier {
+public class MoonCharm extends AccessoryItem implements MeleeDamageModifier, MeleeCritChanceModifier, LifeRegenerationModifier, ConditionalAttributeModifier {
     public static final ConfigDouble MELEE_DAMAGE_MULTIPLIER = new ConfigDouble(
         "accessory.moon_charm.melee_damage_multiplier",
         "melee_damage_multiplier",
@@ -69,6 +70,13 @@ public class MoonCharm extends AccessoryItem implements MeleeDamageModifier, Mel
         1.0D,
         10.0D
     );
+    public static final ConfigDouble LIFE_REGEN = new ConfigDouble(
+        "accessory.moon_charm.life_regen",
+        "health_per_second",
+        0.1D,
+        0.0D,
+        1000.0D
+    );
 
     public MoonCharm() {
         super(new Item.Properties().stacksTo(1));
@@ -85,9 +93,13 @@ public class MoonCharm extends AccessoryItem implements MeleeDamageModifier, Mel
     }
 
     @Override
+    public float getHealthPerSecond(ItemStack stack, LivingEntity entity) {
+        return entity.level().isNight() ? LIFE_REGEN.get().floatValue() : 0.0F;
+    }
+
+    @Override
     public Multimap<Holder<Attribute>, AttributeModifier> getAttributeModifiers(SlotContext slotContext, ResourceLocation id, ItemStack stack) {
-        //条件属性由 AccessoryUtil.syncConditionalModifiers 动态管理，不走 curios 自动应用
-        return MultimapBuilder.hashKeys().arrayListValues().build();
+        return getConditionalModifiers(stack, slotContext.entity());
     }
 
     @Override
@@ -154,7 +166,7 @@ public class MoonCharm extends AccessoryItem implements MeleeDamageModifier, Mel
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigStruct.loadAll(MELEE_DAMAGE_MULTIPLIER, MELEE_CRIT_CHANCE, ATTACK_SPEED, MOVE_SPEED, DEFENSE, JUMP_HEIGHT);
+            ConfigStruct.loadAll(MELEE_DAMAGE_MULTIPLIER, MELEE_CRIT_CHANCE, ATTACK_SPEED, MOVE_SPEED, DEFENSE, JUMP_HEIGHT, LIFE_REGEN);
         }
     };
 
@@ -170,7 +182,7 @@ public class MoonCharm extends AccessoryItem implements MeleeDamageModifier, Mel
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         tooltipComponents.add(Component.translatable(
             "tooltip.lzxnoneterraria.active_at_night"
-        ).withStyle(ChatFormatting.GRAY));
+        ).withStyle(ChatFormatting.GREEN));
         if(MELEE_CRIT_CHANCE.get() > 0.0D) {
             tooltipComponents.add(Component.translatable(
                 "tooltip.lzxnoneterraria.melee_crit_chance_bonus",
@@ -204,6 +216,12 @@ public class MoonCharm extends AccessoryItem implements MeleeDamageModifier, Mel
         if(JUMP_HEIGHT.get() > 1.0D) {
             tooltipComponents.add(Component.translatable(
                 "tooltip.lzxnoneterraria.jump_boost"
+            ).withStyle(ChatFormatting.GRAY));
+        }
+        if(LIFE_REGEN.get() > 0.0D) {
+            tooltipComponents.add(Component.translatable(
+                "tooltip.lzxnoneterraria.life_regen",
+                EffectTooltipUtil.formatNumber(LIFE_REGEN.get())
             ).withStyle(ChatFormatting.GRAY));
         }
     }

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:obsidian_skull"
+    },
+    {
+      "item": "lzxnoneterraria:obsidian_rose"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:obsidian_skull_rose",
+    "count": 1
+  }
+}

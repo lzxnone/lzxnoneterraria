@@ -68,6 +68,83 @@ public class AccessoryUtil {
         });
     }
 
+    //魔力恢复延迟倍率：取所有饰品中的最小值（减半优先）
+    public static double getManaRecoverDelayMultiplier(LivingEntity entity) {
+        double[] multiplier = {1.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof ManaRegenerationModifier modifier) {
+                multiplier[0] = Math.min(multiplier[0], modifier.getManaRecoverDelayMultiplier(stack, entity));
+            }
+        });
+        return multiplier[0];
+    }
+
+    //额外魔力恢复速率：累加所有饰品
+    public static double getManaRegenBonus(LivingEntity entity, int currentMana, int maxMana) {
+        double[] bonus = {0.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof ManaRegenerationModifier modifier) {
+                bonus[0] += modifier.getManaRegenBonus(stack, entity, currentMana, maxMana);
+            }
+        });
+        return bonus[0];
+    }
+
+    //最大魔力加成：累加所有饰品的加成
+    public static int getMaxManaBonus(LivingEntity entity) {
+        int[] bonus = {0};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof MaxManaModifier modifier) {
+                bonus[0] += modifier.getMaxManaBonus(stack, entity);
+            }
+        });
+        return bonus[0];
+    }
+
+    //每秒生命回复量：累加所有饰品的生命再生加成
+    public static float getHealthPerSecond(LivingEntity entity) {
+        float[] amount = {0.0F};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof LifeRegenerationModifier modifier) {
+                amount[0] += modifier.getHealthPerSecond(stack, entity);
+            }
+        });
+        return amount[0];
+    }
+
+    //岩浆免疫时长（刻）：取所有饰品中的最大值
+    public static int getLavaImmunityTicks(LivingEntity entity) {
+        int[] ticks = {0};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof LavaImmunityModifier modifier) {
+                ticks[0] = Math.max(ticks[0], modifier.getLavaImmunityTicks(stack, entity));
+            }
+        });
+        return ticks[0];
+    }
+
+    //是否佩戴恐慌类饰品（受到攻击后触发加速）
+    public static boolean canApplyPanic(LivingEntity entity) {
+        boolean[] result = {false};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof PanicModifier modifier && modifier.canApplyPanic(stack, entity)) {
+                result[0] = true;
+            }
+        });
+        return result[0];
+    }
+
+    //岩浆伤害减免倍率：取所有饰品中的最大值
+    public static double getLavaDamageReduction(LivingEntity entity) {
+        double[] reduction = {0.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof LavaDamageReductionModifier modifier) {
+                reduction[0] = Math.max(reduction[0], modifier.getLavaDamageReduction(stack, entity));
+            }
+        });
+        return reduction[0];
+    }
+
     public static double applyDamageImmunity(LivingEntity entity) {
         double[] chance = {0.0D};
         AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {

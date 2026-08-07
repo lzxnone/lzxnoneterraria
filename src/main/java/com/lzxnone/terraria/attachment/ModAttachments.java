@@ -24,12 +24,6 @@ public class ModAttachments {
     public static final Supplier<AttachmentType<Integer>> DEVILS_DEVASTATION_HIT_COUNT =
         ATTACHMENT_TYPES.register("devils_devastation_hit_count", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build());
 
-    public static final Supplier<AttachmentType<List<UUID>>> SUMMON_WEAPON_SUMMONS =
-        ATTACHMENT_TYPES.register("summon_weapon_summons", () -> AttachmentType.<List<UUID>>builder((Supplier<List<UUID>>) ArrayList::new).serialize(Codec.list(Codec.STRING.xmap(UUID::fromString, UUID::toString))).build());
-
-    public static final Supplier<AttachmentType<Integer>> SUMMON_ATTACK_MODE =
-        ATTACHMENT_TYPES.register("summon_attack_mode", () -> AttachmentType.builder(() -> 2).serialize(Codec.INT).build());
-
     public static final Supplier<AttachmentType<PlayerSummon>> PLAYER_SUMMON =
         ATTACHMENT_TYPES.register("player_summon", () -> AttachmentType.builder(PlayerSummon::new).serialize(PlayerSummon.CODEC).copyOnDeath().build());
 
@@ -41,5 +35,8 @@ public class ModAttachments {
 
     public static final Supplier<AttachmentType<Optional<UUID>>> PALADIN_GUARDIAN_SOURCE =
         ATTACHMENT_TYPES.register("paladin_guardian_source", () -> AttachmentType.<Optional<UUID>>builder(Optional::empty).serialize(Codec.STRING.xmap(UUID::fromString, UUID::toString).optionalFieldOf("guardian").codec()).build());
+
+    public static final Supplier<AttachmentType<LavaImmunity>> LAVA_IMMUNITY =
+        ATTACHMENT_TYPES.register("lava_immunity", () -> AttachmentType.builder(LavaImmunity::new).build());
 
 }

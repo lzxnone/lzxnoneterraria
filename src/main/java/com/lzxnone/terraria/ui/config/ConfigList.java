@@ -9,6 +9,7 @@ import com.lzxnone.terraria.effect.ManaSicknessEffect;
 import com.lzxnone.terraria.effect.MidasEffect;
 import com.lzxnone.terraria.effect.PaladinsShieldEffect;
 import com.lzxnone.terraria.effect.IceBarrierEffect;
+import com.lzxnone.terraria.effect.PanicEffect;
 import com.lzxnone.terraria.effect.SummonEffect;
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
 import com.lzxnone.terraria.client.config.RenderConfigs;
@@ -49,6 +50,18 @@ import com.lzxnone.terraria.item.accessory.HeroShield;
 import com.lzxnone.terraria.item.accessory.FrozenTurtleShell;
 import com.lzxnone.terraria.item.accessory.FrozenShield;
 import com.lzxnone.terraria.item.accessory.FireGauntlet;
+import com.lzxnone.terraria.item.accessory.LavaCharm;
+import com.lzxnone.terraria.item.accessory.ObsidianRose;
+import com.lzxnone.terraria.item.accessory.MagmaSkull;
+import com.lzxnone.terraria.item.accessory.MoltenCharm;
+import com.lzxnone.terraria.item.accessory.ObsidianSkullRose;
+import com.lzxnone.terraria.item.accessory.MoltenSkullRose;
+import com.lzxnone.terraria.item.accessory.PanicNecklace;
+import com.lzxnone.terraria.item.accessory.SweetheartNecklace;
+import com.lzxnone.terraria.item.accessory.ArcaneFlower;
+import com.lzxnone.terraria.item.accessory.RegenerationBand;
+import com.lzxnone.terraria.item.accessory.BandOfStarpower;
+import com.lzxnone.terraria.item.accessory.ManaRegenerationBand;
 import com.lzxnone.terraria.item.accessory.EyeOfGolem;
 import com.lzxnone.terraria.item.accessory.DestroyerEmblem;
 import com.lzxnone.terraria.item.accessory.MoonStone;
@@ -174,7 +187,8 @@ public class ConfigList {
             ManaSicknessEffect.CONFIG_LIST_ITEM,
             SummonEffect.CONFIG_LIST_ITEM,
             PaladinsShieldEffect.CONFIG_LIST_ITEM,
-            IceBarrierEffect.CONFIG_LIST_ITEM
+            IceBarrierEffect.CONFIG_LIST_ITEM,
+            PanicEffect.CONFIG_LIST_ITEM
         });
         ITEMS.put(AMMO, new ConfigListItem[]{
             MusketBall.CONFIG_LIST_ITEM,
@@ -230,6 +244,18 @@ public class ConfigList {
             FrozenTurtleShell.CONFIG_LIST_ITEM,
             FrozenShield.CONFIG_LIST_ITEM,
             FireGauntlet.CONFIG_LIST_ITEM,
+            LavaCharm.CONFIG_LIST_ITEM,
+            ObsidianRose.CONFIG_LIST_ITEM,
+            MagmaSkull.CONFIG_LIST_ITEM,
+            MoltenCharm.CONFIG_LIST_ITEM,
+            ObsidianSkullRose.CONFIG_LIST_ITEM,
+            MoltenSkullRose.CONFIG_LIST_ITEM,
+            PanicNecklace.CONFIG_LIST_ITEM,
+            SweetheartNecklace.CONFIG_LIST_ITEM,
+            ArcaneFlower.CONFIG_LIST_ITEM,
+            RegenerationBand.CONFIG_LIST_ITEM,
+            BandOfStarpower.CONFIG_LIST_ITEM,
+            ManaRegenerationBand.CONFIG_LIST_ITEM,
             EyeOfGolem.CONFIG_LIST_ITEM,
             DestroyerEmblem.CONFIG_LIST_ITEM,
             MoonStone.CONFIG_LIST_ITEM,

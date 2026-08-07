@@ -116,6 +116,18 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.FROZEN_TURTLE_SHELL.get());
                 output.accept(ModItems.MAGMA_STONE.get());
                 output.accept(ModItems.FIRE_GAUNTLET.get());
+                output.accept(ModItems.LAVA_CHARM.get());
+                output.accept(ModItems.OBSIDIAN_ROSE.get());
+                output.accept(ModItems.MAGMA_SKULL.get());
+                output.accept(ModItems.MOLTEN_CHARM.get());
+                output.accept(ModItems.OBSIDIAN_SKULL_ROSE.get());
+                output.accept(ModItems.MOLTEN_SKULL_ROSE.get());
+                output.accept(ModItems.PANIC_NECKLACE.get());
+                output.accept(ModItems.SWEETHEART_NECKLACE.get());
+                output.accept(ModItems.ARCANE_FLOWER.get());
+                output.accept(ModItems.REGENERATION_BAND.get());
+                output.accept(ModItems.BAND_OF_STARPOWER.get());
+                output.accept(ModItems.MANA_REGENERATION_BAND.get());
                 output.accept(ModItems.EYE_OF_GOLEM.get());
                 output.accept(ModItems.DESTROYER_EMBLEM.get());
                 output.accept(ModItems.MOON_STONE.get());

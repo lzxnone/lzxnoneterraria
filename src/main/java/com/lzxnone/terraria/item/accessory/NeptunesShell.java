@@ -45,8 +45,7 @@ public class NeptunesShell extends AccessoryItem implements WaterBreathingModifi
 
     @Override
     public Multimap<Holder<Attribute>, AttributeModifier> getAttributeModifiers(SlotContext slotContext, ResourceLocation id, ItemStack stack) {
-        //条件属性由 AccessoryUtil.syncConditionalModifiers 动态管理，不走 curios 自动应用
-        return MultimapBuilder.hashKeys().arrayListValues().build();
+        return getConditionalModifiers(stack, slotContext.entity());
     }
 
     @Override
@@ -96,7 +95,7 @@ public class NeptunesShell extends AccessoryItem implements WaterBreathingModifi
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         tooltipComponents.add(Component.translatable(
             "tooltip.lzxnoneterraria.active_in_water"
-        ).withStyle(ChatFormatting.GRAY));
+        ).withStyle(ChatFormatting.GREEN));
         if(MOVE_SPEED.get() != 1.0D) {
             tooltipComponents.add(Component.translatable(
                 "tooltip.lzxnoneterraria.move_speed_bonus",

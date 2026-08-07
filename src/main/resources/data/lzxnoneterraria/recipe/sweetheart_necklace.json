@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:panic_necklace"
+    },
+    {
+      "item": "lzxnoneterraria:honey_comb"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:sweetheart_necklace",
+    "count": 1
+  }
+}
