@@ -43,7 +43,7 @@ public class PlayerManaSyncEventHandler {
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if(!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        //刷新饰品最大魔力加成（基础/加成分离：水晶升级不受饰品影响）
+        //刷新饰品最大魔力加成
         if(player.tickCount % 20 == 0) {
             PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
             int bonus = AccessoryUtil.getMaxManaBonus(player);
@@ -76,7 +76,7 @@ public class PlayerManaSyncEventHandler {
 
     public static void sync(ServerPlayer player) {
         PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
-        PacketDistributor.sendToPlayer(player, new ManaSyncPayload(mana.getMana(), mana.getMaxMana()));
+        PacketDistributor.sendToPlayer(player, new ManaSyncPayload(mana.getMana(), mana.getBaseMaxMana(), mana.getBonusMaxMana()));
     }
 
     public static void playMaxManaSoundIfRecovered(ServerPlayer player, int oldMana, PlayerMana mana) {

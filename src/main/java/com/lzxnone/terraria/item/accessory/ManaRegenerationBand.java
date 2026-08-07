@@ -38,14 +38,14 @@ public class ManaRegenerationBand extends AccessoryItem implements ManaRegenerat
     public static final ConfigDouble REGEN_BONUS_SCALE = new ConfigDouble(
         "accessory.mana_regeneration_band.regen_bonus_scale",
         "mana_regen_bonus_scale",
-        11.5D,
+        0.575D,
         0.0D,
         400.0D
     );
     public static final ConfigDouble REGEN_BONUS_BASE = new ConfigDouble(
         "accessory.mana_regeneration_band.regen_bonus_base",
         "mana_regen_bonus_base",
-        2.875D,
+        0.14375D,
         0.0D,
         400.0D
     );

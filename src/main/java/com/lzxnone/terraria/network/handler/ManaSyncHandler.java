@@ -9,7 +9,8 @@ public class ManaSyncHandler {
     public static void handle(final ManaSyncPayload payload, final IPayloadContext context) {
         context.enqueueWork(() -> {
             PlayerMana mana = context.player().getData(ModAttachments.PLAYER_MANA);
-            mana.setMaxMana(payload.maxMana());
+            mana.setBaseMaxMana(payload.baseMaxMana());
+            mana.setBonusMaxMana(payload.bonusMaxMana());
             mana.setMana(payload.mana());
             context.player().setData(ModAttachments.PLAYER_MANA, mana);
         });

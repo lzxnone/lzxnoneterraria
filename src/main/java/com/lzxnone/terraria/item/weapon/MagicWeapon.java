@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.item.weapon;
 
+import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.attachment.PlayerMana;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
@@ -89,9 +90,12 @@ public class MagicWeapon extends Weapon {
     //是否可以继续使用魔法武器
     protected boolean canUseMagic(ItemStack stack, LivingEntity entity) {
         if(entity.hasInfiniteMaterials()) return true;
-        if(entity instanceof ServerPlayer player && player.getData(ModAttachments.PLAYER_MANA).hasMana()) return true;
-        if(entity instanceof ServerPlayer player) return tryAutoUseManaPotion(player);
-        return entity instanceof Player player && canAutoUseManaPotion(player) && findManaPotionSlot(player) >= 0;
+        if(entity instanceof Player player) {
+            if(player.getData(ModAttachments.PLAYER_MANA).hasMana()) return true;
+            if(player instanceof ServerPlayer serverPlayer) return tryAutoUseManaPotion(serverPlayer);
+            return canAutoUseManaPotion(player) && findManaPotionSlot(player) >= 0;
+        }
+        return false;
     }
 
     //进行魔力消耗
