@@ -23,7 +23,9 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -66,6 +68,62 @@ public class AccessoryUtil {
                 }
             });
         });
+    }
+
+    //绿宝石掉落物吸附范围：取所有饰品中的最大值
+    public static double getEmeraldPickupRange(LivingEntity entity) {
+        double[] range = {0.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof EmeraldPickupRangeModifier modifier) {
+                range[0] = Math.max(range[0], modifier.getEmeraldPickupRange(stack, entity));
+            }
+        });
+        return range[0];
+    }
+
+    //所有掉落物吸附范围：取所有饰品中的最大值
+    public static double getItemPickupRange(LivingEntity entity) {
+        double[] range = {0.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof ItemPickupRangeModifier modifier) {
+                range[0] = Math.max(range[0], modifier.getItemPickupRange(stack, entity));
+            }
+        });
+        return range[0];
+    }
+
+    //该掉落物对该玩家的有效吸附范围：绿宝石取两接口最大值，其余仅全物品接口；
+    //返回 0 表示不吸附（未佩戴任何扩展吸附范围的饰品或配置为 0），封顶 16 格
+    public static double getEffectivePickupRange(LivingEntity entity, Item item) {
+        double range;
+        if(item == Items.EMERALD) {
+            range = Math.max(getEmeraldPickupRange(entity), getItemPickupRange(entity));
+        }else {
+            range = getItemPickupRange(entity);
+        }
+        return Math.min(range, 16.0D);
+    }
+
+    //商人交易折扣比例：取所有饰品中的最大值
+    public static double getMerchantDiscountRatio(LivingEntity entity) {
+        double[] ratio = {0.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof MerchantDiscountModifier modifier) {
+                ratio[0] = Math.max(ratio[0], modifier.getMerchantDiscountRatio(stack, entity));
+            }
+        });
+        return ratio[0];
+    }
+
+    //击中敌人掉落绿宝石概率：取所有饰品中的最大值
+    public static double getEmeraldDropChance(LivingEntity entity) {
+        double[] chance = {0.0D};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof EmeraldDropOnHitModifier modifier) {
+                chance[0] = Math.max(chance[0], modifier.getEmeraldDropChance(stack, entity));
+            }
+        });
+        return chance[0];
     }
 
     //耐魔性持续时间比例：取所有饰品中的最小值（降低优先）

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "lzxnoneterraria:warrior_emblem"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "lzxnoneterraria:summoner_emblem"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "lzxnoneterraria:ranger_emblem"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "lzxnoneterraria:sorcerer_emblem"
+        }
+      ]
+    }
+  ]
+}

@@ -183,6 +183,14 @@ public class ModItems {
     public static final DeferredItem<Item> VALENTINE_RING = ITEMS.register("valentine_ring", ValentineRing::new);
     public static final DeferredItem<Item> CHARM_OF_MYTHS = ITEMS.register("charm_of_myths", CharmOfMyths::new);
     public static final DeferredItem<Item> MANA_CLOAK = ITEMS.register("mana_cloak", ManaCloak::new);
+    public static final DeferredItem<Item> LUCKY_COIN = ITEMS.register("lucky_coin", LuckyCoin::new);
+    public static final DeferredItem<Item> GOLD_RING = ITEMS.register("gold_ring", GoldRing::new);
+    public static final DeferredItem<Item> COIN_RING = ITEMS.register("coin_ring", CoinRing::new);
+    public static final DeferredItem<Item> DISCOUNT_CARD = ITEMS.register("discount_card", DiscountCard::new);
+    public static final DeferredItem<Item> GREEDY_RING = ITEMS.register("greedy_ring", GreedyRing::new);
+    public static final DeferredItem<Item> TREASURE_MAGNET = ITEMS.register("treasure_magnet", TreasureMagnet::new);
+    public static final DeferredItem<Item> TOOLBELT = ITEMS.register("toolbelt", Toolbelt::new);
+    public static final DeferredItem<Item> ANCIENT_CHISEL = ITEMS.register("ancient_chisel", AncientChisel::new);
     public static final DeferredItem<Item> EYE_OF_GOLEM = ITEMS.register("eye_of_the_golem", EyeOfGolem::new);
     public static final DeferredItem<Item> DESTROYER_EMBLEM = ITEMS.register("destroyer_emblem", DestroyerEmblem::new);
     public static final DeferredItem<Item> MOON_STONE = ITEMS.register("moon_stone", MoonStone::new);

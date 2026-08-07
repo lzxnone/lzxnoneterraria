@@ -71,6 +71,14 @@ import com.lzxnone.terraria.item.accessory.PhilosophersStone;
 import com.lzxnone.terraria.item.accessory.ValentineRing;
 import com.lzxnone.terraria.item.accessory.CharmOfMyths;
 import com.lzxnone.terraria.item.accessory.ManaCloak;
+import com.lzxnone.terraria.item.accessory.LuckyCoin;
+import com.lzxnone.terraria.item.accessory.GoldRing;
+import com.lzxnone.terraria.item.accessory.CoinRing;
+import com.lzxnone.terraria.item.accessory.DiscountCard;
+import com.lzxnone.terraria.item.accessory.GreedyRing;
+import com.lzxnone.terraria.item.accessory.TreasureMagnet;
+import com.lzxnone.terraria.item.accessory.Toolbelt;
+import com.lzxnone.terraria.item.accessory.AncientChisel;
 import com.lzxnone.terraria.item.accessory.EyeOfGolem;
 import com.lzxnone.terraria.item.accessory.DestroyerEmblem;
 import com.lzxnone.terraria.item.accessory.MoonStone;
@@ -274,6 +282,14 @@ public class ConfigList {
             ValentineRing.CONFIG_LIST_ITEM,
             CharmOfMyths.CONFIG_LIST_ITEM,
             ManaCloak.CONFIG_LIST_ITEM,
+            LuckyCoin.CONFIG_LIST_ITEM,
+            GoldRing.CONFIG_LIST_ITEM,
+            CoinRing.CONFIG_LIST_ITEM,
+            DiscountCard.CONFIG_LIST_ITEM,
+            GreedyRing.CONFIG_LIST_ITEM,
+            TreasureMagnet.CONFIG_LIST_ITEM,
+            Toolbelt.CONFIG_LIST_ITEM,
+            AncientChisel.CONFIG_LIST_ITEM,
             EyeOfGolem.CONFIG_LIST_ITEM,
             DestroyerEmblem.CONFIG_LIST_ITEM,
             MoonStone.CONFIG_LIST_ITEM,

@@ -25,7 +25,10 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -116,6 +119,13 @@ public class EntityEventHandler {
             double critChance = AccessoryUtil.getCritChance(livingEntity);
             if(critChance > 0.0D && attacker.getRandom().nextDouble() < critChance) {
                 event.setNewDamage(event.getNewDamage() * 1.5F);
+            }
+            //击中敌人概率掉落绿宝石（敌对生物、末影龙或凋灵）
+            double emeraldDropChance = AccessoryUtil.getEmeraldDropChance(livingEntity);
+            if(emeraldDropChance > 0.0D
+                && (target instanceof Enemy || target instanceof EnderDragon || target instanceof WitherBoss)
+                && livingEntity.getRandom().nextDouble() < emeraldDropChance) {
+                target.spawnAtLocation(new ItemStack(Items.EMERALD));
             }
         }
         //冰障

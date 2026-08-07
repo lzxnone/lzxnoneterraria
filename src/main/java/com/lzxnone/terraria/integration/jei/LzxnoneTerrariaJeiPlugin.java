@@ -44,5 +44,21 @@ public class LzxnoneTerrariaJeiPlugin implements IModPlugin {
             new ItemStack(ModItems.NATURES_GIFT.get()),
             Component.translatable("jei.lzxnoneterraria.info.natures_gift")
         );
+        registration.addItemStackInfo(
+            new ItemStack(ModItems.WARRIOR_EMBLEM.get()),
+            Component.translatable("jei.lzxnoneterraria.info.warrior_emblem")
+        );
+        registration.addItemStackInfo(
+            new ItemStack(ModItems.SUMMONER_EMBLEM.get()),
+            Component.translatable("jei.lzxnoneterraria.info.summoner_emblem")
+        );
+        registration.addItemStackInfo(
+            new ItemStack(ModItems.RANGER_EMBLEM.get()),
+            Component.translatable("jei.lzxnoneterraria.info.ranger_emblem")
+        );
+        registration.addItemStackInfo(
+            new ItemStack(ModItems.SORCERER_EMBLEM.get()),
+            Component.translatable("jei.lzxnoneterraria.info.sorcerer_emblem")
+        );
     }
 }

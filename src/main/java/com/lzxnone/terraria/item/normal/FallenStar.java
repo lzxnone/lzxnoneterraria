@@ -28,7 +28,7 @@ public class FallenStar extends Item {
         private static final double AIR_FRICTION = 0.98D;
         private static final double GROUND_FRICTION = 0.6D;
         private static final double MAX_FALL_SPEED = -1.5D;
-        private static final double MIN_ATTRACT_RADIUS = 4.0D;
+        private static final double MIN_ATTRACT_RADIUS = 0D;
         private static final double PICKUP_RADIUS = 0.35D;
         private static final double MAX_PICKUP_RADIUS = 16.0D;
         private static final double ATTRACT_SPEED = 0.25D;

@@ -235,6 +235,8 @@ public class CelestialShell extends AccessoryItem implements DamageModifier, Cri
     @Override
     public Multimap<Holder<Attribute>, AttributeModifier> getConditionalModifiers(ItemStack stack, LivingEntity entity) {
         Multimap<Holder<Attribute>, AttributeModifier> modifiers = MultimapBuilder.hashKeys().arrayListValues().build();
+        //tooltip 预览时 entity 为 null（curios 会对未佩戴物品查询属性修饰符）
+        if(entity == null) return modifiers;
         if(entity.level().isNight()) {
             buildWolfModifiers(modifiers);
         }

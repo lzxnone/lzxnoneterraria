@@ -137,6 +137,14 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.VALENTINE_RING.get());
                 output.accept(ModItems.CHARM_OF_MYTHS.get());
                 output.accept(ModItems.MANA_CLOAK.get());
+                output.accept(ModItems.LUCKY_COIN.get());
+                output.accept(ModItems.GOLD_RING.get());
+                output.accept(ModItems.COIN_RING.get());
+                output.accept(ModItems.DISCOUNT_CARD.get());
+                output.accept(ModItems.GREEDY_RING.get());
+                output.accept(ModItems.TREASURE_MAGNET.get());
+                output.accept(ModItems.TOOLBELT.get());
+                output.accept(ModItems.ANCIENT_CHISEL.get());
                 output.accept(ModItems.EYE_OF_GOLEM.get());
                 output.accept(ModItems.DESTROYER_EMBLEM.get());
                 output.accept(ModItems.MOON_STONE.get());

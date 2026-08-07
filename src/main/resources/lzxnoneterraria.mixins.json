@@ -4,7 +4,9 @@
   "package": "com.lzxnone.terraria.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "LivingEntityVisibilityMixin"
+    "LivingEntityVisibilityMixin",
+    "ItemEntityMixin",
+    "VillagerMixin"
   ],
   "client": [
     "GuiGraphicsMixin",

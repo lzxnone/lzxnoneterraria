@@ -18,6 +18,7 @@ public class AccessoryEventHandler {
     @SubscribeEvent
     public static void onCurioChange(CurioChangeEvent event) {
         LivingEntity entity = event.getEntity();
+        //curios 在实体卸载/玩家登出时也会触发该事件，此时 entity 为 null
         if(entity.level().isClientSide()) return;
         AccessoryUtil.removeImmuneEffects(entity);
         //脱下条件属性饰品时，移除其全部动态属性

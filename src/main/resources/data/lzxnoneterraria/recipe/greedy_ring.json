@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:discount_card"
+    },
+    {
+      "item": "lzxnoneterraria:coin_ring"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:greedy_ring",
+    "count": 1
+  }
+}

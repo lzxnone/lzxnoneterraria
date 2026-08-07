@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:gold_ring"
+    },
+    {
+      "item": "lzxnoneterraria:lucky_coin"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:coin_ring",
+    "count": 1
+  }
+}
