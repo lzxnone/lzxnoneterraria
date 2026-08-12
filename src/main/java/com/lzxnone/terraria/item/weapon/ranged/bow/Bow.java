@@ -14,9 +14,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 public class Bow extends RangedWeapon {
     public static final Vector3f OFFSET = new Vector3f(-0.3f, -0.15f, 1.5f);
@@ -41,6 +43,11 @@ public class Bow extends RangedWeapon {
     @Override
     public int getUseTime(ItemStack weaponStack, LivingEntity entity) {
         return USE_TIME;
+    }
+
+    @Override
+    public @NonNull UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.BOW;
     }
 
     @Override
