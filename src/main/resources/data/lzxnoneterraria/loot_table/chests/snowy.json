@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "lzxnoneterraria:valentine_ring",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "lzxnoneterraria:hand_warmer",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 2
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "lzxnoneterraria:lava_charm",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "lzxnoneterraria:obsidian_rose",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "lzxnoneterraria:magma_stone",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 3
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

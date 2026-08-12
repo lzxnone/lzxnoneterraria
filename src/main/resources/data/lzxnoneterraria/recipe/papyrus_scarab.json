@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "lzxnoneterraria:hercules_beetle"
+    },
+    {
+      "item": "lzxnoneterraria:necromantic_scroll"
+    }
+  ],
+  "result": {
+    "id": "lzxnoneterraria:papyrus_scarab",
+    "count": 1
+  }
+}

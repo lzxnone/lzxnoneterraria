@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "lzxnoneterraria:eye_of_the_golem",
+          "weight": 33
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 67
+        }
+      ]
+    }
+  ]
+}

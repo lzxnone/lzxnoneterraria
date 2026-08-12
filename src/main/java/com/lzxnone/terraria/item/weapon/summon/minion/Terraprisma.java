@@ -54,7 +54,7 @@ public class Terraprisma extends MinionWeapon {
     public static final ConfigDouble DASH_PRE_SPEED = new ConfigDouble(
         "weapon.terraprisma.dash_pre_speed",
         "terraprisma_dash_pre_speed",
-        -0.75D,
+        -0.5D,
         -10.0D,
         10.0D
     );
@@ -75,7 +75,7 @@ public class Terraprisma extends MinionWeapon {
     public static final ConfigDouble DASH_FRICTION = new ConfigDouble(
         "weapon.terraprisma.dash_friction",
         "terraprisma_dash_friction",
-        0.66D,
+        0.4D,
         0.0D,
         1.0D
     );
