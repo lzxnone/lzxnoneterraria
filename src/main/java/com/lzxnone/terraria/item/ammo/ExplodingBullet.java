@@ -115,6 +115,7 @@ public class ExplodingBullet extends BulletAmmo {
             //方块检测
             BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, end);
             if(blockHitResult.getType() != HitResult.Type.MISS) {
+                if(summon.level() instanceof ServerLevel serverLevel) Ammo.playBlockHitEffects(serverLevel, blockHitResult);
                 summon.setPos(blockHitResult.getLocation());
                 SoundUtil.playServerSound(summon.level(), ModSounds.BOOM.get(), summon.position());
                 ParticleUtil.addParticles(

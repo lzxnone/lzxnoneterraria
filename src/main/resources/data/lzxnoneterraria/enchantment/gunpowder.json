@@ -12,10 +12,10 @@
     "base": 1,
     "per_level_above_first": 11
   },
-  "primary_items": "#lzxnoneterraria:ranged_weapons",
+  "primary_items": "#lzxnoneterraria:gunpowder_weapons",
   "slots": [
     "mainhand"
   ],
-  "supported_items": "#lzxnoneterraria:ranged_weapons",
+  "supported_items": "#lzxnoneterraria:gunpowder_weapons",
   "weight": 10
 }

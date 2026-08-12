@@ -5,6 +5,7 @@ import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.RangedWeapon;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -19,6 +20,11 @@ public class AmmoUtil {
     public static final Vector3f OFFSET = new Vector3f(-0.3f, -0.15f, 1.5f);
 
     public static StaticSummon createAmmoSummon(Level level, Player player, InteractionHand hand, ItemStack stack, Vector3f offset) {
+        return createAmmoSummon(level, player, hand, stack, RangedWeapon.getAmmoStack(stack), offset);
+    }
+
+    public static StaticSummon createAmmoSummon(Level level, Player player, InteractionHand hand, ItemStack stack,
+                                                ItemStack ammoStack, Vector3f offset) {
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
         Vec3 eyePos = player.getEyePosition();
         offset = getOffset(hand, offset);
@@ -40,7 +46,7 @@ public class AmmoUtil {
         summon.yRotO = xyRot[1];
         summon.noPhysics = true;
 
-        ResourceLocation ammoId = RangedWeapon.getAmmo(stack);
+        ResourceLocation ammoId = BuiltInRegistries.ITEM.getKey(ammoStack.getItem());
         String ammo = ammoId == null ? "" : ammoId.toString();
         if(ammo.equals("lzxnoneterraria:musket_ball")) setMusketBall(summon);
         else if(ammo.equals("lzxnoneterraria:silver_bullet")) setSilverBullet(summon);
@@ -58,6 +64,7 @@ public class AmmoUtil {
         else if(ammo.equals("lzxnoneterraria:luminite_bullet")) setLuminiteBullet(summon);
         else if(ammo.equals("lzxnoneterraria:tungsten_bullet")) setTungstenBullet(summon);
         else if(ammo.equals("lzxnoneterraria:meteor_shot")) setMeteorShot(summon);
+        else if(ammo.equals("lzxnoneterraria:wooden_arrow")) setWoodenArrow(summon);
         else if(ammo.equals("minecraft:snowball")) setSnowball(summon);
         else if(ammo.equals("lzxnoneterraria:fallen_star")) setFallenStar(summon);
         else if(ammo.equals("minecraft:slime_ball")) setSlimeBall(summon);
@@ -250,6 +257,17 @@ public class AmmoUtil {
         CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
         customData.putInt("hit", 0);
         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+        summon.setNoGravity(true);
+    }
+
+    public static void setWoodenArrow(StaticSummon summon) {
+        summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.WOODEN_ARROW);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
+        summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.WOODEN_ARROW.get()));
+        summon.getEntityData().set(StaticSummon.LIFETIME, 100);
+        summon.getEntityData().set(StaticSummon.SCALE_X, 0.5f);
+        summon.getEntityData().set(StaticSummon.SCALE_Y, 1.0f);
+        summon.getEntityData().set(StaticSummon.SCALE_Z, 1.0f);
         summon.setNoGravity(true);
     }
 

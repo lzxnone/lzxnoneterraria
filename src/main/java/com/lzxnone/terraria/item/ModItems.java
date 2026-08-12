@@ -14,6 +14,7 @@ import com.lzxnone.terraria.item.weapon.ranged.Flamethrower;
 import com.lzxnone.terraria.item.weapon.ranged.SnowballCannon;
 import com.lzxnone.terraria.item.weapon.ranged.StarCannon;
 import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
+import com.lzxnone.terraria.item.weapon.ranged.bow.DaedalusStormbow;
 import com.lzxnone.terraria.item.weapon.ranged.gun.*;
 import com.lzxnone.terraria.item.weapon.summon.minion.StardustDragonStaff;
 import com.lzxnone.terraria.item.weapon.summon.minion.Terraprisma;
@@ -81,6 +82,7 @@ public class ModItems {
     public static final DeferredItem<Item> SUPER_STAR_SHOOTER = ITEMS.register("super_star_shooter", SuperStarShooter::new);
     public static final DeferredItem<Item> FLAMETHROWER = ITEMS.register("flamethrower", Flamethrower::new);
     public static final DeferredItem<Item> ELF_MELTER = ITEMS.register("elf_melter", ElfMelter::new);
+    public static final DeferredItem<Item> DAEDALUS_STORMBOW = ITEMS.register("daedalus_stormbow", DaedalusStormbow::new);
 
     //召唤武器
     public static final DeferredItem<Item> TERRAPRISMA = ITEMS.register("terraprisma", Terraprisma::new);
@@ -107,6 +109,7 @@ public class ModItems {
     public static final DeferredItem<Item> ENDLESS_MUSKET_POUCH = ITEMS.register("endless_musket_pouch", EndlessMusketPouch::new);
     public static final DeferredItem<Item> LUMINITE_BULLET = ITEMS.register("luminite_bullet", LuminiteBullet::new);
     public static final DeferredItem<Item> TUNGSTEN_BULLET = ITEMS.register("tungsten_bullet", TungstenBullet::new);
+    public static final DeferredItem<Item> WOODEN_ARROW = ITEMS.register("wooden_arrow", WoodenArrow::new);
     public static final DeferredItem<Item> FALLEN_STAR = ITEMS.register("fallen_star", FallenStar::new);
 
     //饰品

@@ -32,7 +32,6 @@ public class ModEntities {
                 .sized(1.0f, 1.0f)
                 .clientTrackingRange(1024)
                 .updateInterval(1)
-                .fireImmune()
                 .build("static_summon")
         );
 

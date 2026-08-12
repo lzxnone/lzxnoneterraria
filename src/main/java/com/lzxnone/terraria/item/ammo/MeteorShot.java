@@ -18,6 +18,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
@@ -92,6 +93,7 @@ public class MeteorShot extends BulletAmmo {
             //方块检测
             BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, end);
             if(blockHitResult.getType() != HitResult.Type.MISS) {
+                if(summon.level() instanceof ServerLevel serverLevel) Ammo.playBlockHitEffects(serverLevel, blockHitResult);
                 if(MeteorShot.incrementHit(summon) >= MAX_HIT.get()) {
                     this.onDied(summon);
                     return;

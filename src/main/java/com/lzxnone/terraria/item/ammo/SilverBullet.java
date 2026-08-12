@@ -15,6 +15,7 @@ import com.lzxnone.terraria.utils.FilterUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.monster.piglin.Piglin;
@@ -90,6 +91,7 @@ public class SilverBullet extends BulletAmmo {
             //方块检测
             BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, end);
             if(blockHitResult.getType() != HitResult.Type.MISS) {
+                if(summon.level() instanceof ServerLevel serverLevel) Ammo.playBlockHitEffects(serverLevel, blockHitResult);
                 this.onDied(summon);
                 return;
             }

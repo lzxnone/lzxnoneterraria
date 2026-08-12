@@ -102,6 +102,7 @@ public class CrystalBullet extends BulletAmmo {
             //方块检测
             BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, end);
             if(blockHitResult.getType() != HitResult.Type.MISS) {
+                if(summon.level() instanceof ServerLevel serverLevel) Ammo.playBlockHitEffects(serverLevel, blockHitResult);
                 summon.setPos(blockHitResult.getLocation());
                 CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
                 float damage = customData.contains("damage") ? customData.getFloat("damage") : 0;

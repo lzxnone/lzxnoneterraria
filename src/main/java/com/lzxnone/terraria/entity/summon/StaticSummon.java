@@ -22,6 +22,7 @@ import java.util.*;
 
 public class StaticSummon extends Entity {
     public static final int INFINITE_LIFETIME = -114514;
+    public static final String HIT_TARGET_IGNITE_TICKS_KEY = "hitTargetIgniteTicks";
 
     public static final EntityDataAccessor<String> BEHAVIOR =
             SynchedEntityData.defineId(StaticSummon.class, EntityDataSerializers.STRING);
@@ -146,6 +147,21 @@ public class StaticSummon extends Entity {
         StaticSummonBehaviors.getBehavior(this.entityData.get(BEHAVIOR)).tick(this);
         //this.setPos(this.position().add(this.getDeltaMovement()));
         this.move(MoverType.SELF, this.getDeltaMovement());
+    }
+
+    @Override
+    public boolean fireImmune() {
+        return !this.entityData.get(CUSTOM_DATA).contains(HIT_TARGET_IGNITE_TICKS_KEY);
+    }
+
+    @Override
+    public boolean isOnFire() {
+        return super.isOnFire() || this.entityData.get(CUSTOM_DATA).contains(HIT_TARGET_IGNITE_TICKS_KEY);
+    }
+
+    @Override
+    public boolean displayFireAnimation() {
+        return super.displayFireAnimation() || this.entityData.get(CUSTOM_DATA).contains(HIT_TARGET_IGNITE_TICKS_KEY);
     }
 
     @Override

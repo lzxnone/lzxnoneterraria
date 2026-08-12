@@ -2,6 +2,7 @@ package com.lzxnone.terraria.mixin;
 
 import com.lzxnone.terraria.client.config.RenderConfigs;
 import com.lzxnone.terraria.item.weapon.RangedWeapon;
+import com.lzxnone.terraria.item.weapon.ranged.bow.Bow;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.InteractionHand;
@@ -32,10 +33,12 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> {
                 : player.getMainArm().getOpposite();
 
         if(player.getUseItem().getItem() instanceof RangedWeapon) {
-            if(usedArm == HumanoidArm.RIGHT) {
-                this.rightArm.xRot = (float) Math.toRadians(player.getXRot() - 90);
-            }else {
-                this.leftArm.xRot = (float) Math.toRadians(player.getXRot() - 90);
+            if(!(player.getUseItem().getItem() instanceof Bow)) {
+                if(usedArm == HumanoidArm.RIGHT) {
+                    this.rightArm.xRot = (float) Math.toRadians(player.getXRot() - 90);
+                }else {
+                    this.leftArm.xRot = (float) Math.toRadians(player.getXRot() - 90);
+                }
             }
         }
     }

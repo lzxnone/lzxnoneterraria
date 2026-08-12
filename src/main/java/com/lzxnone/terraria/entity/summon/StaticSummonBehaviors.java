@@ -67,6 +67,7 @@ public class StaticSummonBehaviors {
     public static final String GOLDEN_BULLET = "golden_bullet";
     public static final String LUMINITE_BULLET = "luminite_bullet";
     public static final String TUNGSTEN_BULLET = "tungsten_bullet";
+    public static final String WOODEN_ARROW = "wooden_arrow";
 
     //特殊子弹实体
     public static final String SNOWBALL = "snowball";
@@ -119,6 +120,7 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(GOLDEN_BULLET, GoldenBullet.SUMMON_BEHAVIOR);
         BEHAVIORS.put(LUMINITE_BULLET, LuminiteBullet.SUMMON_BEHAVIOR);
         BEHAVIORS.put(TUNGSTEN_BULLET, TungstenBullet.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(WOODEN_ARROW, WoodenArrow.SUMMON_BEHAVIOR);
 
         BEHAVIORS.put(SNOWBALL, SnowballCannon.SUMMON_BEHAVIOR);
         BEHAVIORS.put(FALLEN_STAR, StarCannon.SUMMON_BEHAVIOR);

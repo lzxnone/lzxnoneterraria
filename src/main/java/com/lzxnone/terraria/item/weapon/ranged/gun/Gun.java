@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.item.weapon.ranged.gun;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
@@ -11,7 +12,9 @@ import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.AmmoUtil;
+import com.lzxnone.terraria.utils.MathUtil;
 import com.lzxnone.terraria.utils.SoundUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -19,12 +22,15 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
-import java.util.function.Supplier;
+import java.util.List;
 
 public class Gun extends RangedWeapon {
     private static final float DAMAGE_MIN = 0.0f;
@@ -34,61 +40,30 @@ public class Gun extends RangedWeapon {
     public static final double SPRINT_SPREAD_MULTIPLIER = 2.0D;
     public static final double WALK_SPREAD_MULTIPLIER = 1.5D;
     public static final double CROUCH_SPREAD_MULTIPLIER = 0.5D;
+    public static final Vector3f DEFAULT_OFFSET = new Vector3f(-0.3f, -0.15f, 1.5f);
 
-    private final String id;
-    private final Vector3f offset;
-    private final ConfigFloat damage;
-    private final boolean hasAmmoNotConsumeChance;
-    private final ConfigFloat ammoNotConsumeChance;
-    private final int useTime;
-    private final Supplier<SoundEvent> sound;
-    private final float knockbackScale;
-    private final int invulnerableTime;
-
-    public Gun(Tier tier, Properties properties, String id, Vector3f offset, float damageDefault, int useTime,
-               Supplier<SoundEvent> sound, float knockbackScale, int invulnerableTime) {
-        this(tier, properties, id, offset, damageDefault, false, 0.0f, useTime, sound, knockbackScale, invulnerableTime);
-    }
-
-    public Gun(Tier tier, Properties properties, String id, Vector3f offset, float damageDefault, float ammoNotConsumeChanceDefault,
-               int useTime, Supplier<SoundEvent> sound, float knockbackScale, int invulnerableTime) {
-        this(tier, properties, id, offset, damageDefault, true, ammoNotConsumeChanceDefault, useTime, sound, knockbackScale, invulnerableTime);
-    }
-
-    private Gun(Tier tier, Properties properties, String id, Vector3f offset, float damageDefault, boolean hasAmmoNotConsumeChance,
-                float ammoNotConsumeChanceDefault, int useTime, Supplier<SoundEvent> sound,
-                float knockbackScale, int invulnerableTime) {
+    public Gun(Tier tier, Properties properties) {
         super(tier, properties);
-        this.id = id;
-        this.offset = offset;
-        this.damage = createDamageConfig(id, damageDefault);
-        this.hasAmmoNotConsumeChance = hasAmmoNotConsumeChance;
-        this.ammoNotConsumeChance = createAmmoNotConsumeChanceConfig(id, ammoNotConsumeChanceDefault);
-        this.useTime = useTime;
-        this.sound = sound;
-        this.knockbackScale = knockbackScale;
-        this.invulnerableTime = invulnerableTime;
+    }
+
+    public static IConfigData createConfigData(ConfigStruct... configs) {
+        return new IConfigData() {
+            @Override
+            public void onConfigLoad() {
+                ConfigStruct.loadAll(configs);
+            }
+        };
     }
 
     public static IConfigData createConfigData(String id, float damageDefault) {
-        return new IConfigData() {
-            @Override
-            public void onConfigLoad() {
-                createDamageConfig(id, damageDefault).load();
-            }
-        };
+        return createConfigData(createDamageConfig(id, damageDefault));
     }
 
     public static IConfigData createConfigData(String id, float damageDefault, float ammoNotConsumeChanceDefault) {
-        return new IConfigData() {
-            @Override
-            public void onConfigLoad() {
-                ConfigStruct.loadAll(
-                    createAmmoNotConsumeChanceConfig(id, ammoNotConsumeChanceDefault),
-                    createDamageConfig(id, damageDefault)
-                );
-            }
-        };
+        return createConfigData(
+            createDamageConfig(id, damageDefault),
+            createAmmoNotConsumeChanceConfig(id, ammoNotConsumeChanceDefault)
+        );
     }
 
     public static ConfigFloat createDamageConfig(String id, float damageDefault) {
@@ -116,15 +91,6 @@ public class Gun extends RangedWeapon {
         return "weapon." + id + ".ammo_not_consume_chance";
     }
 
-    public float getDamage() {
-        return damage.get();
-    }
-
-    public float getAmmoNotConsumeChance() {
-        if(!hasAmmoNotConsumeChance) return 0.0f;
-        return ammoNotConsumeChance.get();
-    }
-
     @Override
     public boolean canUseAmmo(ItemStack weaponStack, ItemStack ammoStack) {
         return ammoStack.is(ModItemTags.BULLET_AMMO);
@@ -137,13 +103,54 @@ public class Gun extends RangedWeapon {
 
     @Override
     public int getUseTime(ItemStack weaponStack, LivingEntity entity) {
-        return useTime;
+        return 20;
     }
 
     @Override
     public int getAmmoConsumeAmount(ItemStack weaponStack, LivingEntity entity) {
-        if(!hasAmmoNotConsumeChance) return super.getAmmoConsumeAmount(weaponStack, entity);
-        return entity.getRandom().nextFloat() < getAmmoNotConsumeChance() ? 0 : 1;
+        float chance = getAmmoNotConsumeChance(weaponStack, entity);
+        if(chance <= 0.0f) return super.getAmmoConsumeAmount(weaponStack, entity);
+        return entity.getRandom().nextFloat() < chance ? 0 : 1;
+    }
+
+    protected float getDamage(ItemStack stack, Player player) {
+        return 0.0f;
+    }
+
+    protected float getAmmoNotConsumeChance(ItemStack stack, LivingEntity entity) {
+        return 0.0f;
+    }
+
+    protected Vector3f getOffset(ItemStack stack, Player player) {
+        return DEFAULT_OFFSET;
+    }
+
+    protected SoundEvent getShootSound(ItemStack stack, Player player) {
+        return ModSounds.SHOT.get();
+    }
+
+    protected float getKnockbackScale(ItemStack stack, Player player) {
+        return 0.1f;
+    }
+
+    protected int getInvulnerableTime(ItemStack stack, Player player) {
+        return 10;
+    }
+
+    protected int getProjectileCount(ItemStack stack, Player player) {
+        return 1;
+    }
+
+    protected float getSpreadDegrees(ItemStack stack, Player player, int index) {
+        return 0.0f;
+    }
+
+    protected ItemStack getBulletAmmoStack(Level level, Player player, InteractionHand hand, ItemStack weaponStack) {
+        return getAmmoStack(weaponStack);
+    }
+
+    protected void postprocessBulletSummon(Level level, Player player, InteractionHand hand, ItemStack weaponStack,
+                                           StaticSummon summon, int index) {
     }
 
     protected float getFinalSpreadDegrees(float baseSpread, ItemStack weaponStack, Player player) {
@@ -164,17 +171,64 @@ public class Gun extends RangedWeapon {
         return (float) spread;
     }
 
+    protected void applySpread(Player player, StaticSummon summon, float spreadDegrees) {
+        if(spreadDegrees <= 0.0f) return;
+
+        Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
+        Vec3 forward = MathUtil.toVec3(dirs[0]).normalize();
+        Vec3 up = MathUtil.toVec3(dirs[1]).normalize();
+        Vec3 right = MathUtil.toVec3(dirs[2]).normalize();
+
+        double yaw = Math.toRadians((player.getRandom().nextFloat() * 2.0f - 1.0f) * spreadDegrees);
+        double pitch = Math.toRadians((player.getRandom().nextFloat() * 2.0f - 1.0f) * spreadDegrees);
+        Vec3 spreadDir = forward
+            .add(right.scale(Math.tan(yaw)))
+            .add(up.scale(Math.tan(pitch)))
+            .normalize();
+
+        float[] xyRot = MathUtil.computeXYRot(spreadDir.toVector3f());
+        summon.setXRot(xyRot[0]);
+        summon.xRotO = xyRot[0];
+        summon.setYRot(xyRot[1]);
+        summon.yRotO = xyRot[1];
+    }
+
+    protected StaticSummon createBulletSummon(Level level, Player player, InteractionHand hand, ItemStack stack, int index) {
+        ItemStack ammoStack = getBulletAmmoStack(level, player, hand, stack);
+        StaticSummon summon = AmmoUtil.createAmmoSummon(level, player, hand, stack, ammoStack, getOffset(stack, player));
+        applySpread(player, summon, getSpreadDegrees(stack, player, index));
+
+        CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+        customData.putFloat("damage", getDamage(stack, player));
+        customData.putFloat("knockbackScale", getKnockbackScale(stack, player));
+        customData.putInt("invulnerableTime", getInvulnerableTime(stack, player));
+        summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+
+        postprocessBulletSummon(level, player, hand, stack, summon, index);
+        return summon;
+    }
+
     @Override
     protected void shoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
-        SoundUtil.playClientSound(player, sound.get());
-        if(!level.isClientSide()) {
-            StaticSummon summon = AmmoUtil.createAmmoSummon(level, player, hand, stack, offset);
-            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-            customData.putFloat("damage", getDamage());
-            customData.putFloat("knockbackScale", knockbackScale);
-            customData.putInt("invulnerableTime", invulnerableTime);
-            summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+        SoundUtil.playClientSound(player, getShootSound(stack, player));
+        if(level.isClientSide()) return;
+
+        int projectileCount = getProjectileCount(stack, player);
+        for(int i = 0; i < projectileCount; i++) {
+            StaticSummon summon = createBulletSummon(level, player, hand, stack, i);
             level.addFreshEntity(summon);
         }
     }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context,
+                                List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        if(stack.is(ModItemTags.SPREAD_RANGED_WEAPONS)) {
+            tooltipComponents.add(Component.translatable(
+                "tooltip.lzxnoneterraria.spread_ranged_weapon"
+            ).withStyle(ChatFormatting.GRAY));
+        }
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+    }
 }
+

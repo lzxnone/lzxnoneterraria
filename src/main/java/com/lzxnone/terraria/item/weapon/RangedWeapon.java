@@ -2,6 +2,7 @@ package com.lzxnone.terraria.item.weapon;
 
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
+import com.lzxnone.terraria.item.ModItemTags;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.effect.RangedDamageModifier;
@@ -26,6 +27,7 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -55,9 +57,16 @@ public class RangedWeapon extends Weapon {
 
     public static float applyRangedDamageBonus(ItemStack stack, LivingEntity entity, float damage) {
         double finalDamage = damage;
+        //力量
+        int powerLevel = getEnchantmentLevel(entity, stack, Enchantments.POWER);
+        if(powerLevel > 0) {
+            finalDamage *= 1.0D + 0.2D * powerLevel;
+        }
         //火药
-        int gunpowderLevel = getEnchantmentLevel(entity, stack, ModEnchantments.GUNPOWDER);
-        finalDamage *= Math.pow(ModEnchantmentConfigs.getGunpowderDamageMultiplier(), gunpowderLevel);
+        if(stack.is(ModItemTags.GUNPOWDER_WEAPONS)) {
+            int gunpowderLevel = getEnchantmentLevel(entity, stack, ModEnchantments.GUNPOWDER);
+            finalDamage *= Math.pow(ModEnchantmentConfigs.getGunpowderDamageMultiplier(), gunpowderLevel);
+        }
         //饰品
         double[] multiplier = {1.0D};
         AccessoryUtil.forEachAccessory(entity, (accessory, accessoryStack) -> {
@@ -95,25 +104,19 @@ public class RangedWeapon extends Weapon {
     }
 
     public boolean canShoot(ItemStack weaponStack, Player player) {
-        ItemStack ammoStack = getAmmoStack(weaponStack);
-        if(ammoStack.isEmpty() || !canUseAmmo(weaponStack, ammoStack)) return false;
-        if(player.hasInfiniteMaterials()) return true;
-
-        Item ammoItem = ammoStack.getItem();
-        for(ItemStack inventoryStack : player.getInventory().items) {
-            if(inventoryStack.is(ammoItem)) return true;
-        }
-        return false;
+        return !findAmmo(weaponStack, player).isEmpty();
     }
 
     public int getAmmoCount(ItemStack weaponStack, Player player) {
         ItemStack ammoStack = getAmmoStack(weaponStack);
         if(ammoStack.isEmpty() || !canUseAmmo(weaponStack, ammoStack)) return 0;
 
-        Item ammoItem = ammoStack.getItem();
         int count = 0;
+        ItemStack offhandStack = player.getItemInHand(InteractionHand.OFF_HAND);
+        if(isAmmoStack(ammoStack, offhandStack)) count += offhandStack.getCount();
+
         for(ItemStack inventoryStack : player.getInventory().items) {
-            if(inventoryStack.is(ammoItem)) count += inventoryStack.getCount();
+            if(isAmmoStack(ammoStack, inventoryStack)) count += inventoryStack.getCount();
         }
         return count;
     }
@@ -129,10 +132,12 @@ public class RangedWeapon extends Weapon {
         if(ammoStack.isEmpty() || !canUseAmmo(weaponStack, ammoStack)) return false;
         if(ammoStack.is(ModItems.ENDLESS_MUSKET_POUCH.get())) return true;
 
-        Item ammoItem = ammoStack.getItem();
         int available = 0;
+        ItemStack offhandStack = player.getItemInHand(InteractionHand.OFF_HAND);
+        if(isAmmoStack(ammoStack, offhandStack)) available += offhandStack.getCount();
+
         for(ItemStack inventoryStack : player.getInventory().items) {
-            if(inventoryStack.is(ammoItem)) {
+            if(isAmmoStack(ammoStack, inventoryStack)) {
                 available += inventoryStack.getCount();
                 if(available >= amount) break;
             }
@@ -140,8 +145,15 @@ public class RangedWeapon extends Weapon {
         if(available < amount) return false;
 
         int remaining = amount;
+        if(isAmmoStack(ammoStack, offhandStack)) {
+            int consumed = Math.min(remaining, offhandStack.getCount());
+            offhandStack.shrink(consumed);
+            remaining -= consumed;
+            if(remaining <= 0) return true;
+        }
+
         for(ItemStack inventoryStack : player.getInventory().items) {
-            if(!inventoryStack.is(ammoItem)) continue;
+            if(!isAmmoStack(ammoStack, inventoryStack)) continue;
 
             int consumed = Math.min(remaining, inventoryStack.getCount());
             inventoryStack.shrink(consumed);
@@ -150,6 +162,38 @@ public class RangedWeapon extends Weapon {
         }
 
         return false;
+    }
+
+    public ItemStack findAmmo(ItemStack weaponStack, Player player) {
+        ItemStack ammoStack = getAmmoStack(weaponStack);
+        ItemStack inventoryAmmo = findAmmoItem(player, ammoStack);
+        if(!inventoryAmmo.isEmpty()) return inventoryAmmo;
+        if(player.hasInfiniteMaterials() && canUseAmmo(weaponStack, ammoStack)) return ammoStack.copy();
+        return ItemStack.EMPTY;
+    }
+
+    public boolean isSelectedAmmo(ItemStack weaponStack, ItemStack ammoStack) {
+        ItemStack selectedAmmo = getAmmoStack(weaponStack);
+        return isAmmoStack(selectedAmmo, ammoStack);
+    }
+
+    protected ItemStack findAmmoItem(Player player, ItemStack ammoStack) {
+        if(ammoStack.isEmpty()) return ItemStack.EMPTY;
+
+        ItemStack offhandStack = player.getItemInHand(InteractionHand.OFF_HAND);
+        if(isAmmoStack(ammoStack, offhandStack)) return offhandStack;
+
+        ItemStack mainhandStack = player.getItemInHand(InteractionHand.MAIN_HAND);
+        if(isAmmoStack(ammoStack, mainhandStack)) return mainhandStack;
+
+        for(ItemStack inventoryStack : player.getInventory().items) {
+            if(isAmmoStack(ammoStack, inventoryStack)) return inventoryStack;
+        }
+        return ItemStack.EMPTY;
+    }
+
+    protected boolean isAmmoStack(ItemStack selectedAmmo, ItemStack ammoStack) {
+        return !selectedAmmo.isEmpty() && !ammoStack.isEmpty() && ammoStack.is(selectedAmmo.getItem());
     }
 
     public boolean tryShoot(Level level, Player player, InteractionHand hand, ItemStack weaponStack) {

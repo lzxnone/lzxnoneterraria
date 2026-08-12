@@ -201,6 +201,7 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.SUPER_STAR_SHOOTER.get());
                 output.accept(ModItems.FLAMETHROWER.get());
                 output.accept(ModItems.ELF_MELTER.get());
+                output.accept(ModItems.DAEDALUS_STORMBOW.get());
                 output.accept(ModItems.MUSKET_BALL.get());
                 output.accept(ModItems.METEOR_SHOT.get());
                 output.accept(ModItems.SILVER_BULLET.get());
@@ -217,6 +218,7 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.ENDLESS_MUSKET_POUCH.get());
                 output.accept(ModItems.LUMINITE_BULLET.get());
                 output.accept(ModItems.TUNGSTEN_BULLET.get());
+                output.accept(ModItems.WOODEN_ARROW.get());
                 output.accept(ModItems.FALLEN_STAR.get());
             }).build());
 

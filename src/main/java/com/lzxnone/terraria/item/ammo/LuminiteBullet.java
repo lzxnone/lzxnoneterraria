@@ -104,6 +104,7 @@ public class LuminiteBullet extends BulletAmmo {
             //方块检测
             BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, end);
             if(blockHitResult.getType() != HitResult.Type.MISS) {
+                if(summon.level() instanceof ServerLevel serverLevel) Ammo.playBlockHitEffects(serverLevel, blockHitResult);
                 summon.setPos(blockHitResult.getLocation());
                 ParticleUtil.addParticles(
                     (ServerLevel) summon.level(), PARTICLE,

@@ -7,6 +7,7 @@ import com.lzxnone.terraria.attachment.PlayerMana;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
+import com.lzxnone.terraria.effect.IchorEffect;
 import com.lzxnone.terraria.effect.MidasEffect;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.effect.PaladinsShieldEffect;
@@ -15,6 +16,8 @@ import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.accessory.PanicNecklace;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
+import com.lzxnone.terraria.item.weapon.RangedWeapon;
+import com.lzxnone.terraria.item.weapon.Weapon;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
 import net.minecraft.nbt.CompoundTag;
@@ -83,6 +86,7 @@ public class EntityEventHandler {
         //进行护甲穿透
         if(!source.is(DamageTypeTags.BYPASSES_ARMOR)) {
             if(attacker instanceof LivingEntity livingEntity) AccessoryUtil.applyTargetArmorModifiers(livingEntity, entity);
+            IchorEffect.applyArmorReduction(entity);
         }
         //近战攻击命中时点燃目标
         if(attacker instanceof LivingEntity livingAttacker && livingAttacker != entity) {
@@ -112,8 +116,18 @@ public class EntityEventHandler {
         if(!(target.level() instanceof ServerLevel serverLevel)) return;
         DamageSource source = event.getSource();
         Entity attacker = source.getEntity();
+        //原版的箭伤害
+        if(source.is(DamageTypes.ARROW) && attacker instanceof LivingEntity livingAttacker) {
+            ItemStack weaponStack = source.getWeaponItem();
+            if(weaponStack != null && !weaponStack.isEmpty()) {
+                float finalDamage = Weapon.applyDamageBonus(weaponStack, livingAttacker, event.getNewDamage());
+                finalDamage = RangedWeapon.applyRangedDamageBonus(weaponStack, livingAttacker, finalDamage);
+                event.setNewDamage(finalDamage);
+            }
+        }
         //移除饰品加成护甲穿透
         AccessoryUtil.removeTargetArmorModifiers(event.getEntity());
+        IchorEffect.removeArmorReduction(event.getEntity());
         //暴击
         if(attacker instanceof LivingEntity livingEntity && attacker != target) {
             double critChance = AccessoryUtil.getCritChance(livingEntity);

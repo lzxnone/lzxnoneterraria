@@ -1,8 +1,6 @@
 package com.lzxnone.terraria.utils;
 
 import com.lzxnone.terraria.damage.ModDamageTypes;
-import com.lzxnone.terraria.effect.IchorEffect;
-import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.BeeSummon;
@@ -21,6 +19,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Objects;
@@ -102,14 +101,12 @@ public class DamageUtil {
             finalDamage = MagicWeapon.applyMagicDamageBonus(itemSource, player, finalDamage);
         }else if(category == DamageCategory.RANGED && !itemSource.isEmpty()) {
             finalDamage = RangedWeapon.applyRangedDamageBonus(itemSource, player, finalDamage);
+            knockbackLevel += Weapon.getEnchantmentLevel(player, itemSource, Enchantments.PUNCH);
         }else if(category == DamageCategory.MINION && !itemSource.isEmpty()) {
             finalDamage = SummonWeapon.applySummonDamageBonus(itemSource, player, finalDamage);
             knockbackLevel = MinionWeapon.applyMinionKnockback(player, knockbackLevel);
         }else if(category == DamageCategory.SENTRY && !itemSource.isEmpty()) {
             finalDamage = SummonWeapon.applySummonDamageBonus(itemSource, player, finalDamage);
-        }
-        if(category != DamageCategory.REAL) {
-            finalDamage = applyTargetDamageEffects(target, finalDamage);
         }
         finalDamage = Math.max(0.0F, finalDamage);
 
@@ -165,17 +162,6 @@ public class DamageUtil {
         if(player.hasEffect(MobEffects.WEAKNESS) && player.getEffect(MobEffects.WEAKNESS) != null) {
             int amplifier = Objects.requireNonNull(player.getEffect(MobEffects.WEAKNESS)).getAmplifier();
             finalDamage -= (amplifier + 1) * 4.0F;
-        }
-        return Math.max(0.0F, finalDamage);
-    }
-
-    private static float applyTargetDamageEffects(Entity target, float damage) {
-        if(!(target instanceof LivingEntity livingTarget)) return damage;
-
-        float finalDamage = damage;
-        if(livingTarget.hasEffect(ModEffects.ICHOR) && livingTarget.getEffect(ModEffects.ICHOR) != null) {
-            int amplifier = Objects.requireNonNull(livingTarget.getEffect(ModEffects.ICHOR)).getAmplifier();
-            finalDamage *= 1.0f + IchorEffect.getDamageBonusPerLevel() * (amplifier + 1);
         }
         return Math.max(0.0F, finalDamage);
     }

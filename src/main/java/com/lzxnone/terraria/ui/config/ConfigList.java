@@ -121,6 +121,7 @@ import com.lzxnone.terraria.item.weapon.ranged.Flamethrower;
 import com.lzxnone.terraria.item.weapon.ranged.SnowballCannon;
 import com.lzxnone.terraria.item.weapon.ranged.StarCannon;
 import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
+import com.lzxnone.terraria.item.weapon.ranged.bow.DaedalusStormbow;
 import com.lzxnone.terraria.item.weapon.ranged.gun.*;
 import com.lzxnone.terraria.item.weapon.summon.minion.StardustDragonStaff;
 import com.lzxnone.terraria.item.weapon.summon.minion.Terraprisma;
@@ -192,7 +193,8 @@ public class ConfigList {
             StarCannon.CONFIG_LIST_ITEM,
             SuperStarShooter.CONFIG_LIST_ITEM,
             Flamethrower.CONFIG_LIST_ITEM,
-            ElfMelter.CONFIG_LIST_ITEM
+            ElfMelter.CONFIG_LIST_ITEM,
+            DaedalusStormbow.CONFIG_LIST_ITEM
         });
         ITEMS.put(EFFECT, new ConfigListItem[]{
             BloodButcheredEffect.CONFIG_LIST_ITEM,
@@ -222,7 +224,8 @@ public class ConfigList {
             ExplodingBullet.CONFIG_LIST_ITEM,
             GoldenBullet.CONFIG_LIST_ITEM,
             LuminiteBullet.CONFIG_LIST_ITEM,
-            TungstenBullet.CONFIG_LIST_ITEM
+            TungstenBullet.CONFIG_LIST_ITEM,
+            WoodenArrow.CONFIG_LIST_ITEM
         });
         ITEMS.put(ACCESSORY, new ConfigListItem[]{
             NaturesGift.CONFIG_LIST_ITEM,

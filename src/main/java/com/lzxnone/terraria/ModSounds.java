@@ -71,6 +71,10 @@ public class ModSounds {
             SOUND_EVENTS.register("whip",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "whip")));
+    public static final Supplier<SoundEvent> BOW_SHOOT =
+            SOUND_EVENTS.register("bow_shoot",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "bow_shoot")));
     public static final Supplier<SoundEvent> SHOT =
             SOUND_EVENTS.register("shot",
                     () -> SoundEvent.createVariableRangeEvent(

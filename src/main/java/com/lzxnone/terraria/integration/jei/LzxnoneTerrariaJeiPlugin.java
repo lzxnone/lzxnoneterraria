@@ -252,5 +252,9 @@ public class LzxnoneTerrariaJeiPlugin implements IModPlugin {
             new ItemStack(ModItems.SORCERER_EMBLEM.get()),
             Component.translatable("jei.lzxnoneterraria.info.sorcerer_emblem")
         );
+        registration.addItemStackInfo(
+            new ItemStack(ModItems.DAEDALUS_STORMBOW.get()),
+            Component.translatable("jei.lzxnoneterraria.info.daedalus_stormbow")
+        );
     }
 }

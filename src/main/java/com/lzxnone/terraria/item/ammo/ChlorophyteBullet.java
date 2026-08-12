@@ -14,6 +14,7 @@ import com.lzxnone.terraria.utils.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -152,6 +153,7 @@ public class ChlorophyteBullet extends BulletAmmo {
             }
             BlockHitResult blockHitResult = CollisionUtil.checkBlockHit(summon, summon.position().add(oldMotion));
             if(blockHitResult.getType() != HitResult.Type.MISS) {
+                if(summon.level() instanceof ServerLevel serverLevel) Ammo.playBlockHitEffects(serverLevel, blockHitResult);
                 this.onDied(summon);
                 return;
             }

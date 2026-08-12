@@ -2,6 +2,7 @@ package com.lzxnone.terraria.client.entity.summon;
 
 import com.lzxnone.terraria.client.item.normal.ClientDropFallenStar;
 import com.lzxnone.terraria.client.item.normal.ClientManaStar;
+import com.lzxnone.terraria.client.item.ranged.ClientArrowAmmo;
 import com.lzxnone.terraria.client.item.ranged.ClientBulletAmmo;
 import com.lzxnone.terraria.client.item.magic.ClientLastPrism;
 import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
@@ -72,6 +73,7 @@ public class ClientStaticSummonRenderBehaviors {
         BEHAVIORS.put(StaticSummonBehaviors.GOLDEN_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.LUMINITE_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.TUNGSTEN_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.WOODEN_ARROW, ClientArrowAmmo.SUMMON_BEHAVIOR);
 
         BEHAVIORS.put(StaticSummonBehaviors.SNOWBALL, DEFAULT_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.FALLEN_STAR, ClientStarCannon.SUMMON_BEHAVIOR);
