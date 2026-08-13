@@ -140,7 +140,10 @@ public class DamageUtil {
                     extraKnockback = livingTarget.getDeltaMovement().subtract(beforeHurtMovement);
                 }
 
-                livingTarget.setDeltaMovement(beforeHurtMovement.add(hurtKnockback.add(extraKnockback).scale(knockbackScale)));
+                Vec3 knockback = hurtKnockback.add(extraKnockback);
+                double scaledY = knockback.y * Math.min(knockbackScale, 1.0F);
+                Vec3 scaledKnockback = new Vec3(knockback.x * knockbackScale, scaledY, knockback.z * knockbackScale);
+                livingTarget.setDeltaMovement(beforeHurtMovement.add(scaledKnockback));
             }
             DamageSource postSource = attackEntity == player
                 ? source
@@ -151,7 +154,7 @@ public class DamageUtil {
         return hasHurt;
     }
 
-    private static float applyPlayerDamageEffects(Player player, float damage) {
+    public static float applyPlayerDamageEffects(Player player, float damage) {
         float finalDamage = damage;
         //力量
         if(player.hasEffect(MobEffects.DAMAGE_BOOST) && player.getEffect(MobEffects.DAMAGE_BOOST) != null) {

@@ -1,7 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
 import com.lzxnone.terraria.item.weapon.MeleeWeapon;
-import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.projectile.IStaticProjectileBehavior;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
@@ -15,15 +14,11 @@ import com.lzxnone.terraria.utils.MathUtil;
 import com.lzxnone.terraria.utils.ParticleUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tiers;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
@@ -33,9 +28,11 @@ import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
-import net.minecraft.network.chat.Component;
 
 public class Muramasa extends MeleeWeapon {
+    public static final String ID = "muramasa";
+    public static final ConfigFloat BASE_MELEE_DAMAGE = createBaseMeleeDamageConfig(ID, 4F);
+    public static final ConfigFloat BASE_MELEE_ATTACK_SPEED = createBaseMeleeAttackSpeedConfig(ID, -1.5F);
     public static final ConfigFloat BEAM_DAMAGE = new ConfigFloat(
         "weapon.muramasa.beam_damage",
         "muramasa_beam_damage",
@@ -47,28 +44,27 @@ public class Muramasa extends MeleeWeapon {
         @Override
         public void onConfigLoad() {
             ConfigStruct.loadAll(
+                BASE_MELEE_DAMAGE,
+                BASE_MELEE_ATTACK_SPEED,
                 BEAM_DAMAGE
             );
         }
     };
 
-    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
-        "muramasa",
-        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/muramasa.png"),
-        Component.translatable("item.lzxnoneterraria.muramasa"),
-        CONFIG_DATA
-    );
+    public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public Muramasa() {
-        super(Tiers.IRON, new Item.Properties().attributes(ItemAttributeModifiers.builder()
-            .add(Attributes.ATTACK_DAMAGE,
-                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_damage"), 4, AttributeModifier.Operation.ADD_VALUE),
-                EquipmentSlotGroup.MAINHAND)
-            .add(Attributes.ATTACK_SPEED,
-                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_speed"), -1.5, AttributeModifier.Operation.ADD_VALUE),
-                EquipmentSlotGroup.MAINHAND)
-            .build()
-        ));
+        super(Tiers.IRON, new Item.Properties());
+    }
+
+    @Override
+    protected float getBaseMeleeDamage(ItemStack stack) {
+        return BASE_MELEE_DAMAGE.get();
+    }
+
+    @Override
+    protected float getBaseMeleeAttackSpeed(ItemStack stack) {
+        return BASE_MELEE_ATTACK_SPEED.get();
     }
 
     public static final DustParticleOptions PARTICLE = new DustParticleOptions(

@@ -48,9 +48,7 @@ public class PlayerManaSyncEventHandler {
             PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
             int bonus = AccessoryUtil.getMaxManaBonus(player);
             if(mana.getBonusMaxMana() != bonus) {
-                mana.setBonusMaxMana(bonus);
-                player.setData(ModAttachments.PLAYER_MANA, mana);
-                sync(player);
+                PlayerMana.setBonusMaxMana(player, bonus);
             }
         }
 
@@ -63,15 +61,8 @@ public class PlayerManaSyncEventHandler {
             return;
         }
 
-        int oldMana = mana.getMana();
         double regenBonus = AccessoryUtil.getManaRegenBonus(player, mana.getMana(), mana.getMaxMana());
-        if(!mana.recoverMana(PlayerMana.DEFAULT_RECOVER_RATE + regenBonus)) return;
-
-        player.setData(ModAttachments.PLAYER_MANA, mana);
-        if(mana.getMana() != oldMana) {
-            playMaxManaSoundIfRecovered(player, oldMana, mana);
-            sync(player);
-        }
+        PlayerMana.recoverMana(player, PlayerMana.DEFAULT_RECOVER_RATE + regenBonus);
     }
 
     public static void sync(ServerPlayer player) {

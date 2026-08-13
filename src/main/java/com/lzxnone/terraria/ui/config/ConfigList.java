@@ -4,6 +4,7 @@ import com.lzxnone.terraria.effect.BloodButcheredEffect;
 import com.lzxnone.terraria.effect.AcidVenomEffect;
 import com.lzxnone.terraria.effect.CursedInfernoEffect;
 import com.lzxnone.terraria.effect.DemonicFlamesEffect;
+import com.lzxnone.terraria.effect.BetsysCurseEffect;
 import com.lzxnone.terraria.effect.IchorEffect;
 import com.lzxnone.terraria.effect.ManaSicknessEffect;
 import com.lzxnone.terraria.effect.MidasEffect;
@@ -92,10 +93,14 @@ import com.lzxnone.terraria.item.accessory.PutridScent;
 import com.lzxnone.terraria.item.accessory.Shackle;
 import com.lzxnone.terraria.item.accessory.SniperScope;
 import com.lzxnone.terraria.item.accessory.ReconScope;
+import com.lzxnone.terraria.item.weapon.magic.BetsyWrath;
+import com.lzxnone.terraria.item.weapon.magic.BubbleGun;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
+import com.lzxnone.terraria.item.weapon.magic.LunarFlare;
 import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.item.weapon.melee.BladeOfGrass;
 import com.lzxnone.terraria.item.weapon.melee.BloodButcherer;
+import com.lzxnone.terraria.item.weapon.melee.CopperShortsword;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.item.weapon.melee.EnchantedSword;
 import com.lzxnone.terraria.item.weapon.melee.Excalibur;
@@ -112,6 +117,7 @@ import com.lzxnone.terraria.item.weapon.melee.Starfury;
 import com.lzxnone.terraria.item.weapon.melee.TerraBlade;
 import com.lzxnone.terraria.item.weapon.melee.Terragrim;
 import com.lzxnone.terraria.item.weapon.melee.TheHorsemansBlade;
+import com.lzxnone.terraria.item.weapon.melee.TrueCopperShortsword;
 import com.lzxnone.terraria.item.weapon.melee.TrueExcalibur;
 import com.lzxnone.terraria.item.weapon.melee.TrueNightsEdge;
 import com.lzxnone.terraria.item.weapon.melee.Volcano;
@@ -142,6 +148,7 @@ public class ConfigList {
 
     static {
         ITEMS.put(WEAPON, new ConfigListItem[]{
+            CopperShortsword.CONFIG_LIST_ITEM,
             EnchantedSword.CONFIG_LIST_ITEM,
             BeeKeeper.CONFIG_LIST_ITEM,
             Starfury.CONFIG_LIST_ITEM,
@@ -156,6 +163,7 @@ public class ConfigList {
             NightsEdge.CONFIG_LIST_ITEM,
             TrueExcalibur.CONFIG_LIST_ITEM,
             TrueNightsEdge.CONFIG_LIST_ITEM,
+            TrueCopperShortsword.CONFIG_LIST_ITEM,
             LightsBane.CONFIG_LIST_ITEM,
             BloodButcherer.CONFIG_LIST_ITEM,
             Muramasa.CONFIG_LIST_ITEM,
@@ -169,6 +177,9 @@ public class ConfigList {
             StardustDragonStaff.CONFIG_LIST_ITEM,
             Possession.CONFIG_LIST_ITEM,
             LastPrism.CONFIG_LIST_ITEM,
+            BetsyWrath.CONFIG_LIST_ITEM,
+            LunarFlare.CONFIG_LIST_ITEM,
+            BubbleGun.CONFIG_LIST_ITEM,
             Minishark.CONFIG_LIST_ITEM,
             FlintlockPistol.CONFIG_LIST_ITEM,
             Boomstick.CONFIG_LIST_ITEM,
@@ -201,6 +212,7 @@ public class ConfigList {
             DemonicFlamesEffect.CONFIG_LIST_ITEM,
             CursedInfernoEffect.CONFIG_LIST_ITEM,
             IchorEffect.CONFIG_LIST_ITEM,
+            BetsysCurseEffect.CONFIG_LIST_ITEM,
             AcidVenomEffect.CONFIG_LIST_ITEM,
             MidasEffect.CONFIG_LIST_ITEM,
             ManaSicknessEffect.CONFIG_LIST_ITEM,

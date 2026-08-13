@@ -1,7 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
 import com.lzxnone.terraria.item.weapon.MeleeWeapon;
-import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.projectile.IStaticProjectileBehavior;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
@@ -19,15 +18,11 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tiers;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -41,12 +36,14 @@ import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
 import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
 import com.lzxnone.terraria.ui.config.struct.ConfigInt;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
-import net.minecraft.network.chat.Component;
 
 import java.util.Comparator;
 import java.util.List;
 
 public class BladeOfGrass extends MeleeWeapon {
+    public static final String ID = "blade_of_grass";
+    public static final ConfigFloat BASE_MELEE_DAMAGE = createBaseMeleeDamageConfig(ID, 3F);
+    public static final ConfigFloat BASE_MELEE_ATTACK_SPEED = createBaseMeleeAttackSpeedConfig(ID, -2.4F);
     public static final ConfigFloat PROJECTILE_DAMAGE = new ConfigFloat(
         "weapon.blade_of_grass.projectile_damage",
         "blade_of_grass_projectile_damage",
@@ -100,6 +97,8 @@ public class BladeOfGrass extends MeleeWeapon {
         @Override
         public void onConfigLoad() {
             ConfigStruct.loadAll(
+                BASE_MELEE_DAMAGE,
+                BASE_MELEE_ATTACK_SPEED,
                 PROJECTILE_DAMAGE,
                 EFFECT_DURATION,
                 TARGET_RANGE,
@@ -111,23 +110,20 @@ public class BladeOfGrass extends MeleeWeapon {
         }
     };
 
-    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
-        "blade_of_grass",
-        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/blade_of_grass.png"),
-        Component.translatable("item.lzxnoneterraria.blade_of_grass"),
-        CONFIG_DATA
-    );
+    public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public BladeOfGrass() {
-        super(Tiers.IRON, new Item.Properties().attributes(ItemAttributeModifiers.builder()
-            .add(Attributes.ATTACK_DAMAGE,
-                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_damage"), 3, AttributeModifier.Operation.ADD_VALUE),
-                EquipmentSlotGroup.MAINHAND)
-            .add(Attributes.ATTACK_SPEED,
-                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_speed"), -2.4, AttributeModifier.Operation.ADD_VALUE),
-                EquipmentSlotGroup.MAINHAND)
-            .build()
-        ));
+        super(Tiers.IRON, new Item.Properties());
+    }
+
+    @Override
+    protected float getBaseMeleeDamage(ItemStack stack) {
+        return BASE_MELEE_DAMAGE.get();
+    }
+
+    @Override
+    protected float getBaseMeleeAttackSpeed(ItemStack stack) {
+        return BASE_MELEE_ATTACK_SPEED.get();
     }
 
     public static final IStaticProjectileBehavior PROJECTILE_BEHAVIOR = new IStaticProjectileBehavior() {

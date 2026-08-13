@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/gun3",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/bubble_gun"
+  }
+}

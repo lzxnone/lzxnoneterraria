@@ -106,4 +106,9 @@ public class PartyBullet extends BulletAmmo {
         }
     };
 
+    @Override
+    public float getBaseDamage(ItemStack stack) {
+        return BASE_DAMAGE.get();
+    }
+
 }

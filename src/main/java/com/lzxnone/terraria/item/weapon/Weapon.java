@@ -2,18 +2,23 @@ package com.lzxnone.terraria.item.weapon;
 
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.effect.DamageModifier;
-import com.lzxnone.terraria.item.effect.MeleeDamageModifier;
+import com.lzxnone.terraria.item.ModItemTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.List;
 
 public class Weapon extends Item {
     private final int enchantmentValue;
@@ -54,6 +59,17 @@ public class Weapon extends Item {
     @Override
     public int getEnchantmentValue(ItemStack stack) {
         return enchantmentValue;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context,
+                                List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        if(stack.is(ModItemTags.SPREAD_RANGED_WEAPONS)) {
+            tooltipComponents.add(Component.translatable(
+                "tooltip.lzxnoneterraria.spread_ranged_weapon"
+            ).withStyle(ChatFormatting.GRAY));
+        }
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 
     public static int getEnchantmentLevel(LivingEntity entity, ItemStack stack, ResourceKey<Enchantment> enchantment) {

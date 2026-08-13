@@ -1,7 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
 import com.lzxnone.terraria.item.weapon.MeleeWeapon;
-import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.projectile.IStaticProjectileBehavior;
@@ -17,14 +16,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
@@ -39,11 +34,13 @@ import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
 import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
 import com.lzxnone.terraria.ui.config.struct.ConfigInt;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
-import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
 public class Zenith extends MeleeWeapon {
+    public static final String ID = "zenith";
+    public static final ConfigFloat BASE_MELEE_DAMAGE = createBaseMeleeDamageConfig(ID, 20F);
+    public static final ConfigFloat BASE_MELEE_ATTACK_SPEED = createBaseMeleeAttackSpeedConfig(ID, -2.4F);
     public static final ConfigFloat DAMAGE = new ConfigFloat(
         "weapon.zenith.damage",
         "zenith_damage",
@@ -130,6 +127,8 @@ public class Zenith extends MeleeWeapon {
         @Override
         public void onConfigLoad() {
             ConfigStruct.loadAll(
+                BASE_MELEE_DAMAGE,
+                BASE_MELEE_ATTACK_SPEED,
                 DAMAGE,
                 MAX_RANGE,
                 DISTANCE_MODE,
@@ -185,23 +184,20 @@ public class Zenith extends MeleeWeapon {
         return TRAIL_ALPHA.get();
     }
 
-    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
-        "zenith",
-        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/zenith.png"),
-        Component.translatable("item.lzxnoneterraria.zenith"),
-        CONFIG_DATA
-    );
+    public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public Zenith() {
-        super(Tiers.NETHERITE, new Item.Properties().attributes(ItemAttributeModifiers.builder()
-            .add(Attributes.ATTACK_DAMAGE,
-                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_damage"), 20, AttributeModifier.Operation.ADD_VALUE),
-                EquipmentSlotGroup.MAINHAND)
-            .add(Attributes.ATTACK_SPEED,
-                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_speed"), -2.4, AttributeModifier.Operation.ADD_VALUE),
-                EquipmentSlotGroup.MAINHAND)
-            .build()
-        ).fireResistant().rarity(Rarity.EPIC));
+        super(Tiers.NETHERITE, new Item.Properties().fireResistant().rarity(Rarity.EPIC));
+    }
+
+    @Override
+    protected float getBaseMeleeDamage(ItemStack stack) {
+        return BASE_MELEE_DAMAGE.get();
+    }
+
+    @Override
+    protected float getBaseMeleeAttackSpeed(ItemStack stack) {
+        return BASE_MELEE_ATTACK_SPEED.get();
     }
 
     private static ItemStack[] weapons;

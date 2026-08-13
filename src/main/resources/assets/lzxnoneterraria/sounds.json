@@ -23,6 +23,29 @@
   "beam2": {
     "sounds": ["lzxnoneterraria:beam2"]
   },
+  "betsys_fireball_shoot": {
+    "sounds": [
+      "lzxnoneterraria:betsys_fireball_shoot",
+      "lzxnoneterraria:betsys_fireball_shoot2",
+      "lzxnoneterraria:betsys_fireball_shoot3"
+    ]
+  },
+  "betsys_fireball_collide": {
+    "sounds": [
+      "lzxnoneterraria:betsys_fireball_collide",
+      "lzxnoneterraria:betsys_fireball_collide2",
+      "lzxnoneterraria:betsys_fireball_collide3"
+    ]
+  },
+  "magic_shoot": {
+    "sounds": ["lzxnoneterraria:magic_shoot"]
+  },
+  "bubble": {
+    "sounds": ["lzxnoneterraria:bubble"]
+  },
+  "bubble_break": {
+    "sounds": ["lzxnoneterraria:bubble_break"]
+  },
   "star_fall": {
     "sounds": ["lzxnoneterraria:star_fall"]
   },

@@ -1,7 +1,9 @@
 package com.lzxnone.terraria.attachment;
 
+import com.lzxnone.terraria.event.PlayerManaSyncEventHandler;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 
 public class PlayerMana {
@@ -79,26 +81,63 @@ public class PlayerMana {
         return recoverDelay;
     }
 
-    public boolean hasMana() {
-        return mana > 0;
+    public static boolean recoverMana(ServerPlayer player, double amount) {
+        PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
+        int oldMana = mana.getMana();
+        if(!mana.recoverMana(amount)) return false;
+
+        player.setData(ModAttachments.PLAYER_MANA, mana);
+        if(mana.getMana() != oldMana) {
+            PlayerManaSyncEventHandler.playMaxManaSoundIfRecovered(player, oldMana, mana);
+            PlayerManaSyncEventHandler.sync(player);
+        }
+        return true;
     }
 
-    //通过魔力水晶增加基础最大魔力
-    public int increaseBaseMaxMana(int amount) {
-        if(amount <= 0 || baseMaxMana >= MAX_BASE_MANA) return 0;
+    public static boolean consumeMana(ServerPlayer player, double amount) {
+        PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
+        int oldMana = mana.getMana();
+        if(!mana.consumeMana(amount)) return false;
 
-        int oldBaseMaxMana = baseMaxMana;
-        setBaseMaxMana(Math.min(baseMaxMana + amount, MAX_BASE_MANA));
-        int increase = baseMaxMana - oldBaseMaxMana;
-        setMana(mana + increase);
-        return increase;
+        mana.applyRecoverDelay();
+        player.setData(ModAttachments.PLAYER_MANA, mana);
+        if(mana.getMana() != oldMana) {
+            PlayerManaSyncEventHandler.sync(player);
+        }
+        return true;
+    }
+
+    public static boolean setBaseMaxMana(ServerPlayer player, int baseMaxMana) {
+        PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
+        int oldMana = mana.getMana();
+        int oldBaseMaxMana = mana.getBaseMaxMana();
+        mana.setBaseMaxMana(Mth.clamp(baseMaxMana, 0, MAX_BASE_MANA));
+        if(oldMana == mana.getMana() && oldBaseMaxMana == mana.getBaseMaxMana()) return false;
+
+        player.setData(ModAttachments.PLAYER_MANA, mana);
+        PlayerManaSyncEventHandler.sync(player);
+        return true;
+    }
+
+    public static boolean setBonusMaxMana(ServerPlayer player, int bonusMaxMana) {
+        PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
+        int oldMana = mana.getMana();
+        int oldBonusMaxMana = mana.getBonusMaxMana();
+        mana.setBonusMaxMana(bonusMaxMana);
+        if(oldMana == mana.getMana() && oldBonusMaxMana == mana.getBonusMaxMana()) return false;
+
+        player.setData(ModAttachments.PLAYER_MANA, mana);
+        PlayerManaSyncEventHandler.sync(player);
+        return true;
     }
 
     //通过累加计数器恢复魔力
-    public boolean recoverMana(double amount) {
+    private boolean recoverMana(double amount) {
         if(amount <= 0.0D || mana >= getMaxMana()) return false;
 
-        int recoverAmount = addManaProgress(false, amount);
+        double progress = recoverProgress + amount;
+        int recoverAmount = (int)Math.floor(progress);
+        recoverProgress = progress - recoverAmount;
         if(recoverAmount <= 0) return true;
 
         int oldMana = mana;
@@ -106,27 +145,16 @@ public class PlayerMana {
         return mana != oldMana;
     }
 
-    //直接恢复指定值的魔力
-    public boolean recoverManaImmediately(int amount) {
-        if(amount <= 0 || mana >= getMaxMana()) return false;
-
-        int oldMana = mana;
-        setMana(mana + amount);
-        return mana != oldMana;
-    }
-
     //通过累加计数器消耗魔力
-    public boolean consumeMana(double amount) {
+    private boolean consumeMana(double amount) {
         if(amount <= 0.0D) return true;
         if(mana <= 0) return false;
+        if(mana < (int)Math.floor(consumeProgress + amount)) return false;
 
-        int consumeAmount = addManaProgress(true, amount);
-        if(consumeAmount <= 0) return mana > 0;
-
-        if(consumeAmount >= mana) {
-            mana = 0;
-            return false;
-        }
+        double progress = consumeProgress + amount;
+        int consumeAmount = (int)Math.floor(progress);
+        consumeProgress = progress - consumeAmount;
+        if(consumeAmount <= 0) return true;
 
         mana -= consumeAmount;
         return true;
@@ -137,7 +165,7 @@ public class PlayerMana {
         if(getMaxMana() <= 0) return;
 
         double emptyRatio = 1.0D - (double) mana / getMaxMana();
-        recoverDelay = Math.max(recoverDelay, (int) Math.ceil(0.7D * (emptyRatio * 240.0D + 45.0D)));
+        recoverDelay = Math.max(recoverDelay, (int) Math.ceil(0.7D * (emptyRatio * 240.0D + 45.0D) / 3.0D));
         recoverProgress = 0.0D;
     }
 
@@ -150,17 +178,4 @@ public class PlayerMana {
         return recoverDelay > 0;
     }
 
-    //累计计数器
-    private int addManaProgress(boolean consume, double amount) {
-        double progress = (consume ? consumeProgress : recoverProgress) + amount;
-        int wholeAmount = (int)Math.floor(progress);
-        double nextProgress = progress - wholeAmount;
-
-        if(consume) {
-            consumeProgress = nextProgress;
-        }else {
-            recoverProgress = nextProgress;
-        }
-        return wholeAmount;
-    }
 }

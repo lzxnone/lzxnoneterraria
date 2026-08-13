@@ -4,9 +4,10 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.particles.ParticleOptions;
 
-public class CircleParticle extends EmissiveBloomParticle {
+public class CircleParticle extends TextureSheetParticle {
     private final float baseSize;
 
     protected CircleParticle(ClientLevel level, double x, double y, double z,
@@ -46,6 +47,16 @@ public class CircleParticle extends EmissiveBloomParticle {
     @Override
     public void render(VertexConsumer buffer, Camera camera, float partialTick) {
         for(int i = 0;i < 10;i++) super.render(buffer, camera, partialTick);
+    }
+
+    @Override
+    public int getLightColor(float partialTick) {
+        return LightTexture.FULL_BRIGHT;
+    }
+
+    @Override
+    public ParticleRenderType getRenderType() {
+        return ModParticleRenderTypes.EMISSIVE_BLOOM_PARTICLE;
     }
 
     public static class Provider implements ParticleProvider<CircleParticleOptions> {

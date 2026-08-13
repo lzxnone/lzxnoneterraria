@@ -2,11 +2,13 @@ package com.lzxnone.terraria.item.weapon;
 
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
+import com.lzxnone.terraria.item.ammo.Ammo;
 import com.lzxnone.terraria.item.ModItemTags;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.effect.RangedDamageModifier;
-import com.lzxnone.terraria.item.effect.SummonDamageModifier;
+import com.lzxnone.terraria.item.weapon.ranged.bow.Bow;
+import com.lzxnone.terraria.utils.DamageUtil;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -55,12 +57,23 @@ public class RangedWeapon extends Weapon {
         return null;
     }
 
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = entity instanceof Player player ? DamageUtil.applyPlayerDamageEffects(player, 0.0F) : 0.0F;
+        return applyRangedDamageBonus(weaponStack, entity, damage);
+    }
+
+    protected float getAmmoBaseDamage(ItemStack ammoStack) {
+        return ammoStack.getItem() instanceof Ammo ammo ? ammo.getBaseDamage(ammoStack) : 0.0F;
+    }
+
     public static float applyRangedDamageBonus(ItemStack stack, LivingEntity entity, float damage) {
         double finalDamage = damage;
         //力量
-        int powerLevel = getEnchantmentLevel(entity, stack, Enchantments.POWER);
-        if(powerLevel > 0) {
-            finalDamage *= 1.0D + 0.2D * powerLevel;
+        if(stack.getItem() instanceof Bow) {
+            int powerLevel = getEnchantmentLevel(entity, stack, Enchantments.POWER);
+            if (powerLevel > 0) {
+                finalDamage *= 1.0D + 0.2D * powerLevel;
+            }
         }
         //火药
         if(stack.is(ModItemTags.GUNPOWDER_WEAPONS)) {
@@ -170,11 +183,6 @@ public class RangedWeapon extends Weapon {
         if(!inventoryAmmo.isEmpty()) return inventoryAmmo;
         if(player.hasInfiniteMaterials() && canUseAmmo(weaponStack, ammoStack)) return ammoStack.copy();
         return ItemStack.EMPTY;
-    }
-
-    public boolean isSelectedAmmo(ItemStack weaponStack, ItemStack ammoStack) {
-        ItemStack selectedAmmo = getAmmoStack(weaponStack);
-        return isAmmoStack(selectedAmmo, ammoStack);
     }
 
     protected ItemStack findAmmoItem(Player player, ItemStack ammoStack) {

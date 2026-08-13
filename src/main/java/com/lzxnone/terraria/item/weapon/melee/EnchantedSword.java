@@ -1,7 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
 import com.lzxnone.terraria.item.weapon.MeleeWeapon;
-import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.projectile.IStaticProjectileBehavior;
@@ -17,7 +16,6 @@ import com.lzxnone.terraria.ui.config.struct.ConfigInt;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.*;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,16 +23,12 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -42,6 +36,9 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 public class EnchantedSword extends MeleeWeapon {
+    public static final String ID = "enchanted_sword";
+    public static final ConfigFloat BASE_MELEE_DAMAGE = createBaseMeleeDamageConfig(ID, 4F);
+    public static final ConfigFloat BASE_MELEE_ATTACK_SPEED = createBaseMeleeAttackSpeedConfig(ID, -2.4F);
     public static final ConfigFloat DAMAGE = new ConfigFloat(
         "weapon.enchanted_sword.damage",
         "enchanted_sword_damage",
@@ -64,23 +61,25 @@ public class EnchantedSword extends MeleeWeapon {
         10.0
     );
     public EnchantedSword() {
-        super(Tiers.IRON, new Item.Properties().attributes(ItemAttributeModifiers.builder()
-            .add(Attributes.ATTACK_DAMAGE,
-                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_damage"), 4,
-                        AttributeModifier.Operation.ADD_VALUE),
-                EquipmentSlotGroup.MAINHAND)
-            .add(Attributes.ATTACK_SPEED,
-                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_speed"), -2.4,
-                        AttributeModifier.Operation.ADD_VALUE),
-                EquipmentSlotGroup.MAINHAND)
-            .build()
-        ));
+        super(Tiers.IRON, new Item.Properties());
+    }
+
+    @Override
+    protected float getBaseMeleeDamage(ItemStack stack) {
+        return BASE_MELEE_DAMAGE.get();
+    }
+
+    @Override
+    protected float getBaseMeleeAttackSpeed(ItemStack stack) {
+        return BASE_MELEE_ATTACK_SPEED.get();
     }
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
             ConfigStruct.loadAll(
+                BASE_MELEE_DAMAGE,
+                BASE_MELEE_ATTACK_SPEED,
                 DAMAGE,
                 LIFETIME,
                 SPEED
@@ -88,12 +87,7 @@ public class EnchantedSword extends MeleeWeapon {
         }
     };
 
-    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
-        "enchanted_sword",
-        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/enchanted_sword.png"),
-        Component.translatable("item.lzxnoneterraria.enchanted_sword"),
-        CONFIG_DATA
-    );
+    public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public static final IStaticProjectileBehavior PROJECTILE_BEHAVIOR = new IStaticProjectileBehavior() {
         @Override

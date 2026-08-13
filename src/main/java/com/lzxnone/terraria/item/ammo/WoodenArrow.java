@@ -109,4 +109,9 @@ public class WoodenArrow extends ArrowAmmo {
         summon.setXRot(xyRot[0]);
         summon.setYRot(xyRot[1]);
     }
+    @Override
+    public float getBaseDamage(ItemStack stack) {
+        return BASE_DAMAGE.get();
+    }
+
 }

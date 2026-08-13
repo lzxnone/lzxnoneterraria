@@ -1,7 +1,6 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
 import com.lzxnone.terraria.item.weapon.MeleeWeapon;
-import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
@@ -20,20 +19,15 @@ import com.lzxnone.terraria.utils.SoundUtil;
 import com.mojang.math.Axis;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -44,6 +38,9 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 
 public class Terragrim extends MeleeWeapon {
+    public static final String ID = "terragrim";
+    public static final ConfigFloat BASE_MELEE_DAMAGE = createBaseMeleeDamageConfig(ID, 3F);
+    public static final ConfigFloat BASE_MELEE_ATTACK_SPEED = createBaseMeleeAttackSpeedConfig(ID, -0.5F);
     public static final ConfigDouble HIT_RANGE = new ConfigDouble(
         "weapon.terragrim.hit_range",
         "terragrim_hit_range",
@@ -66,21 +63,25 @@ public class Terragrim extends MeleeWeapon {
         90
     );
     public Terragrim() {
-        super(Tiers.DIAMOND, new Item.Properties().attributes(ItemAttributeModifiers.builder()
-            .add(Attributes.ATTACK_DAMAGE,
-                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_damage"), 3, AttributeModifier.Operation.ADD_VALUE),
-                EquipmentSlotGroup.MAINHAND)
-            .add(Attributes.ATTACK_SPEED,
-                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_speed"), -0.5, AttributeModifier.Operation.ADD_VALUE),
-                EquipmentSlotGroup.MAINHAND)
-            .build()
-        ).rarity(Rarity.RARE));
+        super(Tiers.DIAMOND, new Item.Properties().rarity(Rarity.RARE));
+    }
+
+    @Override
+    protected float getBaseMeleeDamage(ItemStack stack) {
+        return BASE_MELEE_DAMAGE.get();
+    }
+
+    @Override
+    protected float getBaseMeleeAttackSpeed(ItemStack stack) {
+        return BASE_MELEE_ATTACK_SPEED.get();
     }
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
             ConfigStruct.loadAll(
+                BASE_MELEE_DAMAGE,
+                BASE_MELEE_ATTACK_SPEED,
                 HIT_RANGE,
                 DAMAGE,
                 ROTATE_RANGE
@@ -88,12 +89,7 @@ public class Terragrim extends MeleeWeapon {
         }
     };
 
-    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
-        "terragrim",
-        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/terragrim.png"),
-        Component.translatable("item.lzxnoneterraria.terragrim"),
-        CONFIG_DATA
-    );
+    public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public static final ResourceLocation[] RES = {
             ResourceLocation.parse("lzxnoneterraria:textures/vfx/terragrim_beam0.png"),

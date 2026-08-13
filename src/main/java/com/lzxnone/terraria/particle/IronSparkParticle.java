@@ -5,7 +5,6 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
 import org.joml.Vector3f;
 
@@ -14,7 +13,6 @@ public class IronSparkParticle extends TextureSheetParticle {
     private final float sparkLength;
     private final Vector3f dir;
     private final Vector3f right;
-    private final Vector3f normal;
 
     protected IronSparkParticle(ClientLevel level, double x, double y, double z,
                                 double xSpeed, double ySpeed, double zSpeed,
@@ -37,7 +35,6 @@ public class IronSparkParticle extends TextureSheetParticle {
 
         this.dir = new Vector3f(options.dir).normalize();
         this.right = new Vector3f(options.right).normalize();
-        this.normal = new Vector3f(this.dir).cross(this.right).normalize();
 
         this.xd = dir.x;
         this.yd = dir.y;
@@ -89,11 +86,9 @@ public class IronSparkParticle extends TextureSheetParticle {
             for(int j = 0; j < 4; j++) {
                 float[] v = verts[j];
                 buffer.addVertex(v[0], v[1], v[2])
-                        .setColor(this.rCol, this.gCol, this.bCol, this.alpha)
                         .setUv(v[3], v[4])
-                        .setOverlay(OverlayTexture.NO_OVERLAY)
-                        .setLight(LightTexture.FULL_BRIGHT)
-                        .setNormal(this.normal.x(), this.normal.y(), this.normal.z());
+                        .setColor(this.rCol, this.gCol, this.bCol, this.alpha)
+                        .setLight(LightTexture.FULL_BRIGHT);
             }
         }
     }
@@ -105,7 +100,7 @@ public class IronSparkParticle extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return ModParticleRenderTypes.EMISSIVE_BLOOM;
+        return ModParticleRenderTypes.EMISSIVE_BLOOM_PARTICLE;
     }
 
     public static class Provider implements ParticleProvider<IronSparkParticleOptions> {

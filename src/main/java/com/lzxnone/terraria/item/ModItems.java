@@ -55,6 +55,9 @@ public class ModItems {
 
     //魔法武器
     public static final DeferredItem<Item> LAST_PRISM = ITEMS.register("last_prism", LastPrism::new);
+    public static final DeferredItem<Item> BETSY_WRATH = ITEMS.register("betsys_wrath", BetsyWrath::new);
+    public static final DeferredItem<Item> LUNAR_FLARE = ITEMS.register("lunar_flare", LunarFlare::new);
+    public static final DeferredItem<Item> BUBBLE_GUN = ITEMS.register("bubble_gun", BubbleGun::new);
 
     //远程武器
     public static final DeferredItem<Item> MUSKET = ITEMS.register("musket", Musket::new);
@@ -244,6 +247,7 @@ public class ModItems {
     public static final DeferredItem<Item> LUMINITE_BULLET_PROJECTILE = ITEMS.register("luminite_bullet_projectile", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> WHITE_STAR = ITEMS.register("white_star", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> MANA_STAR = ITEMS.register("mana_star", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> BUBBLE_GUN_PROJECTILE = ITEMS.register("bubble_gun_projectile", () -> new Item(new Item.Properties()));
 
     public static final DeferredItem<Item> ENCHANTED_SWORD_BEAM = ITEMS.register("enchanted_sword_beam", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> STARFURY_STAR = ITEMS.register("starfury_star", () -> new Item(new Item.Properties()));

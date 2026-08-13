@@ -1,10 +1,8 @@
 package com.lzxnone.terraria.item.normal;
 
-import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.attachment.PlayerMana;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
-import com.lzxnone.terraria.event.PlayerManaSyncEventHandler;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -71,13 +69,9 @@ public class ManaStar extends Item {
                 summon.setDeltaMovement(dir.scale(ATTRACT_SPEED));
             }
             if(dist <= PICKUP_RADIUS) {
-                PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
                 CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
                 int amount = customData.contains("mana") ? customData.getInt("mana") : 0;
-                if(mana.recoverManaImmediately(amount)) {
-                    player.setData(ModAttachments.PLAYER_MANA, mana);
-                    PlayerManaSyncEventHandler.sync(player);
-                }
+                PlayerMana.recoverMana(player, amount);
                 onDied(summon);
                 return true;
             }

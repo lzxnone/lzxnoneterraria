@@ -7,6 +7,7 @@ import com.lzxnone.terraria.attachment.PlayerMana;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
+import com.lzxnone.terraria.effect.BetsysCurseEffect;
 import com.lzxnone.terraria.effect.IchorEffect;
 import com.lzxnone.terraria.effect.MidasEffect;
 import com.lzxnone.terraria.effect.ModEffects;
@@ -24,10 +25,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -37,11 +40,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.List;
@@ -52,6 +57,53 @@ import java.util.UUID;
 public class EntityEventHandler {
     //魔力星掉落概率
     private static final double MANA_STAR_DROP_CHANCE = 1.0D / 9.0D;
+
+    //吸引掉落物
+    private static final double ITEM_PICKUP_PROBE_RANGE = 16.0D;
+    private static final double ITEM_ATTRACT_MIN_SPEED = 0.08D;
+    private static final double ITEM_ATTRACT_MAX_SPEED = 0.6D;
+    private static final double ITEM_ATTRACT_SPEED_SCALE = 0.18D;
+    private static final double ITEM_ATTRACT_EXISTING_MOTION_SCALE = 0.6D;
+    private static final double ITEM_PICKUP_TOUCH_RANGE_SQR = 1.2D * 1.2D;
+
+    @SubscribeEvent
+    public static void onEntityTick(EntityTickEvent.Post event) {
+        if(!(event.getEntity() instanceof ItemEntity itemEntity)) return;
+        if(!(itemEntity.level() instanceof ServerLevel serverLevel)) return;
+        if(!itemEntity.isAlive() || itemEntity.getItem().isEmpty() || itemEntity.hasPickUpDelay()) return;
+
+        ServerPlayer target = null;
+        double bestScore = Double.MAX_VALUE;
+        List<ServerPlayer> players = serverLevel.getEntitiesOfClass(
+            ServerPlayer.class,
+            itemEntity.getBoundingBox().inflate(ITEM_PICKUP_PROBE_RANGE),
+            player -> player.isAlive() && !player.isSpectator()
+        );
+        for(ServerPlayer player : players) {
+            double range = AccessoryUtil.getEffectivePickupRange(player, itemEntity.getItem().getItem());
+            if(range <= 0.0D) continue;
+            double distanceSqr = itemEntity.distanceToSqr(player);
+            if(distanceSqr > range * range) continue;
+            if(distanceSqr < bestScore) {
+                bestScore = distanceSqr;
+                target = player;
+            }
+        }
+        if(target == null) return;
+
+        if(itemEntity.distanceToSqr(target) <= ITEM_PICKUP_TOUCH_RANGE_SQR) {
+            itemEntity.playerTouch(target);
+            return;
+        }
+
+        Vec3 toPlayer = target.getEyePosition().subtract(itemEntity.position());
+        double distance = toPlayer.length();
+        if(distance < 1.0E-4D) return;
+        double speed = Mth.clamp(distance * ITEM_ATTRACT_SPEED_SCALE, ITEM_ATTRACT_MIN_SPEED, ITEM_ATTRACT_MAX_SPEED);
+        Vec3 attractMotion = toPlayer.scale(speed / distance);
+        itemEntity.setDeltaMovement(itemEntity.getDeltaMovement().scale(ITEM_ATTRACT_EXISTING_MOTION_SCALE).add(attractMotion));
+        itemEntity.hasImpulse = true;
+    }
 
     @SubscribeEvent
     public static void onLivingIncomingDamage(LivingIncomingDamageEvent event) {
@@ -87,6 +139,7 @@ public class EntityEventHandler {
         if(!source.is(DamageTypeTags.BYPASSES_ARMOR)) {
             if(attacker instanceof LivingEntity livingEntity) AccessoryUtil.applyTargetArmorModifiers(livingEntity, entity);
             IchorEffect.applyArmorReduction(entity);
+            BetsysCurseEffect.applyArmorReduction(entity);
         }
         //近战攻击命中时点燃目标
         if(attacker instanceof LivingEntity livingAttacker && livingAttacker != entity) {
@@ -100,12 +153,8 @@ public class EntityEventHandler {
                 || source.is(DamageTypes.ON_FIRE) || source.is(DamageTypes.IN_FIRE) || source.is(DamageTypes.WITHER);
             double manaMultiplier = AccessoryUtil.getManaOnHurtMultiplier(player);
             if(!isDebuffDamage && manaMultiplier > 0.0D) {
-                PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
                 int recover = (int) Math.round(event.getAmount() * manaMultiplier);
-                if(recover > 0 && mana.recoverManaImmediately(recover)) {
-                    player.setData(ModAttachments.PLAYER_MANA, mana);
-                    PlayerManaSyncEventHandler.sync((ServerPlayer) player);
-                }
+                if(recover > 0 && player instanceof ServerPlayer serverPlayer) PlayerMana.recoverMana(serverPlayer, recover);
             }
         }
     }
@@ -128,6 +177,7 @@ public class EntityEventHandler {
         //移除饰品加成护甲穿透
         AccessoryUtil.removeTargetArmorModifiers(event.getEntity());
         IchorEffect.removeArmorReduction(event.getEntity());
+        BetsysCurseEffect.removeArmorReduction(event.getEntity());
         //暴击
         if(attacker instanceof LivingEntity livingEntity && attacker != target) {
             double critChance = AccessoryUtil.getCritChance(livingEntity);

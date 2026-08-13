@@ -1,7 +1,7 @@
 package com.lzxnone.terraria.item.weapon.melee;
 
-import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
@@ -21,19 +21,14 @@ import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.ParticleUtil;
 import com.mojang.math.Axis;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tiers;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
@@ -43,6 +38,9 @@ import java.util.Comparator;
 import java.util.List;
 
 public class LightsBane extends MeleeWeapon {
+    public static final String ID = "lights_bane";
+    public static final ConfigFloat BASE_MELEE_DAMAGE = createBaseMeleeDamageConfig(ID, 3F);
+    public static final ConfigFloat BASE_MELEE_ATTACK_SPEED = createBaseMeleeAttackSpeedConfig(ID, -1.0F);
     public static final ConfigFloat BIG_DAMAGE = new ConfigFloat(
         "weapon.lights_bane.big_damage",
         "lights_bane_big_damage",
@@ -65,21 +63,25 @@ public class LightsBane extends MeleeWeapon {
         64.0
     );
     public LightsBane() {
-        super(Tiers.IRON, new Item.Properties().attributes(ItemAttributeModifiers.builder()
-            .add(Attributes.ATTACK_DAMAGE,
-                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_damage"), 3, AttributeModifier.Operation.ADD_VALUE),
-                EquipmentSlotGroup.MAINHAND)
-            .add(Attributes.ATTACK_SPEED,
-                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "base_attack_speed"), -1.0, AttributeModifier.Operation.ADD_VALUE),
-                EquipmentSlotGroup.MAINHAND)
-            .build()
-        ));
+        super(Tiers.IRON, new Item.Properties());
+    }
+
+    @Override
+    protected float getBaseMeleeDamage(ItemStack stack) {
+        return BASE_MELEE_DAMAGE.get();
+    }
+
+    @Override
+    protected float getBaseMeleeAttackSpeed(ItemStack stack) {
+        return BASE_MELEE_ATTACK_SPEED.get();
     }
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
             ConfigStruct.loadAll(
+                BASE_MELEE_DAMAGE,
+                BASE_MELEE_ATTACK_SPEED,
                 BIG_DAMAGE,
                 SMALL_DAMAGE,
                 TARGET_RANGE
@@ -87,12 +89,7 @@ public class LightsBane extends MeleeWeapon {
         }
     };
 
-    public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
-        "lights_bane",
-        ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/lights_bane.png"),
-        Component.translatable("item.lzxnoneterraria.lights_bane"),
-        CONFIG_DATA
-    );
+    public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public static final DustParticleOptions PARTICLE = new DustParticleOptions(
         0.075f, 0.5f, 40, true, new Vector3f[]{
@@ -207,4 +204,3 @@ public class LightsBane extends MeleeWeapon {
         }
     };
 }
-

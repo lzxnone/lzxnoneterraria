@@ -4,6 +4,7 @@ import com.lzxnone.terraria.client.item.normal.ClientDropFallenStar;
 import com.lzxnone.terraria.client.item.normal.ClientManaStar;
 import com.lzxnone.terraria.client.item.ranged.ClientArrowAmmo;
 import com.lzxnone.terraria.client.item.ranged.ClientBulletAmmo;
+import com.lzxnone.terraria.client.item.magic.ClientBetsysWrath;
 import com.lzxnone.terraria.client.item.magic.ClientLastPrism;
 import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
 import com.lzxnone.terraria.client.item.melee.ClientFirstFractal;
@@ -53,6 +54,7 @@ public class ClientStaticSummonRenderBehaviors {
         BEHAVIORS.put(StaticSummonBehaviors.DEVILS_DEVASTATION_MARK_LIGHTNING, ClientDevilsDevastation.SUMMON_BEHAVIOR4);
         BEHAVIORS.put(StaticSummonBehaviors.LAST_PRISM_TRI, ClientLastPrism.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.LAST_PRISM_BEAM, ClientLastPrism.SUMMON_BEHAVIOR2);
+        BEHAVIORS.put(StaticSummonBehaviors.BETSY_WRATH, ClientBetsysWrath.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.TERRAPRISMA, ClientTerraprisma.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.POSSESSION, ClientWhip.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.POSSESSION_VISION, DEFAULT_BEHAVIOR);

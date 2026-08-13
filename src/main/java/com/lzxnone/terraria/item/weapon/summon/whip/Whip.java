@@ -15,6 +15,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -43,6 +44,12 @@ public abstract class Whip extends SummonWeapon {
     protected abstract String getRes(StaticSummon summon);
 
     protected abstract float getDamage();
+
+    @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = entity instanceof Player player ? DamageUtil.applyPlayerDamageEffects(player, getDamage()) : getDamage();
+        return applySummonDamageBonus(weaponStack, entity, damage);
+    }
 
     protected abstract int getLifetime();
 

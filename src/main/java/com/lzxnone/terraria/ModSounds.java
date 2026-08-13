@@ -19,6 +19,26 @@ public class ModSounds {
             SOUND_EVENTS.register("beam2",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "beam2")));
+    public static final Supplier<SoundEvent> BETSYS_FIREBALL_SHOOT =
+            SOUND_EVENTS.register("betsys_fireball_shoot",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "betsys_fireball_shoot")));
+    public static final Supplier<SoundEvent> BETSYS_FIREBALL_COLLIDE =
+            SOUND_EVENTS.register("betsys_fireball_collide",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "betsys_fireball_collide")));
+    public static final Supplier<SoundEvent> MAGIC_SHOOT =
+            SOUND_EVENTS.register("magic_shoot",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "magic_shoot")));
+    public static final Supplier<SoundEvent> BUBBLE =
+            SOUND_EVENTS.register("bubble",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "bubble")));
+    public static final Supplier<SoundEvent> BUBBLE_BREAK =
+            SOUND_EVENTS.register("bubble_break",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "bubble_break")));
     public static final Supplier<SoundEvent> MAX_MANA =
             SOUND_EVENTS.register("max_mana",
                     () -> SoundEvent.createVariableRangeEvent(

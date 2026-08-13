@@ -25,6 +25,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
@@ -88,6 +89,19 @@ public class StardustDragonStaff extends MinionWeapon {
         Component.translatable("item.lzxnoneterraria.stardust_dragon_staff"),
         CONFIG_DATA
     );
+
+    @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        int stardustDragonSlotCount = 0;
+        if(entity instanceof Player player) {
+            for(PlayerSummon.SummonSlot slot : player.getData(ModAttachments.PLAYER_SUMMON).getMinionSlots()) {
+                if(slot.getId().equals(StaticSummonBehaviors.STARDUST_DRAGON_STAFF)) stardustDragonSlotCount++;
+            }
+        }
+        float damage = DAMAGE.get() + ADD_DAMAGE.get() * Math.max(0, stardustDragonSlotCount - 1);
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        return applySummonDamageBonus(weaponStack, entity, damage);
+    }
 
     public static final DustParticleOptions PARTICLE = new DustParticleOptions(
         0.1f, 0.5f, 40, true, new Vector3f[]{

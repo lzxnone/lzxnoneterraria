@@ -24,6 +24,8 @@ public class ModEffects {
             MOB_EFFECTS.register("cursed_inferno", CursedInfernoEffect::new);
     public static final DeferredHolder<MobEffect, IchorEffect> ICHOR =
             MOB_EFFECTS.register("ichor", IchorEffect::new);
+    public static final DeferredHolder<MobEffect, BetsysCurseEffect> BETSYS_CURSE =
+            MOB_EFFECTS.register("betsys_curse", BetsysCurseEffect::new);
     public static final DeferredHolder<MobEffect, AcidVenomEffect> ACID_VENOM =
             MOB_EFFECTS.register("acid_venom", AcidVenomEffect::new);
     public static final DeferredHolder<MobEffect, SummonEffect> SUMMON =

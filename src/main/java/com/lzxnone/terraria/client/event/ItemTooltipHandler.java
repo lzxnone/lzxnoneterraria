@@ -1,6 +1,9 @@
 package com.lzxnone.terraria.client.event;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.item.weapon.MagicWeapon;
+import com.lzxnone.terraria.item.weapon.RangedWeapon;
+import com.lzxnone.terraria.item.weapon.SummonWeapon;
 import com.lzxnone.terraria.item.weapon.summon.minion.MinionWeapon;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
@@ -26,6 +29,9 @@ public class ItemTooltipHandler {
     public static void onItemTooltip(ItemTooltipEvent event) {
         addEnchantedBookTooltip(event);
         addMinionWeaponTooltip(event);
+        addRangedWeaponTooltip(event);
+        addSummonWeaponTooltip(event);
+        addMagicWeaponTooltip(event);
     }
 
     private static void addEnchantedBookTooltip(ItemTooltipEvent event) {
@@ -63,6 +69,60 @@ public class ItemTooltipHandler {
                     event.getToolTip().add(
                         Component.translatable("tooltip.lzxnoneterraria.minion_weapon_minion_count", count)
                             .withStyle(ChatFormatting.GREEN)
+                    );
+                }
+            }
+        }
+    }
+
+    private static void addMagicWeaponTooltip(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        if(stack.getItem() instanceof MagicWeapon magicWeapon) {
+            Player player = event.getEntity();
+            if(player != null) {
+                float damage = magicWeapon.getTooltipDamage(stack, player);
+                if(damage > 0.0F) {
+                    event.getToolTip().add(
+                        Component.translatable(
+                            "tooltip.lzxnoneterraria.magic_weapon_damage",
+                            damage == Math.rint(damage) ? String.valueOf((int) damage) : String.format("%.2f", damage)
+                        ).withStyle(ChatFormatting.RED)
+                    );
+                }
+            }
+        }
+    }
+
+    private static void addRangedWeaponTooltip(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        if(stack.getItem() instanceof RangedWeapon rangedWeapon) {
+            Player player = event.getEntity();
+            if(player != null) {
+                float damage = rangedWeapon.getTooltipDamage(stack, player);
+                if(damage > 0.0F) {
+                    event.getToolTip().add(
+                        Component.translatable(
+                            "tooltip.lzxnoneterraria.ranged_weapon_damage",
+                            damage == Math.rint(damage) ? String.valueOf((int) damage) : String.format("%.2f", damage)
+                        ).withStyle(ChatFormatting.RED)
+                    );
+                }
+            }
+        }
+    }
+
+    private static void addSummonWeaponTooltip(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        if(stack.getItem() instanceof SummonWeapon summonWeapon) {
+            Player player = event.getEntity();
+            if(player != null) {
+                float damage = summonWeapon.getTooltipDamage(stack, player);
+                if(damage > 0.0F) {
+                    event.getToolTip().add(
+                        Component.translatable(
+                            "tooltip.lzxnoneterraria.summon_weapon_damage",
+                            damage == Math.rint(damage) ? String.valueOf((int) damage) : String.format("%.2f", damage)
+                        ).withStyle(ChatFormatting.RED)
                     );
                 }
             }

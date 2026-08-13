@@ -2,9 +2,10 @@ package com.lzxnone.terraria.particle;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.particles.SimpleParticleType;
 
-public class DevilsDevastationRuneParticle extends EmissiveBloomParticle {
+public class DevilsDevastationRuneParticle extends TextureSheetParticle {
     private final float baseSize;
 
     protected DevilsDevastationRuneParticle(ClientLevel level, double x, double y, double z,
@@ -47,6 +48,16 @@ public class DevilsDevastationRuneParticle extends EmissiveBloomParticle {
 
         this.quadSize = this.baseSize * (1.0F - lifeRatio);
         this.alpha = 1.0F - lifeRatio;
+    }
+
+    @Override
+    public int getLightColor(float partialTick) {
+        return LightTexture.FULL_BRIGHT;
+    }
+
+    @Override
+    public ParticleRenderType getRenderType() {
+        return ModParticleRenderTypes.EMISSIVE_BLOOM_PARTICLE;
     }
 
     public static class Provider implements ParticleProvider<SimpleParticleType> {

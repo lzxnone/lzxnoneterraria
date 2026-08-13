@@ -84,6 +84,9 @@ public class LzxnoneTerrariaClient {
             event.registerSpriteSet(ModParticles.SOLAR_EXPLOSION_PARTICLE.get(), SolarExplosionParticle.Provider::new);
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpriteSet(ModParticles.LUNAR_FLARE_EXPLOSION_PARTICLE.get(), LunarFlareExplosionParticle.Provider::new);
+        });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
             event.registerSpriteSet(ModParticles.CRYSTAL_FRAGMENT_PARTICLE.get(), CrystalFragmentParticle.Provider::new);
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {

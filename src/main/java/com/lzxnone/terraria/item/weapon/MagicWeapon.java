@@ -1,24 +1,32 @@
 package com.lzxnone.terraria.item.weapon;
 
-import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.attachment.PlayerMana;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
-import com.lzxnone.terraria.event.PlayerManaSyncEventHandler;
 import com.lzxnone.terraria.effect.ManaSicknessEffect;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.effect.AutoManaPotionUser;
 import com.lzxnone.terraria.item.effect.MagicDamageModifier;
 import com.lzxnone.terraria.item.effect.ManaCostModifier;
-import com.lzxnone.terraria.item.effect.SummonDamageModifier;
 import com.lzxnone.terraria.item.potion.AbstractManaPotion;
+import com.lzxnone.terraria.utils.DamageUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.NonNull;
+
+import java.util.List;
 
 public class MagicWeapon extends Weapon {
     public MagicWeapon(Tier tier, Properties properties) {
@@ -26,27 +34,102 @@ public class MagicWeapon extends Weapon {
     }
 
     @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if(player.getCooldowns().isOnCooldown(stack.getItem())) return InteractionResultHolder.fail(stack);
+        player.startUsingItem(hand);
+
+        if(level.isClientSide()) return InteractionResultHolder.consume(stack);
+        if(!tryShoot(level, player, hand, stack)) return InteractionResultHolder.fail(stack);
+        player.getCooldowns().addCooldown(stack.getItem(), Math.max(1, getUseTime(stack, player) / 3));
+        return InteractionResultHolder.consume(stack);
+    }
+
+    public boolean shouldShootThisTick(ItemStack weaponStack, LivingEntity entity, int remainingUseTicks) {
+        int useTime = Math.max(1, getUseTime(weaponStack, entity));
+        int elapsedMinecraftTicks = getUseDuration(weaponStack, entity) - remainingUseTicks;
+        if(elapsedMinecraftTicks <= 0) return false;
+
+        int currentShot = elapsedMinecraftTicks * 3 / useTime;
+        int previousShot = (elapsedMinecraftTicks - 1) * 3 / useTime;
+        return currentShot > previousShot;
+    }
+
+    @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int count) {
-        if(!canUseMagic(stack, entity)) {
-            entity.stopUsingItem();
-            return;
-        }
+        if(level.isClientSide()) return;
+        if(!(entity instanceof Player player)) return;
+        if(!shouldShootThisTick(stack, entity, count)) return;
 
-        if(!level.isClientSide()) {
-            if(!tryConsumeMana(level, entity, stack, getFinalManaConsumeRate(stack, entity))) {
-                entity.stopUsingItem();
-                return;
-            }
+        if(!tryShoot(level, player, player.getUsedItemHand(), stack)) {
+            player.stopUsingItem();
         }
+    }
 
-        onMagicUseTick(level, entity, stack, count);
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return 72000;
+    }
+
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = entity instanceof Player player ? DamageUtil.applyPlayerDamageEffects(player, 0.0F) : 0.0F;
+        return applyMagicDamageBonus(weaponStack, entity, damage);
+    }
+
+    @Override
+    public @NonNull UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.BLOCK;
+    }
+
+    public int getUseTime(ItemStack weaponStack, LivingEntity entity) {
+        return 1;
+    }
+
+    public boolean tryShoot(Level level, Player player, InteractionHand hand, ItemStack weaponStack) {
+        double manaConsume = getFinalManaConsumeRate(weaponStack, player);
+        if(!tryConsumeMana(player, manaConsume)) return false;
+
+        shoot(level, player, hand, weaponStack);
+        return true;
+    }
+
+    //尝试消耗魔力
+    protected boolean tryConsumeMana(Player player, double amount) {
+        //创造模式
+        if(amount <= 0.0D || player.hasInfiniteMaterials()) return true;
+        if(!(player instanceof ServerPlayer serverPlayer)) return false;
+        //直接消耗
+        if(PlayerMana.consumeMana(serverPlayer, amount)) return true;
+
+        //自动喝药
+        PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
+        double targetMana = Math.max(1.0D, Math.floor(mana.getConsumeProgress() + amount));
+        if(!tryAutoUseManaPotionToReachTarget(player, targetMana)) return false;
+        return PlayerMana.consumeMana(serverPlayer, amount);
     }
 
     //使用魔法武器时
-    protected void onMagicUseTick(Level level, LivingEntity entity, ItemStack stack, int count) {}
+    protected void shoot(Level level, Player player, InteractionHand hand, ItemStack stack) {}
 
     //提供基础魔力消耗
     protected double getManaConsumeRate(ItemStack stack, LivingEntity entity) { return 0.0D; }
+
+    protected double getManaTooltipValue(ItemStack stack) {
+        return getManaConsumeRate(stack, null);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context,
+                                List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        double mana = getManaTooltipValue(stack);
+        if(mana > 0.0D) {
+            tooltipComponents.add(Component.translatable(
+                "tooltip.lzxnoneterraria.magic_weapon_mana",
+                mana == Math.rint(mana) ? String.valueOf((int) mana) : String.format("%.2f", mana)
+            ).withStyle(ChatFormatting.BLUE));
+        }
+    }
 
     //获取最终魔力消耗
     protected double getFinalManaConsumeRate(ItemStack stack, LivingEntity entity) {
@@ -87,61 +170,65 @@ public class MagicWeapon extends Weapon {
         return (float) Math.max(0.0D, finalDamage);
     }
 
-    //是否可以继续使用魔法武器
-    protected boolean canUseMagic(ItemStack stack, LivingEntity entity) {
-        if(entity.hasInfiniteMaterials()) return true;
-        if(entity instanceof Player player) {
-            if(player.getData(ModAttachments.PLAYER_MANA).hasMana()) return true;
-            if(player instanceof ServerPlayer serverPlayer) return tryAutoUseManaPotion(serverPlayer);
-            return canAutoUseManaPotion(player) && findManaPotionSlot(player) >= 0;
-        }
-        return false;
-    }
-
-    //进行魔力消耗
-    protected boolean tryConsumeMana(Level level, LivingEntity entity, ItemStack stack, double amount) {
-        if(amount <= 0.0D || entity.hasInfiniteMaterials()) return true;
-        if(!(entity instanceof ServerPlayer player)) return true;
-
+    protected static boolean tryAutoUseManaPotionToReachTarget(Player player, double targetMana) {
         PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
-        int oldMana = mana.getMana();
-        boolean canContinue = mana.consumeMana(amount);
-        mana.applyRecoverDelay();
-        player.setData(ModAttachments.PLAYER_MANA, mana);
-        if(mana.getMana() != oldMana) {
-            PlayerManaSyncEventHandler.sync(player);
-        }
-        if(canContinue) return true;
-        return tryAutoUseManaPotion(player);
-    }
+        if(targetMana <= 0.0D || mana.getMana() >= targetMana) return true;
+        if(mana.getMaxMana() < targetMana) return false;
 
-    private static int findManaPotionSlot(Player player) {
-        for(int i = 0; i < player.getInventory().getContainerSize(); i++) {
-            ItemStack stack = player.getInventory().getItem(i);
-            if(stack.getItem() instanceof AbstractManaPotion potion) {
-                if(potion.getRecoverAmount() > 0) return i;
-            }
-        }
-        return -1;
-    }
-
-    private static boolean canAutoUseManaPotion(LivingEntity entity) {
         boolean[] result = {false};
-        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
-            if(accessory instanceof AutoManaPotionUser autoUser && autoUser.canAutoUseManaPotion(stack, entity)) {
+        AccessoryUtil.forEachAccessory(player, (accessory, stack) -> {
+            if(accessory instanceof AutoManaPotionUser autoUser && autoUser.canAutoUseManaPotion(stack, player)) {
                 result[0] = true;
             }
         });
-        return result[0];
-    }
+        if(!result[0]) return false;
 
-    private static boolean tryAutoUseManaPotion(ServerPlayer player) {
-        if(!canAutoUseManaPotion(player)) return false;
-        int slot = findManaPotionSlot(player);
-        if(slot < 0) return false;
-        ItemStack stack = player.getInventory().getItem(slot);
-        if(!(stack.getItem() instanceof AbstractManaPotion potion)) return false;
-        return potion.tryDrink(player, stack);
+        if(!(player instanceof ServerPlayer serverPlayer)) {
+            int simulatedMana = mana.getMana();
+            for(int i = 0; i < player.getInventory().getContainerSize() && simulatedMana < targetMana; i++) {
+                ItemStack stack = player.getInventory().getItem(i);
+                if(!(stack.getItem() instanceof AbstractManaPotion potion)) continue;
+                int recoverAmount = potion.getRecoverAmount();
+                if(recoverAmount <= 0) continue;
+                for(int j = 0; j < stack.getCount() && simulatedMana < targetMana; j++) {
+                    simulatedMana = Math.min(mana.getMaxMana(), simulatedMana + recoverAmount);
+                }
+            }
+            return simulatedMana >= targetMana;
+        }
+
+        while(serverPlayer.getData(ModAttachments.PLAYER_MANA).getMana() < targetMana) {
+            mana = serverPlayer.getData(ModAttachments.PLAYER_MANA);
+            int bestSlot = -1;
+            int bestRecoverAmount = 0;
+            int smallestSufficientRecoverAmount = Integer.MAX_VALUE;
+            for(int i = 0; i < serverPlayer.getInventory().getContainerSize(); i++) {
+                ItemStack stack = serverPlayer.getInventory().getItem(i);
+                if(!(stack.getItem() instanceof AbstractManaPotion potion)) continue;
+                int recoverAmount = potion.getRecoverAmount();
+                if(recoverAmount <= 0) continue;
+                int manaAfterDrink = Math.min(mana.getMaxMana(), mana.getMana() + recoverAmount);
+                if(manaAfterDrink <= mana.getMana()) continue;
+                if(manaAfterDrink >= targetMana) {
+                    if(recoverAmount < smallestSufficientRecoverAmount) {
+                        bestSlot = i;
+                        bestRecoverAmount = recoverAmount;
+                        smallestSufficientRecoverAmount = recoverAmount;
+                    }
+                }else if(smallestSufficientRecoverAmount == Integer.MAX_VALUE && recoverAmount > bestRecoverAmount) {
+                    bestSlot = i;
+                    bestRecoverAmount = recoverAmount;
+                }
+            }
+            if(bestSlot < 0) return false;
+
+            ItemStack stack = serverPlayer.getInventory().getItem(bestSlot);
+            if(!(stack.getItem() instanceof AbstractManaPotion potion)) return false;
+            int oldMana = mana.getMana();
+            if(!potion.tryDrink(serverPlayer, stack)) return false;
+            if(serverPlayer.getData(ModAttachments.PLAYER_MANA).getMana() <= oldMana) return false;
+        }
+        return true;
     }
 
 }

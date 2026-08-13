@@ -5,7 +5,6 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -141,11 +140,9 @@ public class DustParticle extends TextureSheetParticle {
             vertex.add(x, y, z);
 
             buffer.addVertex(vertex.x(), vertex.y(), vertex.z())
-                .setColor(this.rCol, this.gCol, this.bCol, this.alpha)
                 .setUv(uvs[i][0], uvs[i][1])
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(LightTexture.FULL_BRIGHT)
-                .setNormal(0.0F, 0.0F, 1.0F);
+                .setColor(this.rCol, this.gCol, this.bCol, this.alpha)
+                .setLight(LightTexture.FULL_BRIGHT);
         }
     }
 
@@ -156,7 +153,7 @@ public class DustParticle extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return glow ? ModParticleRenderTypes.EMISSIVE_BLOOM : ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+        return glow ? ModParticleRenderTypes.EMISSIVE_BLOOM_PARTICLE : ParticleRenderType.PARTICLE_SHEET_OPAQUE;
     }
 
     public static class Provider implements ParticleProvider<DustParticleOptions> {

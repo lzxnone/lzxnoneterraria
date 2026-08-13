@@ -179,4 +179,9 @@ public class CrystalBullet extends BulletAmmo {
         projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
         summon.level().addFreshEntity(projectile);
     }
+    @Override
+    public float getBaseDamage(ItemStack stack) {
+        return BASE_DAMAGE.get();
+    }
+
 }

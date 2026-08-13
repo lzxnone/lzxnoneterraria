@@ -128,6 +128,12 @@ public class SnowballCannon extends RangedWeapon {
     }
 
     @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = entity instanceof Player player ? DamageUtil.applyPlayerDamageEffects(player, DAMAGE.get()) : DAMAGE.get();
+        return applyRangedDamageBonus(weaponStack, entity, damage);
+    }
+
+    @Override
     protected void shoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
         SoundUtil.playClientSound(player, ModSounds.SHOT2.get());
         if(!level.isClientSide()) {

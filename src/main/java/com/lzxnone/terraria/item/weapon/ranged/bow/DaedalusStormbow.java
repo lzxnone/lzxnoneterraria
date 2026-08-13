@@ -6,6 +6,7 @@ import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
+import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
 import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.MathUtil;
@@ -24,25 +25,24 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public class DaedalusStormbow extends Bow {
-    public static final String ID = "daedalus_stormbow";
     public static final int USE_TIME = 19;
     public static final int ARROW_COUNT = 3;
-    public static final double RANGE = 64.0D;
     public static final double SPAWN_HEIGHT = 20.0D;
     public static final double SPAWN_OFFSET = 6.0D;
     public static final double HIT_OFFSET = 2D;
 
     public static final ConfigFloat DAMAGE = new ConfigFloat("weapon.daedalus_stormbow.damage", "daedalus_stormbow_damage", 4.0F, 0.0F, 8388600.0F);
+    public static final ConfigDouble RANGE = new ConfigDouble("weapon.daedalus_stormbow.range", "daedalus_stormbow_range", 64.0D, 0.0D, 1024.0D);
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigStruct.loadAll(DAMAGE);
+            ConfigStruct.loadAll(DAMAGE, RANGE);
         }
     };
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
-            ID,
-            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/" + ID + ".png"),
-            Component.translatable("item.lzxnoneterraria." + ID),
+            "daedalus_stormbow",
+            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "textures/item/daedalus_stormbow.png"),
+            Component.translatable("item.lzxnoneterraria.daedalus_stormbow"),
             CONFIG_DATA
     );
 
@@ -77,7 +77,7 @@ public class DaedalusStormbow extends Bow {
 
         for(int i = 0; i < ARROW_COUNT; i++) {
             StaticSummon summon = createArrowSummon(level, player, hand, weaponStack);
-            Vec3 targetPos = MathUtil.getCrosshairPos(player, level, RANGE);
+            Vec3 targetPos = MathUtil.getCrosshairPos(player, level, RANGE.get());
             Vec3 spawnPos = targetPos.add(
                     (level.random.nextDouble() * 2.0D - 1.0D) * SPAWN_OFFSET,
                     SPAWN_HEIGHT + i * 1.5D,

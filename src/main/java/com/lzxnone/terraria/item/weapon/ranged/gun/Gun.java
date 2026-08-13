@@ -6,15 +6,16 @@ import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.ModItemTags;
+import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.RangedWeapon;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.AmmoUtil;
+import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.MathUtil;
 import com.lzxnone.terraria.utils.SoundUtil;
-import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -22,15 +23,11 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
-
-import java.util.List;
 
 public class Gun extends RangedWeapon {
     private static final float DAMAGE_MIN = 0.0f;
@@ -115,6 +112,21 @@ public class Gun extends RangedWeapon {
 
     protected float getDamage(ItemStack stack, Player player) {
         return 0.0f;
+    }
+
+    @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        Player player = entity instanceof Player playerEntity ? playerEntity : null;
+        ItemStack ammoStack = getTooltipAmmoStack(weaponStack, entity);
+        float damage = getDamage(weaponStack, player) + getAmmoBaseDamage(ammoStack);
+        if(player != null) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        return applyRangedDamageBonus(weaponStack, entity, damage);
+    }
+
+    protected ItemStack getTooltipAmmoStack(ItemStack weaponStack, LivingEntity entity) {
+        ItemStack ammoStack = getAmmoStack(weaponStack);
+        if(ammoStack.is(ModItems.ENDLESS_MUSKET_POUCH.get())) return ModItems.MUSKET_BALL.get().getDefaultInstance();
+        return ammoStack;
     }
 
     protected float getAmmoNotConsumeChance(ItemStack stack, LivingEntity entity) {
@@ -220,15 +232,5 @@ public class Gun extends RangedWeapon {
         }
     }
 
-    @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context,
-                                List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if(stack.is(ModItemTags.SPREAD_RANGED_WEAPONS)) {
-            tooltipComponents.add(Component.translatable(
-                "tooltip.lzxnoneterraria.spread_ranged_weapon"
-            ).withStyle(ChatFormatting.GRAY));
-        }
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-    }
 }
 

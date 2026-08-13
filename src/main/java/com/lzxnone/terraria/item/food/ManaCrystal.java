@@ -3,7 +3,6 @@ package com.lzxnone.terraria.item.food;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.attachment.PlayerMana;
-import com.lzxnone.terraria.event.PlayerManaSyncEventHandler;
 import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -33,14 +32,13 @@ public class ManaCrystal extends Food {
 
     @Override
     protected boolean onEat(Level level, Player player, ItemStack stack) {
+        if(!(player instanceof ServerPlayer serverPlayer)) return false;
         PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
-        if(mana.increaseBaseMaxMana(MANA_INCREASE) <= 0) return false;
+        int baseMaxMana = mana.getBaseMaxMana();
+        if(baseMaxMana >= PlayerMana.MAX_BASE_MANA) return false;
+        if(!PlayerMana.setBaseMaxMana(serverPlayer, Math.min(baseMaxMana + MANA_INCREASE, PlayerMana.MAX_BASE_MANA))) return false;
 
-        player.setData(ModAttachments.PLAYER_MANA, mana);
-        if(player instanceof ServerPlayer serverPlayer) {
-            PlayerManaSyncEventHandler.sync(serverPlayer);
-            SoundUtil.playServerSound(player, ModSounds.GET_MANA.get(), 0.5f, 1.0f);
-        }
+        player.playNotifySound(ModSounds.GET_MANA.get(), SoundSource.PLAYERS, 4.0F, 1.0F);
         return true;
     }
 

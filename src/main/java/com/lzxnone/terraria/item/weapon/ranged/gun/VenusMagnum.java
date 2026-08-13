@@ -53,6 +53,11 @@ public class VenusMagnum extends Gun {
 
     @Override
     protected ItemStack getBulletAmmoStack(Level level, Player player, InteractionHand hand, ItemStack weaponStack) {
+        return getTooltipAmmoStack(weaponStack, player);
+    }
+
+    @Override
+    protected ItemStack getTooltipAmmoStack(ItemStack weaponStack, LivingEntity entity) {
         ItemStack ammoStack = RangedWeapon.getAmmoStack(weaponStack);
         if(ammoStack.is(ModItems.MUSKET_BALL.get()) || ammoStack.is(ModItems.TUNGSTEN_BULLET.get()) || ammoStack.is(ModItems.ENDLESS_MUSKET_POUCH.get())) {
             return ModItems.HIGH_VELOCITY_BULLET.get().getDefaultInstance();

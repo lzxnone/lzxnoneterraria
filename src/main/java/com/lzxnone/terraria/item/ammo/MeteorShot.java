@@ -129,4 +129,9 @@ public class MeteorShot extends BulletAmmo {
         summon.setYRot(xyRot[1]);
         summon.yRotO = xyRot[1];
     }
+    @Override
+    public float getBaseDamage(ItemStack stack) {
+        return BASE_DAMAGE.get();
+    }
+
 }

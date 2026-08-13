@@ -53,6 +53,9 @@ public class ModCreativeModeTabs {
             .icon(() -> ModItems.LAST_PRISM.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 output.accept(ModItems.LAST_PRISM.get());
+                output.accept(ModItems.BETSY_WRATH.get());
+                output.accept(ModItems.LUNAR_FLARE.get());
+                output.accept(ModItems.BUBBLE_GUN.get());
                 output.accept(ModItems.MANA_CRYSTAL.get());
                 output.accept(ModItems.LESSER_MANA_POTION.get());
                 output.accept(ModItems.MANA_POTION.get());

@@ -6,6 +6,7 @@ import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.ModItemTags;
 import com.lzxnone.terraria.item.weapon.RangedWeapon;
 import com.lzxnone.terraria.utils.AmmoUtil;
+import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -67,6 +68,18 @@ public class Bow extends RangedWeapon {
 
     protected float getDamage(ItemStack weaponStack, LivingEntity entity, ItemStack ammoStack) {
         return 0;
+    }
+
+    @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        ItemStack ammoStack = getTooltipAmmoStack(weaponStack, entity);
+        float damage = getDamage(weaponStack, entity, ammoStack) + getAmmoBaseDamage(ammoStack);
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        return applyRangedDamageBonus(weaponStack, entity, damage);
+    }
+
+    protected ItemStack getTooltipAmmoStack(ItemStack weaponStack, LivingEntity entity) {
+        return getAmmoStack(weaponStack);
     }
 
     protected float getKnockbackScale(ItemStack weaponStack, LivingEntity entity, ItemStack ammoStack) {

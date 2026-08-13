@@ -16,6 +16,7 @@ public class ShaderRegistry {
     private static ShaderInstance blur;
     private static ShaderInstance composite;
     private static ShaderInstance outline;
+    private static ShaderInstance particleBloom;
 
     public static ShaderInstance getBlur() {
         return blur;
@@ -27,6 +28,10 @@ public class ShaderRegistry {
 
     public static ShaderInstance getOutline() {
         return outline;
+    }
+
+    public static ShaderInstance getParticleBloom() {
+        return particleBloom;
     }
 
     @SubscribeEvent
@@ -55,6 +60,14 @@ public class ShaderRegistry {
                     DefaultVertexFormat.POSITION_TEX
                 ),
                 shader -> outline = shader
+            );
+            event.registerShader(
+                new ShaderInstance(
+                    event.getResourceProvider(),
+                    ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "particle_bloom"),
+                    DefaultVertexFormat.PARTICLE
+                ),
+                shader -> particleBloom = shader
             );
         } catch (IOException e) {
             throw new RuntimeException("Shader load error", e);

@@ -254,4 +254,9 @@ public class ChlorophyteBullet extends BulletAmmo {
         summon.xRotO = xyRot[0];
         summon.yRotO = xyRot[1];
     }
+    @Override
+    public float getBaseDamage(ItemStack stack) {
+        return BASE_DAMAGE.get();
+    }
+
 }

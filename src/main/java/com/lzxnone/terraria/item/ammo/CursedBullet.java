@@ -100,4 +100,9 @@ public class CursedBullet extends BulletAmmo {
             summon.setPos(end);
         }
     };
+    @Override
+    public float getBaseDamage(ItemStack stack) {
+        return BASE_DAMAGE.get();
+    }
+
 }

@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/book",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/lunar_flare"
+  }
+}

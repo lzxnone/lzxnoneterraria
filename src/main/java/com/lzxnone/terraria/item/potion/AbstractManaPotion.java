@@ -3,7 +3,6 @@ package com.lzxnone.terraria.item.potion;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.attachment.PlayerMana;
 import com.lzxnone.terraria.effect.ManaSicknessEffect;
-import com.lzxnone.terraria.event.PlayerManaSyncEventHandler;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -20,14 +19,9 @@ public abstract class AbstractManaPotion extends Potion {
 
     @Override
     protected boolean onDrink(ServerPlayer player, ItemStack stack) {
-        PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
-        int oldMana = mana.getMana();
-        if(!mana.recoverManaImmediately(getRecoverAmount())) return false;
+        if(!PlayerMana.recoverMana(player, getRecoverAmount())) return false;
 
         ManaSicknessEffect.applyTo(player);
-        player.setData(ModAttachments.PLAYER_MANA, mana);
-        PlayerManaSyncEventHandler.playMaxManaSoundIfRecovered(player, oldMana, mana);
-        PlayerManaSyncEventHandler.sync(player);
         return true;
     }
 

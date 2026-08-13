@@ -107,4 +107,9 @@ public class HighVelocityBullet extends BulletAmmo {
         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
         return hit;
     }
+    @Override
+    public float getBaseDamage(ItemStack stack) {
+        return BASE_DAMAGE.get();
+    }
+
 }

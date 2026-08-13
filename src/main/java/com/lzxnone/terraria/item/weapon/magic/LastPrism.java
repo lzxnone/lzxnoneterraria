@@ -2,13 +2,13 @@ package com.lzxnone.terraria.item.weapon.magic;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
+import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.MagicWeapon;
-import com.lzxnone.terraria.item.weapon.melee.Mace;
 import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
@@ -20,12 +20,11 @@ import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
 import com.lzxnone.terraria.utils.ParticleUtil;
-import com.lzxnone.terraria.utils.SoundUtil;
-import com.mojang.math.Axis;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -38,7 +37,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Tiers;
-import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -47,7 +45,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,7 +85,7 @@ public class LastPrism extends MagicWeapon {
         "last_prism_mana_consume_rate",
         144,
         0,
-        72000
+        10000
     );
     public LastPrism() {
         super(
@@ -119,13 +116,24 @@ public class LastPrism extends MagicWeapon {
     }
 
     @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = entity instanceof Player player ? DamageUtil.applyPlayerDamageEffects(player, DAMAGE.get()) : DAMAGE.get();
+        return applyMagicDamageBonus(weaponStack, entity, damage);
+    }
+
+    @Override
     protected double getManaConsumeRate(ItemStack stack, LivingEntity entity) {
         long startGameTime = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
             .copyTag()
             .getLong(USE_START_GAME_TIME_KEY);
         long elapsedTime = Math.max(0L, entity.level().getGameTime() - startGameTime);
-        double useRatio = Mth.clamp(elapsedTime / (double)MAX_USE_TIME.get(), 0.0D, 1.0D);
-        return MANA_CONSUME_RATE.get() * useRatio;
+        double useRatio = Mth.clamp(elapsedTime / (double)CHARGE_TIME.get(), 0.0D, 1.0D);
+        return MANA_CONSUME_RATE.get() * useRatio / 20.0D;
+    }
+
+    @Override
+    protected double getManaTooltipValue(ItemStack stack) {
+        return MANA_CONSUME_RATE.get();
     }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(
@@ -310,9 +318,11 @@ public class LastPrism extends MagicWeapon {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if(!canUseMagic(stack, player)) return InteractionResultHolder.fail(stack);
+        player.startUsingItem(hand);
+        if(level.isClientSide()) return InteractionResultHolder.consume(stack);
+        if(!canStartUsingPrism(player)) return InteractionResultHolder.fail(stack);
 
-        if(stack.is(ModItems.LAST_PRISM.get()) && !player.level().isClientSide()) {
+        if(stack.is(ModItems.LAST_PRISM.get())) {
             CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putLong(USE_START_GAME_TIME_KEY, level.getGameTime()));
             Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
 
@@ -359,28 +369,25 @@ public class LastPrism extends MagicWeapon {
 
                 level.addFreshEntity(beam);
             }
-
-            player.startUsingItem(hand);
-            return InteractionResultHolder.consume(stack);
         }
-        return InteractionResultHolder.pass(stack);
+        return InteractionResultHolder.consume(stack);
     }
 
     @Override
-    public @NonNull UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.BLOCK;
-    }
-
-    @Override
-    protected void onMagicUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int count) {
-        if(!(livingEntity instanceof Player player)) return;
-        if(player.tickCount % 10 == 0) {
-            SoundUtil.playClientSound(player, ModSounds.BEAM2.get());
+    public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int count) {
+        if(level.isClientSide()) return;
+        if(!(entity instanceof Player player)) return;
+        if(entity.tickCount % 10 == 0) {
+            player.playNotifySound(ModSounds.BEAM2.get(), SoundSource.PLAYERS, 4.0F, 1.0F);
+        }
+        if(!tryConsumeMana(player, getFinalManaConsumeRate(stack, player))) {
+            player.stopUsingItem();
         }
     }
 
-    @Override
-    public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        return 72000;
+    private boolean canStartUsingPrism(Player player) {
+        if(player.hasInfiniteMaterials()) return true;
+        if(player.getData(ModAttachments.PLAYER_MANA).getMana() > 0) return true;
+        return tryAutoUseManaPotionToReachTarget(player, 1.0D);
     }
 }

@@ -7,6 +7,7 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -16,6 +17,10 @@ public class Ammo extends Item {
 
     public Ammo() {
         super(new Item.Properties().stacksTo(MAX_STACK_SIZE));
+    }
+
+    public float getBaseDamage(ItemStack stack) {
+        return 0.0F;
     }
 
     public static void playBlockHitEffects(ServerLevel level, BlockHitResult blockHitResult) {
