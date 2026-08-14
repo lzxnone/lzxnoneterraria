@@ -123,8 +123,7 @@ public class StarWrath extends MeleeWeapon {
                 Entity target = result.getEntity();
                 Entity owner = projectile.getOwner();
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) DAMAGE.get(), 0.2f)) {
-                    target.invulnerableTime = 2;
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) DAMAGE.get(), 0.2f, 2)) {
                 }
             }
         }

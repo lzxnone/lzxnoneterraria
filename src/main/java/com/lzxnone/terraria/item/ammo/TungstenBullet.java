@@ -72,8 +72,7 @@ public class TungstenBullet extends BulletAmmo {
 
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 Entity target = targets.getFirst();
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, BASE_DAMAGE.get() + damage, knockbackScale)) {
-                    target.invulnerableTime = invulnerableTime;
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, BASE_DAMAGE.get() + damage, knockbackScale, invulnerableTime)) {
                     this.onDied(summon);
                     return;
                 }

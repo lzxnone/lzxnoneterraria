@@ -6,6 +6,7 @@ import com.lzxnone.terraria.item.normal.ManaStar;
 import com.lzxnone.terraria.item.weapon.magic.BetsyWrath;
 import com.lzxnone.terraria.item.weapon.magic.BubbleGun;
 import com.lzxnone.terraria.item.weapon.magic.LunarFlare;
+import com.lzxnone.terraria.item.weapon.magic.NebulaBlaze;
 import com.lzxnone.terraria.item.weapon.ranged.ElfMelter;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.*;
@@ -52,6 +53,8 @@ public class StaticSummonBehaviors {
     public static final String BETSY_WRATH = "betsys_wrath";
     public static final String LUNAR_FLARE = "lunar_flare";
     public static final String BUBBLE = "bubble";
+    public static final String NEBULA_BLAZE = "nebula_blaze";
+    public static final String NEBULA_BLAZE_EXPLOSIVE = "nebula_blaze_explosive";
     public static final String TERRAPRISMA = "terraprisma";
     public static final String STARDUST_DRAGON_STAFF = "stardust_dragon_staff";
     public static final String POSSESSION = "possession";
@@ -109,6 +112,8 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(BETSY_WRATH, BetsyWrath.SUMMON_BEHAVIOR);
         BEHAVIORS.put(LUNAR_FLARE, LunarFlare.SUMMON_BEHAVIOR);
         BEHAVIORS.put(BUBBLE, BubbleGun.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(NEBULA_BLAZE, NebulaBlaze.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(NEBULA_BLAZE_EXPLOSIVE, NebulaBlaze.SUMMON_BEHAVIOR2);
         BEHAVIORS.put(TERRAPRISMA, Terraprisma.SUMMON_BEHAVIOR);
         BEHAVIORS.put(STARDUST_DRAGON_STAFF, StardustDragonStaff.SUMMON_BEHAVIOR);
         BEHAVIORS.put(POSSESSION, Whip.SUMMON_BEHAVIOR);

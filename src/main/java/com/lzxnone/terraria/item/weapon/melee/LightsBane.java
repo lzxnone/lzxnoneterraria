@@ -19,6 +19,7 @@ import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.ParticleUtil;
+import com.lzxnone.terraria.utils.SearchUtil;
 import com.mojang.math.Axis;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -34,7 +35,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import org.joml.Vector3f;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class LightsBane extends MeleeWeapon {
@@ -141,7 +141,7 @@ public class LightsBane extends MeleeWeapon {
                 List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                 for(Entity target : targets) {
                     float damage = customData.contains("big") && customData.getBoolean("big") ? (float) BIG_DAMAGE.get() : (float) SMALL_DAMAGE.get();
-                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), damage, 1.0f)) {
+                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), damage, 1.0f, -1)) {
 
                     }
                 }
@@ -166,9 +166,8 @@ public class LightsBane extends MeleeWeapon {
                             pos.x - targetRange, pos.y - targetRange, pos.z - targetRange,
                             pos.x + targetRange, pos.y + targetRange, pos.z + targetRange
                         );
-                        List<Entity> entities = CollisionUtil.searchEnemies(target.level(), searchBox, player, player);
+                        List<Entity> entities = SearchUtil.searchNearestEnemies(player, player, searchBox, 1);
                         Entity summonTarget = null;
-                        entities.sort(Comparator.comparingDouble(e -> e.distanceToSqr(pos)));
                         if(!entities.isEmpty()) summonTarget = entities.getFirst();
                         if(summonTarget != null) {
                             StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), player.level());

@@ -18,6 +18,7 @@ import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
+import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
 import com.lzxnone.terraria.utils.ParticleUtil;
 import com.lzxnone.terraria.utils.SoundUtil;
@@ -26,6 +27,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -33,11 +35,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
+
+import java.util.List;
 
 public class BubbleGun extends MagicWeapon {
     public static final Vector3f OFFSET = new Vector3f(-0.25F, -0.1F, 1.2F);
@@ -87,10 +91,15 @@ public class BubbleGun extends MagicWeapon {
 
             if(summon.level().isClientSide()) return;
 
-            EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, nextPos, HITBOX_INFLATE);
-            if(entityHitResult != null) {
-                if(DamageUtil.magicAttack(summon, entityHitResult.getEntity(), summon.getEntityData().get(StaticSummon.STACK_SOURCE), DAMAGE.get(), 0.2F)) {
-                    entityHitResult.getEntity().invulnerableTime = 5;
+            AABB hitBox = new AABB(summon.position(), nextPos).inflate(HITBOX_INFLATE);
+            List<Entity> targets = summon.level().getEntitiesOfClass(
+                Entity.class,
+                hitBox,
+                FilterUtil.createTargetFilter(summon, summon.getOwner())
+            );
+            if(!targets.isEmpty()) {
+                Entity target = targets.getFirst();
+                if(DamageUtil.magicAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), DAMAGE.get(), 0.2F, 5)) {
                 }
                 onDied(summon);
                 return;

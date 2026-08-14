@@ -127,7 +127,7 @@ public class BeeSummon extends Bee {
         if(owner == null) return false;
         boolean isHurt;
         if(owner instanceof Player) {
-            isHurt = DamageUtil.meleeAttack(this, target, stackSource, (float) damage, 1.0f);
+            isHurt = DamageUtil.meleeAttack(this, target, stackSource, (float) damage, 1.0f, -1);
         }else {
             DamageSource damageSource = this.damageSources().mobAttack(owner);
             isHurt = target.hurt(damageSource, (float) damage);

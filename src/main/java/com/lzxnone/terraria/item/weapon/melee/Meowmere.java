@@ -130,7 +130,7 @@ public class Meowmere extends MeleeWeapon {
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
                 if(summon.getOwner() instanceof Player player) {
-                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f)) {
+                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 2)) {
                         if(customData.contains("hitEntity") && customData.getInt("hitEntity") < 4) {
                             customData.putInt("hitEntity", customData.getInt("hitEntity") + 1);
                             summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
@@ -138,7 +138,6 @@ public class Meowmere extends MeleeWeapon {
                             onDied(summon);
                             return;
                         }
-                        target.invulnerableTime = 2;
                     }
                 }
                 return;

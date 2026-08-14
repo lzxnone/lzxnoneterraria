@@ -25,6 +25,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -161,14 +162,13 @@ public class LunarFlare extends MagicWeapon {
             double explosionRange = EXPLOSION_RANGE.get();
             if(explosionRange > 0.0D) {
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
-                for(LivingEntity target : serverLevel.getEntitiesOfClass(
-                    LivingEntity.class,
+                for(Entity target : serverLevel.getEntitiesOfClass(
+                    Entity.class,
                     AABB.ofSize(pos, explosionRange * 2.0D, explosionRange * 2.0D, explosionRange * 2.0D),
-                    FilterUtil.createLivingTargetFilter(summon, summon.getOwner())
+                    FilterUtil.createTargetFilter(summon, summon.getOwner())
                 )) {
                     if(target.distanceToSqr(pos) > explosionRange * explosionRange) continue;
-                    if(DamageUtil.magicAttack(summon, target, sourceStack, DAMAGE.get(), 0.4F)) {
-                        target.invulnerableTime = 10;
+                    if(DamageUtil.magicAttack(summon, target, sourceStack, DAMAGE.get(), 0.4F, 10)) {
                     }
                 }
             }

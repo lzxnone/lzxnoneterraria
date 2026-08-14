@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/sword",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/nebula_blaze"
+  }
+}

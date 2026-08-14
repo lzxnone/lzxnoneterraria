@@ -154,9 +154,7 @@ public class Possession extends Whip {
         public void onHitEntity(StaticProjectile projectile, EntityHitResult result) {
             if(!projectile.level().isClientSide()) {
                 Entity target = result.getEntity();
-                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), BEAM_DAMAGE.get(), 0)) {
-                    target.invulnerableTime = 5;
-                }
+                DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), BEAM_DAMAGE.get(), 0, 5);
             }
         }
     };

@@ -81,8 +81,7 @@ public class SilverBullet extends BulletAmmo {
                 if(target instanceof Piglin || target instanceof PiglinBrute || target instanceof ZombifiedPiglin) {
                     finalDamage *= PIGLIN_DAMAGE_MULTIPLIER.get();
                 }
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, finalDamage, knockbackScale)) {
-                    target.invulnerableTime = invulnerableTime;
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, finalDamage, knockbackScale, invulnerableTime)) {
                     this.onDied(summon);
                     return;
                 }

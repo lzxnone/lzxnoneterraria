@@ -164,8 +164,7 @@ public class Mace extends MeleeWeapon {
                         FilterUtil.createTargetFilter(projectile, player)
                     );
                     for(Entity target : targets) {
-                        if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) DAMAGE.get(), 1.0f)) {
-                            target.invulnerableTime = 15;
+                        if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 15)) {
                         }
                     }
                 }
@@ -276,8 +275,7 @@ public class Mace extends MeleeWeapon {
                     EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(summon.getDeltaMovement()), 1.0);
                     if(entityHitResult != null) {
                         Entity target = entityHitResult.getEntity();
-                        if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f)) {
-                            target.invulnerableTime = 10;
+                        if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 10)) {
                         }
                     }
                 }
@@ -295,7 +293,7 @@ public class Mace extends MeleeWeapon {
                     FilterUtil.createTargetFilter(summon, summon.getOwner())
                 );
                 for(Entity target : targets) {
-                    DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f);
+                    DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, -1);
                 }
             }else if(state == State.THROWING_BACK.ordinal()){
                 Vec3 moveDir = player.getEyePosition().subtract(summon.position());
@@ -326,8 +324,7 @@ public class Mace extends MeleeWeapon {
                 EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, summon.position().add(summon.getDeltaMovement()), 1.0);
                 if(entityHitResult != null) {
                     Entity target = entityHitResult.getEntity();
-                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f)) {
-                        target.invulnerableTime = 10;
+                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 10)) {
                     }
                 }
                 if(dist < 2.0f) {

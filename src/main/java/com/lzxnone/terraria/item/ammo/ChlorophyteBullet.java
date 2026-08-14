@@ -145,8 +145,7 @@ public class ChlorophyteBullet extends BulletAmmo {
 
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 Entity hitTarget = targets.getFirst();
-                if(DamageUtil.rangedAttack(summon, hitTarget, sourceStack, BASE_DAMAGE.get() + damage, knockbackScale)) {
-                    hitTarget.invulnerableTime = invulnerableTime;
+                if(DamageUtil.rangedAttack(summon, hitTarget, sourceStack, BASE_DAMAGE.get() + damage, knockbackScale, invulnerableTime)) {
                     this.onDied(summon);
                     return;
                 }
@@ -163,8 +162,7 @@ public class ChlorophyteBullet extends BulletAmmo {
     };
 
     private static Entity findTarget(StaticSummon summon) {
-        AABB searchBox = summon.getBoundingBox().inflate(TARGET_RANGE.get());
-        List<Entity> targets = CollisionUtil.searchEnemies(summon.level(), searchBox, summon, summon.getOwner());
+        List<Entity> targets = SearchUtil.searchEnemies(summon, summon.getOwner(), summon.getBoundingBox().inflate(TARGET_RANGE.get()));
         Entity bestTarget = null;
         double bestDistance = Double.MAX_VALUE;
         for(Entity target : targets) {

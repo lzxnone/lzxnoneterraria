@@ -32,7 +32,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
 import org.joml.Vector3f;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class Seedler extends MeleeWeapon {
@@ -138,8 +137,7 @@ public class Seedler extends MeleeWeapon {
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
                 if(summon.getOwner() instanceof Player player) {
-                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) THORN_DAMAGE.get(), 1.0f)) {
-                        target.invulnerableTime = 2;
+                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) THORN_DAMAGE.get(), 1.0f, 2)) {
                     }
                 }
                 onDied(summon);
@@ -182,15 +180,8 @@ public class Seedler extends MeleeWeapon {
         @Override
         public void onDied(StaticSummon summon) {
             if(!summon.level().isClientSide()) {
-                List<Entity> targets = CollisionUtil.searchEnemies(
-                    summon.level(),
-                    AABB.ofSize(summon.position(), 64, 64, 64),
-                    summon,
-                    summon.getOwner()
-                );
-                targets.sort(Comparator.comparingDouble(e -> e.distanceToSqr(summon.position())));
-
                 int count = summon.getRandom().nextInt(4) + 4;
+                List<Entity> targets = SearchUtil.searchNearestEnemies(summon, summon.getOwner(), summon.getBoundingBox().inflate(32.0D), count);
                 for(int i = 0; i < count; i++) {
                     Vec3 tPos = i < targets.size() ? new Vec3(targets.get(i).getX(), targets.get(i).getEyeY(), targets.get(i).getZ()) : MathUtil.getRandomPosInRadius(summon.position(), 4);
                     Vec3 dir = new Vec3(tPos.x - summon.getX(), tPos.y - summon.getY(), tPos.z - summon.getZ()).normalize();
@@ -256,8 +247,7 @@ public class Seedler extends MeleeWeapon {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) THORN_DAMAGE.get(), 1.0f)) {
-                    target.invulnerableTime = 2;
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) THORN_DAMAGE.get(), 1.0f, 2)) {
                     onDied(projectile);
                 }
             }
@@ -304,4 +294,3 @@ public class Seedler extends MeleeWeapon {
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 }
-

@@ -80,8 +80,7 @@ public class MeteorShot extends BulletAmmo {
 
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 for(Entity target : targets) {
-                    if(DamageUtil.rangedAttack(summon, target, sourceStack, (BASE_DAMAGE.get() + damage), knockbackScale)) {
-                        target.invulnerableTime = invulnerableTime;
+                    if(DamageUtil.rangedAttack(summon, target, sourceStack, (BASE_DAMAGE.get() + damage), knockbackScale, invulnerableTime)) {
                         if(incrementHit(summon) >= MAX_HIT.get()) {
                             this.onDied(summon);
                             return;

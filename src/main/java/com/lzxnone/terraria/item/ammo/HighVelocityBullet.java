@@ -78,8 +78,7 @@ public class HighVelocityBullet extends BulletAmmo {
 
                 for(Entity target : targets) {
                     int hit = customData.getInt("hit");
-                    if(DamageUtil.rangedAttack(summon, target, sourceStack, (BASE_DAMAGE.get() + damage) * (float) Math.pow(DAMAGE_DECAY.get(), hit), knockbackScale)) {
-                        target.invulnerableTime = invulnerableTime;
+                    if(DamageUtil.rangedAttack(summon, target, sourceStack, (BASE_DAMAGE.get() + damage) * (float) Math.pow(DAMAGE_DECAY.get(), hit), knockbackScale, invulnerableTime)) {
                         if(incrementHit(summon) >= MAX_HIT.get()) {
                             this.onDied(summon);
                             return;

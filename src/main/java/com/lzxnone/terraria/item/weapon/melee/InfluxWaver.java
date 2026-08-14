@@ -37,7 +37,6 @@ import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
 import com.lzxnone.terraria.ui.config.struct.ConfigInt;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -204,8 +203,7 @@ public class InfluxWaver extends MeleeWeapon {
                         Entity target = customData.contains("target") ? summon.level().getEntity(customData.getInt("target")) : null;
                         if(target != null && !hitTarget.getUUID().equals(target.getUUID())) return;
                         if(summon.getOwner() instanceof Player player && FilterUtil.createTargetFilter(player).test(hitTarget)) {
-                            if(DamageUtil.meleeAttack(summon, hitTarget, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f)) {
-                                hitTarget.invulnerableTime = 2;
+                            if(DamageUtil.meleeAttack(summon, hitTarget, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 2)) {
                             }
                             customData.putBoolean("dead", false);
                             summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
@@ -271,15 +269,13 @@ public class InfluxWaver extends MeleeWeapon {
     }
 
     public static Entity search(Player player, Vec3 pos) {
+        double targetRange = TARGET_RANGE.get();
         AABB searchBox = new AABB(
-            pos.x - TARGET_RANGE.get(), pos.y - TARGET_RANGE.get(), pos.z - TARGET_RANGE.get(),
-            pos.x + TARGET_RANGE.get(), pos.y + TARGET_RANGE.get(), pos.z + TARGET_RANGE.get()
+            pos.x - targetRange, pos.y - targetRange, pos.z - targetRange,
+            pos.x + targetRange, pos.y + targetRange, pos.z + targetRange
         );
-        List<Entity> entities = CollisionUtil.searchEnemies(player.level(), searchBox, player, player);
-        Entity target = null;
-        entities.sort(Comparator.comparingDouble(e -> e.distanceToSqr(pos)));
-        if(!entities.isEmpty()) target = entities.getFirst();
-        return target;
+        List<Entity> entities = SearchUtil.searchNearestEnemies(player, player, searchBox, 1);
+        return entities.isEmpty() ? null : entities.getFirst();
     }
 
     @Override
@@ -301,4 +297,3 @@ public class InfluxWaver extends MeleeWeapon {
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 }
-

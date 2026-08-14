@@ -88,9 +88,8 @@ public class ExplodingBullet extends BulletAmmo {
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 boolean dead = false;
                 for(Entity target : targets) {
-                    if(DamageUtil.rangedAttack(summon, target, sourceStack, BASE_DAMAGE.get() + damage, knockbackScale * KNOCKBACK_MULTIPLIER.get())) {
+                    if(DamageUtil.rangedAttack(summon, target, sourceStack, BASE_DAMAGE.get() + damage, knockbackScale * KNOCKBACK_MULTIPLIER.get(), invulnerableTime)) {
                         dead = true;
-                        target.invulnerableTime = invulnerableTime;
                         SoundUtil.playServerSound(summon.level(), ModSounds.BOOM.get(), summon.position());
 
                     }

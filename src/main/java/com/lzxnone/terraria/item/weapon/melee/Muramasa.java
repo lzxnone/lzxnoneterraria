@@ -192,7 +192,7 @@ public class Muramasa extends MeleeWeapon {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) BEAM_DAMAGE.get(), 1.0f)) {
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) BEAM_DAMAGE.get(), 1.0f, -1)) {
 
                 }
             }

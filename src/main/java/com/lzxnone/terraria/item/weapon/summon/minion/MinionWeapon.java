@@ -11,8 +11,8 @@ import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.effect.MinionCountModifier;
 import com.lzxnone.terraria.item.effect.MinionKnockbackModifier;
 import com.lzxnone.terraria.item.weapon.SummonWeapon;
-import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.FilterUtil;
+import com.lzxnone.terraria.utils.SearchUtil;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -154,19 +154,10 @@ public class MinionWeapon extends SummonWeapon {
         if(playerRelatedTarget != null) return playerRelatedTarget;
 
         AABB searchBox = AABB.ofSize(summon.position(), range * 2.0D, range * 2.0D, range * 2.0D);
-        List<Entity> targets = ignoreBlockOcclusion ? CollisionUtil.searchEntities(
-            summon.level(),
-            searchBox,
-            summon,
-            player
-        ) : CollisionUtil.searchEnemies(
-            summon.level(),
-            searchBox,
-            summon,
-            player
-        );
+        List<Entity> targets = ignoreBlockOcclusion
+            ? SearchUtil.searchEntities(summon, player, searchBox)
+            : SearchUtil.searchEnemies(summon, player, searchBox);
         targets.removeIf(target -> !isValidSummonTarget(summon, player, target, range)
-            || (!ignoreBlockOcclusion && !isValidEnemySummonTarget(summon, player, target, range))
             || (!ignoreBlockOcclusion && !canPlayerSeeTarget(player, target)));
         targets.sort(Comparator.comparingDouble(target -> target.distanceToSqr(summon.position())));
         return targets.isEmpty() ? null : targets.getFirst();
@@ -199,7 +190,7 @@ public class MinionWeapon extends SummonWeapon {
             if(customData.contains("targetPart")) {
                 String targetPart = customData.getString("targetPart");
                 for(EnderDragonPart part : dragon.getSubEntities()) {
-                    if(part.name.equals(targetPart) && CollisionUtil.isEnemySearchTarget(part, summon, summon.getOwner())) {
+                    if(part.name.equals(targetPart) && isValidEnemyTarget(summon, summon.getOwner(), part)) {
                         return part;
                     }
                 }
@@ -207,7 +198,7 @@ public class MinionWeapon extends SummonWeapon {
 
             Entity owner = summon.getOwner();
             EnderDragonPart nearestPart = List.of(dragon.getSubEntities()).stream()
-                .filter(part -> CollisionUtil.isEnemySearchTarget(part, summon, owner))
+                .filter(part -> isValidEnemyTarget(summon, owner, part))
                 .min(Comparator.comparingDouble(part -> part.distanceToSqr(summon.position())))
                 .orElse(null);
             return nearestPart != null ? nearestPart : dragon;
@@ -232,13 +223,6 @@ public class MinionWeapon extends SummonWeapon {
             && FilterUtil.createTargetFilter(summon, player).test(target);
     }
 
-    private static boolean isValidEnemySummonTarget(StaticSummon summon, Player player, Entity target, double range) {
-        return target != null
-            && target.level() == summon.level()
-            && target.distanceToSqr(summon) <= range * range
-            && CollisionUtil.isEnemySearchTarget(target, summon, player);
-    }
-
     private static boolean canPlayerSeeTarget(Player player, Entity target) {
         BlockHitResult hitResult = player.level().clip(new ClipContext(
             player.getEyePosition(),
@@ -248,6 +232,10 @@ public class MinionWeapon extends SummonWeapon {
             player
         ));
         return hitResult.getType() == HitResult.Type.MISS;
+    }
+
+    private static boolean isValidEnemyTarget(StaticSummon summon, Entity owner, Entity target) {
+        return SearchUtil.searchEnemies(summon, owner, target.getBoundingBox()).contains(target);
     }
 
     private static boolean hasBarrenLand(StaticSummon summon, Player player) {

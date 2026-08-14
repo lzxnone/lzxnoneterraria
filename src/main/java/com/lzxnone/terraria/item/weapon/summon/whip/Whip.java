@@ -6,9 +6,9 @@ import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.weapon.SummonWeapon;
-import com.lzxnone.terraria.utils.CollisionUtil;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.MathUtil;
+import com.lzxnone.terraria.utils.SearchUtil;
 import com.lzxnone.terraria.utils.SoundUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -196,10 +196,9 @@ public abstract class Whip extends SummonWeapon {
         double radius = range + height + bend + HITBOX_INFLATE;
         AABB searchBox = AABB.ofSize(hand, radius * 2.0D, radius * 2.0D, radius * 2.0D);
 
-        for(Entity target : CollisionUtil.searchEntities(summon.level(), searchBox, summon, summon.getOwner())) {
+        for(Entity target : SearchUtil.searchEntities(summon, summon.getOwner(), searchBox)) {
             if(!intersectsWhip(points, target)) continue;
-            if(DamageUtil.summonAttack(summon, target, sourceStack, whip.getDamage(), whip.getKnockbackScale())) {
-                target.invulnerableTime = whip.getInvulnerableTime();
+            if(DamageUtil.summonAttack(summon, target, sourceStack, whip.getDamage(), whip.getKnockbackScale(), whip.getInvulnerableTime())) {
                 whip.onHitTarget(summon, target);
             }
         }

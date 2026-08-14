@@ -55,6 +55,8 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.LAST_PRISM.get());
                 output.accept(ModItems.BETSY_WRATH.get());
                 output.accept(ModItems.LUNAR_FLARE.get());
+                output.accept(ModItems.NEBULA_BLAZE.get());
+                output.accept(ModItems.NEBULA_ARCANUM.get());
                 output.accept(ModItems.BUBBLE_GUN.get());
                 output.accept(ModItems.MANA_CRYSTAL.get());
                 output.accept(ModItems.LESSER_MANA_POTION.get());

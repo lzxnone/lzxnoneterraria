@@ -97,6 +97,8 @@ import com.lzxnone.terraria.item.weapon.magic.BetsyWrath;
 import com.lzxnone.terraria.item.weapon.magic.BubbleGun;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.magic.LunarFlare;
+import com.lzxnone.terraria.item.weapon.magic.NebulaArcanum;
+import com.lzxnone.terraria.item.weapon.magic.NebulaBlaze;
 import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.item.weapon.melee.BladeOfGrass;
 import com.lzxnone.terraria.item.weapon.melee.BloodButcherer;
@@ -179,6 +181,8 @@ public class ConfigList {
             LastPrism.CONFIG_LIST_ITEM,
             BetsyWrath.CONFIG_LIST_ITEM,
             LunarFlare.CONFIG_LIST_ITEM,
+            NebulaBlaze.CONFIG_LIST_ITEM,
+            NebulaArcanum.CONFIG_LIST_ITEM,
             BubbleGun.CONFIG_LIST_ITEM,
             Minishark.CONFIG_LIST_ITEM,
             FlintlockPistol.CONFIG_LIST_ITEM,

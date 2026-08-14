@@ -37,7 +37,6 @@ import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
 import com.lzxnone.terraria.ui.config.struct.ConfigInt;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class BladeOfGrass extends MeleeWeapon {
@@ -151,7 +150,7 @@ public class BladeOfGrass extends MeleeWeapon {
                 CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
                 if(!customData.contains("hitCount") || customData.getInt("hitCount") >= PROJECTILE_MAX_HIT_COUNT.get()) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) PROJECTILE_DAMAGE.get(), 1.0f)) {
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) PROJECTILE_DAMAGE.get(), 1.0f, -1)) {
                     int count = customData.getInt("hitCount");
                     count++;
                     if(target instanceof LivingEntity livingEntity && projectile.getRandom().nextInt(4) == 0) {
@@ -185,13 +184,7 @@ public class BladeOfGrass extends MeleeWeapon {
         ItemStack stack = player.getItemInHand(hand);
 
         if(!level.isClientSide()) {
-             List<Entity> targets = CollisionUtil.searchEnemies(
-                player.level(),
-                AABB.ofSize(player.getBoundingBox().getCenter(), TARGET_RANGE.get() * 2, TARGET_RANGE.get() * 2, TARGET_RANGE.get() * 2),
-                player,
-                player
-            );
-            targets.sort(Comparator.comparingDouble(e -> e.distanceToSqr(player.position())));
+            List<Entity> targets = SearchUtil.searchNearestEnemies(player, player, player.getBoundingBox().inflate(TARGET_RANGE.get()), 1);
 
             Vec3 playerPos = player.getEyePosition();
 
@@ -247,4 +240,3 @@ public class BladeOfGrass extends MeleeWeapon {
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 }
-

@@ -196,8 +196,7 @@ public class FirstFractal extends MeleeWeapon {
                             FilterUtil.createTargetFilter(summon, summon.getOwner())
                     );
                     for(Entity target : targets) {
-                        if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PROJECTILE_DAMAGE.get(), 0.2f)) {
-                            target.invulnerableTime = 10;
+                        if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PROJECTILE_DAMAGE.get(), 0.2f, 10)) {
                         }
                     }
                 }

@@ -105,8 +105,7 @@ public class EnchantedSword extends MeleeWeapon {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE),(float) DAMAGE.get(), 1.0f)) {
-                    target.invulnerableTime = 5;
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE),(float) DAMAGE.get(), 1.0f, 5)) {
                     ParticleUtil.addParticles(
                         (ServerLevel) projectile.level(), ModParticles.COLORFUL_PARTICLE,
                         projectile.position(), new Vec3(0.2, 0.2, 0.2),

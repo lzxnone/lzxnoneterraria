@@ -83,8 +83,7 @@ public class CrystalBullet extends BulletAmmo {
 
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 Entity target = targets.getFirst();
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, BASE_DAMAGE.get() + damage, knockbackScale)) {
-                    target.invulnerableTime = invulnerableTime;
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, BASE_DAMAGE.get() + damage, knockbackScale, invulnerableTime)) {
                     summon.setPos(end);
                     for(int i = 0;i < FRAGMENT_COUNT.get();i++) {
                         summonProjectile(summon, (BASE_DAMAGE.get() + damage) * FRAGMENT_DAMAGE_MULTIPLIER.get());
@@ -132,8 +131,7 @@ public class CrystalBullet extends BulletAmmo {
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
                 CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
                 float damage = customData.contains("damage") ? customData.getFloat("damage") : 0;
-                if(DamageUtil.rangedAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), damage, 1.0f)) {
-                    target.invulnerableTime = 5;
+                if(DamageUtil.rangedAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), damage, 1.0f, 5)) {
                     onDied(projectile);
                 }
             }

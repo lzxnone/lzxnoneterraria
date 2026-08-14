@@ -174,7 +174,7 @@ public class StardustDragonStaff extends MinionWeapon {
                 float damage = DAMAGE.get() + ADD_DAMAGE.get() * Math.max(0, stardustDragonSlotCount - 1);
 
                 for(Entity target : targets) {
-                    if(DamageUtil.minionAttack(summon, target, sourceStack, damage, 1.0f)) target.invulnerableTime = 15;
+                    DamageUtil.minionAttack(summon, target, sourceStack, damage, 1.0f, 15);
                 }
             }
         }

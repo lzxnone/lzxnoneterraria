@@ -198,13 +198,12 @@ public class NightsEdge extends MeleeWeapon {
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < MAX_HIT_COUNT.get()) {
-                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) DAMAGE.get(), 1.0f)) {
+                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 20)) {
                                 ParticleUtil.addParticles(
                                     (ServerLevel) target.level(), ModParticles.NIGHTS_EDGE_HIT_PARTICLE.get(),
                                     new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2.0, target.getZ()), new Vec3(0, 0, 0),
                                     0, 1
                                 );
-                                target.invulnerableTime = 20;
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
                                 beam.getEntityData().set(SwordBeam.CUSTOM_DATA, custom_data);
@@ -256,14 +255,13 @@ public class NightsEdge extends MeleeWeapon {
                     List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                     for(Entity target : targets) {
                         if(count >= PROJECTILE_MAX_HIT_COUNT.get()) break;
-                        if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PROJECTILE_DAMAGE.get(), 1.0f)) {
+                        if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PROJECTILE_DAMAGE.get(), 1.0f, 20)) {
                             count++;
                             ParticleUtil.addParticles(
                                 (ServerLevel) target.level(), ModParticles.NIGHTS_EDGE_HIT_PARTICLE.get(),
                                 new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2.0, target.getZ()), new Vec3(0, 0, 0),
                                 0, 1
                             );
-                            target.invulnerableTime = 20;
                         }
                     }
                     if(!targets.isEmpty()) customData.putInt("hitCount", count);

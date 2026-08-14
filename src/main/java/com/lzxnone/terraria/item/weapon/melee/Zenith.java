@@ -102,27 +102,9 @@ public class Zenith extends MeleeWeapon {
         10,
         100
     );
-    public static final ConfigDouble SCALE = new ConfigDouble(
-        "weapon.zenith.scale",
-        "zenith_scale",
-        2.0,
-        0.1,
-        10.0
-    );
-    public static final ConfigDouble TRAIL_ALPHA = new ConfigDouble(
-        "weapon.zenith.trail_alpha",
-        "zenith_trail_alpha",
-        0.15,
-        0.0,
-        1.0
-    );
-    public static final ConfigInt TRAIL_MAX_LENGTH = new ConfigInt(
-        "weapon.zenith.trail_max_length",
-        "zenith_trail_max_length",
-        10,
-        0,
-        100
-    );
+    public static final float SCALE = 2.0f;
+    public static final float TRAIL_ALPHA = 1.0f;
+    public static final int TRAIL_MAX_LENGTH = 10;
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
@@ -137,10 +119,7 @@ public class Zenith extends MeleeWeapon {
                 TRAIL_OFFSET,
                 WEAPON_COUNT,
                 BOUNDING_BOX_SIZE,
-                CYCLE,
-                SCALE,
-                TRAIL_ALPHA,
-                TRAIL_MAX_LENGTH
+                CYCLE
             );
         }
     };
@@ -177,11 +156,11 @@ public class Zenith extends MeleeWeapon {
     }
 
     public static double getScale() {
-        return SCALE.get();
+        return SCALE;
     }
 
     public static double getTrailAlpha() {
-        return TRAIL_ALPHA.get();
+        return TRAIL_ALPHA;
     }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
@@ -291,7 +270,7 @@ public class Zenith extends MeleeWeapon {
 
             projectile.trailPositions.addFirst(projectile.position().add(right.scale(-1.2)));
             projectile.trailPositions.addFirst(projectile.position().add(right.scale(1.5)));
-            while(projectile.trailPositions.size() > TRAIL_MAX_LENGTH.get()) projectile.trailPositions.removeLast();
+            while(projectile.trailPositions.size() > TRAIL_MAX_LENGTH) projectile.trailPositions.removeLast();
 
             projectile.setBoundingBox(new AABB(
                 projectile.getX() - BOUNDING_BOX_SIZE.get(), projectile.getY() - BOUNDING_BOX_SIZE.get(), projectile.getZ() - BOUNDING_BOX_SIZE.get(),
@@ -332,8 +311,7 @@ public class Zenith extends MeleeWeapon {
             if(!projectile.level().isClientSide()) {
                 Entity target = result.getEntity();
                 if(projectile.getOwner() instanceof Player player && FilterUtil.createTargetFilter(projectile, projectile.getOwner()).test(target)) {
-                    if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) (DAMAGE.get() + Math.random() * DAMAGE.get()), 0.2f)) {
-                        target.invulnerableTime = 2;
+                    if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) (DAMAGE.get() + Math.random() * DAMAGE.get()), 0.2f, 2)) {
                     }
                 }
             }
@@ -388,16 +366,16 @@ public class Zenith extends MeleeWeapon {
             customData.putInt("angle", randomAngle);
             if(i == 0) {
                 projectile.getEntityData().set(StaticProjectile.COLOR_A, 1.0f);
-                projectile.getEntityData().set(StaticProjectile.SCALE_X, SCALE.get().floatValue());
-                projectile.getEntityData().set(StaticProjectile.SCALE_Y, SCALE.get().floatValue());
+                projectile.getEntityData().set(StaticProjectile.SCALE_X, SCALE);
+                projectile.getEntityData().set(StaticProjectile.SCALE_Y, SCALE);
                 projectile.getEntityData().set(StaticProjectile.LIFETIME, cycle);
                 projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3ft-1.571)", b, w));
                 projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*sin(%.3ft-1.571)+%.3f", a, w, a));
                 customData.putInt("start", 0);
             }else if(i == 1) {
                 projectile.getEntityData().set(StaticProjectile.COLOR_A, 0.75f);
-                projectile.getEntityData().set(StaticProjectile.SCALE_X, SCALE.get().floatValue() * 0.75f);
-                projectile.getEntityData().set(StaticProjectile.SCALE_Y, SCALE.get().floatValue() * 0.75f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_X, SCALE * 0.75f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_Y, SCALE * 0.75f);
                 projectile.getEntityData().set(StaticProjectile.LIFETIME, (int) (cycle * 1.25));
                 if(w > 0) {
                     projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3ft-3.142)", b, w));
@@ -409,8 +387,8 @@ public class Zenith extends MeleeWeapon {
                 customData.putInt("start", (int) (cycle * 0.25));
             }else if(i == 2) {
                 projectile.getEntityData().set(StaticProjectile.COLOR_A, 0.5f);
-                projectile.getEntityData().set(StaticProjectile.SCALE_X, SCALE.get().floatValue() * 0.5f);
-                projectile.getEntityData().set(StaticProjectile.SCALE_Y, SCALE.get().floatValue() * 0.5f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_X, SCALE * 0.5f);
+                projectile.getEntityData().set(StaticProjectile.SCALE_Y, SCALE * 0.5f);
                 projectile.getEntityData().set(StaticProjectile.LIFETIME, (int) (cycle * 1.5));
                 if(w > 0) {
                     projectile.getEntityData().set(StaticProjectile.EXPRESSION_X, String.format("%.3f*cos(%.3ft-4.713)", b, w));

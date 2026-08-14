@@ -81,8 +81,7 @@ public class StarCannon extends RangedWeapon {
             );
             for(Entity target : targets) {
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, DAMAGE.get(), 0.25f)) {
-                    target.invulnerableTime = 5;
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, DAMAGE.get(), 0.25f, 5)) {
                 }
             }
 

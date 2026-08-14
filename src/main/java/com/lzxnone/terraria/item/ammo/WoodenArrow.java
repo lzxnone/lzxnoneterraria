@@ -82,11 +82,10 @@ public class WoodenArrow extends ArrowAmmo {
 
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 Entity target = targets.getFirst();
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, BASE_DAMAGE.get() + damage, knockbackScale)) {
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, BASE_DAMAGE.get() + damage, knockbackScale, invulnerableTime)) {
                     if(customData.contains(StaticSummon.HIT_TARGET_IGNITE_TICKS_KEY)) {
                         target.igniteForTicks(customData.getInt(StaticSummon.HIT_TARGET_IGNITE_TICKS_KEY));
                     }
-                    target.invulnerableTime = invulnerableTime;
                     this.onDied(summon);
                     return;
                 }

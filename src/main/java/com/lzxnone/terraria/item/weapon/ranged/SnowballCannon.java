@@ -78,8 +78,7 @@ public class SnowballCannon extends RangedWeapon {
             if(!targets.isEmpty()) {
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 Entity target = targets.getFirst();
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, DAMAGE.get(), 0.5f)) {
-                    target.invulnerableTime = 10;
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, DAMAGE.get(), 0.5f, 10)) {
                     this.onDied(summon);
                     return;
                 }

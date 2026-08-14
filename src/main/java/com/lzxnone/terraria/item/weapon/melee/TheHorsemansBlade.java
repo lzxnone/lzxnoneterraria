@@ -43,7 +43,6 @@ import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
 import com.lzxnone.terraria.ui.config.struct.ConfigInt;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class TheHorsemansBlade extends MeleeWeapon {
@@ -178,8 +177,7 @@ public class TheHorsemansBlade extends MeleeWeapon {
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < BLADE_MAX_HIT_COUNT.get()) {
-                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) BLADE_DAMAGE.get(), 1.0f)) {
-                                target.invulnerableTime = 20;
+                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) BLADE_DAMAGE.get(), 1.0f, 20)) {
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
                                 beam.getEntityData().set(SwordBeam.CUSTOM_DATA, custom_data);
@@ -285,14 +283,8 @@ public class TheHorsemansBlade extends MeleeWeapon {
 
             if(!summon.level().isClientSide()) {
                 if(target == null) {
-                    List<Entity> targets = CollisionUtil.searchEnemies(
-                        summon.level(),
-                        AABB.ofSize(summon.position(), PUMPKIN_MAX_TARGET_RANGE.get() * 2, PUMPKIN_MAX_TARGET_RANGE.get() * 2, PUMPKIN_MAX_TARGET_RANGE.get() * 2),
-                        summon,
-                        summon.getOwner()
-                    );
-                    targets.sort(Comparator.comparingDouble(e -> e.distanceToSqr(summon.position())));
-                    if(!targets.isEmpty()) target = targets.getFirst();
+                    List<Entity> targets = SearchUtil.searchNearestEnemies(summon, summon.getOwner(), summon.getBoundingBox().inflate(PUMPKIN_MAX_TARGET_RANGE.get()), 1);
+                    target = targets.isEmpty() ? null : targets.getFirst();
                     if(target != null) {
                         customData.putInt("target", target.getId());
                         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
@@ -312,7 +304,7 @@ public class TheHorsemansBlade extends MeleeWeapon {
                 summon.setYRot(xyRot[1]);
 
                 if(selfPos.distanceToSqr(targetPos) < 2.0D) {
-                    if(summon.getOwner() instanceof Player player && FilterUtil.createTargetFilter(player).test(target) && DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PUMPKIN_DAMAGE.get(), 1.0f)) onDied(summon);
+                    if(summon.getOwner() instanceof Player player && FilterUtil.createTargetFilter(player).test(target) && DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PUMPKIN_DAMAGE.get(), 1.0f, -1)) onDied(summon);
                 }
             }else {
                 Vec3 dir = summon.getLookAngle().normalize();
@@ -327,18 +319,13 @@ public class TheHorsemansBlade extends MeleeWeapon {
                 );
                 summon.setBoundingBox(box);
 
-                List<Entity> hitEntities = summon.level().getEntitiesOfClass(
-                    Entity.class,
-                    summon.getBoundingBox().inflate(0.2D),
-                    entity -> CollisionUtil.isEnemySearchTarget(entity, summon, summon.getOwner())
-                );
+                List<Entity> hitEntities = SearchUtil.searchEnemies(summon, summon.getOwner(), summon.getBoundingBox().inflate(0.2D));
 
                 if(!hitEntities.isEmpty()) {
                     for(Entity hitEntity : hitEntities) {
                         if(target != null && hitEntity.getUUID() == target.getUUID()) continue;
                         if(summon.getOwner() instanceof Player player) {
-                            if(DamageUtil.meleeAttack(summon, hitEntity, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PUMPKIN_DAMAGE.get(), 1.0f)) {
-                                hitEntity.invulnerableTime = 2;
+                            if(DamageUtil.meleeAttack(summon, hitEntity, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PUMPKIN_DAMAGE.get(), 1.0f, 2)) {
                             }
                         }
                     }
@@ -366,4 +353,3 @@ public class TheHorsemansBlade extends MeleeWeapon {
         }
     };
 }
-

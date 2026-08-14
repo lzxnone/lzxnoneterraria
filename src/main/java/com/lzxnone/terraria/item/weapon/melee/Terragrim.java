@@ -148,7 +148,7 @@ public class Terragrim extends MeleeWeapon {
                     );
                     for(Entity target : targets) {
                         if(target instanceof LivingEntity livingEntity) {
-                            if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 0.05f)) target.invulnerableTime = 0;
+                            DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 0.05f, 0);
                         }
                     }
                 }

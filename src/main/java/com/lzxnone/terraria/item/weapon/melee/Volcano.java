@@ -166,7 +166,7 @@ public class Volcano extends MeleeWeapon {
                             for(LivingEntity livingEntity : targets) {
                                 if(livingEntity.getUUID() == target.getUUID()) continue;
                                 if(hitCount >= EXPLOSION_MAX_HIT_COUNT.get()) break;
-                                if(DamageUtil.meleeAttack(player, livingEntity, player.getWeaponItem(), (float) EXPLOSION_DAMAGE.get(), 1.0f)) {
+                                if(DamageUtil.meleeAttack(player, livingEntity, player.getWeaponItem(), (float) EXPLOSION_DAMAGE.get(), 1.0f, -1)) {
                                     livingTarget.igniteForSeconds(IGNITE_SECONDS.get());
                                     hitCount++;
                                 }

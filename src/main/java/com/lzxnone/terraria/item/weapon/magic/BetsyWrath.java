@@ -30,6 +30,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -210,15 +211,16 @@ public class BetsyWrath extends MagicWeapon {
             double explosionRange = EXPLOSION_RANGE.get();
             if(explosionRange > 0.0D) {
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
-                for(LivingEntity target : serverLevel.getEntitiesOfClass(
-                    LivingEntity.class,
+                for(Entity target : serverLevel.getEntitiesOfClass(
+                    Entity.class,
                     AABB.ofSize(pos, explosionRange * 2.0D, explosionRange * 2.0D, explosionRange * 2.0D),
-                    FilterUtil.createLivingTargetFilter(summon, summon.getOwner())
+                    FilterUtil.createTargetFilter(summon, summon.getOwner())
                 )) {
                     if(target.distanceToSqr(pos) > explosionRange * explosionRange) continue;
-                    if(DamageUtil.magicAttack(summon, target, sourceStack, DAMAGE.get(), 0.6F)) {
-                        target.invulnerableTime = 10;
-                        if(BUFF_DURATION.get() > 0) target.addEffect(new MobEffectInstance(ModEffects.BETSYS_CURSE, BUFF_DURATION.get(), 0));
+                    if(DamageUtil.magicAttack(summon, target, sourceStack, DAMAGE.get(), 0.6F, 10)) {
+                        if(BUFF_DURATION.get() > 0 && target instanceof LivingEntity livingTarget) {
+                            livingTarget.addEffect(new MobEffectInstance(ModEffects.BETSYS_CURSE, BUFF_DURATION.get(), 0));
+                        }
                     }
                 }
             }

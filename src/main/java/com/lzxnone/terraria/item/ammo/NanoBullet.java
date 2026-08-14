@@ -86,8 +86,7 @@ public class NanoBullet extends BulletAmmo {
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 Entity target = targets.getFirst();
                 int hit = customData.getInt("hit");
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, hit > 0 ? (BASE_DAMAGE.get() + damage) * DAMAGE_DECAY.get() : BASE_DAMAGE.get() + damage, knockbackScale)) {
-                    target.invulnerableTime = invulnerableTime;
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, hit > 0 ? (BASE_DAMAGE.get() + damage) * DAMAGE_DECAY.get() : BASE_DAMAGE.get() + damage, knockbackScale, invulnerableTime)) {
                     if(target instanceof LivingEntity livingEntity) {
                         MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.CONFUSED, EFFECT_TIME.get(), 0);
                         livingEntity.addEffect(effectInstance);

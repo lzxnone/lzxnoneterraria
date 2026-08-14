@@ -5,6 +5,7 @@ import com.lzxnone.terraria.client.item.normal.ClientManaStar;
 import com.lzxnone.terraria.client.item.ranged.ClientArrowAmmo;
 import com.lzxnone.terraria.client.item.ranged.ClientBulletAmmo;
 import com.lzxnone.terraria.client.item.magic.ClientBetsysWrath;
+import com.lzxnone.terraria.client.item.magic.ClientBubbleGun;
 import com.lzxnone.terraria.client.item.magic.ClientLastPrism;
 import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
 import com.lzxnone.terraria.client.item.melee.ClientFirstFractal;
@@ -16,6 +17,7 @@ import com.lzxnone.terraria.client.item.melee.ClientTerraBlade;
 import com.lzxnone.terraria.client.item.melee.ClientTerragrim;
 import com.lzxnone.terraria.client.item.melee.ClientTrueNightsEdge;
 import com.lzxnone.terraria.client.item.ranged.ClientFlamethrower;
+import com.lzxnone.terraria.client.item.ranged.ClientSnowballCannon;
 import com.lzxnone.terraria.client.item.ranged.ClientStarCannon;
 import com.lzxnone.terraria.client.item.ranged.ClientSuperStarShooter;
 import com.lzxnone.terraria.client.item.summon.ClientStardustDragonStaff;
@@ -77,7 +79,8 @@ public class ClientStaticSummonRenderBehaviors {
         BEHAVIORS.put(StaticSummonBehaviors.TUNGSTEN_BULLET, ClientBulletAmmo.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.WOODEN_ARROW, ClientArrowAmmo.SUMMON_BEHAVIOR);
 
-        BEHAVIORS.put(StaticSummonBehaviors.SNOWBALL, DEFAULT_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.SNOWBALL, ClientSnowballCannon.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.BUBBLE, ClientBubbleGun.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.FALLEN_STAR, ClientStarCannon.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.FALLEN_STAR_SUPER, ClientSuperStarShooter.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.FLAMETHROWER_FLAME, ClientFlamethrower.SUMMON_BEHAVIOR);

@@ -16,15 +16,22 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.boss.EnderDragonPart;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class DamageUtil {
+    private static final Map<String, Long> DRAGON_INVULNERABLE_UNTIL = new HashMap<>();
+
     public enum DamageCategory {
         NORMAL,
         MELEE,
@@ -36,36 +43,36 @@ public class DamageUtil {
         REAL
     }
 
-    public static boolean normalAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
-        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.NORMAL);
+    public static boolean normalAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale, int invulnerableTime) {
+        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, invulnerableTime, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.NORMAL);
     }
 
-    public static boolean meleeAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
-        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.MELEE);
+    public static boolean meleeAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale, int invulnerableTime) {
+        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, invulnerableTime, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.MELEE);
     }
 
-    public static boolean rangedAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
-        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.RANGED);
+    public static boolean rangedAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale, int invulnerableTime) {
+        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, invulnerableTime, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.RANGED);
     }
 
-    public static boolean summonAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
-        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.SUMMON);
+    public static boolean summonAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale, int invulnerableTime) {
+        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, invulnerableTime, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.SUMMON);
     }
 
-    public static boolean minionAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
-        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.MINION);
+    public static boolean minionAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale, int invulnerableTime) {
+        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, invulnerableTime, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.MINION);
     }
 
-    public static boolean sentryAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
-        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.SENTRY);
+    public static boolean sentryAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale, int invulnerableTime) {
+        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, invulnerableTime, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.SENTRY);
     }
 
-    public static boolean magicAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale) {
-        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.MAGIC);
+    public static boolean magicAttack(Entity attackEntity, Entity target, ItemStack sourceStack, float damage, float knockbackScale, int invulnerableTime) {
+        return entityAttack(attackEntity, target, sourceStack, damage, knockbackScale, invulnerableTime, ModDamageTypes.PLAYER_NORMAL_ATTACK, DamageCategory.MAGIC);
     }
 
-    public static boolean realAttack(Entity attackEntity, Entity target, float damage, float knockbackScale) {
-        return entityAttack(attackEntity, target, ItemStack.EMPTY, damage, knockbackScale, ModDamageTypes.PLAYER_REAL_ATTACK, DamageCategory.REAL);
+    public static boolean realAttack(Entity attackEntity, Entity target, float damage, float knockbackScale, int invulnerableTime) {
+        return entityAttack(attackEntity, target, ItemStack.EMPTY, damage, knockbackScale, invulnerableTime, ModDamageTypes.PLAYER_REAL_ATTACK, DamageCategory.REAL);
     }
 
     private static boolean entityAttack(
@@ -74,6 +81,7 @@ public class DamageUtil {
         ItemStack sourceStack,
         float damage,
         float knockbackScale,
+        int invulnerableTime,
         ResourceKey<DamageType> damageType,
         DamageCategory category
     ) {
@@ -119,9 +127,16 @@ public class DamageUtil {
         }
 
         Vec3 beforeHurtMovement = target instanceof LivingEntity livingTarget ? livingTarget.getDeltaMovement() : Vec3.ZERO;
+        String dragonInvulnerableKey = getDragonInvulnerableKey(target);
+        if(dragonInvulnerableKey != null && invulnerableTime > 0) {
+            long gameTime = serverLevel.getGameTime();
+            Long invulnerableUntil = DRAGON_INVULNERABLE_UNTIL.get(dragonInvulnerableKey);
+            if(invulnerableUntil != null && invulnerableUntil > gameTime) return false;
+        }
         boolean hasHurt = target.hurt(source, finalDamage);
 
         if(hasHurt) {
+            applyInvulnerableTime(serverLevel, target, invulnerableTime, dragonInvulnerableKey);
             if(category != DamageCategory.MINION && category != DamageCategory.SENTRY && target instanceof LivingEntity livingTarget) {
                 player.setLastHurtMob(livingTarget);
             }
@@ -152,6 +167,33 @@ public class DamageUtil {
         }
 
         return hasHurt;
+    }
+
+    private static void applyInvulnerableTime(ServerLevel serverLevel, Entity target, int invulnerableTime, String dragonInvulnerableKey) {
+        if(invulnerableTime < 0) return;
+        target.invulnerableTime = invulnerableTime;
+        if(target instanceof EnderDragonPart dragonPart) {
+            dragonPart.parentMob.invulnerableTime = invulnerableTime;
+        }
+        if(dragonInvulnerableKey != null && invulnerableTime > 0) {
+            DRAGON_INVULNERABLE_UNTIL.put(dragonInvulnerableKey, serverLevel.getGameTime() + invulnerableTime);
+            if(DRAGON_INVULNERABLE_UNTIL.size() > 1024) {
+                long gameTime = serverLevel.getGameTime();
+                DRAGON_INVULNERABLE_UNTIL.entrySet().removeIf(entry -> entry.getValue() <= gameTime);
+            }
+        }
+    }
+
+    private static String getDragonInvulnerableKey(Entity target) {
+        UUID targetUuid = null;
+        String partName = "";
+        if(target instanceof EnderDragonPart dragonPart) {
+            targetUuid = dragonPart.parentMob.getUUID();
+            partName = ":" + dragonPart.name;
+        }else if(target instanceof EnderDragon dragon) {
+            targetUuid = dragon.getUUID();
+        }
+        return targetUuid == null ? null : targetUuid + partName;
     }
 
     public static float applyPlayerDamageEffects(Player player, float damage) {

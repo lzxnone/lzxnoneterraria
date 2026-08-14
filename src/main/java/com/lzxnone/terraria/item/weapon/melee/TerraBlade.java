@@ -190,8 +190,7 @@ public class TerraBlade extends MeleeWeapon {
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < SWORD_BEAM_MAX_HIT_COUNT.get()) {
-                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), SWORD_BEAM_DAMAGE.get(), 0.1f)) {
-                                target.invulnerableTime = 20;
+                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), SWORD_BEAM_DAMAGE.get(), 0.1f, 20)) {
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
                                 beam.getEntityData().set(SwordBeam.CUSTOM_DATA, custom_data);
@@ -258,14 +257,13 @@ public class TerraBlade extends MeleeWeapon {
                 int count = customData.getInt("hitCount");
                 List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                 for(Entity target : targets) {
-                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), PROJECTILE_DAMAGE.get() * (float)Math.pow(PROJECTILE_DAMAGE_DECAY.get(), count), 0.1f)) {
+                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), PROJECTILE_DAMAGE.get() * (float)Math.pow(PROJECTILE_DAMAGE_DECAY.get(), count), 0.1f, 12)) {
                         count++;
                         ParticleUtil.addParticles(
                             (ServerLevel) summon.level(), ModParticles.TERRA_BEAM_HIT_PARTICLE.get(),
                             new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2.0, target.getZ()), new Vec3(0, 0, 0),
                             0, 1
                         );
-                        target.invulnerableTime = 12;
                     }
                 }
                 if(!targets.isEmpty()) customData.putInt("hitCount", count);
