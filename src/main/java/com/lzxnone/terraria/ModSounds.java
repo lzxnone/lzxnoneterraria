@@ -35,6 +35,10 @@ public class ModSounds {
             SOUND_EVENTS.register("magic_shoot2",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "magic_shoot2")));
+    public static final Supplier<SoundEvent> MAGIC_SHOOT3 =
+            SOUND_EVENTS.register("magic_shoot3",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "magic_shoot3")));
     public static final Supplier<SoundEvent> BUBBLE =
             SOUND_EVENTS.register("bubble",
                     () -> SoundEvent.createVariableRangeEvent(

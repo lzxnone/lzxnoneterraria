@@ -9,6 +9,7 @@ import net.minecraft.core.particles.ParticleOptions;
 
 public class CircleParticle extends TextureSheetParticle {
     private final float baseSize;
+    private final boolean opaque;
 
     protected CircleParticle(ClientLevel level, double x, double y, double z,
                              double xSpeed, double ySpeed, double zSpeed,
@@ -25,6 +26,7 @@ public class CircleParticle extends TextureSheetParticle {
         this.rCol = options.color.x;
         this.gCol = options.color.y;
         this.bCol = options.color.z;
+        this.opaque = options.color.x + options.color.y + options.color.z < 0.18F;
 
         this.baseSize = options.initSize + (this.random.nextFloat() * options.initSize * 0.5f);
         this.quadSize = baseSize;
@@ -56,7 +58,7 @@ public class CircleParticle extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return ModParticleRenderTypes.EMISSIVE_BLOOM_PARTICLE;
+        return this.opaque ? ParticleRenderType.PARTICLE_SHEET_OPAQUE : ModParticleRenderTypes.EMISSIVE_BLOOM_PARTICLE;
     }
 
     public static class Provider implements ParticleProvider<CircleParticleOptions> {

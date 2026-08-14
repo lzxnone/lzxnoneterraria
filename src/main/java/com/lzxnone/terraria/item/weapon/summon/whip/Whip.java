@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Whip extends SummonWeapon {
-    public static final Vector3f OFFSET = new Vector3f(1.0F, -1.0F, 0.0F);
+    public static final Vector3f OFFSET = new Vector3f(-1.0F, 1.0F, 0.0F);
     private static final int SEGMENTS = 24;
     private static final double HITBOX_INFLATE = 1.0D;
 

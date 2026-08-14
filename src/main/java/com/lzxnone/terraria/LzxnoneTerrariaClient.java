@@ -5,12 +5,17 @@ import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.client.entity.beam.SwordBeamRenderer;
 import com.lzxnone.terraria.client.entity.projectile.StaticProjectileRenderer;
 import com.lzxnone.terraria.client.entity.summon.StaticSummonRenderer;
+import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.particle.*;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.client.renderer.entity.BeeRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -19,6 +24,18 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 public class LzxnoneTerrariaClient {
     public LzxnoneTerrariaClient(ModContainer container, IEventBus modEventBus) {
         container.registerExtensionPoint(IConfigScreenFactory.class, (modContainer, parent) -> ConfigScreen.create(parent));
+
+        //使用渲染
+        modEventBus.addListener(FMLClientSetupEvent.class, event -> event.enqueueWork(() -> ItemProperties.register(
+            ModItems.NEBULA_ARCANUM.get(),
+            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "using"),
+            (stack, level, entity, seed) -> {
+                if(entity instanceof Player player && player.isUsingItem() && player.getUseItem().is(stack.getItem())) {
+                    return 1.0F;
+                }
+                return 0.0F;
+            }
+        )));
 
         //Entity渲染
         modEventBus.addListener(EntityRenderersEvent.RegisterRenderers.class, event -> {

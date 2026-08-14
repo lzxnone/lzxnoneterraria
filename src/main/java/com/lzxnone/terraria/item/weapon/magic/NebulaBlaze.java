@@ -13,6 +13,7 @@ import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
 import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import com.lzxnone.terraria.utils.*;
 import net.minecraft.nbt.CompoundTag;
@@ -51,6 +52,7 @@ public class NebulaBlaze extends MagicWeapon {
     public static final ConfigDouble EXPLOSION_RANGE = new ConfigDouble("weapon.nebula_blaze.explosion_range", "nebula_blaze_explosion_range", 3.0D, 0.0D, 64.0D);
     public static final ConfigDouble EXPLOSIVE_CHANCE = new ConfigDouble("weapon.nebula_blaze.explosive_chance", "nebula_blaze_explosive_chance", 0.2D, 0.0D, 1.0D);
     public static final ConfigDouble MANA_CONSUME = new ConfigDouble("weapon.nebula_blaze.mana_consume", "nebula_blaze_mana_consume", 12.0D, 0.0D, 10000.0D);
+    public static final ConfigInt LIFETIME = new ConfigInt("weapon.nebula_blaze.lifetime", "nebula_blaze_lifetime", 100, 1, 72000);
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
@@ -64,7 +66,8 @@ public class NebulaBlaze extends MagicWeapon {
                 EXPLOSIVE_TARGET_RANGE,
                 EXPLOSION_RANGE,
                 EXPLOSIVE_CHANCE,
-                MANA_CONSUME
+                MANA_CONSUME,
+                LIFETIME
             );
         }
     };
@@ -169,7 +172,7 @@ public class NebulaBlaze extends MagicWeapon {
         summon.getEntityData().set(StaticSummon.STACK_SOURCE, stack.copy());
         summon.getEntityData().set(StaticSummon.BEHAVIOR, explosive ? StaticSummonBehaviors.NEBULA_BLAZE_EXPLOSIVE : StaticSummonBehaviors.NEBULA_BLAZE);
         summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-        summon.getEntityData().set(StaticSummon.LIFETIME, 100);
+        summon.getEntityData().set(StaticSummon.LIFETIME, LIFETIME.get());
         if(explosive) {
             summon.getEntityData().set(StaticSummon.SCALE_X, 2.0f);
             summon.getEntityData().set(StaticSummon.SCALE_Y, 2.0f);

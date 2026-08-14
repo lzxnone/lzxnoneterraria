@@ -43,6 +43,9 @@
   "magic_shoot2": {
     "sounds": ["lzxnoneterraria:magic_shoot2"]
   },
+  "magic_shoot3": {
+    "sounds": ["lzxnoneterraria:magic_shoot3"]
+  },
   "bubble": {
     "sounds": ["lzxnoneterraria:bubble"]
   },

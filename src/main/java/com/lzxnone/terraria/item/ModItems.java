@@ -250,6 +250,7 @@ public class ModItems {
     public static final DeferredItem<Item> WHITE_STAR = ITEMS.register("white_star", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> MANA_STAR = ITEMS.register("mana_star", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> BUBBLE_GUN_PROJECTILE = ITEMS.register("bubble_gun_projectile", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> VORTEX_ROCKET = ITEMS.register("vortex_rocket", () -> new Item(new Item.Properties()));
 
     public static final DeferredItem<Item> ENCHANTED_SWORD_BEAM = ITEMS.register("enchanted_sword_beam", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> STARFURY_STAR = ITEMS.register("starfury_star", () -> new Item(new Item.Properties()));

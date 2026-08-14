@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.client.entity.projectile;
 
 import com.lzxnone.terraria.client.item.accessory.ClientAccessoryFallenStar;
+import com.lzxnone.terraria.client.item.magic.ClientNebulaArcanum;
 import com.lzxnone.terraria.client.item.melee.ClientBladeOfGrass;
 import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
 import com.lzxnone.terraria.client.item.melee.ClientMace;
@@ -35,6 +36,7 @@ public class ClientStaticProjectileRenderBehaviors {
         BEHAVIORS.put(StaticProjectileBehaviors.SUPER_STAR_PRISMATIC_BOLT, ClientSuperStarShooter.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(StaticProjectileBehaviors.POSSESSION_PROJECTILE, ClientPossession.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(StaticProjectileBehaviors.ACCESSORY_FALLEN_STAR_PROJECTILE, ClientAccessoryFallenStar.PROJECTILE_BEHAVIOR);
+        BEHAVIORS.put(StaticProjectileBehaviors.NEBULA_ARCANUM_ORBIT_PROJECTILE, ClientNebulaArcanum.PROJECTILE_BEHAVIOR);
     }
 
     public static IStaticProjectileRenderBehavior getBehavior(String id) {

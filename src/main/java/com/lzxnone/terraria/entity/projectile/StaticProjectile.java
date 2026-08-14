@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.entity.projectile;
 
+import com.lzxnone.terraria.entity.summon.StaticSummon;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -191,7 +192,8 @@ public class StaticProjectile extends Projectile {
             this.onHit(hitResult);
         }
 
-        if(this.entityData.get(AGE) > this.entityData.get(LIFETIME)) {
+        int lifetime = this.entityData.get(LIFETIME);
+        if(lifetime != StaticSummon.INFINITE_LIFETIME && this.entityData.get(AGE) > lifetime) {
             StaticProjectileBehaviors.getBehavior(this.entityData.get(BEHAVIOR)).onDied(this);
         }
         this.entityData.set(AGE, this.entityData.get(AGE) + 1);
