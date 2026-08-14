@@ -59,6 +59,7 @@ public class ModItems {
     public static final DeferredItem<Item> LUNAR_FLARE = ITEMS.register("lunar_flare", LunarFlare::new);
     public static final DeferredItem<Item> NEBULA_BLAZE = ITEMS.register("nebula_blaze", NebulaBlaze::new);
     public static final DeferredItem<Item> NEBULA_ARCANUM = ITEMS.register("nebula_arcanum", NebulaArcanum::new);
+    public static final DeferredItem<Item> STELLAR_TUNE = ITEMS.register("stellar_tune", StellarTune::new);
     public static final DeferredItem<Item> BUBBLE_GUN = ITEMS.register("bubble_gun", BubbleGun::new);
 
     //远程武器

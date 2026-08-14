@@ -78,7 +78,7 @@ public class ClientStarCannon {
 
             Vector3f color = new Vector3f(0.29f, 0.29f, 0.871f);
             float alpha = 0.5f;
-            for(int i = 0; i < 1; i++) {
+            for(int i = 0; i < 3; i++) {
                 starConsumer.addVertex(poseStack.last().pose(), -starHalfWidth, -starHalfHeight, 0f)
                     .setColor(color.x, color.y, color.z, alpha).setUv(0.0f, 1.0f)
                     .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0.0f, 1.0f, 0.0f);
@@ -91,6 +91,7 @@ public class ClientStarCannon {
                 starConsumer.addVertex(poseStack.last().pose(), -starHalfWidth, starHalfHeight, 0f)
                     .setColor(color.x, color.y, color.z, alpha).setUv(0.0f, 0.0f)
                     .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(0.0f, 1.0f, 0.0f);
+                poseStack.mulPose(Axis.XP.rotationDegrees(60.0F));
             }
             poseStack.popPose();
         }

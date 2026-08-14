@@ -58,6 +58,24 @@
   "star_collide": {
     "sounds": ["lzxnoneterraria:star_collide"]
   },
+  "star_tune0": {
+    "sounds": ["lzxnoneterraria:star_tune0"]
+  },
+  "star_tune1": {
+    "sounds": ["lzxnoneterraria:star_tune1"]
+  },
+  "star_tune2": {
+    "sounds": ["lzxnoneterraria:star_tune2"]
+  },
+  "star_tune3": {
+    "sounds": ["lzxnoneterraria:star_tune3"]
+  },
+  "star_tune4": {
+    "sounds": ["lzxnoneterraria:star_tune4"]
+  },
+  "star_tune5": {
+    "sounds": ["lzxnoneterraria:star_tune5"]
+  },
   "snow_break": {
     "sounds": ["lzxnoneterraria:snow_break"]
   },

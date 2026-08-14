@@ -51,6 +51,12 @@ public class ClientAccessoryFallenStar {
         VertexConsumer consumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(STAR_WAVE_RES));
         addQuad(consumer, poseStack.last().pose(), STAR_WAVE_HALF_WIDTH, STAR_WAVE_HALF_HEIGHT,
             STAR_WAVE_COLOR_R, STAR_WAVE_COLOR_G, STAR_WAVE_COLOR_B, STAR_WAVE_ALPHA);
+        poseStack.mulPose(Axis.XP.rotationDegrees(60.0F));
+        addQuad(consumer, poseStack.last().pose(), STAR_WAVE_HALF_WIDTH, STAR_WAVE_HALF_HEIGHT,
+            STAR_WAVE_COLOR_R, STAR_WAVE_COLOR_G, STAR_WAVE_COLOR_B, STAR_WAVE_ALPHA);
+        poseStack.mulPose(Axis.XP.rotationDegrees(60.0F));
+        addQuad(consumer, poseStack.last().pose(), STAR_WAVE_HALF_WIDTH, STAR_WAVE_HALF_HEIGHT,
+            STAR_WAVE_COLOR_R, STAR_WAVE_COLOR_G, STAR_WAVE_COLOR_B, STAR_WAVE_ALPHA);
         poseStack.popPose();
     }
 

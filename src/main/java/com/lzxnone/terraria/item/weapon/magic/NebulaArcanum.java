@@ -109,7 +109,7 @@ public class NebulaArcanum extends MagicWeapon {
     );
 
     public NebulaArcanum() {
-        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
+        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
     }
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {

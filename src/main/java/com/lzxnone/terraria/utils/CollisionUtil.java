@@ -24,6 +24,21 @@ public class CollisionUtil {
         return result;
     }
 
+    public static EntityHitResult checkEntityHit(StaticProjectile projectile, Vec3 start, Vec3 end, double inflate) {
+         EntityHitResult result = ProjectileUtil.getEntityHitResult(
+            projectile.level(),
+            projectile,
+            start,
+            end,
+            projectile.getBoundingBox()
+                .move(start.subtract(projectile.position()))
+                .expandTowards(end.subtract(start))
+                .inflate(inflate),
+            FilterUtil.createTargetFilter(projectile, projectile.getOwner())
+        );
+        return result;
+    }
+
     public static EntityHitResult checkEntityHit(StaticSummon summon, Vec3 nextPos, double inflate) {
          EntityHitResult result = ProjectileUtil.getEntityHitResult(
             summon.level(),

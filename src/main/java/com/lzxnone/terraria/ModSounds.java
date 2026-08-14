@@ -79,6 +79,30 @@ public class ModSounds {
             SOUND_EVENTS.register("star_collide",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "star_collide")));
+    public static final Supplier<SoundEvent> STAR_TUNE0 =
+            SOUND_EVENTS.register("star_tune0",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "star_tune0")));
+    public static final Supplier<SoundEvent> STAR_TUNE1 =
+            SOUND_EVENTS.register("star_tune1",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "star_tune1")));
+    public static final Supplier<SoundEvent> STAR_TUNE2 =
+            SOUND_EVENTS.register("star_tune2",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "star_tune2")));
+    public static final Supplier<SoundEvent> STAR_TUNE3 =
+            SOUND_EVENTS.register("star_tune3",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "star_tune3")));
+    public static final Supplier<SoundEvent> STAR_TUNE4 =
+            SOUND_EVENTS.register("star_tune4",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "star_tune4")));
+    public static final Supplier<SoundEvent> STAR_TUNE5 =
+            SOUND_EVENTS.register("star_tune5",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "star_tune5")));
     public static final Supplier<SoundEvent> SNOW_BREAK =
             SOUND_EVENTS.register("snow_break",
                     () -> SoundEvent.createVariableRangeEvent(
