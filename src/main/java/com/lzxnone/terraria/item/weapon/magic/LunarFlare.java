@@ -41,7 +41,6 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 public class LunarFlare extends MagicWeapon {
-    public static final double HITBOX_INFLATE = 0.75D;
     public static final double SPAWN_HEIGHT = 20.0D;
     public static final double DELTA_HEIGHT = 10.0D;
     public static final double SPAWN_OFFSET = 10.0D;
@@ -115,7 +114,7 @@ public class LunarFlare extends MagicWeapon {
                 return;
             }
 
-            EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, nextPos, HITBOX_INFLATE);
+            EntityHitResult entityHitResult = CollisionUtil.checkEntityHit(summon, nextPos, 0.75);
             if(entityHitResult != null) {
                 onDied(summon);
                 return;

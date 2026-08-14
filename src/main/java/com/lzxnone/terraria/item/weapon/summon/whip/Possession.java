@@ -80,8 +80,8 @@ public class Possession extends Whip {
     }
 
     @Override
-    protected int getCooldown() {
-        return 3;
+    protected int getUseTime() {
+        return 12;
     }
 
     @Override

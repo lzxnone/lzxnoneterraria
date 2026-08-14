@@ -20,20 +20,20 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Whip extends SummonWeapon {
+    public static final Vector3f OFFSET = new Vector3f(1.0F, -1.0F, 0.0F);
     private static final int SEGMENTS = 24;
     private static final double HITBOX_INFLATE = 1.0D;
-    private static final double SUMMON_OFFSET_X = -1.0D;
-    private static final double SUMMON_OFFSET_Y = 1.0D;
-    private static final double SUMMON_OFFSET_Z = 0.0D;
 
     protected Whip(Tier tier, Item.Properties properties) {
         super(tier, properties);
@@ -61,7 +61,7 @@ public abstract class Whip extends SummonWeapon {
         return getRange() * 0.25D;
     }
 
-    protected int getCooldown() {
+    protected int getUseTime() {
         return 20;
     }
 
@@ -90,11 +90,13 @@ public abstract class Whip extends SummonWeapon {
             Entity owner = summon.getOwner();
             if(owner == null) return;
 
+            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+            Vec3 offset = readVec3(customData, "offset", new Vec3(OFFSET.x, OFFSET.y, OFFSET.z));
             Vector3f[] dirs = MathUtil.computeCoordinateSystem(owner);
             summon.setPos(new Vec3(
-                owner.getX() + dirs[0].x * SUMMON_OFFSET_Z + dirs[1].x * SUMMON_OFFSET_Y + dirs[2].x * SUMMON_OFFSET_X,
-                owner.getY() + dirs[0].y * SUMMON_OFFSET_Z + dirs[1].y * SUMMON_OFFSET_Y + dirs[2].y * SUMMON_OFFSET_X,
-                owner.getZ() + dirs[0].z * SUMMON_OFFSET_Z + dirs[1].z * SUMMON_OFFSET_Y + dirs[2].z * SUMMON_OFFSET_X
+                owner.getX() + dirs[0].x * offset.z + dirs[1].x * offset.y + dirs[2].x * offset.x,
+                owner.getY() + dirs[0].y * offset.z + dirs[1].y * offset.y + dirs[2].y * offset.x,
+                owner.getZ() + dirs[0].z * offset.z + dirs[1].z * offset.y + dirs[2].z * offset.x
             ));
             Whip whip = getWhip(summon);
             if(whip != null) whip.onTick(summon);
@@ -123,51 +125,99 @@ public abstract class Whip extends SummonWeapon {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        SoundUtil.playClientSound(player, ModSounds.WHIP_USE.get());
-        if(!level.isClientSide()) {
-            Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
-            StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), level);
-            summon.setOwner(player);
-            summon.getEntityData().set(StaticSummon.STACK_SOURCE, stack.copy());
-            summon.setPos(new Vec3(
-                player.getX() + dirs[0].x * SUMMON_OFFSET_Z + dirs[1].x * SUMMON_OFFSET_Y + dirs[2].x * SUMMON_OFFSET_X,
-                player.getY() + dirs[0].y * SUMMON_OFFSET_Z + dirs[1].y * SUMMON_OFFSET_Y + dirs[2].y * SUMMON_OFFSET_X,
-                player.getZ() + dirs[0].z * SUMMON_OFFSET_Z + dirs[1].z * SUMMON_OFFSET_Y + dirs[2].z * SUMMON_OFFSET_X
-            ));
-            summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.POSSESSION);
-            summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
-            summon.getEntityData().set(StaticSummon.LIFETIME, getLifetime());
-
-            int rotateAngle = (int)((player.getRandom().nextFloat() * 2.0F - 1.0F) * getRotateAngle());
-            dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], rotateAngle);
-            CompoundTag customData = new CompoundTag();
-            customData.putFloat("dirX", dirs[0].x);
-            customData.putFloat("dirY", dirs[0].y);
-            customData.putFloat("dirZ", dirs[0].z);
-            customData.putFloat("upX", dirs[1].x);
-            customData.putFloat("upY", dirs[1].y);
-            customData.putFloat("upZ", dirs[1].z);
-            customData.putFloat("rightX", dirs[2].x);
-            customData.putFloat("rightY", dirs[2].y);
-            customData.putFloat("rightZ", dirs[2].z);
-            customData.putDouble("range", getRange());
-            customData.putDouble("height", getHeight());
-            customData.putDouble("bend", getBend());
-            customData.putBoolean("reverse", summon.getRandom().nextInt(2) == 0);
-            customData.putString("res", getRes(summon));
-            summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
-
-            summon.setNoGravity(true);
-            summon.noPhysics = true;
-
-            float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
-            summon.setXRot(xyRot[0]);
-            summon.setYRot(xyRot[1]);
-            level.addFreshEntity(summon);
-        }
-
-        player.getCooldowns().addCooldown(stack.getItem(), getCooldown());
+        if(player.getCooldowns().isOnCooldown(stack.getItem()) || !tryShoot(level, player, hand, stack)) return InteractionResultHolder.fail(stack);
+        player.startUsingItem(hand);
+        player.getCooldowns().addCooldown(stack.getItem(), Math.max(1, getUseTime() / 3));
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return 72000;
+    }
+
+    @Override
+    public @NonNull UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.BLOCK;
+    }
+
+    public boolean shouldShootThisTick(ItemStack weaponStack, LivingEntity entity, int remainingUseTicks) {
+        int useTime = Math.max(1, getUseTime());
+        int elapsedMinecraftTicks = getUseDuration(weaponStack, entity) - remainingUseTicks;
+        if(elapsedMinecraftTicks <= 0) return false;
+
+        int currentShot = elapsedMinecraftTicks * 3 / useTime;
+        int previousShot = (elapsedMinecraftTicks - 1) * 3 / useTime;
+        return currentShot > previousShot;
+    }
+
+    @Override
+    public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int count) {
+        if(level.isClientSide()) return;
+        if(!(entity instanceof Player player)) return;
+        if(!shouldShootThisTick(stack, entity, count)) return;
+
+        if(!tryShoot(level, player, player.getUsedItemHand(), stack)) {
+            player.stopUsingItem();
+        }
+    }
+
+    protected boolean tryShoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        shoot(level, player, hand, stack);
+        return true;
+    }
+
+    protected void shoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        SoundUtil.playClientSound(player, ModSounds.WHIP_USE.get());
+        if(level.isClientSide()) return;
+
+        Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
+        StaticSummon summon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), level);
+        summon.setOwner(player);
+        summon.getEntityData().set(StaticSummon.STACK_SOURCE, stack.copy());
+        Vector3f offset = new Vector3f(
+            hand == InteractionHand.OFF_HAND ? -OFFSET.x : OFFSET.x,
+            OFFSET.y,
+            OFFSET.z
+        );
+        summon.setPos(new Vec3(
+            player.getX() + dirs[0].x * offset.z + dirs[1].x * offset.y + dirs[2].x * offset.x,
+            player.getY() + dirs[0].y * offset.z + dirs[1].y * offset.y + dirs[2].y * offset.x,
+            player.getZ() + dirs[0].z * offset.z + dirs[1].z * offset.y + dirs[2].z * offset.x
+        ));
+        summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.POSSESSION);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
+        summon.getEntityData().set(StaticSummon.LIFETIME, getLifetime());
+
+        int rotateAngle = (int)((player.getRandom().nextFloat() * 2.0F - 1.0F) * getRotateAngle());
+        dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], rotateAngle);
+        CompoundTag customData = new CompoundTag();
+        customData.putFloat("dirX", dirs[0].x);
+        customData.putFloat("dirY", dirs[0].y);
+        customData.putFloat("dirZ", dirs[0].z);
+        customData.putFloat("upX", dirs[1].x);
+        customData.putFloat("upY", dirs[1].y);
+        customData.putFloat("upZ", dirs[1].z);
+        customData.putFloat("rightX", dirs[2].x);
+        customData.putFloat("rightY", dirs[2].y);
+        customData.putFloat("rightZ", dirs[2].z);
+        customData.putFloat("offsetX", offset.x);
+        customData.putFloat("offsetY", offset.y);
+        customData.putFloat("offsetZ", offset.z);
+        customData.putDouble("range", getRange());
+        customData.putDouble("height", getHeight());
+        customData.putDouble("bend", getBend());
+        customData.putBoolean("reverse", summon.getRandom().nextInt(2) == 0);
+        customData.putString("res", getRes(summon));
+        summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+
+        summon.setNoGravity(true);
+        summon.noPhysics = true;
+
+        float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
+        summon.setXRot(xyRot[0]);
+        summon.setYRot(xyRot[1]);
+        level.addFreshEntity(summon);
     }
 
     private static void hurtTargets(StaticSummon summon) {

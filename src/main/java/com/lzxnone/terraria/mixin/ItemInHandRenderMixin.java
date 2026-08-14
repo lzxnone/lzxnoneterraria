@@ -2,11 +2,13 @@ package com.lzxnone.terraria.mixin;
 
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.client.config.RenderConfigs;
+import com.lzxnone.terraria.client.item.magic.ClientNebulaBlaze;
 import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
 import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.item.weapon.melee.Mace;
+import com.lzxnone.terraria.item.weapon.summon.whip.Whip;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -105,8 +107,14 @@ public class ItemInHandRenderMixin {
                                          boolean leftHand, PoseStack poseStack, MultiBufferSource buffer,
                                          int seed, CallbackInfo ci) {
         if(!RenderConfigs.ENABLE_RENDER_ITEM.get()) return;
-
-        if((itemStack.is(ModItems.ZENITH.get())
+        if(itemStack.getItem() instanceof Whip && entity instanceof Player player) {
+            if(player.isUsingItem()) {
+                ItemStack usingStack = player.getUseItem();
+                if(usingStack.is(itemStack.getItem())) {
+                    ci.cancel();
+                }
+            }
+        }else if((itemStack.is(ModItems.ZENITH.get())
             || itemStack.is(ModItems.TRUE_COPPER_SHORTSWORD.get())
             || itemStack.is(ModItems.FIRST_FRACTAL.get())
             || itemStack.is(ModItems.TERRAGRIM.get())) && entity instanceof Player player) {
@@ -130,6 +138,14 @@ public class ItemInHandRenderMixin {
             if(player.isUsingItem()) {
                 ItemStack usingStack = player.getUseItem();
                 if(usingStack.is(itemStack.getItem())) {
+                    ci.cancel();
+                }
+            }
+        }else if(itemStack.is(ModItems.NEBULA_BLAZE.get()) && entity instanceof Player player) {
+            if(player.isUsingItem()) {
+                ItemStack usingStack = player.getUseItem();
+                if(usingStack.is(itemStack.getItem())) {
+                    ClientNebulaBlaze.renderHandProjectile(buffer, poseStack, player);
                     ci.cancel();
                 }
             }

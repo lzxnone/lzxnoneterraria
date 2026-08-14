@@ -7,16 +7,14 @@ import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.weapon.MagicWeapon;
+import com.lzxnone.terraria.particle.CircleParticleOptions;
+import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
 import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
-import com.lzxnone.terraria.utils.CollisionUtil;
-import com.lzxnone.terraria.utils.DamageUtil;
-import com.lzxnone.terraria.utils.FilterUtil;
-import com.lzxnone.terraria.utils.MathUtil;
-import com.lzxnone.terraria.utils.SearchUtil;
+import com.lzxnone.terraria.utils.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -30,6 +28,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Tiers;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -40,8 +39,7 @@ import org.joml.Vector3f;
 import java.util.List;
 
 public class NebulaBlaze extends MagicWeapon {
-    public static final Vector3f OFFSET = new Vector3f(-0.25F, -0.1F, 1.2F);
-    public static final double HITBOX_INFLATE = 0.35D;
+    public static final Vector3f OFFSET = new Vector3f(-0.5F, -0.1F, 1.2F);
     public static final String TARGET_UUID_KEY = "target";
 
     public static final ConfigFloat DAMAGE = new ConfigFloat("weapon.nebula_blaze.damage", "nebula_blaze_damage", 10.0F, 0.0F, 8388600.0F);
@@ -78,16 +76,35 @@ public class NebulaBlaze extends MagicWeapon {
         CONFIG_DATA
     );
 
+    public static final CircleParticleOptions TRAIL_PARTICLE = new CircleParticleOptions(0.075F, 16, new Vector3f(1.0F, 0.18F, 0.72F));
+    public static final CircleParticleOptions EXPLOSIVE_TRAIL_PARTICLE = new CircleParticleOptions(0.085F, 16, new Vector3f(0.24F, 0.7F, 1.0F));
+    public static final DustParticleOptions DUST_PARTICLE = new DustParticleOptions(
+        0.1F, 0.35F, 18, true,
+        new Vector3f[] {new Vector3f(1.0F, 0.16F, 0.62F), new Vector3f(0.86F, 0.08F, 1.0F)}
+    );
+    public static final DustParticleOptions EXPLOSIVE_DUST_PARTICLE = new DustParticleOptions(
+        0.15F, 0.35F, 18, true,
+        new Vector3f[] {new Vector3f(0.12F, 0.86F, 1.0F), new Vector3f(0.22F, 0.25F, 1.0F)}
+    );
+    public static final DustParticleOptions DEATH_PARTICLE = new DustParticleOptions(
+        0.15F, 0.45F, 32, true,
+        new Vector3f[] {new Vector3f(1.0F, 0.12F, 0.58F), new Vector3f(0.95F, 0.04F, 1.0F)}
+    );
+    public static final DustParticleOptions EXPLOSIVE_DEATH_PARTICLE = new DustParticleOptions(
+        0.3F, 0.5F, 36, true,
+        new Vector3f[] {new Vector3f(0.0F, 0.95F, 1.0F), new Vector3f(0.2F, 0.35F, 1.0F)}
+    );
+
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
         @Override
         public void tick(StaticSummon summon) {
             checkBeforeTick(summon);
-            tickProjectile(summon, SPEED.get(), TARGET_RANGE.get(), DAMAGE.get());
+            tickProjectile(summon, SPEED.get(), TARGET_RANGE.get(), DAMAGE.get(), false);
         }
 
         @Override
         public void onDied(StaticSummon summon) {
-            explode(summon, DAMAGE.get());
+            explode(summon, DAMAGE.get(), false);
         }
     };
 
@@ -95,12 +112,12 @@ public class NebulaBlaze extends MagicWeapon {
         @Override
         public void tick(StaticSummon summon) {
             checkBeforeTick(summon);
-            tickProjectile(summon, EXPLOSIVE_SPEED.get(), EXPLOSIVE_TARGET_RANGE.get(), EXPLOSIVE_DAMAGE.get());
+            tickProjectile(summon, EXPLOSIVE_SPEED.get(), EXPLOSIVE_TARGET_RANGE.get(), EXPLOSIVE_DAMAGE.get(), true);
         }
 
         @Override
         public void onDied(StaticSummon summon) {
-            explode(summon, EXPLOSIVE_DAMAGE.get());
+            explode(summon, EXPLOSIVE_DAMAGE.get(), true);
         }
     };
 
@@ -128,7 +145,7 @@ public class NebulaBlaze extends MagicWeapon {
     protected void shoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
         if(level.isClientSide()) return;
 
-        player.playNotifySound(ModSounds.MAGIC_SHOOT.get(), SoundSource.PLAYERS, 4.0F, 1.0F);
+        player.playNotifySound(ModSounds.MAGIC_SHOOT2.get(), SoundSource.PLAYERS, 4.0F, 1.0F);
 
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
         Vector3f offset = new Vector3f(
@@ -151,7 +168,17 @@ public class NebulaBlaze extends MagicWeapon {
         summon.setDeltaMovement(direction.scale(explosive ? EXPLOSIVE_SPEED.get() : SPEED.get()));
         summon.getEntityData().set(StaticSummon.STACK_SOURCE, stack.copy());
         summon.getEntityData().set(StaticSummon.BEHAVIOR, explosive ? StaticSummonBehaviors.NEBULA_BLAZE_EXPLOSIVE : StaticSummonBehaviors.NEBULA_BLAZE);
+        summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.LIFETIME, 100);
+        if(explosive) {
+            summon.getEntityData().set(StaticSummon.SCALE_X, 2.0f);
+            summon.getEntityData().set(StaticSummon.SCALE_Y, 2.0f);
+            summon.getEntityData().set(StaticSummon.SCALE_Z, 2.0f);
+        }else {
+            summon.getEntityData().set(StaticSummon.SCALE_X, 1.5f);
+            summon.getEntityData().set(StaticSummon.SCALE_Y, 1.5f);
+            summon.getEntityData().set(StaticSummon.SCALE_Z, 1.5f);
+        }
         summon.getEntityData().set(StaticSummon.GLOW, true);
         summon.setNoGravity(true);
         summon.noPhysics = true;
@@ -164,7 +191,7 @@ public class NebulaBlaze extends MagicWeapon {
         level.addFreshEntity(summon);
     }
 
-    private static void tickProjectile(StaticSummon summon, double speed, double targetRange, float damage) {
+    private static void tickProjectile(StaticSummon summon, double speed, double targetRange, float damage, boolean explosive) {
         Vec3 direction = summon.getDeltaMovement();
         if(direction.lengthSqr() < 1.0E-7D) direction = summon.getLookAngle();
         if(direction.lengthSqr() < 1.0E-7D) direction = new Vec3(0.0D, 0.0D, 1.0D);
@@ -177,11 +204,36 @@ public class NebulaBlaze extends MagicWeapon {
                 if(target == null || !target.isAlive()) {
                     target = null;
                     customData.remove(TARGET_UUID_KEY);
+                }else if(serverLevel.clip(new ClipContext(
+                    summon.position(),
+                    target.getBoundingBox().getCenter(),
+                    ClipContext.Block.COLLIDER,
+                    ClipContext.Fluid.NONE,
+                    summon
+                )).getType() != HitResult.Type.MISS) {
+                    target = null;
+                    customData.remove(TARGET_UUID_KEY);
                 }
             }
             if(target == null) {
-                List<Entity> targets = SearchUtil.searchNearestEnemies(summon, summon.getOwner(), summon.getBoundingBox().inflate(targetRange), 1);
-                target = targets.isEmpty() ? null : targets.getFirst();
+                List<Entity> targets = SearchUtil.searchEnemies(summon, summon.getOwner(), summon.getBoundingBox().inflate(targetRange));
+                double bestDistance = Double.MAX_VALUE;
+                for(Entity candidate : targets) {
+                    Vec3 targetCenter = candidate.getBoundingBox().getCenter();
+                    if(serverLevel.clip(new ClipContext(
+                        summon.position(),
+                        targetCenter,
+                        ClipContext.Block.COLLIDER,
+                        ClipContext.Fluid.NONE,
+                        summon
+                    )).getType() != HitResult.Type.MISS) continue;
+
+                    double distance = targetCenter.distanceToSqr(summon.position());
+                    if(distance < bestDistance) {
+                        bestDistance = distance;
+                        target = candidate;
+                    }
+                }
                 if(target != null) customData.putUUID(TARGET_UUID_KEY, target.getUUID());
             }
             summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
@@ -204,15 +256,16 @@ public class NebulaBlaze extends MagicWeapon {
         summon.yRotO = xyRot[1];
 
         if(summon.level().isClientSide()) return;
+        addTrailParticles(summon, direction, explosive);
 
-        AABB hitBox = new AABB(start, end).inflate(HITBOX_INFLATE);
+        AABB hitBox = new AABB(start, end).inflate(0.35);
         List<Entity> hitTargets = summon.level().getEntitiesOfClass(
             Entity.class,
             hitBox,
             FilterUtil.createTargetFilter(summon, summon.getOwner())
         );
         if(!hitTargets.isEmpty()) {
-            explode(summon, damage);
+            explode(summon, damage, explosive);
             return;
         }
 
@@ -220,14 +273,23 @@ public class NebulaBlaze extends MagicWeapon {
         if(blockHitResult.getType() != HitResult.Type.MISS) {
             summon.setPos(blockHitResult.getLocation());
             summon.setDeltaMovement(Vec3.ZERO);
-            explode(summon, damage);
+            explode(summon, damage, explosive);
         }
     }
 
-    private static void explode(StaticSummon summon, float damage) {
+    private static void explode(StaticSummon summon, float damage, boolean explosive) {
         if(!(summon.level() instanceof ServerLevel serverLevel)) return;
 
         Vec3 pos = summon.position();
+        ParticleUtil.addParticles(
+            serverLevel,
+            explosive ? EXPLOSIVE_DEATH_PARTICLE : DEATH_PARTICLE,
+            pos,
+            new Vec3(explosive ? 0.75D : 0.55D, explosive ? 0.75D : 0.55D, explosive ? 0.75D : 0.55D),
+            0.03D,
+            explosive ? 28 : 20
+        );
+        SoundUtil.playServerSound(summon.level(), ModSounds.BOOM.get(), summon.position());
         double explosionRange = EXPLOSION_RANGE.get();
         if(explosionRange > 0.0D) {
             ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
@@ -243,5 +305,39 @@ public class NebulaBlaze extends MagicWeapon {
         }
 
         summon.discard();
+    }
+
+    private static void addTrailParticles(StaticSummon summon, Vec3 direction, boolean explosive) {
+        if(!(summon.level() instanceof ServerLevel serverLevel)) return;
+
+        Vector3f[] dirs = MathUtil.computeCoordinateSystem(direction.toVector3f(), summon.getYRot());
+        Vec3 up = MathUtil.toVec3(dirs[1]).normalize();
+        Vec3 right = MathUtil.toVec3(dirs[2]).normalize();
+        double phase = summon.getEntityData().get(StaticSummon.AGE) * 0.75D;
+        double radius = explosive ? 0.5D : 0.35D;
+
+        for(int i = 0; i < 2; i++) {
+            double angle = phase + Math.PI * i;
+            Vec3 particlePos = summon.position()
+                .add(up.scale(Math.cos(angle) * radius))
+                .add(right.scale(Math.sin(angle) * radius));
+            ParticleUtil.addParticles(
+                serverLevel,
+                explosive ? EXPLOSIVE_TRAIL_PARTICLE : TRAIL_PARTICLE,
+                particlePos,
+                Vec3.ZERO,
+                0.0D,
+                1
+            );
+        }
+
+        ParticleUtil.addParticles(
+            serverLevel,
+            explosive ? EXPLOSIVE_DUST_PARTICLE : DUST_PARTICLE,
+            summon.position(),
+            new Vec3(Math.random(), Math.random(), Math.random()),
+            0.2D,
+            1
+        );
     }
 }

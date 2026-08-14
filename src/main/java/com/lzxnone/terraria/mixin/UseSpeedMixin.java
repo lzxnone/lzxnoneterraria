@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.MagicWeapon;
 import com.lzxnone.terraria.item.weapon.RangedWeapon;
+import com.lzxnone.terraria.item.weapon.summon.whip.Whip;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,7 +23,8 @@ public abstract class UseSpeedMixin {
                 || usingItem.is(ModItems.TERRAGRIM.get())
                 || usingItem.is(ModItems.MACE.get())
                 || usingItem.getItem() instanceof MagicWeapon
-                || usingItem.getItem() instanceof RangedWeapon;
+                || usingItem.getItem() instanceof RangedWeapon
+                || usingItem.getItem() instanceof Whip;
     }
 
     @WrapOperation(

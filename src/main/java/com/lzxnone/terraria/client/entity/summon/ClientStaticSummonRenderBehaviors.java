@@ -7,6 +7,7 @@ import com.lzxnone.terraria.client.item.ranged.ClientBulletAmmo;
 import com.lzxnone.terraria.client.item.magic.ClientBetsysWrath;
 import com.lzxnone.terraria.client.item.magic.ClientBubbleGun;
 import com.lzxnone.terraria.client.item.magic.ClientLastPrism;
+import com.lzxnone.terraria.client.item.magic.ClientNebulaBlaze;
 import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
 import com.lzxnone.terraria.client.item.melee.ClientFirstFractal;
 import com.lzxnone.terraria.client.item.melee.ClientLightsBane;
@@ -57,6 +58,8 @@ public class ClientStaticSummonRenderBehaviors {
         BEHAVIORS.put(StaticSummonBehaviors.LAST_PRISM_TRI, ClientLastPrism.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.LAST_PRISM_BEAM, ClientLastPrism.SUMMON_BEHAVIOR2);
         BEHAVIORS.put(StaticSummonBehaviors.BETSY_WRATH, ClientBetsysWrath.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.NEBULA_BLAZE, ClientNebulaBlaze.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.NEBULA_BLAZE_EXPLOSIVE, ClientNebulaBlaze.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.TERRAPRISMA, ClientTerraprisma.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.POSSESSION, ClientWhip.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.POSSESSION_VISION, DEFAULT_BEHAVIOR);
