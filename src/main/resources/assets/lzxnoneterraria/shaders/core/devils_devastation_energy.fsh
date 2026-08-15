@@ -13,7 +13,6 @@ uniform vec4 ColorB;
 const vec3 BOX_MIN = vec3(-0.25, 0.0, -1.0);
 const vec3 BOX_MAX = vec3( 0.25, 32.0, 1.0);
 
-// ---------- Ashima Arts simplex noise（GLSL 事实标准，无网格感、无方向偏差）----------
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec4 permute(vec4 x) { return mod289(((x * 34.0) + 1.0) * x); }
@@ -133,8 +132,10 @@ float densityField(vec3 p, float time) {
     nz = p.z / zHalf;
 
     // 横截面中心更亮，靠近 X/Z 边界逐渐减弱。
-    float edgeX = 1.0 - smoothstep(0.65, 1.0, abs(nx));
-    float edgeZ = 1.0 - smoothstep(0.65, 1.0, abs(nz));
+    // 边界阈值随噪声波动 → 边缘不规则撕裂（能量溢出感）
+    float edgeNoise = fbm3(vec3(ny * 22.0, time * 4.0, 0.0)) * 0.5 + 0.5;
+    float edgeX = 1.0 - smoothstep(0.55 + edgeNoise * 0.35, 1.05 + edgeNoise * 0.35, abs(nx));
+    float edgeZ = 1.0 - smoothstep(0.55 + edgeNoise * 0.35, 1.05 + edgeNoise * 0.35, abs(nz));
     float volumeMask = edgeX * edgeZ;
 
     // 根部与剑尖稍微渐隐。
@@ -177,15 +178,24 @@ float densityField(vec3 p, float time) {
     float radial = length(vec2(nx, nz));
     float core = 1.0 - smoothstep(0.05, 0.75, radial);
 
+    // 溢出细丝：边界附近的高频刺状丝，断续随机，随时间沿剑身流动
+    float filament = fbm3(vec3(nx * 8.0, ny * 36.0, nz * 8.0) + vec3(0.0, time * 5.0, 0.0)) * 0.5 + 0.5;
+    float edgeDist = min(1.0 - abs(nx), 1.0 - abs(nz));     // 距边界（内部）距离，0=边界
+    float leak = step(0.74, filament) * smoothstep(0.12, 0.0, edgeDist);
+
     float density =
         n1 * 0.30 +
         stream1 * 0.85 +
         stream2 * 0.55 +
         core * 0.65;
 
+    // 细丝顶破表面（不乘 volumeMask，靠 slab 限制在盒内，边缘处 mask 已衰减由丝接管）
+    density = max(density, leak * 1.4);
+
     density = smoothstep(0.30, 1.15, density);
 
-    return density * volumeMask;
+    // leak 必须绕过 volumeMask（边界处 mask≈0 会把它乘没），靠 slab 限制在盒内
+    return max(density * volumeMask, leak);
 }
 
 vec3 densityColor(vec3 p, float density) {
