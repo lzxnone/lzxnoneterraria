@@ -17,6 +17,7 @@ public class ShaderRegistry {
     private static ShaderInstance composite;
     private static ShaderInstance outline;
     private static ShaderInstance particleBloom;
+    private static ShaderInstance devilsDevastationEnergy;
 
     public static ShaderInstance getBlur() {
         return blur;
@@ -32,6 +33,10 @@ public class ShaderRegistry {
 
     public static ShaderInstance getParticleBloom() {
         return particleBloom;
+    }
+
+    public static ShaderInstance getDevilsDevastationEnergy() {
+        return devilsDevastationEnergy;
     }
 
     @SubscribeEvent
@@ -68,6 +73,14 @@ public class ShaderRegistry {
                     DefaultVertexFormat.PARTICLE
                 ),
                 shader -> particleBloom = shader
+            );
+            event.registerShader(
+                new ShaderInstance(
+                    event.getResourceProvider(),
+                    ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "devils_devastation_energy"),
+                    DefaultVertexFormat.NEW_ENTITY
+                ),
+                shader -> devilsDevastationEnergy = shader
             );
         } catch (IOException e) {
             throw new RuntimeException("Shader load error", e);

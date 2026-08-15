@@ -3,13 +3,23 @@ package com.lzxnone.terraria.client.item.melee;
 import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.client.event.ShaderRegistry;
 import com.lzxnone.terraria.utils.*;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.shaders.Uniform;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.nbt.CompoundTag;
@@ -20,6 +30,7 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import net.minecraft.client.Camera;
+import net.neoforged.neoforge.client.GlStateBackup;
 
 import java.util.*;
 import com.lzxnone.terraria.client.entity.projectile.IStaticProjectileRenderBehavior;
@@ -423,58 +434,6 @@ public class ClientDevilsDevastation {
         }
     }
 
-    public static void renderTubeSegmented(VertexConsumer buffer, Matrix4f matrix, Vec3 entityWorldPos,
-        List<Vec3> points, float[] radii,
-        Vector3f[] colors, float alpha,
-        float uvOffsetU, float uvOffsetV, float uvScaleU, float uvScaleV) {
-        int n = points.size();
-        if(n < 2 || radii.length < n || colors.length < n) return;
-
-        Vector3f[][] oriDirs = new Vector3f[n][3];
-        Vec3[] up = new Vec3[n], right = new Vec3[n];
-        for(int i = 0;i < n;i++) {
-            if(i == n - 1) oriDirs[i] = MathUtil.computeCoordinateSystem(points.get(n - 1).subtract(points.get(n - 2)).toVector3f(), 0);
-            else oriDirs[i] = MathUtil.computeCoordinateSystem(points.get(i + 1).subtract(points.get(i)).toVector3f(), 0);
-            up[i] = MathUtil.toVec3(oriDirs[i][1]);
-            right[i] = MathUtil.toVec3(oriDirs[i][2]);
-        }
-
-        for(int i = 0;i < n - 1;i++) {
-            float r0 = radii[i];
-            float r1 = radii[i + 1];
-            if(r0 <= 0.001F && r1 <= 0.001F) continue;
-            Vec3 N = right[i], B = up[i], N1 = right[i + 1], B1 = up[i + 1];
-            Vec3 P = points.get(i), P1 = points.get(i + 1);
-            Vector3f c0 = colors[i], c1 = colors[i + 1];
-
-            float u0 = uvOffsetU + uvScaleU * ((float)i / (float)(n - 1));
-            float u1 = uvOffsetU + uvScaleU * ((float)(i + 1) / (float)(n - 1));
-
-            for(int j = 0;j < RING;j++) {
-                float a0 = (float) (2.0 * Math.PI * j / RING);
-                float a1 = (float) (2.0 * Math.PI * (j + 1) / RING);
-
-                float v0 = (float) j / (float)RING + uvOffsetV;
-                float v1 = (float) (j + 1) / (float)RING + uvOffsetV;
-
-                Vec3 d0 = computeRingDir(N, B, a0);
-                Vec3 d1 = computeRingDir(N1, B1, a0);
-                Vec3 d0b = computeRingDir(N, B, a1);
-                Vec3 d1b = computeRingDir(N1, B1, a1);
-                Vec3 v00 = P.add(d0.scale(r0));
-                Vec3 v01 = P1.add(d1.scale(r1));
-                Vec3 v02 = P1.add(d1b.scale(r1));
-                Vec3 v03 = P.add(d0b.scale(r0));
-                for(int k = 0;k < 10;k++) {
-                    writeVert(buffer, matrix, entityWorldPos, v00, u0, v0, alpha, c0.x(), c0.y(), c0.z());
-                    writeVert(buffer, matrix, entityWorldPos, v01, u1, v0, alpha, c1.x(), c1.y(), c1.z());
-                    writeVert(buffer, matrix, entityWorldPos, v02, u1, v1, alpha, c1.x(), c1.y(), c1.z());
-                    writeVert(buffer, matrix, entityWorldPos, v03, u0, v1, alpha, c0.x(), c0.y(), c0.z());
-                }
-            }
-        }
-    }
-
     public static Vec3 computeRingDir(Vec3 n, Vec3 b, float ang) {
         return n.scale(Math.cos(ang)).add(b.scale(Math.sin(ang)));
     }
@@ -493,61 +452,163 @@ public class ClientDevilsDevastation {
             .setNormal(0.0F, 1.0F, 0.0F);
     }
 
+    //采样空间（光线步进长方体）：x 厚度 ±0.25、y 长 0→32、z 宽 ±1
+    private static final float BLADE_MIN_X = -0.25f;
+    private static final float BLADE_MAX_X = 0.25f;
+    private static final float BLADE_MIN_Y = 0.0f;
+    private static final float BLADE_MAX_Y = 32.0f;
+    private static final float BLADE_MIN_Z = -1.0f;
+    private static final float BLADE_MAX_Z = 1.0f;
+
     public static void renderEnergyWave(MultiBufferSource buffer, PoseStack poseStack, Entity entity) {
-        Matrix4f matrix = poseStack.last().pose();
-        int time = entity.tickCount;
+        ShaderInstance shader = ShaderRegistry.getDevilsDevastationEnergy();
+        if (shader == null) return;
 
-        poseStack.translate(0, 1.4, 0.6);
+        poseStack.pushPose();
 
-        float baseRadius = 1.0f;
-        float speed = 0.25f;
+        GlStateBackup backup = new GlStateBackup();
+        RenderSystem.backupGlState(backup);
+        ShaderInstance prevShader = RenderSystem.getShader();
 
-        Vector3f colorA = new Vector3f(0.729f, 0.396f, 0.345f);
-        Vector3f colorB = new Vector3f(0.8f, 0.176f, 0.78f);
+        try {
+            if (buffer instanceof MultiBufferSource.BufferSource source) {
+                source.endBatch();
+            }
 
-        List<Vec3> points = new ArrayList<>();
-        float[] outRadius = new float[ENERGY_WAVE_SEG + 1];
-        Vector3f[] outColors = new Vector3f[ENERGY_WAVE_SEG + 1];
+            poseStack.translate(0.0, 1.4, 0.2);
+            Matrix4f modelMatrix = new Matrix4f(poseStack.last().pose());
 
-        for(int i = 0; i <= ENERGY_WAVE_SEG; i++) {
-            float t = (float) i / ENERGY_WAVE_SEG;
-            float y = t * ENERGY_WAVE_LENGTH;
+            //注入 uniform
+            Uniform modelMat = shader.getUniform("ModelMat");
+            if (modelMat != null) modelMat.set(modelMatrix);
+            Uniform gameTime = shader.getUniform("EffectTime");
+            if (gameTime != null) gameTime.set((float) entity.tickCount);
+            Uniform colorA = shader.getUniform("ColorA");
+            if (colorA != null) colorA.set(0.729f, 0.396f, 0.345f, 1.0f);
+            Uniform colorB = shader.getUniform("ColorB");
+            if (colorB != null) colorB.set(0.8f, 0.176f, 0.78f, 1.0f);
 
-            float phase = time * speed * 6f - t * (float) Math.PI * 5;
-            float wave = (float) Math.sin(phase);
-
-            points.add(new Vec3(0, y, 0));
-
-            float taper = (float) Math.cos(t * Math.PI * 0.5f);
-            float pulse = 0.7f + 0.3f * (0.5f + 0.5f * wave);
-            outRadius[i] = baseRadius * taper * pulse;
-
-            float blend = 0.5f + 0.5f * (float) Math.sin(time * 0.3f * speed - t * (float) Math.PI * 2);
-            outColors[i] = new Vector3f(
-                colorA.x + (colorB.x - colorA.x) * blend,
-                colorA.y + (colorB.y - colorA.y) * blend,
-                colorA.z + (colorB.z - colorA.z) * blend
+            //GL 状态：加法混合 + 深度测试 + 背面剔除（代理盒只需朝向相机的面）
+            RenderSystem.setShader(() -> shader);
+            RenderSystem.enableBlend();
+            RenderSystem.blendFunc(
+                GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE
             );
-        }
+            RenderSystem.enableDepthTest();
+            RenderSystem.depthMask(true);
+            RenderSystem.enableCull();
 
-        float[] inRadius = new float[ENERGY_WAVE_SEG + 1];
-        Vector3f[] inColors = new Vector3f[ENERGY_WAVE_SEG + 1];
-        for(int i = 0; i <= ENERGY_WAVE_SEG; i++) {
-            inRadius[i] = outRadius[i] * 0.1f;
-            inColors[i] = new Vector3f(1.0f, 1.0f, 1.0f);
+            //加法混合下重复绘制 3 次 = 亮度叠加，补偿 LDR 无 bloom 时的亮度损失
+            for (int pass = 0; pass < 3; pass++) {
+                BufferBuilder bb = RenderSystem.renderThreadTesselator().begin(
+                    VertexFormat.Mode.QUADS,
+                    DefaultVertexFormat.NEW_ENTITY
+                );
+                addBox(
+                    bb,
+                    BLADE_MIN_X, BLADE_MIN_Y, BLADE_MIN_Z,
+                    BLADE_MAX_X, BLADE_MAX_Y, BLADE_MAX_Z
+                );
+                BufferUploader.drawWithShader(Objects.requireNonNull(bb.build()));
+            }
+        } finally {
+            poseStack.popPose();
+            RenderSystem.depthMask(true);
+            RenderSystem.enableDepthTest();
+            RenderSystem.enableCull();
+            RenderSystem.defaultBlendFunc();
+            if (prevShader != null) {
+                RenderSystem.setShader(() -> prevShader);
+            }
+            RenderSystem.restoreGlState(backup);
         }
-        VertexConsumer consumer2 = buffer.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES));
-        renderTubeSegmented(consumer2, matrix, new Vec3(0, 0, 0), points, inRadius, inColors, 1.0f,
-            0, 0, 1.0f, 0.0f);
+    }
 
-        float uOffset = time * 0.125f;
-        float vOffset = time * 0.125f;
-        VertexConsumer consumer = buffer.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES4));
-        for(int i = 0;i < 1;i++) {
-            renderTubeSegmented(consumer, matrix, new Vec3(0, 0, 0), points, outRadius, outColors, 1.0f,
-                uOffset, 0 + vOffset, 2.0f, 0.0f);
-            renderTubeSegmented(consumer, matrix, new Vec3(0, 0, 0), points, outRadius, outColors, 1.0f,
-                uOffset, 0.5f + vOffset, 2.0f, 0.0f);
-        }
+    private static void addBox(
+        BufferBuilder bb,
+        float minX, float minY, float minZ,
+        float maxX, float maxY, float maxZ
+    ) {
+    // +X
+    addQuad(bb,
+        maxX, minY, minZ,
+        maxX, maxY, minZ,
+        maxX, maxY, maxZ,
+        maxX, minY, maxZ,
+        1, 0, 0
+    );
+
+    // -X
+    addQuad(bb,
+        minX, minY, maxZ,
+        minX, maxY, maxZ,
+        minX, maxY, minZ,
+        minX, minY, minZ,
+        -1, 0, 0
+    );
+
+    // +Y
+    addQuad(bb,
+        minX, maxY, maxZ,
+        maxX, maxY, maxZ,
+        maxX, maxY, minZ,
+        minX, maxY, minZ,
+        0, 1, 0
+    );
+
+    // -Y
+    addQuad(bb,
+        minX, minY, minZ,
+        maxX, minY, minZ,
+        maxX, minY, maxZ,
+        minX, minY, maxZ,
+        0, -1, 0
+    );
+
+    // +Z
+    addQuad(bb,
+        minX, minY, maxZ,
+        maxX, minY, maxZ,
+        maxX, maxY, maxZ,
+        minX, maxY, maxZ,
+        0, 0, 1
+    );
+
+    // -Z
+    addQuad(bb,
+        maxX, minY, minZ,
+        minX, minY, minZ,
+        minX, maxY, minZ,
+        maxX, maxY, minZ,
+        0, 0, -1
+    );
+}
+
+    private static void addQuad(
+        BufferBuilder bb,
+        float x0, float y0, float z0,
+        float x1, float y1, float z1,
+        float x2, float y2, float z2,
+        float x3, float y3, float z3,
+        float nx, float ny, float nz
+    ) {
+        addVertex(bb, x0, y0, z0, nx, ny, nz);
+        addVertex(bb, x1, y1, z1, nx, ny, nz);
+        addVertex(bb, x2, y2, z2, nx, ny, nz);
+        addVertex(bb, x3, y3, z3, nx, ny, nz);
+    }
+
+    private static void addVertex(
+        BufferBuilder bb,
+        float x, float y, float z,
+        float nx, float ny, float nz
+    ) {
+        bb.addVertex(x, y, z)
+            .setColor(255, 255, 255, 255)
+            .setUv(0, 0)
+            .setUv1(0, 0)
+            .setUv2(0, 0)
+            .setNormal(nx, ny, nz);
     }
 }
