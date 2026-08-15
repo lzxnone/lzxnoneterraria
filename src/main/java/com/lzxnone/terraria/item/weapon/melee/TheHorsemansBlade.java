@@ -42,8 +42,11 @@ import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
 import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
 import com.lzxnone.terraria.ui.config.struct.ConfigInt;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
+import com.lzxnone.terraria.item.ModItems;
 
 import java.util.List;
+import net.minecraft.world.item.enchantment.Enchantments;
+import org.jspecify.annotations.NonNull;
 
 public class TheHorsemansBlade extends MeleeWeapon {
     public static final String ID = "the_horsemans_blade";
@@ -122,6 +125,20 @@ public class TheHorsemansBlade extends MeleeWeapon {
     }
 
     @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = BLADE_DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
+    }
+
+    @Override
     protected float getBaseMeleeDamage(ItemStack stack) {
         return BASE_MELEE_DAMAGE.get();
     }
@@ -133,7 +150,6 @@ public class TheHorsemansBlade extends MeleeWeapon {
 
     public static final CompoundTag BEAM_DATA = Util.make(new CompoundTag(), tag -> {
         tag.putString("behavior", "the_horsemans_blade");
-        tag.putInt("cooldown", 10);
         tag.putFloat("color0R", 0.741f);
         tag.putFloat("color0G", 0.133f);
         tag.putFloat("color0B", 0.133f);
@@ -177,7 +193,7 @@ public class TheHorsemansBlade extends MeleeWeapon {
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < BLADE_MAX_HIT_COUNT.get()) {
-                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) BLADE_DAMAGE.get(), 1.0f, 20)) {
+                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) BLADE_DAMAGE.get(), 1.0f, 10)) {
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
                                 beam.getEntityData().set(SwordBeam.CUSTOM_DATA, custom_data);
@@ -223,8 +239,11 @@ public class TheHorsemansBlade extends MeleeWeapon {
         @Override
         public void generate(Entity entity, CompoundTag beamData) {
             beamData.putInt("rotate", (int) (BLADE_ROTATE_RANGE.get() * (Math.random() * 2 - 1)));
-            //beamData.putBoolean("right", entity.getRandom().nextInt(2) == 0);
+            beamData.putInt("lifetime", Math.max(1, getUseTime() / 3));
             ISwordBeamBehavior.super.generate(entity, beamData);
+            if(entity instanceof Player player) {
+                player.getCooldowns().addCooldown(ModItems.THE_HORSEMANS_BLADE.get(), Math.max(1, getUseTime() / 3));
+            }
         }
     };
 
@@ -258,12 +277,58 @@ public class TheHorsemansBlade extends MeleeWeapon {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if(!level.isClientSide()) {
-            SwordBeamBehaviors.getBehavior("the_horsemans_blade").generate(player, BEAM_DATA);
-        }else {
-            SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+        if(player.getCooldowns().isOnCooldown(stack.getItem()) || !tryShoot(level, player, hand, stack)) return InteractionResultHolder.fail(stack);
+        player.startUsingItem(hand);
+        player.getCooldowns().addCooldown(stack.getItem(), Math.max(1, getUseTime() / 3));
+        return InteractionResultHolder.consume(stack);
+    }
+
+    @Override
+    public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int count) {
+        if(!(livingEntity instanceof Player player)) return;
+        if(!shouldShootThisTick(stack, livingEntity, count)) return;
+
+        if(!tryShoot(level, player, player.getUsedItemHand(), stack)) {
+            player.stopUsingItem();
         }
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+    }
+
+    public boolean shouldShootThisTick(ItemStack weaponStack, LivingEntity entity, int remainingUseTicks) {
+        int useTime = Math.max(1, getUseTime());
+        int elapsedMinecraftTicks = getUseDuration(weaponStack, entity) - remainingUseTicks;
+        if(elapsedMinecraftTicks <= 0) return false;
+
+        int currentShot = elapsedMinecraftTicks * 3 / useTime;
+        int previousShot = (elapsedMinecraftTicks - 1) * 3 / useTime;
+        return currentShot > previousShot;
+    }
+
+    public boolean tryShoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        shoot(level, player, hand, stack);
+        return true;
+    }
+
+    public void shoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+        int randomAngle = (int) (BLADE_ROTATE_RANGE.get() * (Math.random() * 2 - 1));
+        CompoundTag beamData = BEAM_DATA.copy();
+        beamData.putInt("rotate", randomAngle);
+        beamData.putInt("lifetime", Math.max(1, getUseTime() / 3));
+        SwordBeamBehaviors.getBehavior(SwordBeamBehaviors.DEFAULT).generate(player, beamData);
+    }
+
+    public static int getUseTime() {
+        return 26;
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return 72000;
+    }
+
+    @Override
+    public @NonNull UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.NONE;
     }
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
@@ -304,7 +369,7 @@ public class TheHorsemansBlade extends MeleeWeapon {
                 summon.setYRot(xyRot[1]);
 
                 if(selfPos.distanceToSqr(targetPos) < 2.0D) {
-                    if(summon.getOwner() instanceof Player player && FilterUtil.createTargetFilter(player).test(target) && DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PUMPKIN_DAMAGE.get(), 1.0f, -1)) onDied(summon);
+                    if(summon.getOwner() instanceof Player player && FilterUtil.createTargetFilter(player).test(target) && DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PUMPKIN_DAMAGE.get(), 1.0f, 10)) onDied(summon);
                 }
             }else {
                 Vec3 dir = summon.getLookAngle().normalize();
@@ -325,7 +390,7 @@ public class TheHorsemansBlade extends MeleeWeapon {
                     for(Entity hitEntity : hitEntities) {
                         if(target != null && hitEntity.getUUID() == target.getUUID()) continue;
                         if(summon.getOwner() instanceof Player player) {
-                            if(DamageUtil.meleeAttack(summon, hitEntity, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PUMPKIN_DAMAGE.get(), 1.0f, 2)) {
+                            if(DamageUtil.meleeAttack(summon, hitEntity, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PUMPKIN_DAMAGE.get(), 1.0f, 10)) {
                             }
                         }
                     }

@@ -55,7 +55,7 @@ public class LastPrism extends MagicWeapon {
     public static final ConfigFloat DAMAGE = new ConfigFloat(
         "weapon.last_prism.damage",
         "last_prism_damage",
-        2.0f,
+        3.0f,
         0.0f,
         8388600.0f
     );
@@ -241,7 +241,7 @@ public class LastPrism extends MagicWeapon {
                 AABB entityBox = hitEntity.getBoundingBox().inflate(beamData.radius());
                 Optional<Vec3> clipResult = entityBox.clip(beamData.start(), beamData.end());
                 if(entityBox.contains(beamData.start()) || clipResult.isPresent()) {
-                    if(DamageUtil.magicAttack(beam, hitEntity, beam.getEntityData().get(StaticSummon.STACK_SOURCE), DAMAGE.get() * beamData.ratio(), 0.1f, 5)) {
+                    if(DamageUtil.magicAttack(beam, hitEntity, beam.getEntityData().get(StaticSummon.STACK_SOURCE), DAMAGE.get() * beamData.ratio(), 0.1f, 2)) {
                     }
                 }
             }

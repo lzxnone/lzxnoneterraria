@@ -2,6 +2,7 @@ package com.lzxnone.terraria.client.event;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.item.weapon.MagicWeapon;
+import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.item.weapon.RangedWeapon;
 import com.lzxnone.terraria.item.weapon.SummonWeapon;
 import com.lzxnone.terraria.item.weapon.summon.minion.MinionWeapon;
@@ -29,6 +30,7 @@ public class ItemTooltipHandler {
     public static void onItemTooltip(ItemTooltipEvent event) {
         addEnchantedBookTooltip(event);
         addMinionWeaponTooltip(event);
+        addMeleeWeaponTooltip(event);
         addRangedWeaponTooltip(event);
         addSummonWeaponTooltip(event);
         addMagicWeaponTooltip(event);
@@ -85,6 +87,24 @@ public class ItemTooltipHandler {
                     event.getToolTip().add(
                         Component.translatable(
                             "tooltip.lzxnoneterraria.magic_weapon_damage",
+                            damage == Math.rint(damage) ? String.valueOf((int) damage) : String.format("%.2f", damage)
+                        ).withStyle(ChatFormatting.RED)
+                    );
+                }
+            }
+        }
+    }
+
+    private static void addMeleeWeaponTooltip(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        if(stack.getItem() instanceof MeleeWeapon meleeWeapon) {
+            Player player = event.getEntity();
+            if(player != null) {
+                float damage = meleeWeapon.getTooltipDamage(stack, player);
+                if(damage > 0.0F) {
+                    event.getToolTip().add(
+                        Component.translatable(
+                            "tooltip.lzxnoneterraria.melee_weapon_damage",
                             damage == Math.rint(damage) ? String.valueOf((int) damage) : String.format("%.2f", damage)
                         ).withStyle(ChatFormatting.RED)
                     );

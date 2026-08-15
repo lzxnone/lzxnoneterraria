@@ -1,5 +1,7 @@
 package com.lzxnone.terraria.utils;
 
+import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.damage.ModDamageTypes;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
@@ -31,6 +33,8 @@ import java.util.UUID;
 
 public class DamageUtil {
     private static final Map<String, Long> DRAGON_INVULNERABLE_UNTIL = new HashMap<>();
+    private static final int SHORT_INVULNERABLE_TIME = 2;
+    private static final int MAX_SOURCE_COOLDOWNS = 64;
 
     public enum DamageCategory {
         NORMAL,
@@ -126,8 +130,21 @@ public class DamageUtil {
             }
         }
 
+        //伤害浮动：最终伤害乘以 0.8~1.2 随机系数
+        finalDamage *= 0.8F + (float) Math.random() * 0.4F;
+
         Vec3 beforeHurtMovement = target instanceof LivingEntity livingTarget ? livingTarget.getDeltaMovement() : Vec3.ZERO;
         String dragonInvulnerableKey = getDragonInvulnerableKey(target);
+        //按来源隔离的冷却：同一来源（UUID）在 invulnerableTime 内不重复命中同一目标
+        if(invulnerableTime > 0 && target instanceof LivingEntity livingTarget) {
+            long gameTime = serverLevel.getGameTime();
+            Map<UUID, Long> sourceCooldowns = livingTarget.getData(ModAttachments.SOURCE_HIT_COOLDOWNS);
+            if(sourceCooldowns.size() > MAX_SOURCE_COOLDOWNS) {
+                sourceCooldowns.entrySet().removeIf(entry -> entry.getValue() <= gameTime);
+            }
+            Long nextAllowed = sourceCooldowns.get(attackEntity.getUUID());
+            if(nextAllowed != null && gameTime < nextAllowed) return false;
+        }
         if(dragonInvulnerableKey != null && invulnerableTime > 0) {
             long gameTime = serverLevel.getGameTime();
             Long invulnerableUntil = DRAGON_INVULNERABLE_UNTIL.get(dragonInvulnerableKey);
@@ -136,6 +153,10 @@ public class DamageUtil {
         boolean hasHurt = target.hurt(source, finalDamage);
 
         if(hasHurt) {
+            if(invulnerableTime > 0 && target instanceof LivingEntity livingTarget) {
+                livingTarget.getData(ModAttachments.SOURCE_HIT_COOLDOWNS)
+                    .put(attackEntity.getUUID(), serverLevel.getGameTime() + invulnerableTime);
+            }
             applyInvulnerableTime(serverLevel, target, invulnerableTime, dragonInvulnerableKey);
             if(category != DamageCategory.MINION && category != DamageCategory.SENTRY && target instanceof LivingEntity livingTarget) {
                 player.setLastHurtMob(livingTarget);
@@ -171,9 +192,10 @@ public class DamageUtil {
 
     private static void applyInvulnerableTime(ServerLevel serverLevel, Entity target, int invulnerableTime, String dragonInvulnerableKey) {
         if(invulnerableTime < 0) return;
-        target.invulnerableTime = invulnerableTime;
+        //实体全局无敌帧固定缩短；同来源防刷已由 SOURCE_HIT_COOLDOWNS 承担
+        target.invulnerableTime = SHORT_INVULNERABLE_TIME;
         if(target instanceof EnderDragonPart dragonPart) {
-            dragonPart.parentMob.invulnerableTime = invulnerableTime;
+            dragonPart.parentMob.invulnerableTime = SHORT_INVULNERABLE_TIME;
         }
         if(dragonInvulnerableKey != null && invulnerableTime > 0) {
             DRAGON_INVULNERABLE_UNTIL.put(dragonInvulnerableKey, serverLevel.getGameTime() + invulnerableTime);

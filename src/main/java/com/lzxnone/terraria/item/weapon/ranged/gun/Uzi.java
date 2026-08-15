@@ -48,7 +48,7 @@ public class Uzi extends Gun {
     }
     @Override
     protected int getInvulnerableTime(ItemStack stack, Player player) {
-        return 5;
+        return 10;
     }
 
     @Override

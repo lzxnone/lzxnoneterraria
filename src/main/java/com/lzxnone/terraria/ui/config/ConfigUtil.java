@@ -85,6 +85,29 @@ public final class ConfigUtil {
         set(path, new JsonPrimitive(value));
     }
 
+    public static void remove(String path) {
+        ensureLoaded();
+
+        String[] parts = splitPath(path);
+        if(parts.length == 0) {
+            return;
+        }
+
+        JsonObject current = configCache;
+        for(int i = 0; i < parts.length - 1; i++) {
+            JsonElement child = current.get(parts[i]);
+            if(child == null || !child.isJsonObject()) {
+                return;
+            }
+            current = child.getAsJsonObject();
+        }
+
+        if(current.has(parts[parts.length - 1])) {
+            current.remove(parts[parts.length - 1]);
+            dirty = true;
+        }
+    }
+
     public static void save() {
         save(false);
     }

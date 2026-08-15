@@ -20,7 +20,9 @@ import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.weapon.RangedWeapon;
 import com.lzxnone.terraria.item.weapon.Weapon;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
+import com.lzxnone.terraria.item.weapon.summon.minion.StardustCellStaff;
 import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
+import com.lzxnone.terraria.utils.ParticleUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -239,6 +241,13 @@ public class EntityEventHandler {
             if(owner instanceof Player) killer = owner;
         }
         if(livingEntity.level() instanceof ServerLevel serverLevel) {
+            //细胞附着死亡爆散
+            if(livingEntity.hasEffect(ModEffects.CELLED)) {
+                Vec3 center = livingEntity.getBoundingBox().getCenter();
+                ParticleUtil.addParticles(serverLevel, StardustCellStaff.CELL_CIRCLE_BLUE, center, Vec3.ZERO, 0.35D, 25);
+                ParticleUtil.addParticles(serverLevel, StardustCellStaff.CELL_CIRCLE_CYAN, center, Vec3.ZERO, 0.35D, 25);
+            }
+
             //迈达斯生成绿宝石
             if(livingEntity.hasEffect(ModEffects.MIDAS) && livingEntity.getRandom().nextFloat() < MidasEffect.getDropChance()) {
                 livingEntity.spawnAtLocation(new ItemStack(Items.EMERALD));

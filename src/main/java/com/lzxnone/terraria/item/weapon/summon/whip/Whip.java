@@ -15,6 +15,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -70,7 +71,7 @@ public abstract class Whip extends SummonWeapon {
     }
 
     protected int getInvulnerableTime() {
-        return 20;
+        return 10;
     }
 
     protected int getRotateAngle() {
@@ -153,7 +154,6 @@ public abstract class Whip extends SummonWeapon {
 
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int count) {
-        if(level.isClientSide()) return;
         if(!(entity instanceof Player player)) return;
         if(!shouldShootThisTick(stack, entity, count)) return;
 
@@ -176,7 +176,7 @@ public abstract class Whip extends SummonWeapon {
         summon.setOwner(player);
         summon.getEntityData().set(StaticSummon.STACK_SOURCE, stack.copy());
         Vector3f offset = new Vector3f(
-            hand == InteractionHand.OFF_HAND ? -OFFSET.x : OFFSET.x,
+            hand == (player.getMainArm() == HumanoidArm.RIGHT ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND) ? -OFFSET.x : OFFSET.x,
             OFFSET.y,
             OFFSET.z
         );

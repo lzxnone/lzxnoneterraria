@@ -39,6 +39,7 @@ import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 
 import java.util.List;
 import java.util.Locale;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 public class InfluxWaver extends MeleeWeapon {
     public static final String ID = "influx_waver";
@@ -98,6 +99,20 @@ public class InfluxWaver extends MeleeWeapon {
 
     public InfluxWaver() {
         super(Tiers.DIAMOND, new Item.Properties().rarity(Rarity.RARE));
+    }
+
+    @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
     }
 
     @Override
@@ -203,7 +218,7 @@ public class InfluxWaver extends MeleeWeapon {
                         Entity target = customData.contains("target") ? summon.level().getEntity(customData.getInt("target")) : null;
                         if(target != null && !hitTarget.getUUID().equals(target.getUUID())) return;
                         if(summon.getOwner() instanceof Player player && FilterUtil.createTargetFilter(player).test(hitTarget)) {
-                            if(DamageUtil.meleeAttack(summon, hitTarget, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 2)) {
+                            if(DamageUtil.meleeAttack(summon, hitTarget, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 10)) {
                             }
                             customData.putBoolean("dead", false);
                             summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);

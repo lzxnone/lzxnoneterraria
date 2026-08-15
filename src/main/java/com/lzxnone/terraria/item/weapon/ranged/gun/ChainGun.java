@@ -47,7 +47,7 @@ public class ChainGun extends Gun {
     }
     @Override
     protected int getInvulnerableTime(ItemStack stack, Player player) {
-        return 4;
+        return 10;
     }
 
     @Override

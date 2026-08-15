@@ -5,6 +5,8 @@ import com.lzxnone.terraria.client.config.RenderConfigs;
 import com.lzxnone.terraria.client.item.magic.ClientNebulaBlaze;
 import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
 import com.lzxnone.terraria.entity.ModRenderTypes;
+import com.lzxnone.terraria.entity.beam.SwordBeam;
+import com.lzxnone.terraria.entity.beam.SwordBeamBehaviors;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.item.weapon.melee.Mace;
@@ -148,6 +150,30 @@ public class ItemInHandRenderMixin {
                     ClientNebulaBlaze.renderHandProjectile(buffer, poseStack, player);
                     ci.cancel();
                 }
+            }
+        }else if(itemStack.is(ModItems.TERRA_BLADE.get()) && entity instanceof Player player) {
+            if(SwordBeam.hasActiveBeam(player, SwordBeamBehaviors.TERRA_BLADE)) {
+                ci.cancel();
+            }
+        }else if(itemStack.is(ModItems.THE_HORSEMANS_BLADE.get()) && entity instanceof Player player) {
+            if(SwordBeam.hasActiveBeam(player, SwordBeamBehaviors.THE_HORSEMANS_BLADE)) {
+                ci.cancel();
+            }
+        }else if(itemStack.is(ModItems.EXCALIBUR.get()) && entity instanceof Player player) {
+            if(SwordBeam.hasActiveBeam(player, SwordBeamBehaviors.EXCALIBUR)) {
+                ci.cancel();
+            }
+        }else if(itemStack.is(ModItems.TRUE_EXCALIBUR.get()) && entity instanceof Player player) {
+            if(SwordBeam.hasActiveBeam(player, SwordBeamBehaviors.TRUE_EXCALIBUR)) {
+                ci.cancel();
+            }
+        }else if(itemStack.is(ModItems.NIGHTS_EDGE.get()) && entity instanceof Player player) {
+            if (SwordBeam.hasActiveBeam(player, SwordBeamBehaviors.NIGHTS_EDGE)) {
+                ci.cancel();
+            }
+        }else if(itemStack.is(ModItems.TRUE_NIGHTS_EDGE.get()) && entity instanceof Player player) {
+            if (SwordBeam.hasActiveBeam(player, SwordBeamBehaviors.TRUE_NIGHTS_EDGE)) {
+                ci.cancel();
             }
         }
     }

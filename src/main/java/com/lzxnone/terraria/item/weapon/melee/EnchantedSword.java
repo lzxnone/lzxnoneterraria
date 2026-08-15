@@ -34,6 +34,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 public class EnchantedSword extends MeleeWeapon {
     public static final String ID = "enchanted_sword";
@@ -62,6 +63,20 @@ public class EnchantedSword extends MeleeWeapon {
     );
     public EnchantedSword() {
         super(Tiers.IRON, new Item.Properties());
+    }
+
+    @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
     }
 
     @Override
@@ -105,7 +120,7 @@ public class EnchantedSword extends MeleeWeapon {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE),(float) DAMAGE.get(), 1.0f, 5)) {
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE),(float) DAMAGE.get(), 1.0f, 10)) {
                     ParticleUtil.addParticles(
                         (ServerLevel) projectile.level(), ModParticles.COLORFUL_PARTICLE,
                         projectile.position(), new Vec3(0.2, 0.2, 0.2),

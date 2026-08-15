@@ -141,7 +141,7 @@ public class LightsBane extends MeleeWeapon {
                 List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                 for(Entity target : targets) {
                     float damage = customData.contains("big") && customData.getBoolean("big") ? (float) BIG_DAMAGE.get() : (float) SMALL_DAMAGE.get();
-                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), damage, 1.0f, -1)) {
+                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), damage, 1.0f, 10)) {
 
                     }
                 }

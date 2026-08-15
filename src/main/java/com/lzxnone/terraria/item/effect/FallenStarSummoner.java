@@ -52,7 +52,7 @@ public interface FallenStarSummoner {
                         fallenStarDamage[0] = Math.max(summoner.getFallenStarDamage(accessoryStack, player), fallenStarDamage[0]);
                     }
                 });
-                if(DamageUtil.meleeAttack(projectile, target, stack, (float) fallenStarDamage[0], 1.0f, 5)) {
+                if(DamageUtil.meleeAttack(projectile, target, stack, (float) fallenStarDamage[0], 1.0f, 10)) {
                 }
             }
         }

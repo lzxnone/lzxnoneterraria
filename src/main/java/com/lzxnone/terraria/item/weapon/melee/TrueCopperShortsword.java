@@ -11,6 +11,7 @@ import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.utils.MathUtil;
 import com.lzxnone.terraria.utils.SoundUtil;
+import com.lzxnone.terraria.utils.DamageUtil;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -24,6 +25,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 public class TrueCopperShortsword extends MeleeWeapon {
     public static final String ID = "true_copper_shortsword";
@@ -34,6 +36,20 @@ public class TrueCopperShortsword extends MeleeWeapon {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
     public TrueCopperShortsword() {
         super(Tiers.NETHERITE, new Item.Properties().fireResistant().rarity(Rarity.EPIC));
+    }
+
+    @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = Zenith.DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
     }
 
     @Override
@@ -138,19 +154,47 @@ public class TrueCopperShortsword extends MeleeWeapon {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        if(player.getCooldowns().isOnCooldown(stack.getItem()) || !tryShoot(level, player, hand, stack)) return InteractionResultHolder.fail(stack);
         player.startUsingItem(hand);
-        return InteractionResultHolder.consume(stack);
+        player.getCooldowns().addCooldown(stack.getItem(), Math.max(1, getUseTime() / 3));
+        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 
     @Override
     public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int count) {
         if(!(livingEntity instanceof Player player)) return;
-        if(player.tickCount % 3 == 0) {
-            double deltaDist = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                .copyTag().getDouble("deltaDist");
-            summon(player, deltaDist);
-            SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+        if(!shouldShootThisTick(stack, livingEntity, count)) return;
+
+        if(!tryShoot(level, player, player.getUsedItemHand(), stack)) {
+            player.stopUsingItem();
         }
+    }
+
+    public boolean shouldShootThisTick(ItemStack weaponStack, LivingEntity entity, int remainingUseTicks) {
+        int useTime = Math.max(1, getUseTime());
+        int elapsedMinecraftTicks = getUseDuration(weaponStack, entity) - remainingUseTicks;
+        if(elapsedMinecraftTicks <= 0) return false;
+
+        int currentShot = elapsedMinecraftTicks * 3 / useTime;
+        int previousShot = (elapsedMinecraftTicks - 1) * 3 / useTime;
+        return currentShot > previousShot;
+    }
+
+    public boolean tryShoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        shoot(level, player, hand, stack);
+        return true;
+    }
+
+    public void shoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+        if(level.isClientSide()) return;
+        double deltaDist = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+            .copyTag().getDouble("deltaDist");
+        summon(player, deltaDist);
+    }
+
+    public int getUseTime() {
+        return 10;
     }
 
     @Override

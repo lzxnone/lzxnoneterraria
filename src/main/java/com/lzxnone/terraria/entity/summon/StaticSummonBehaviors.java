@@ -16,6 +16,7 @@ import com.lzxnone.terraria.item.weapon.ranged.SnowballCannon;
 import com.lzxnone.terraria.item.weapon.ranged.StarCannon;
 import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
 import com.lzxnone.terraria.item.weapon.summon.minion.StardustDragonStaff;
+import com.lzxnone.terraria.item.weapon.summon.minion.StardustCellStaff;
 import com.lzxnone.terraria.item.weapon.summon.minion.Terraprisma;
 import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
 import com.lzxnone.terraria.item.weapon.summon.whip.Whip;
@@ -60,6 +61,8 @@ public class StaticSummonBehaviors {
     public static final String NEBULA_ARCANUM_SMALL_PROJECTILE = "nebula_arcanum_small_projectile";
     public static final String TERRAPRISMA = "terraprisma";
     public static final String STARDUST_DRAGON_STAFF = "stardust_dragon_staff";
+    public static final String STARDUST_CELL_STAFF = "stardust_cell_staff";
+    public static final String STARDUST_CELL_STUCK_PROJECTILE = "stardust_cell_stuck_projectile";
     public static final String POSSESSION = "possession";
     public static final String POSSESSION_VISION = "possession_vision";
 
@@ -121,6 +124,8 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(NEBULA_ARCANUM_SMALL_PROJECTILE, NebulaArcanum.SUMMON_BEHAVIOR2);
         BEHAVIORS.put(TERRAPRISMA, Terraprisma.SUMMON_BEHAVIOR);
         BEHAVIORS.put(STARDUST_DRAGON_STAFF, StardustDragonStaff.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(STARDUST_CELL_STAFF, StardustCellStaff.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(STARDUST_CELL_STUCK_PROJECTILE, StardustCellStaff.SUMMON_BEHAVIOR2);
         BEHAVIORS.put(POSSESSION, Whip.SUMMON_BEHAVIOR);
         BEHAVIORS.put(POSSESSION_VISION, Possession.SUMMON_BEHAVIOR);
 

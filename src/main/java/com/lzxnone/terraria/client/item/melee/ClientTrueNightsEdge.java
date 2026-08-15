@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.*;
 import net.minecraft.world.phys.*;
@@ -16,7 +17,6 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import com.lzxnone.terraria.client.entity.summon.IStaticSummonRenderBehavior;
 import com.lzxnone.terraria.client.entity.beam.ISwordBeamRenderBehavior;
-import static com.lzxnone.terraria.item.weapon.melee.TrueNightsEdge.*;
 
 public class ClientTrueNightsEdge {
     public static final ISwordBeamRenderBehavior SWORD_BEAM_BEHAVIOR = new ISwordBeamRenderBehavior() {
@@ -105,10 +105,23 @@ public class ClientTrueNightsEdge {
                     color1.x(), color1.y(), color1.z(), alpha, 32 * SwordBeam.SCALE, 32 * SwordBeam.SCALE, 0f, 0f, 0.03f);
             }
             poseStack.popPose();
+
+            ISwordBeamRenderBehavior.super.renderSword(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         }
     };
 
     public static final IStaticSummonRenderBehavior SUMMON_BEHAVIOR = new IStaticSummonRenderBehavior() {
+        public static final Vector3f COLOR0 = new Vector3f(0.400f, 0.659f, 0.290f);
+        public static final Vector3f COLOR1 = new Vector3f(0.475f, 0.612f, 0.247f);
+        public static final Vector3f COLOR2 = new Vector3f(0.631f, 0.871f, 0.192f);
+
+        public static final ResourceLocation RES0 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/terra_beam0.png");
+        public static final ResourceLocation RES1 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/terra_beam3.png");
+        public static final ResourceLocation RES2 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/beam_sparkle.png");
+
+        public static final float FADE_IN = 0.33f;
+        public static final float FADE_OUT = 0.67f;
+
         @Override
         public void render(Entity entity, float entityYaw, float partialTick,
             PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {

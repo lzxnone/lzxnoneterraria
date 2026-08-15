@@ -112,7 +112,7 @@ public class ClientTrueExcalibur {
             RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], (progress + 0.05f) * 180, SwordBeam.DIST * 1.725f);
             RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], (0.5f - (progress + 0.05f)) * 180, rotate);
             poseStack.scale(1.5f, 1.5f, 1.5f);
-            for(int i = 0;i < 20;i++) {
+            for(int i = 0;i < 3;i++) {
                 renderQuad(poseStack.last().pose(), vertexConsumer2,
                     color1.x(), color1.y(), color1.z(), alpha, halfWidth, halfHeight, 0f, 0f, -0.03f);
             }
@@ -133,6 +133,7 @@ public class ClientTrueExcalibur {
             poseStack.popPose();
 
             ISwordBeamRenderBehavior.super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+            ISwordBeamRenderBehavior.super.renderSword(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         }
     };
 }

@@ -1,5 +1,7 @@
 package com.lzxnone.terraria.entity.beam;
 
+import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.utils.FilterUtil;
 import com.lzxnone.terraria.utils.MathUtil;
 import net.minecraft.nbt.CompoundTag;
@@ -9,6 +11,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -41,6 +44,8 @@ public class SwordBeam extends Entity {
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.VECTOR3);
     public static final EntityDataAccessor<Boolean> RIGHT =
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> RIGHT_HAND =
+            SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Float> INFLATE =
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Boolean> OUTLINE =
@@ -58,6 +63,7 @@ public class SwordBeam extends Entity {
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.COMPOUND_TAG);
 
     private Entity owner = null;
+    private boolean registeredToOwner = false;
 
     public Vec3 prevPosition = null;
     public Vec3 currentPosition = null;
@@ -67,6 +73,30 @@ public class SwordBeam extends Entity {
         super(type, level);
         this.setNoGravity(true);
         this.noPhysics = true;
+    }
+
+    public static SwordBeam getActiveBeam(Player player, String behavior) {
+        List<Entity> beams = player.getData(ModAttachments.ACTIVE_BEAMS);
+        beams.removeIf(beam -> !beam.isAlive());
+        for(Entity beam : beams) {
+            if(beam instanceof SwordBeam swordBeam
+                && swordBeam.getEntityData().get(SwordBeam.BEHAVIOR).equals(behavior)) {
+                return swordBeam;
+            }
+        }
+        return null;
+    }
+
+    public static boolean hasActiveBeam(Player player, String behavior) {
+        return getActiveBeam(player, behavior) != null;
+    }
+
+    @Override
+    public void onRemovedFromLevel() {
+        if(getOwner() instanceof Player player) {
+            player.getData(ModAttachments.ACTIVE_BEAMS).removeIf(beam -> beam == this);
+        }
+        super.onRemovedFromLevel();
     }
 
     public void setOwner(Entity entity) {
@@ -107,8 +137,27 @@ public class SwordBeam extends Entity {
             this.getEntityData().set(AGE, this.getEntityData().get(AGE) + 1);
         }
 
-        if(this.getOwner() != null) {
-            this.setPos(this.getOwner().getX(), this.getOwner().getY() + this.getOwner().getBbHeight() * 0.5, this.getOwner().getZ());
+        Entity owner = this.getOwner();
+        if(owner != null) {
+            if(this.level().isClientSide() && !this.registeredToOwner && owner instanceof Player player) {
+                player.getData(ModAttachments.ACTIVE_BEAMS).add(this);
+                this.registeredToOwner = true;
+            }
+
+            Vector3f[] dirs = MathUtil.computeCoordinateSystem(owner);
+            Vec3 eyePos = owner.getEyePosition();
+            Vector3f offset;
+            if(getEntityData().get(SwordBeam.RIGHT_HAND)) {
+                offset = new Vector3f(-0.3f, -0.35f, 0.4f);
+            }else {
+                offset = new Vector3f(0.3f, -0.35f, 0.4f);
+            }
+            Vec3 pos = new Vec3(
+                eyePos.x + dirs[0].x * offset.z + dirs[1].x * offset.y + dirs[2].x * offset.x,
+                eyePos.y + dirs[0].y * offset.z + dirs[1].y * offset.y + dirs[2].y * offset.x,
+                eyePos.z + dirs[0].z * offset.z + dirs[1].z * offset.y + dirs[2].z * offset.x
+            );
+            this.setPos(pos);
         }else {
             SwordBeamBehaviors.getBehavior(this.entityData.get(BEHAVIOR)).onDied(this);
             return;
@@ -198,6 +247,7 @@ public class SwordBeam extends Entity {
         builder.define(BEHAVIOR, "default");
         builder.define(ROTATE, 0);
         builder.define(RIGHT, false);
+        builder.define(RIGHT_HAND, true);
         builder.define(INFLATE, 0.0f);
         builder.define(OUTLINE, false);
         builder.define(COLOR0, new Vector3f(1.0f, 1.0f, 1.0f));
@@ -216,6 +266,7 @@ public class SwordBeam extends Entity {
         tag.putString("behavior", this.entityData.get(BEHAVIOR));
         tag.putInt("rotate", this.entityData.get(ROTATE));
         tag.putBoolean("right", this.entityData.get(RIGHT));
+        tag.putBoolean("rightHand", this.entityData.get(RIGHT_HAND));
         tag.putFloat("inflate", this.entityData.get(INFLATE));
         tag.putBoolean("outline", this.entityData.get(OUTLINE));
         Vector3f c0 = this.entityData.get(COLOR0);
@@ -247,6 +298,7 @@ public class SwordBeam extends Entity {
         if(tag.contains("behavior")) this.entityData.set(BEHAVIOR, tag.getString("behavior"));
         if(tag.contains("rotate")) this.entityData.set(ROTATE, tag.getInt("rotate"));
         if(tag.contains("right")) this.entityData.set(RIGHT, tag.getBoolean("right"));
+        if(tag.contains("rightHand")) this.entityData.set(RIGHT_HAND, tag.getBoolean("rightHand"));
         if(tag.contains("inflate")) this.entityData.set(INFLATE, tag.getFloat("inflate"));
         if(tag.contains("outline")) this.entityData.set(OUTLINE, tag.getBoolean("outline"));
         if(tag.contains("color0R")) {

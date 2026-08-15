@@ -111,9 +111,14 @@ public class Flamethrower extends RangedWeapon {
                 FilterUtil.createTargetFilter(summon, summon.getOwner())
             );
             for(Entity target : targets) {
-                if(target.getBoundingBox().inflate(1.0).clip(collisionStart, end).isEmpty()) continue;
+                AABB targetBox = target.getBoundingBox().inflate(1.0);
+                if(!targetBox.contains(collisionStart) && targetBox.clip(collisionStart, end).isEmpty()) continue;
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, DAMAGE.get(), -0.25f, 12)) {
+                //25% 原版火焰伤害（先结算，避免被 75% 远程伤害的短无敌帧吞掉），并附带 0.8~1.2 伤害浮动
+                float flameDamage = DAMAGE.get() * 0.25F * (0.8F + (float) Math.random() * 0.4F);
+                target.hurt(target.damageSources().onFire(), flameDamage);
+                //75% 远程伤害
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, DAMAGE.get() * 0.75F, -0.25f, 4)) {
                     if(target instanceof LivingEntity livingTarget) {
                         livingTarget.igniteForTicks(IGNITE_TICKS.get());
                     }
@@ -162,8 +167,11 @@ public class Flamethrower extends RangedWeapon {
 
     @Override
     public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
-        float damage = entity instanceof Player player ? DamageUtil.applyPlayerDamageEffects(player, DAMAGE.get()) : DAMAGE.get();
-        return applyRangedDamageBonus(weaponStack, entity, damage);
+        //75% 远程伤害走完整加成流程
+        float damage = entity instanceof Player player ? DamageUtil.applyPlayerDamageEffects(player, DAMAGE.get() * 0.75F) : DAMAGE.get() * 0.75F;
+        damage = applyRangedDamageBonus(weaponStack, entity, damage);
+        //加上 25% 原版火焰伤害
+        return damage + DAMAGE.get() * 0.25F;
     }
 
     @Override

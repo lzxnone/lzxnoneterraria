@@ -38,7 +38,7 @@ public class ElfMelter extends RangedWeapon {
     public static final ConfigFloat DAMAGE = new ConfigFloat("weapon.elf_melter.damage", "elf_melter_damage", 4.0f, 0.0f, 8388600.0f);
     public static final ConfigDouble SPEED = new ConfigDouble("weapon.elf_melter.speed", "elf_melter_speed", 4.0D, 0.1D, 24.0D);
     public static final ConfigDouble RANGE = new ConfigDouble("weapon.elf_melter.range", "elf_melter_range", 32.0D, 1.0D, 128.0D);
-    public static final ConfigInt FREEZE_TICKS = new ConfigInt("weapon.elf_melter.freeze_ticks", "elf_melter_freeze_ticks", 400, 0, 72000);
+    public static final ConfigInt FREEZE_TICKS = new ConfigInt("weapon.elf_melter.freeze_ticks", "elf_melter_freeze_ticks", 1800, 0, 72000);
     public static final Vector3f OFFSET = new Vector3f(-0.3f, -0.1f, 1.5f);
     public static final float FLAME_RED = 0.35f;
     public static final float FLAME_GREEN = 0.85f;
@@ -85,9 +85,14 @@ public class ElfMelter extends RangedWeapon {
                 FilterUtil.createTargetFilter(summon, summon.getOwner())
             );
             for(Entity target : targets) {
-                if(target.getBoundingBox().inflate(1.0).clip(collisionStart, end).isEmpty()) continue;
+                AABB targetBox = target.getBoundingBox().inflate(1.0);
+                if(!targetBox.contains(collisionStart) && targetBox.clip(collisionStart, end).isEmpty()) continue;
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
-                if(DamageUtil.rangedAttack(summon, target, sourceStack, DAMAGE.get(), -0.25f, 12)) {
+                //25% 原版冰冻伤害（先结算，避免被 75% 远程伤害的短无敌帧吞掉），并附带 0.8~1.2 伤害浮动
+                float freezeDamage = DAMAGE.get() * 0.25F * (0.8F + (float) Math.random() * 0.4F);
+                target.hurt(target.damageSources().freeze(), freezeDamage);
+                //75% 远程伤害
+                if(DamageUtil.rangedAttack(summon, target, sourceStack, DAMAGE.get() * 0.75F, -0.25f, 4)) {
                     if(target instanceof LivingEntity livingTarget) {
                         livingTarget.setTicksFrozen(Math.max(livingTarget.getTicksFrozen(), FREEZE_TICKS.get()));
                     }
@@ -140,8 +145,11 @@ public class ElfMelter extends RangedWeapon {
 
     @Override
     public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
-        float damage = entity instanceof Player player ? DamageUtil.applyPlayerDamageEffects(player, DAMAGE.get()) : DAMAGE.get();
-        return applyRangedDamageBonus(weaponStack, entity, damage);
+        //75% 远程伤害走完整加成流程
+        float damage = entity instanceof Player player ? DamageUtil.applyPlayerDamageEffects(player, DAMAGE.get() * 0.75F) : DAMAGE.get() * 0.75F;
+        damage = applyRangedDamageBonus(weaponStack, entity, damage);
+        //加上 25% 原版冰冻伤害
+        return damage + DAMAGE.get() * 0.25F;
     }
 
     @Override

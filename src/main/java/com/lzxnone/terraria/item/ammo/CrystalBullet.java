@@ -79,7 +79,7 @@ public class CrystalBullet extends BulletAmmo {
                 CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
                 float damage = customData.contains("damage") ? customData.getFloat("damage") : 0;
                 float knockbackScale = customData.contains("knockbackScale") ? customData.getFloat("knockbackScale") : 1.0f;
-                int invulnerableTime = customData.contains("invulnerableTime") ? customData.getInt("invulnerableTime") : 20;
+                int invulnerableTime = customData.contains("invulnerableTime") ? customData.getInt("invulnerableTime") : 10;
 
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 Entity target = targets.getFirst();
@@ -131,7 +131,7 @@ public class CrystalBullet extends BulletAmmo {
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
                 CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
                 float damage = customData.contains("damage") ? customData.getFloat("damage") : 0;
-                if(DamageUtil.rangedAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), damage, 1.0f, 5)) {
+                if(DamageUtil.rangedAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), damage, 1.0f, 10)) {
                     onDied(projectile);
                 }
             }

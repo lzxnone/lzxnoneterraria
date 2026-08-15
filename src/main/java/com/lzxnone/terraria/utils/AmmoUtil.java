@@ -9,6 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -27,7 +28,7 @@ public class AmmoUtil {
                                                 ItemStack ammoStack, Vector3f offset) {
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
         Vec3 eyePos = player.getEyePosition();
-        offset = getOffset(hand, offset);
+        offset = getOffset(player, hand, offset);
         Vec3 pos = new Vec3(
             eyePos.x + dirs[0].x * offset.z + dirs[1].x * offset.y + dirs[2].x * offset.x,
             eyePos.y + dirs[0].y * offset.z + dirs[1].y * offset.y + dirs[2].y * offset.x,
@@ -71,9 +72,9 @@ public class AmmoUtil {
         return summon;
     }
 
-    public static Vector3f getOffset(InteractionHand hand, Vector3f offset) {
+    public static Vector3f getOffset(Player player, InteractionHand hand, Vector3f offset) {
         return new Vector3f(
-            hand == InteractionHand.OFF_HAND ? -offset.x : offset.x,
+            hand == (player.getMainArm() == HumanoidArm.RIGHT ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND) ? -offset.x : offset.x,
             offset.y,
             offset.z
         );

@@ -17,6 +17,7 @@ import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
 import com.lzxnone.terraria.item.weapon.ranged.bow.DaedalusStormbow;
 import com.lzxnone.terraria.item.weapon.ranged.gun.*;
 import com.lzxnone.terraria.item.weapon.summon.minion.StardustDragonStaff;
+import com.lzxnone.terraria.item.weapon.summon.minion.StardustCellStaff;
 import com.lzxnone.terraria.item.weapon.summon.minion.Terraprisma;
 import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
 import net.minecraft.world.item.BlockItem;
@@ -93,6 +94,7 @@ public class ModItems {
     //召唤武器
     public static final DeferredItem<Item> TERRAPRISMA = ITEMS.register("terraprisma", Terraprisma::new);
     public static final DeferredItem<Item> STARDUST_DRAGON_STAFF = ITEMS.register("stardust_dragon_staff", StardustDragonStaff::new);
+    public static final DeferredItem<Item> STARDUST_CELL_STAFF = ITEMS.register("stardust_cell_staff", StardustCellStaff::new);
     public static final DeferredItem<Item> POSSESSION = ITEMS.register("possession", Possession::new);
 
     //近战武器 灾厄

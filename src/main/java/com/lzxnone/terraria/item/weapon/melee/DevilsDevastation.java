@@ -50,6 +50,7 @@ import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 
 
 import java.util.*;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 
 public class DevilsDevastation extends MeleeWeapon {
@@ -220,6 +221,20 @@ public class DevilsDevastation extends MeleeWeapon {
     }
 
     @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = KILL_MODE_PROJECTILE_DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
+    }
+
+    @Override
     protected float getBaseMeleeDamage(ItemStack stack) {
         return BASE_MELEE_DAMAGE.get();
     }
@@ -320,7 +335,7 @@ public class DevilsDevastation extends MeleeWeapon {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) PROJECTILE_DAMAGE.get(), 1.0f, 5)) {
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) PROJECTILE_DAMAGE.get(), 1.0f, 10)) {
                     if(target instanceof LivingEntity le) {
                         MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.DEMONIC_FLAMES, PROJECTILE_EFFECT_DURATION.get(), 0);
                         le.addEffect(effectInstance);
@@ -503,7 +518,7 @@ public class DevilsDevastation extends MeleeWeapon {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) STUCK_PROJECTILE_DAMAGE.get(), 1.0f, -1)) {
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) STUCK_PROJECTILE_DAMAGE.get(), 1.0f, 10)) {
                     if(target instanceof LivingEntity le) {
                         MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.DEMONIC_FLAMES, STUCK_PROJECTILE_EFFECT_DURATION.get(), 0);
                         le.addEffect(effectInstance);
@@ -613,7 +628,7 @@ public class DevilsDevastation extends MeleeWeapon {
                 Entity target = result.getEntity();
                 List<UUID> tempStuckList = target.getData(ModAttachments.STUCK_DEVILS_DEVASTATION_PROJECTILE);
                 boolean valid = !tempStuckList.isEmpty();
-                if(projectile.getOwner() instanceof Player player && DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) KILL_MODE_PROJECTILE_DAMAGE.get(), 4.0f, -1)) {
+                if(projectile.getOwner() instanceof Player player && DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) KILL_MODE_PROJECTILE_DAMAGE.get(), 4.0f, 10)) {
                     if(target instanceof LivingEntity le) {
                         MobEffectInstance effectInstance = new MobEffectInstance(ModEffects.DEMONIC_FLAMES, KILL_MODE_PROJECTILE_EFFECT_DURATION.get(), 1);
                         le.addEffect(effectInstance);
@@ -800,7 +815,7 @@ public class DevilsDevastation extends MeleeWeapon {
                         UUID uuid = customData.getUUID("uuid");
                         Entity entity = serverLevel.getEntity(uuid);
                         if(entity instanceof Player player) {
-                            DamageUtil.meleeAttack(player, owner, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) MARK_LIGHTNING_DAMAGE.get(), 1.0f, -1);
+                            DamageUtil.meleeAttack(player, owner, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) MARK_LIGHTNING_DAMAGE.get(), 1.0f, 10);
                             StaticSummon newSummon = new StaticSummon(ModEntities.STATIC_SUMMON.get(), serverLevel);
                             newSummon.setOwner(player);
                             newSummon.getEntityData().set(StaticSummon.STACK_SOURCE, summon.getEntityData().get(StaticSummon.STACK_SOURCE).copy());

@@ -39,6 +39,7 @@ import com.lzxnone.terraria.ui.config.struct.ConfigInt;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 
 import java.util.List;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 public class Mace extends MeleeWeapon {
     public static final String ID = "mace";
@@ -98,6 +99,20 @@ public class Mace extends MeleeWeapon {
 
     public Mace() {
         super(Tiers.IRON, new Item.Properties());
+    }
+
+    @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
     }
 
     @Override
@@ -164,7 +179,7 @@ public class Mace extends MeleeWeapon {
                         FilterUtil.createTargetFilter(projectile, player)
                     );
                     for(Entity target : targets) {
-                        if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 15)) {
+                        if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 10)) {
                         }
                     }
                 }
@@ -293,7 +308,7 @@ public class Mace extends MeleeWeapon {
                     FilterUtil.createTargetFilter(summon, summon.getOwner())
                 );
                 for(Entity target : targets) {
-                    DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, -1);
+                    DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 10);
                 }
             }else if(state == State.THROWING_BACK.ordinal()){
                 Vec3 moveDir = player.getEyePosition().subtract(summon.position());

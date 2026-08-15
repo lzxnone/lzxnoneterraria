@@ -5,6 +5,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.player.Player;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -29,6 +31,7 @@ public class RenderUtil {
     public static void applyTranslate(PoseStack poseStack, Vector3f dir, Vector3f right, double angle, double dist) {
         float cos = (float) Math.cos(Math.toRadians(angle));
         float sin = (float) Math.sin(Math.toRadians(angle));
+        //dist += 0.3;
         Vector3f current = new Vector3f(
             cos * right.x  + sin * dir.x,
             cos * right.y  + sin * dir.y,

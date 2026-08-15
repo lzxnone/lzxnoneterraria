@@ -87,7 +87,7 @@ public class Bow extends RangedWeapon {
     }
 
     protected int getInvulnerableTime(ItemStack weaponStack, LivingEntity entity, ItemStack ammoStack) {
-        return 20;
+        return 10;
     }
 
     protected boolean hasInfinity(ItemStack weaponStack, LivingEntity entity) {

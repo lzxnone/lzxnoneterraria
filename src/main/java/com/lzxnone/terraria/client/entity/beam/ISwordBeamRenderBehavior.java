@@ -7,11 +7,14 @@ import com.lzxnone.terraria.utils.RenderUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -115,7 +118,7 @@ public interface ISwordBeamRenderBehavior {
         RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], (progress + 0.05f) * 180, SwordBeam.DIST * 1.15f);
         RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], (0.5f - progress - 0.05f) * 180, rotate);
         poseStack.scale(1.0f, 1.0f, 1.0f);
-        for(int i = 0;i < 20;i++) {
+        for(int i = 0;i < 3;i++) {
             renderQuad(poseStack.last().pose(), vertexConsumer2,
                 color1.x(), color1.y(), color1.z(), alpha, halfWidth, halfHeight, 0f, 0f, 0.03f);
         }
@@ -132,6 +135,44 @@ public interface ISwordBeamRenderBehavior {
             renderQuad(poseStack.last().pose(), vertexConsumer3,
                 color1.x(), color1.y(), color1.z(), alpha, 32 * SwordBeam.SCALE, 32 * SwordBeam.SCALE, 0f, 0f, 0.03f);
         }
+        poseStack.popPose();
+
+        renderSword(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+    }
+
+    default void renderSword(Entity entity, float entityYaw, float partialTick,
+                             PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+        if(!(entity instanceof SwordBeam beam)) return;
+        ItemStack stack = beam.getEntityData().get(SwordBeam.STACK_SOURCE);
+        if(stack.isEmpty()) return;
+        Entity owner = beam.getOwner();
+        if(owner == null) return;
+
+        int age = beam.getEntityData().get(SwordBeam.AGE);
+        int lifetime = Math.max(1, beam.getEntityData().get(SwordBeam.LIFETIME));
+        float progress = (age + partialTick) / (float) lifetime;
+        if(progress > 1.0f) return;
+        if(beam.getEntityData().get(SwordBeam.RIGHT)) progress = 1.0f - progress;
+
+        Vector3f[] dirs = MathUtil.computeCoordinateSystem(owner);
+        dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], beam.getEntityData().get(SwordBeam.ROTATE));
+        float rotate = beam.getEntityData().get(SwordBeam.ROTATE);
+
+        poseStack.pushPose();
+        RenderUtil.applyTranslate(poseStack, dirs[0], dirs[2], (progress + 0.1f) * 180, SwordBeam.DIST * 0.75);
+        RenderUtil.applyRotate(poseStack, dirs[0], dirs[1], (0.5f - (progress + 0.05f)) * 180, rotate);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(-45));
+        poseStack.scale(1.8f, 1.8f, 1.8f);
+        Minecraft.getInstance().getItemRenderer().renderStatic(
+            stack,
+            ItemDisplayContext.NONE,
+            packedLight,
+            OverlayTexture.NO_OVERLAY,
+            poseStack,
+            bufferSource,
+            entity.level(),
+            0
+        );
         poseStack.popPose();
     }
 

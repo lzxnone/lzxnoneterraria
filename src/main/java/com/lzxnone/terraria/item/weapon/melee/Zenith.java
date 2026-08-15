@@ -20,6 +20,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
@@ -44,8 +45,8 @@ public class Zenith extends MeleeWeapon {
     public static final ConfigFloat DAMAGE = new ConfigFloat(
         "weapon.zenith.damage",
         "zenith_damage",
-        4.0f,
-        1.0f,
+        10.0f,
+        0.0f,
         8388600.0f
     );
     public static final ConfigDouble MAX_RANGE = new ConfigDouble(
@@ -125,6 +126,20 @@ public class Zenith extends MeleeWeapon {
     };
     public static float getDamage() {
         return DAMAGE.get();
+    }
+
+    @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
     }
 
     public static double getMaxRange() {
@@ -311,7 +326,7 @@ public class Zenith extends MeleeWeapon {
             if(!projectile.level().isClientSide()) {
                 Entity target = result.getEntity();
                 if(projectile.getOwner() instanceof Player player && FilterUtil.createTargetFilter(projectile, projectile.getOwner()).test(target)) {
-                    if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) (DAMAGE.get() + Math.random() * DAMAGE.get()), 0.2f, 2)) {
+                    if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) (DAMAGE.get() + Math.random() * DAMAGE.get()), 0.2f, 10)) {
                     }
                 }
             }
@@ -414,25 +429,53 @@ public class Zenith extends MeleeWeapon {
         ItemStack stack = player.getItemInHand(hand);
         CustomData.update(DataComponents.CUSTOM_DATA, stack,
             tag -> tag.putBoolean("isFirst", true));
+        if(player.getCooldowns().isOnCooldown(stack.getItem()) || !tryShoot(level, player, hand, stack)) return InteractionResultHolder.fail(stack);
         player.startUsingItem(hand);
-        return InteractionResultHolder.consume(stack);
+        player.getCooldowns().addCooldown(stack.getItem(), Math.max(1, getUseTime() / 3));
+        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 
     @Override
     public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int count) {
         if(!(livingEntity instanceof Player player)) return;
-        if(player.tickCount % 3 == 0) {
-            double deltaDist = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                .copyTag().getDouble("deltaDist");
-            boolean isFirst = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                        .copyTag().getBoolean("isFirst");
-            if(isFirst) {
-                CustomData.update(DataComponents.CUSTOM_DATA, stack,
-                    tag -> tag.putBoolean("isFirst", false));
-            }
-            summon(player, deltaDist, isFirst);
-            SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+        if(!shouldShootThisTick(stack, livingEntity, count)) return;
+
+        if(!tryShoot(level, player, player.getUsedItemHand(), stack)) {
+            player.stopUsingItem();
         }
+    }
+
+    public boolean shouldShootThisTick(ItemStack weaponStack, LivingEntity entity, int remainingUseTicks) {
+        int useTime = Math.max(1, getUseTime());
+        int elapsedMinecraftTicks = getUseDuration(weaponStack, entity) - remainingUseTicks;
+        if(elapsedMinecraftTicks <= 0) return false;
+
+        int currentShot = elapsedMinecraftTicks * 3 / useTime;
+        int previousShot = (elapsedMinecraftTicks - 1) * 3 / useTime;
+        return currentShot > previousShot;
+    }
+
+    public boolean tryShoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        shoot(level, player, hand, stack);
+        return true;
+    }
+
+    public void shoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+        if(level.isClientSide()) return;
+        double deltaDist = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+            .copyTag().getDouble("deltaDist");
+        boolean isFirst = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                    .copyTag().getBoolean("isFirst");
+        if(isFirst) {
+            CustomData.update(DataComponents.CUSTOM_DATA, stack,
+                tag -> tag.putBoolean("isFirst", false));
+        }
+        summon(player, deltaDist, isFirst);
+    }
+
+    public int getUseTime() {
+        return 10;
     }
 
     @Override

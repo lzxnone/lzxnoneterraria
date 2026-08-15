@@ -29,6 +29,7 @@ import net.minecraft.world.phys.*;
 import org.joml.Vector3f;
 
 import java.util.List;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 public class Meowmere extends MeleeWeapon {
     public static final String ID = "meowmere";
@@ -57,6 +58,20 @@ public class Meowmere extends MeleeWeapon {
     );
     public Meowmere() {
         super(Tiers.DIAMOND, new Item.Properties().rarity(Rarity.RARE));
+    }
+
+    @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
     }
 
     @Override
@@ -130,7 +145,7 @@ public class Meowmere extends MeleeWeapon {
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
                 if(summon.getOwner() instanceof Player player) {
-                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 2)) {
+                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 10)) {
                         if(customData.contains("hitEntity") && customData.getInt("hitEntity") < 4) {
                             customData.putInt("hitEntity", customData.getInt("hitEntity") + 1);
                             summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);

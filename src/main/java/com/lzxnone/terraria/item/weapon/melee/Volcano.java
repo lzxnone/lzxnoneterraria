@@ -35,6 +35,7 @@ import org.joml.Vector3f;
 
 import java.util.Comparator;
 import java.util.List;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 public class Volcano extends MeleeWeapon {
     public static final String ID = "volcano";
@@ -70,6 +71,20 @@ public class Volcano extends MeleeWeapon {
     );
     public Volcano() {
         super(Tiers.IRON, new Item.Properties());
+    }
+
+    @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = EXPLOSION_DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
     }
 
     @Override
@@ -166,7 +181,7 @@ public class Volcano extends MeleeWeapon {
                             for(LivingEntity livingEntity : targets) {
                                 if(livingEntity.getUUID() == target.getUUID()) continue;
                                 if(hitCount >= EXPLOSION_MAX_HIT_COUNT.get()) break;
-                                if(DamageUtil.meleeAttack(player, livingEntity, player.getWeaponItem(), (float) EXPLOSION_DAMAGE.get(), 1.0f, -1)) {
+                                if(DamageUtil.meleeAttack(player, livingEntity, player.getWeaponItem(), (float) EXPLOSION_DAMAGE.get(), 1.0f, 10)) {
                                     livingTarget.igniteForSeconds(IGNITE_SECONDS.get());
                                     hitCount++;
                                 }

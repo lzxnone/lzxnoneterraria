@@ -23,6 +23,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -152,7 +153,7 @@ public class NebulaBlaze extends MagicWeapon {
 
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
         Vector3f offset = new Vector3f(
-            hand == InteractionHand.OFF_HAND ? -OFFSET.x : OFFSET.x,
+            hand == (player.getMainArm() == HumanoidArm.RIGHT ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND) ? -OFFSET.x : OFFSET.x,
             OFFSET.y,
             OFFSET.z
         );
@@ -302,7 +303,7 @@ public class NebulaBlaze extends MagicWeapon {
                 FilterUtil.createTargetFilter(summon, summon.getOwner())
             )) {
                 if(target.distanceToSqr(pos) > explosionRange * explosionRange) continue;
-                if(DamageUtil.magicAttack(summon, target, sourceStack, damage, 0.4F, 5)) {
+                if(DamageUtil.magicAttack(summon, target, sourceStack, damage, 0.4F, 10)) {
                 }
             }
         }

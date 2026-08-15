@@ -22,6 +22,12 @@ public abstract class UseSpeedMixin {
                 || usingItem.is(ModItems.FIRST_FRACTAL.get())
                 || usingItem.is(ModItems.TERRAGRIM.get())
                 || usingItem.is(ModItems.MACE.get())
+                || usingItem.is(ModItems.TERRA_BLADE.get())
+                || usingItem.is(ModItems.THE_HORSEMANS_BLADE.get())
+                || usingItem.is(ModItems.EXCALIBUR.get())
+                || usingItem.is(ModItems.TRUE_EXCALIBUR.get())
+                || usingItem.is(ModItems.NIGHTS_EDGE.get())
+                || usingItem.is(ModItems.TRUE_NIGHTS_EDGE.get())
                 || usingItem.getItem() instanceof MagicWeapon
                 || usingItem.getItem() instanceof RangedWeapon
                 || usingItem.getItem() instanceof Whip;

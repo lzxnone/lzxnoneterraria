@@ -3,21 +3,31 @@ package com.lzxnone.terraria.client.item.melee;
 import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.item.weapon.melee.TerraBlade;
 import com.lzxnone.terraria.utils.*;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.*;
 import net.minecraft.world.phys.*;
 import org.joml.Vector3f;
 import com.lzxnone.terraria.client.entity.summon.IStaticSummonRenderBehavior;
-import static com.lzxnone.terraria.item.weapon.melee.TerraBlade.*;
 
 public class ClientTerraBlade {
     public static final IStaticSummonRenderBehavior SUMMON_BEHAVIOR = new IStaticSummonRenderBehavior() {
+        public static final Vector3f COLOR0 = new Vector3f(0.255f, 0.420f, 0.302f);
+        public static final Vector3f COLOR1 = new Vector3f(0.173f, 0.482f, 0.796f);
+        public static final Vector3f COLOR2 = new Vector3f(0.431f, 0.729f, 0.396f);
+
+        public static final ResourceLocation RES0 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/terra_beam0.png");
+        public static final ResourceLocation RES1 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/terra_beam3.png");
+        public static final ResourceLocation RES2 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/terra_beam4.png");
+        public static final ResourceLocation RES3 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/beam_sparkle.png");
+
         @Override
         public void render(Entity entity, float entityYaw, float partialTick,
             PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
@@ -29,10 +39,10 @@ public class ClientTerraBlade {
             float progress = (summon.getEntityData().get(StaticSummon.AGE) + partialTick) / (float) summon.getEntityData().get(StaticSummon.LIFETIME);
 
             float alpha;
-            if(progress <= FADE_IN) {
-                alpha = 1 - (FADE_IN - progress) / FADE_IN;
-            }else if(progress >= FADE_OUT) {
-                alpha = 1 - (progress - FADE_OUT) / (1 - FADE_OUT);
+            if(progress <= TerraBlade.FADE_IN) {
+                alpha = 1 - (TerraBlade.FADE_IN - progress) / TerraBlade.FADE_IN;
+            }else if(progress >= TerraBlade.FADE_OUT) {
+                alpha = 1 - (progress - TerraBlade.FADE_OUT) / (1 - TerraBlade.FADE_OUT);
             }else {
                 alpha = 1.0f;
             }
@@ -135,12 +145,12 @@ public class ClientTerraBlade {
 
 
                 float sparkleAlpha;
-                if (progress < FADE_IN) {
+                if (progress < TerraBlade.FADE_IN) {
                     sparkleAlpha = 0;
-                } else if (progress > FADE_OUT) {
-                    sparkleAlpha = 1.0f - (progress - FADE_OUT) / (1.0f - FADE_OUT);
+                } else if (progress > TerraBlade.FADE_OUT) {
+                    sparkleAlpha = 1.0f - (progress - TerraBlade.FADE_OUT) / (1.0f - TerraBlade.FADE_OUT);
                 } else {
-                    sparkleAlpha = (progress - FADE_IN) / (FADE_OUT - FADE_IN);
+                    sparkleAlpha = (progress - TerraBlade.FADE_IN) / (TerraBlade.FADE_OUT - TerraBlade.FADE_IN);
                 }
 
                 VertexConsumer vertexConsumer3 = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES3));

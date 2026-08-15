@@ -8,16 +8,21 @@ import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
+import com.lzxnone.terraria.utils.DamageUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.neoforged.neoforge.common.ItemAbilities;
+import net.neoforged.neoforge.common.ItemAbility;
 
 public class MeleeWeapon extends Weapon {
     private static final float BASE_MELEE_DAMAGE_MIN = 0.0F;
@@ -77,6 +82,19 @@ public class MeleeWeapon extends Weapon {
         return -2.4F;
     }
 
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = getBaseMeleeDamage(weaponStack);
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return applyMeleeDamageBonus(weaponStack, entity, damage);
+    }
+
     @Override
     public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
         return ItemAttributeModifiers.builder()
@@ -89,8 +107,12 @@ public class MeleeWeapon extends Weapon {
             .build();
     }
 
-    public static float applyMeleeDamageBonus(ItemStack stack, LivingEntity entity, float damage) {
-        double finalDamage = damage;
+    @Override
+    public boolean canPerformAction(ItemStack stack, ItemAbility itemAbility) {
+        return itemAbility == ItemAbilities.SWORD_SWEEP || super.canPerformAction(stack, itemAbility);
+    }
+
+    public static float applyMeleeDamageBonus(ItemStack stack, LivingEntity entity, float damage) {        double finalDamage = damage;
         //饰品
         double[] multiplier = {1.0D};
         AccessoryUtil.forEachAccessory(entity, (accessory, accessoryStack) -> {

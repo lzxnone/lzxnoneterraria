@@ -36,6 +36,7 @@ import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 public class Terragrim extends MeleeWeapon {
     public static final String ID = "terragrim";
@@ -51,7 +52,7 @@ public class Terragrim extends MeleeWeapon {
     public static final ConfigFloat DAMAGE = new ConfigFloat(
         "weapon.terragrim.damage",
         "terragrim_damage",
-        0.25f,
+        0.75f,
         0.0f,
         8388600.0f
     );
@@ -64,6 +65,20 @@ public class Terragrim extends MeleeWeapon {
     );
     public Terragrim() {
         super(Tiers.DIAMOND, new Item.Properties().rarity(Rarity.RARE));
+    }
+
+    @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
     }
 
     @Override
@@ -148,7 +163,7 @@ public class Terragrim extends MeleeWeapon {
                     );
                     for(Entity target : targets) {
                         if(target instanceof LivingEntity livingEntity) {
-                            DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 0.05f, 0);
+                            DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) DAMAGE.get(), 0.05f, 10);
                         }
                     }
                 }

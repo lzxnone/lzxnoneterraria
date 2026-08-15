@@ -27,6 +27,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -122,7 +123,11 @@ public class StellarTune extends MagicWeapon {
 
         double targetRange = TARGET_RANGE.get();
         Vector3f[] playerDirs = MathUtil.computeCoordinateSystem(player);
-        Vector3f offset = AmmoUtil.getOffset(hand, OFFSET);
+        Vector3f offset = new Vector3f(
+            hand == (player.getMainArm() == HumanoidArm.RIGHT ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND) ? -OFFSET.x : OFFSET.x,
+            OFFSET.y,
+            OFFSET.z
+        );
         Vec3 eyePos = player.getEyePosition();
         Vec3 start = new Vec3(
             eyePos.x + playerDirs[0].x * offset.z + playerDirs[1].x * offset.y + playerDirs[2].x * offset.x,

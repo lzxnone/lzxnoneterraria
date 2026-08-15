@@ -33,6 +33,7 @@ import net.minecraft.world.phys.*;
 import org.joml.Vector3f;
 
 import java.util.List;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 public class Seedler extends MeleeWeapon {
     public static final String ID = "seedler";
@@ -82,6 +83,20 @@ public class Seedler extends MeleeWeapon {
     );
     public Seedler() {
         super(Tiers.DIAMOND, new Item.Properties().rarity(Rarity.UNCOMMON));
+    }
+
+    @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = THORN_DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
     }
 
     @Override
@@ -137,7 +152,7 @@ public class Seedler extends MeleeWeapon {
             if(entityHitResult != null) {
                 Entity target = entityHitResult.getEntity();
                 if(summon.getOwner() instanceof Player player) {
-                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) THORN_DAMAGE.get(), 1.0f, 2)) {
+                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) THORN_DAMAGE.get(), 1.0f, 10)) {
                     }
                 }
                 onDied(summon);
@@ -247,7 +262,7 @@ public class Seedler extends MeleeWeapon {
                 Entity owner = projectile.getOwner();
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) THORN_DAMAGE.get(), 1.0f, 2)) {
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) THORN_DAMAGE.get(), 1.0f, 10)) {
                     onDied(projectile);
                 }
             }

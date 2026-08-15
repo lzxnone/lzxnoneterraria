@@ -129,7 +129,7 @@ public class SuperStarShooter extends RangedWeapon {
         public void onHitEntity(StaticProjectile projectile, EntityHitResult result) {
             if(!projectile.level().isClientSide()) {
                 Entity target = result.getEntity();
-                if(DamageUtil.rangedAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), BOLT_DAMAGE.get(), 0.3f, 5)) {
+                if(DamageUtil.rangedAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), BOLT_DAMAGE.get(), 0.3f, 10)) {
                 }
             }
         }

@@ -71,7 +71,7 @@ public class ConfigFactory {
 
         scroller.setOnValueChanged(floatValue -> setIntConfigValue(path, scroller, valueField, Math.round(floatValue), minValue, maxValue));
         valueField.setTextResponder(textValue -> setIntConfigValue(path, scroller, valueField, parseInt(textValue, defaultValue), minValue, maxValue));
-        resetButton.setOnClick(event -> setIntConfigValue(path, scroller, valueField, resetValue, minValue, maxValue));
+        resetButton.setOnClick(event -> resetIntConfigValue(path, scroller, valueField, resetValue, minValue, maxValue));
 
         container.addChildren(label, scroller, valueField, resetButton);
         configContainer.addChild(container);
@@ -120,7 +120,7 @@ public class ConfigFactory {
 
         scroller.setOnValueChanged(floatValue -> setFloatConfigValue(path, scroller, valueField, floatValue, minValue, maxValue));
         valueField.setTextResponder(textValue -> setFloatConfigValue(path, scroller, valueField, parseFloat(textValue, defaultValue), minValue, maxValue));
-        resetButton.setOnClick(event -> setFloatConfigValue(path, scroller, valueField, resetValue, minValue, maxValue));
+        resetButton.setOnClick(event -> resetFloatConfigValue(path, scroller, valueField, resetValue, minValue, maxValue));
 
         container.addChildren(label, scroller, valueField, resetButton);
         configContainer.addChild(container);
@@ -169,7 +169,7 @@ public class ConfigFactory {
 
         scroller.setOnValueChanged(floatValue -> setDoubleConfigValue(path, scroller, valueField, floatValue, minValue, maxValue));
         valueField.setTextResponder(textValue -> setDoubleConfigValue(path, scroller, valueField, parseDouble(textValue, defaultValue), minValue, maxValue));
-        resetButton.setOnClick(event -> setDoubleConfigValue(path, scroller, valueField, resetValue, minValue, maxValue));
+        resetButton.setOnClick(event -> resetDoubleConfigValue(path, scroller, valueField, resetValue, minValue, maxValue));
 
         container.addChildren(label, scroller, valueField, resetButton);
         configContainer.addChild(container);
@@ -208,7 +208,7 @@ public class ConfigFactory {
         resetButton.setText(Component.translatable(RESET_BUTTON_TRANSLATION_KEY));
 
         textField.setTextResponder(textValue -> ConfigUtil.setString(path, textValue));
-        resetButton.setOnClick(event -> setStringConfigValue(path, textField, defaultValue));
+        resetButton.setOnClick(event -> resetStringConfigValue(path, textField, defaultValue));
 
         container.addChildren(label, textField, resetButton);
         configContainer.addChild(container);
@@ -247,7 +247,7 @@ public class ConfigFactory {
         resetButton.setText(Component.translatable(RESET_BUTTON_TRANSLATION_KEY));
 
         configSwitch.setOnSwitchChanged(switchValue -> ConfigUtil.setBoolean(path, switchValue));
-        resetButton.setOnClick(event -> setBooleanConfigValue(path, configSwitch, defaultValue));
+        resetButton.setOnClick(event -> resetBooleanConfigValue(path, configSwitch, defaultValue));
 
         container.addChildren(label, configSwitch, resetButton);
         configContainer.addChild(container);
@@ -289,6 +289,43 @@ public class ConfigFactory {
     private static void setBooleanConfigValue(String path, Switch configSwitch, boolean value) {
         configSwitch.setOn(value, false);
         ConfigUtil.setBoolean(path, value);
+    }
+
+    private static void resetIntConfigValue(String path, Scroller scroller, TextField valueField, int resetValue, int minValue, int maxValue) {
+        ConfigUtil.remove(path);
+        int intValue = Math.clamp(resetValue, minValue, maxValue);
+        if(scroller.getValue() != intValue) {
+            scroller.setValue((float)intValue, false);
+        }
+        valueField.setText(Integer.toString(intValue), false);
+    }
+
+    private static void resetFloatConfigValue(String path, Scroller scroller, TextField valueField, float resetValue, float minValue, float maxValue) {
+        ConfigUtil.remove(path);
+        float floatValue = Math.clamp(resetValue, minValue, maxValue);
+        if(scroller.getValue() != floatValue) {
+            scroller.setValue(floatValue, false);
+        }
+        valueField.setText(formatFloat(floatValue), false);
+    }
+
+    private static void resetDoubleConfigValue(String path, Scroller scroller, TextField valueField, double resetValue, double minValue, double maxValue) {
+        ConfigUtil.remove(path);
+        double doubleValue = Math.clamp(resetValue, minValue, maxValue);
+        if(scroller.getValue() != (float)doubleValue) {
+            scroller.setValue((float)doubleValue, false);
+        }
+        valueField.setText(formatDouble(doubleValue), false);
+    }
+
+    private static void resetStringConfigValue(String path, TextField textField, String defaultValue) {
+        ConfigUtil.remove(path);
+        textField.setText(defaultValue, false);
+    }
+
+    private static void resetBooleanConfigValue(String path, Switch configSwitch, boolean defaultValue) {
+        ConfigUtil.remove(path);
+        configSwitch.setOn(defaultValue, false);
     }
 
     private static void disableScrollerWheel(Scroller scroller) {

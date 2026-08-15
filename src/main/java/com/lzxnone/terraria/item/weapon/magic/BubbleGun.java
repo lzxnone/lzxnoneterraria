@@ -28,6 +28,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -55,7 +56,7 @@ public class BubbleGun extends MagicWeapon {
     public static final ConfigFloat DAMAGE = new ConfigFloat("weapon.bubble_gun.damage", "bubble_gun_damage", 10.0F, 0.0F, 8388600.0F);
     public static final ConfigDouble SPEED = new ConfigDouble("weapon.bubble_gun.speed", "bubble_gun_speed", 1.2D, 0.0D, 10.0D);
     public static final ConfigDouble DRAG = new ConfigDouble("weapon.bubble_gun.drag", "bubble_gun_drag", 0.94D, 0.0D, 1.0D);
-    public static final ConfigDouble MANA_CONSUME = new ConfigDouble("weapon.bubble_gun.mana_consume", "bubble_gun_mana_consume", 5.0D, 0.0D, 10000.0D);
+    public static final ConfigDouble MANA_CONSUME = new ConfigDouble("weapon.bubble_gun.mana_consume", "bubble_gun_mana_consume", 2.5D, 0.0D, 10000.0D);
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
@@ -99,7 +100,7 @@ public class BubbleGun extends MagicWeapon {
             );
             if(!targets.isEmpty()) {
                 Entity target = targets.getFirst();
-                if(DamageUtil.magicAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), DAMAGE.get(), 0.2F, 5)) {
+                if(DamageUtil.magicAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), DAMAGE.get(), 0.2F, 10)) {
                 }
                 onDied(summon);
                 return;
@@ -177,7 +178,7 @@ public class BubbleGun extends MagicWeapon {
             .normalize();
 
         Vector3f offset = new Vector3f(
-            hand == InteractionHand.OFF_HAND ? -OFFSET.x : OFFSET.x,
+            hand == (player.getMainArm() == HumanoidArm.RIGHT ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND) ? -OFFSET.x : OFFSET.x,
             OFFSET.y,
             OFFSET.z
         );

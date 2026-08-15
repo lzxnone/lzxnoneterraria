@@ -40,28 +40,19 @@ import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
 import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
 import com.lzxnone.terraria.ui.config.struct.ConfigInt;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
+import com.lzxnone.terraria.item.ModItems;
 
 import java.util.List;
+import net.minecraft.world.item.enchantment.Enchantments;
+import org.jspecify.annotations.NonNull;
 
 public class TrueNightsEdge extends MeleeWeapon {
     public static final String ID = "true_nights_edge";
     public static final ConfigFloat BASE_MELEE_DAMAGE = createBaseMeleeDamageConfig(ID, 7.0F);
     public static final ConfigFloat BASE_MELEE_ATTACK_SPEED = createBaseMeleeAttackSpeedConfig(ID, -2.4F);
-    public static final ConfigBoolean PROJECTILE_ALIGN_TO_BLADE = new ConfigBoolean(
-        "weapon.true_nights_edge.projectile_align_to_blade",
-        "true_nights_edge_projectile_align_to_blade",
-        true
-    );
     public static final ConfigInt ROTATE_RANGE = new ConfigInt(
         "weapon.true_nights_edge.rotate_range",
         "true_nights_edge_rotate_range",
-        45,
-        0,
-        90
-    );
-    public static final ConfigInt PROJECTILE_ROTATE_RANGE = new ConfigInt(
-        "weapon.true_nights_edge.projectile_rotate_range",
-        "true_nights_edge_projectile_rotate_range",
         45,
         0,
         90
@@ -90,7 +81,7 @@ public class TrueNightsEdge extends MeleeWeapon {
     public static final ConfigFloat PROJECTILE_DAMAGE = new ConfigFloat(
         "weapon.true_nights_edge.projectile_damage",
         "true_nights_edge_projectile_damage",
-        4.0f,
+        6.0f,
         0.0f,
         8388600.0f
     );
@@ -128,9 +119,7 @@ public class TrueNightsEdge extends MeleeWeapon {
             ConfigStruct.loadAll(
                 BASE_MELEE_DAMAGE,
                 BASE_MELEE_ATTACK_SPEED,
-                PROJECTILE_ALIGN_TO_BLADE,
                 ROTATE_RANGE,
-                PROJECTILE_ROTATE_RANGE,
                 MAX_HIT_COUNT,
                 PROJECTILE_MAX_HIT_COUNT,
                 DAMAGE,
@@ -150,6 +139,20 @@ public class TrueNightsEdge extends MeleeWeapon {
     }
 
     @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
+    }
+
+    @Override
     protected float getBaseMeleeDamage(ItemStack stack) {
         return BASE_MELEE_DAMAGE.get();
     }
@@ -161,8 +164,6 @@ public class TrueNightsEdge extends MeleeWeapon {
 
     public static final CompoundTag BEAM_DATA = Util.make(new CompoundTag(), tag -> {
         tag.putString("behavior", "true_nights_edge");
-        tag.putInt("lifetime", 10);
-        tag.putInt("cooldown", 10);
         tag.putFloat("color0R", 0.165f);
         tag.putFloat("color0G", 0.098f);
         tag.putFloat("color0B", 0.247f);
@@ -212,7 +213,7 @@ public class TrueNightsEdge extends MeleeWeapon {
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < MAX_HIT_COUNT.get()) {
-                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 20)) {
+                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 10)) {
                                 ParticleUtil.addParticles(
                                     (ServerLevel) target.level(), ModParticles.NIGHTS_EDGE_HIT_PARTICLE.get(),
                                     new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2.0, target.getZ()), new Vec3(0, 0, 0),
@@ -232,25 +233,16 @@ public class TrueNightsEdge extends MeleeWeapon {
         public void generate(Entity entity, CompoundTag beamData) {
             int randomAngle = (int) (ROTATE_RANGE.get() * (Math.random() * 2 - 1));
             beamData.putInt("rotate", randomAngle);
+            beamData.putInt("lifetime", Math.max(1, getUseTime() / 3));
             ISwordBeamBehavior.super.generate(entity, beamData);
+            if(entity instanceof Player player) {
+                player.getCooldowns().addCooldown(ModItems.TRUE_NIGHTS_EDGE.get(), Math.max(1, getUseTime() / 3));
+            }
             if(entity instanceof Player player) summon(player, randomAngle);
         }
     };
 
-    public static final Vector3f COLOR0 = new Vector3f(0.400f, 0.659f, 0.290f);
-    public static final Vector3f COLOR1 = new Vector3f(0.475f, 0.612f, 0.247f);
-    public static final Vector3f COLOR2 = new Vector3f(0.631f, 0.871f, 0.192f);
-
-    public static final ResourceLocation RES0 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/terra_beam0.png");
-    public static final ResourceLocation RES1 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/terra_beam3.png");
-    public static final ResourceLocation RES2 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/beam_sparkle.png");
-
-    public static final float FADE_IN = 0.33f;
-    public static final float FADE_OUT = 0.67f;
-
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
-
-
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
@@ -284,7 +276,7 @@ public class TrueNightsEdge extends MeleeWeapon {
                     List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                     for(Entity target : targets) {
                         if(count >= PROJECTILE_MAX_HIT_COUNT.get()) break;
-                        if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PROJECTILE_DAMAGE.get(), 1.0f, 20)) {
+                        if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), (float) PROJECTILE_DAMAGE.get(), 1.0f, 10)) {
                             count++;
                             ParticleUtil.addParticles(
                                 (ServerLevel) target.level(), ModParticles.TRUE_NIGHTS_EDGE_HIT_PARTICLE.get(),
@@ -328,8 +320,7 @@ public class TrueNightsEdge extends MeleeWeapon {
         Vec3 pos = new Vec3(player.getX(), player.getEyeY() - 0.1, player.getZ());
         summon.setPos(pos);
 
-        if(!PROJECTILE_ALIGN_TO_BLADE.get()) randomAngle = (int) (PROJECTILE_ROTATE_RANGE.get() * (Math.random() * 2 - 1));
-
+        //弹射方向始终与刀光对齐（硬编码）
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
         dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], randomAngle);
         float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
@@ -414,12 +405,59 @@ public class TrueNightsEdge extends MeleeWeapon {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if(!level.isClientSide()) {
-            SwordBeamBehaviors.getBehavior("true_nights_edge").generate(player, BEAM_DATA);
-        }else {
-            SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+        if(player.getCooldowns().isOnCooldown(stack.getItem()) || !tryShoot(level, player, hand, stack)) return InteractionResultHolder.fail(stack);
+        player.startUsingItem(hand);
+        player.getCooldowns().addCooldown(stack.getItem(), Math.max(1, getUseTime() / 3));
+        return InteractionResultHolder.consume(stack);
+    }
+
+    @Override
+    public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int count) {
+        if(!(livingEntity instanceof Player player)) return;
+        if(!shouldShootThisTick(stack, livingEntity, count)) return;
+
+        if(!tryShoot(level, player, player.getUsedItemHand(), stack)) {
+            player.stopUsingItem();
         }
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+    }
+
+    public boolean shouldShootThisTick(ItemStack weaponStack, LivingEntity entity, int remainingUseTicks) {
+        int useTime = Math.max(1, getUseTime());
+        int elapsedMinecraftTicks = getUseDuration(weaponStack, entity) - remainingUseTicks;
+        if(elapsedMinecraftTicks <= 0) return false;
+
+        int currentShot = elapsedMinecraftTicks * 3 / useTime;
+        int previousShot = (elapsedMinecraftTicks - 1) * 3 / useTime;
+        return currentShot > previousShot;
+    }
+
+    public boolean tryShoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        shoot(level, player, hand, stack);
+        return true;
+    }
+
+    public void shoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+        int randomAngle = (int) (ROTATE_RANGE.get() * (Math.random() * 2 - 1));
+        CompoundTag beamData = BEAM_DATA.copy();
+        beamData.putInt("rotate", randomAngle);
+        beamData.putInt("lifetime", Math.max(1, getUseTime() / 3));
+        SwordBeamBehaviors.getBehavior(SwordBeamBehaviors.DEFAULT).generate(player, beamData);
+        summon(player, randomAngle);
+    }
+
+    public static int getUseTime() {
+        return 32;
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return 72000;
+    }
+
+    @Override
+    public @NonNull UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.NONE;
     }
 }
 

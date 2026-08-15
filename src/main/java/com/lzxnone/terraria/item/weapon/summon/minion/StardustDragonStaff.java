@@ -173,8 +173,17 @@ public class StardustDragonStaff extends MinionWeapon {
                 }
                 float damage = DAMAGE.get() + ADD_DAMAGE.get() * Math.max(0, stardustDragonSlotCount - 1);
 
+                //以头部 UUID 作为伤害来源：各节命中统一走头部结算，配合 per-source 冷却避免同 tick 多次命中瞬间爆炸
+                StaticSummon head = summon;
+                if(customData.contains("headUUID")) {
+                    Entity headEntity = serverLevel.getEntity(customData.getUUID("headUUID"));
+                    if(headEntity instanceof StaticSummon headSummon && headSummon.isAlive()
+                        && headSummon.getEntityData().get(StaticSummon.BEHAVIOR).equals(StaticSummonBehaviors.STARDUST_DRAGON_STAFF)) {
+                        head = headSummon;
+                    }
+                }
                 for(Entity target : targets) {
-                    DamageUtil.minionAttack(summon, target, sourceStack, damage, 1.0f, 15);
+                    DamageUtil.minionAttack(head, target, sourceStack, damage, 1.0f, 10);
                 }
             }
         }
@@ -520,21 +529,25 @@ public class StardustDragonStaff extends MinionWeapon {
                 CompoundTag headCustomData = new CompoundTag();
                 headCustomData.putBoolean("head", true);
                 headCustomData.putInt("state", State.IDLE.ordinal());
+                headCustomData.putUUID("headUUID", headSummon.getUUID());
                 headSummon.getEntityData().set(StaticSummon.CUSTOM_DATA, headCustomData);
 
                 CompoundTag bodyACustomData = new CompoundTag();
                 bodyACustomData.putBoolean("bodyA", true);
                 bodyACustomData.putUUID("uuid", headSummon.getUUID());
+                bodyACustomData.putUUID("headUUID", headSummon.getUUID());
                 bodySummonA.getEntityData().set(StaticSummon.CUSTOM_DATA, bodyACustomData);
 
                 CompoundTag bodyBCustomData = new CompoundTag();
                 bodyBCustomData.putBoolean("bodyB", true);
                 bodyBCustomData.putUUID("uuid", bodySummonA.getUUID());
+                bodyBCustomData.putUUID("headUUID", headSummon.getUUID());
                 bodySummonB.getEntityData().set(StaticSummon.CUSTOM_DATA, bodyBCustomData);
 
                 CompoundTag tailCustomData = new CompoundTag();
                 tailCustomData.putBoolean("tail", true);
                 tailCustomData.putUUID("uuid", bodySummonB.getUUID());
+                tailCustomData.putUUID("headUUID", headSummon.getUUID());
                 tailSummon.getEntityData().set(StaticSummon.CUSTOM_DATA, tailCustomData);
 
                 MinionWeapon.addFreshSummon(player, StaticSummonBehaviors.STARDUST_DRAGON_STAFF, List.of(headSummon, bodySummonA, bodySummonB, tailSummon));
@@ -606,18 +619,28 @@ public class StardustDragonStaff extends MinionWeapon {
                 StaticSummon bodySummonA = createSummon(level, player, hand);
                 StaticSummon bodySummonB = createSummon(level, player, hand);
 
+                UUID headUUID = null;
+                Entity previousEntity = serverLevel.getEntity(previousUUID);
+                if(previousEntity instanceof StaticSummon previousSummon) {
+                    CompoundTag previousData = previousSummon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+                    if(previousData.contains("headUUID")) headUUID = previousData.getUUID("headUUID");
+                }
+
                 CompoundTag bodyACustomData = new CompoundTag();
                 bodyACustomData.putBoolean("bodyA", true);
                 bodyACustomData.putUUID("uuid", previousUUID);
+                if(headUUID != null) bodyACustomData.putUUID("headUUID", headUUID);
                 bodySummonA.getEntityData().set(StaticSummon.CUSTOM_DATA, bodyACustomData);
 
                 CompoundTag bodyBCustomData = new CompoundTag();
                 bodyBCustomData.putBoolean("bodyB", true);
                 bodyBCustomData.putUUID("uuid", bodySummonA.getUUID());
+                if(headUUID != null) bodyBCustomData.putUUID("headUUID", headUUID);
                 bodySummonB.getEntityData().set(StaticSummon.CUSTOM_DATA, bodyBCustomData);
 
                 tailCustomData.putBoolean("tail", true);
                 tailCustomData.putUUID("uuid", bodySummonB.getUUID());
+                if(headUUID != null) tailCustomData.putUUID("headUUID", headUUID);
                 tailSummon.getEntityData().set(StaticSummon.CUSTOM_DATA, tailCustomData);
 
                 stardustDragonSlots.addFirst(new PlayerSummon.SummonSlot(StaticSummonBehaviors.STARDUST_DRAGON_STAFF, List.of(bodySummonA.getUUID(), bodySummonB.getUUID())));

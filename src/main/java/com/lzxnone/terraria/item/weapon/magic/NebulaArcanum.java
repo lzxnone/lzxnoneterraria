@@ -43,15 +43,15 @@ import java.util.List;
 import java.util.Locale;
 
 public class NebulaArcanum extends MagicWeapon {
-    public static final ConfigFloat DAMAGE = new ConfigFloat("weapon.nebula_arcanum.damage", "nebula_arcanum_damage", 15.0F, 0.0F, 8388600.0F);
+    public static final ConfigFloat DAMAGE = new ConfigFloat("weapon.nebula_arcanum.damage", "nebula_arcanum_damage", 8.0F, 0.0F, 8388600.0F);
     public static final ConfigDouble MANA_CONSUME = new ConfigDouble("weapon.nebula_arcanum.mana_consume", "nebula_arcanum_mana_consume", 30.0D, 0.0D, 10000.0D);
     public static final ConfigDouble SPEED = new ConfigDouble("weapon.nebula_arcanum.speed", "nebula_arcanum_speed", 0.5D, 0.0D, 10.0D);
     public static final ConfigInt LIFETIME = new ConfigInt("weapon.nebula_arcanum.lifetime", "nebula_arcanum_lifetime", 220, 1, 72000);
     public static final ConfigDouble TARGET_RANGE = new ConfigDouble("weapon.nebula_arcanum.target_range", "nebula_arcanum_target_range", 24.0D, 0.0D, 128.0D);
     public static final ConfigDouble EXPLOSION_RANGE = new ConfigDouble("weapon.nebula_arcanum.explosion_range", "nebula_arcanum_explosion_range", 4.0D, 0.0D, 64.0D);
     public static final ConfigInt HIT_COUNT = new ConfigInt("weapon.nebula_arcanum.hit_count", "nebula_arcanum_hit_count", 3, 1, 128);
-    public static final ConfigFloat ORBIT_PROJECTILE_DAMAGE = new ConfigFloat("weapon.nebula_arcanum.orbit_projectile_damage", "nebula_arcanum_orbit_projectile_damage", 7.0F, 0.0F, 8388600.0F);
-    public static final ConfigFloat SMALL_PROJECTILE_DAMAGE = new ConfigFloat("weapon.nebula_arcanum.small_projectile_damage", "nebula_arcanum_small_projectile_damage", 10.0F, 0.0F, 8388600.0F);
+    public static final ConfigFloat ORBIT_PROJECTILE_DAMAGE = new ConfigFloat("weapon.nebula_arcanum.orbit_projectile_damage", "nebula_arcanum_orbit_projectile_damage", 6.0F, 0.0F, 8388600.0F);
+    public static final ConfigFloat SMALL_PROJECTILE_DAMAGE = new ConfigFloat("weapon.nebula_arcanum.small_projectile_damage", "nebula_arcanum_small_projectile_damage", 2.0F, 0.0F, 8388600.0F);
 
     private static final int TRACK_DELAY = 20;
     private static final int ORBIT_PROJECTILE_SPAWN_INTERVAL = 20;
@@ -236,7 +236,7 @@ public class NebulaArcanum extends MagicWeapon {
                 if(!targets.isEmpty()) {
                     CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
                     ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
-                    if(DamageUtil.magicAttack(summon, targets.getFirst(), sourceStack, DAMAGE.get(), 0.75F, 15)) {
+                    if(DamageUtil.magicAttack(summon, targets.getFirst(), sourceStack, DAMAGE.get(), 0.75F, 10)) {
                         int hitCount = customData.getInt("hitCount") + 1;
                         customData.putInt("hitCount", hitCount);
                         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
@@ -276,7 +276,7 @@ public class NebulaArcanum extends MagicWeapon {
                     FilterUtil.createTargetFilter(summon, summon.getOwner())
                 )) {
                     if(target.distanceToSqr(pos) > explosionRange * explosionRange) continue;
-                    DamageUtil.magicAttack(summon, target, sourceStack, DAMAGE.get(), 0.75F, 5);
+                    DamageUtil.magicAttack(summon, target, sourceStack, DAMAGE.get(), 0.75F, 10);
                 }
             }
             SoundUtil.playServerSound(summon.level(), ModSounds.BOOM.get(), summon.position());
@@ -350,7 +350,7 @@ public class NebulaArcanum extends MagicWeapon {
                 );
                 if(!targets.isEmpty()) {
                     ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
-                    if(DamageUtil.magicAttack(summon, targets.getFirst(), sourceStack, SMALL_PROJECTILE_DAMAGE.get(), 0.4F, 15)) {
+                    if(DamageUtil.magicAttack(summon, targets.getFirst(), sourceStack, SMALL_PROJECTILE_DAMAGE.get(), 0.4F, 10)) {
                         onDied(summon);
                         return;
                     }

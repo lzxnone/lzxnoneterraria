@@ -33,6 +33,7 @@ import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 
 import java.util.List;
 import java.util.UUID;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 public class FirstFractal extends MeleeWeapon {
     public static final String ID = "first_fractal";
@@ -41,7 +42,7 @@ public class FirstFractal extends MeleeWeapon {
     public static final ConfigFloat PROJECTILE_DAMAGE = new ConfigFloat(
         "weapon.first_fractal.projectile_damage",
         "first_fractal_projectile_damage",
-        10.0f,
+        25.0f,
         0.0f,
         8388600.0f
     );
@@ -129,6 +130,20 @@ public class FirstFractal extends MeleeWeapon {
     }
 
     @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = PROJECTILE_DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
+    }
+
+    @Override
     protected float getBaseMeleeDamage(ItemStack stack) {
         return BASE_MELEE_DAMAGE.get();
     }
@@ -174,10 +189,6 @@ public class FirstFractal extends MeleeWeapon {
     };
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {
-        public static final ResourceLocation RES = ResourceLocation.parse("lzxnoneterraria:textures/vfx/beam_sparkle.png");
-        public static final ResourceLocation RES2 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/first_fractal_star.png");
-
-
         @Override
         public void tick(StaticSummon summon) {
             this.checkBeforeTick(summon);
@@ -267,19 +278,47 @@ public class FirstFractal extends MeleeWeapon {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        if(player.getCooldowns().isOnCooldown(stack.getItem()) || !tryShoot(level, player, hand, stack)) return InteractionResultHolder.fail(stack);
         player.startUsingItem(hand);
-        return InteractionResultHolder.consume(stack);
+        player.getCooldowns().addCooldown(stack.getItem(), Math.max(1, getUseTime() / 3));
+        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 
     @Override
     public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int count) {
         if(!(livingEntity instanceof Player player)) return;
-        if(player.tickCount % 3 == 0) {
-            double deltaDist = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                .copyTag().getDouble("deltaDist");
-            summon(player, deltaDist);
-            SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+        if(!shouldShootThisTick(stack, livingEntity, count)) return;
+
+        if(!tryShoot(level, player, player.getUsedItemHand(), stack)) {
+            player.stopUsingItem();
         }
+    }
+
+    public boolean shouldShootThisTick(ItemStack weaponStack, LivingEntity entity, int remainingUseTicks) {
+        int useTime = Math.max(1, getUseTime());
+        int elapsedMinecraftTicks = getUseDuration(weaponStack, entity) - remainingUseTicks;
+        if(elapsedMinecraftTicks <= 0) return false;
+
+        int currentShot = elapsedMinecraftTicks * 3 / useTime;
+        int previousShot = (elapsedMinecraftTicks - 1) * 3 / useTime;
+        return currentShot > previousShot;
+    }
+
+    public boolean tryShoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        shoot(level, player, hand, stack);
+        return true;
+    }
+
+    public void shoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+        if(level.isClientSide()) return;
+        double deltaDist = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                .copyTag().getDouble("deltaDist");
+        summon(player, deltaDist);
+    }
+
+    public int getUseTime() {
+        return 10;
     }
 
     @Override

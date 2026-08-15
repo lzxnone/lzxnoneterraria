@@ -6,6 +6,7 @@ import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.beam.ISwordBeamBehavior;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.beam.SwordBeamBehaviors;
+import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
@@ -28,12 +29,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
+import org.jspecify.annotations.NonNull;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -41,26 +44,15 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.List;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 public class TerraBlade extends MeleeWeapon {
     public static final String ID = "terra_blade";
     public static final ConfigFloat BASE_MELEE_DAMAGE = createBaseMeleeDamageConfig(ID, 10F);
     public static final ConfigFloat BASE_MELEE_ATTACK_SPEED = createBaseMeleeAttackSpeedConfig(ID, -1.0F);
-    public static final ConfigBoolean PROJECTILE_ALIGN_TO_SWORD_BEAM = new ConfigBoolean(
-        "weapon.terra_blade.projectile_align_to_sword_beam",
-        "terra_projectile_align_to_blade",
-        true
-    );
     public static final ConfigInt SWORD_BEAM_ROTATE_RANGE = new ConfigInt(
         "weapon.terra_blade.sword_beam_rotate_range",
         "terra_blade_rotate_range",
-        45,
-        0,
-        90
-    );
-    public static final ConfigInt PROJECTILE_ROTATE_RANGE = new ConfigInt(
-        "weapon.terra_blade.projectile_rotate_range",
-        "terra_projectile_rotate_range",
         45,
         0,
         90
@@ -113,6 +105,20 @@ public class TerraBlade extends MeleeWeapon {
     }
 
     @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = PROJECTILE_DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
+    }
+
+    @Override
     protected float getBaseMeleeDamage(ItemStack stack) {
         return BASE_MELEE_DAMAGE.get();
     }
@@ -128,9 +134,7 @@ public class TerraBlade extends MeleeWeapon {
             ConfigStruct.loadAll(
                 BASE_MELEE_DAMAGE,
                 BASE_MELEE_ATTACK_SPEED,
-                PROJECTILE_ALIGN_TO_SWORD_BEAM,
                 SWORD_BEAM_ROTATE_RANGE,
-                PROJECTILE_ROTATE_RANGE,
                 SWORD_BEAM_MAX_HIT_COUNT,
                 SWORD_BEAM_DAMAGE,
                 PROJECTILE_DAMAGE,
@@ -144,9 +148,7 @@ public class TerraBlade extends MeleeWeapon {
     public static final ConfigListItem CONFIG_LIST_ITEM = createConfigListItem(ID, CONFIG_DATA);
 
     public static final CompoundTag BEAM_DATA = Util.make(new CompoundTag(), tag -> {
-        tag.putString("behavior", "terra_blade");
-        tag.putInt("lifetime", 5);
-        tag.putInt("cooldown", 5);
+        tag.putString("behavior", SwordBeamBehaviors.TERRA_BLADE);
         tag.putFloat("color0R", 0.173f);
         tag.putFloat("color0G", 0.482f);
         tag.putFloat("color0B", 0.796f);
@@ -190,7 +192,7 @@ public class TerraBlade extends MeleeWeapon {
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < SWORD_BEAM_MAX_HIT_COUNT.get()) {
-                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), SWORD_BEAM_DAMAGE.get(), 0.1f, 20)) {
+                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), SWORD_BEAM_DAMAGE.get(), 0.1f, 10)) {
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
                                 beam.getEntityData().set(SwordBeam.CUSTOM_DATA, custom_data);
@@ -205,19 +207,14 @@ public class TerraBlade extends MeleeWeapon {
         public void generate(Entity entity, CompoundTag beamData) {
             int randomAngle = (int) (SWORD_BEAM_ROTATE_RANGE.get() * (Math.random() * 2 - 1));
             beamData.putInt("rotate", randomAngle);
+            beamData.putInt("lifetime", Math.max(1, getUseTime() / 3));
             ISwordBeamBehavior.super.generate(entity, beamData);
-            if(entity instanceof Player player) summon(player, randomAngle);
+            if(entity instanceof Player player) {
+                summon(player, randomAngle);
+                player.getCooldowns().addCooldown(ModItems.TERRA_BLADE.get(), Math.max(1, getUseTime() / 3));
+            }
         }
     };
-
-    public static final Vector3f COLOR0 = new Vector3f(0.255f, 0.420f, 0.302f);
-    public static final Vector3f COLOR1 = new Vector3f(0.173f, 0.482f, 0.796f);
-    public static final Vector3f COLOR2 = new Vector3f(0.431f, 0.729f, 0.396f);
-
-    public static final ResourceLocation RES0 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/terra_beam0.png");
-    public static final ResourceLocation RES1 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/terra_beam3.png");
-    public static final ResourceLocation RES2 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/terra_beam4.png");
-    public static final ResourceLocation RES3 = ResourceLocation.parse("lzxnoneterraria:textures/vfx/beam_sparkle.png");
 
     public static final float FADE_IN = 0.33f;
     public static final float FADE_OUT = 0.67f;
@@ -257,7 +254,7 @@ public class TerraBlade extends MeleeWeapon {
                 int count = customData.getInt("hitCount");
                 List<Entity> targets = summon.level().getEntitiesOfClass(Entity.class, summon.getBoundingBox(), FilterUtil.createTargetFilter(summon, summon.getOwner()));
                 for(Entity target : targets) {
-                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), PROJECTILE_DAMAGE.get() * (float)Math.pow(PROJECTILE_DAMAGE_DECAY.get(), count), 0.1f, 12)) {
+                    if(DamageUtil.meleeAttack(summon, target, summon.getEntityData().get(StaticSummon.STACK_SOURCE), PROJECTILE_DAMAGE.get() * (float)Math.pow(PROJECTILE_DAMAGE_DECAY.get(), count), 0.1f, 10)) {
                         count++;
                         ParticleUtil.addParticles(
                             (ServerLevel) summon.level(), ModParticles.TERRA_BEAM_HIT_PARTICLE.get(),
@@ -314,8 +311,6 @@ public class TerraBlade extends MeleeWeapon {
         summon.getEntityData().set(StaticSummon.STACK_SOURCE, player.getWeaponItem().copy());
         Vec3 pos = new Vec3(player.getX(), player.getEyeY() - 0.1, player.getZ());
         summon.setPos(pos);
-
-        if(!PROJECTILE_ALIGN_TO_SWORD_BEAM.get()) randomAngle = (int) (PROJECTILE_ROTATE_RANGE.get() * (Math.random() * 2 - 1));
 
         Vector3f[] dirs = MathUtil.computeCoordinateSystem(player);
         dirs = MathUtil.rotateCoordinateSystem(dirs[0], dirs[2], randomAngle);
@@ -402,13 +397,60 @@ public class TerraBlade extends MeleeWeapon {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if(!level.isClientSide()) {
-            SwordBeamBehaviors.getBehavior("terra_blade").generate(player, BEAM_DATA);
-        }else {
-            SoundUtil.playClientSound(player, ModSounds.WAVE.get());
-            SoundUtil.playClientSound(player, ModSounds.WAVE3.get());
+        if(player.getCooldowns().isOnCooldown(stack.getItem()) || !tryShoot(level, player, hand, stack)) return InteractionResultHolder.fail(stack);
+        player.startUsingItem(hand);
+        player.getCooldowns().addCooldown(stack.getItem(), Math.max(1, getUseTime() / 3));
+        return InteractionResultHolder.consume(stack);
+    }
+
+    @Override
+    public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int count) {
+        if(!(livingEntity instanceof Player player)) return;
+        if(!shouldShootThisTick(stack, livingEntity, count)) return;
+
+        if(!tryShoot(level, player, player.getUsedItemHand(), stack)) {
+            player.stopUsingItem();
         }
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+    }
+
+    public boolean shouldShootThisTick(ItemStack weaponStack, LivingEntity entity, int remainingUseTicks) {
+        int useTime = Math.max(1, getUseTime());
+        int elapsedMinecraftTicks = getUseDuration(weaponStack, entity) - remainingUseTicks;
+        if(elapsedMinecraftTicks <= 0) return false;
+
+        int currentShot = elapsedMinecraftTicks * 3 / useTime;
+        int previousShot = (elapsedMinecraftTicks - 1) * 3 / useTime;
+        return currentShot > previousShot;
+    }
+
+    public boolean tryShoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        shoot(level, player, hand, stack);
+        return true;
+    }
+
+    public void shoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+        SoundUtil.playClientSound(player, ModSounds.WAVE3.get());
+        int randomAngle = (int) (SWORD_BEAM_ROTATE_RANGE.get() * (Math.random() * 2 - 1));
+        CompoundTag beamData = BEAM_DATA.copy();
+        beamData.putInt("rotate", randomAngle);
+        beamData.putInt("lifetime", Math.max(1, getUseTime() / 3));
+        SwordBeamBehaviors.getBehavior(SwordBeamBehaviors.DEFAULT).generate(player, beamData);
+        summon(player, randomAngle);
+    }
+
+    public static int getUseTime() {
+        return 18;
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return 72000;
+    }
+
+    @Override
+    public @NonNull UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.NONE;
     }
 }
 

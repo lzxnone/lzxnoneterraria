@@ -5,6 +5,7 @@ import com.lzxnone.terraria.effect.AcidVenomEffect;
 import com.lzxnone.terraria.effect.CursedInfernoEffect;
 import com.lzxnone.terraria.effect.DemonicFlamesEffect;
 import com.lzxnone.terraria.effect.BetsysCurseEffect;
+import com.lzxnone.terraria.effect.CelledEffect;
 import com.lzxnone.terraria.effect.IchorEffect;
 import com.lzxnone.terraria.effect.ManaSicknessEffect;
 import com.lzxnone.terraria.effect.MidasEffect;
@@ -133,6 +134,7 @@ import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
 import com.lzxnone.terraria.item.weapon.ranged.bow.DaedalusStormbow;
 import com.lzxnone.terraria.item.weapon.ranged.gun.*;
 import com.lzxnone.terraria.item.weapon.summon.minion.StardustDragonStaff;
+import com.lzxnone.terraria.item.weapon.summon.minion.StardustCellStaff;
 import com.lzxnone.terraria.item.weapon.summon.minion.Terraprisma;
 import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
 
@@ -178,6 +180,7 @@ public class ConfigList {
             DevilsDevastation.CONFIG_LIST_ITEM,
             Terraprisma.CONFIG_LIST_ITEM,
             StardustDragonStaff.CONFIG_LIST_ITEM,
+            StardustCellStaff.CONFIG_LIST_ITEM,
             Possession.CONFIG_LIST_ITEM,
             LastPrism.CONFIG_LIST_ITEM,
             BetsyWrath.CONFIG_LIST_ITEM,
@@ -220,6 +223,7 @@ public class ConfigList {
             IchorEffect.CONFIG_LIST_ITEM,
             BetsysCurseEffect.CONFIG_LIST_ITEM,
             AcidVenomEffect.CONFIG_LIST_ITEM,
+            CelledEffect.CONFIG_LIST_ITEM,
             MidasEffect.CONFIG_LIST_ITEM,
             ManaSicknessEffect.CONFIG_LIST_ITEM,
             SummonEffect.CONFIG_LIST_ITEM,

@@ -20,6 +20,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
@@ -34,6 +35,9 @@ import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.ui.config.struct.ConfigFloat;
 import com.lzxnone.terraria.ui.config.struct.ConfigInt;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
+import com.lzxnone.terraria.item.ModItems;
+import net.minecraft.world.item.enchantment.Enchantments;
+import org.jspecify.annotations.NonNull;
 
 public class Excalibur extends MeleeWeapon {
     public static final String ID = "excalibur";
@@ -80,6 +84,20 @@ public class Excalibur extends MeleeWeapon {
     }
 
     @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
+    }
+
+    @Override
     protected float getBaseMeleeDamage(ItemStack stack) {
         return BASE_MELEE_DAMAGE.get();
     }
@@ -91,8 +109,6 @@ public class Excalibur extends MeleeWeapon {
 
     public static final CompoundTag BEAM_DATA = Util.make(new CompoundTag(), tag -> {
         tag.putString("behavior", "excalibur");
-        tag.putInt("lifetime", 5);
-        tag.putInt("cooldown", 5);
         tag.putFloat("color0R", 0.745f);
         tag.putFloat("color0G", 0.620f);
         tag.putFloat("color0B", 0.243f);
@@ -135,7 +151,7 @@ public class Excalibur extends MeleeWeapon {
                     if(custom_data.contains("hitEntityCount")) {
                         int count = custom_data.getInt("hitEntityCount");
                         if(count < MAX_HIT_COUNT.get()) {
-                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 20)) {
+                            if(DamageUtil.meleeAttack(beam, target, beam.getEntityData().get(SwordBeam.STACK_SOURCE), (float) DAMAGE.get(), 1.0f, 10)) {
                                 count++;
                                 custom_data.putInt("hitEntityCount", count);
                                 beam.getEntityData().set(SwordBeam.CUSTOM_DATA, custom_data);
@@ -154,7 +170,11 @@ public class Excalibur extends MeleeWeapon {
         @Override
         public void generate(Entity entity, CompoundTag beamData) {
             beamData.putInt("rotate", (int) (ROTATE_RANGE.get() * (Math.random() * 2 - 1)));
+            beamData.putInt("lifetime", Math.max(1, getUseTime() / 3));
             ISwordBeamBehavior.super.generate(entity, beamData);
+            if(entity instanceof Player player) {
+                player.getCooldowns().addCooldown(ModItems.EXCALIBUR.get(), Math.max(1, getUseTime() / 3));
+            }
         }
     };
 
@@ -188,12 +208,58 @@ public class Excalibur extends MeleeWeapon {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if(!level.isClientSide()) {
-            SwordBeamBehaviors.getBehavior("excalibur").generate(player, BEAM_DATA);
-        }else {
-            SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+        if(player.getCooldowns().isOnCooldown(stack.getItem()) || !tryShoot(level, player, hand, stack)) return InteractionResultHolder.fail(stack);
+        player.startUsingItem(hand);
+        player.getCooldowns().addCooldown(stack.getItem(), Math.max(1, getUseTime() / 3));
+        return InteractionResultHolder.consume(stack);
+    }
+
+    @Override
+    public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int count) {
+        if(!(livingEntity instanceof Player player)) return;
+        if(!shouldShootThisTick(stack, livingEntity, count)) return;
+
+        if(!tryShoot(level, player, player.getUsedItemHand(), stack)) {
+            player.stopUsingItem();
         }
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+    }
+
+    public boolean shouldShootThisTick(ItemStack weaponStack, LivingEntity entity, int remainingUseTicks) {
+        int useTime = Math.max(1, getUseTime());
+        int elapsedMinecraftTicks = getUseDuration(weaponStack, entity) - remainingUseTicks;
+        if(elapsedMinecraftTicks <= 0) return false;
+
+        int currentShot = elapsedMinecraftTicks * 3 / useTime;
+        int previousShot = (elapsedMinecraftTicks - 1) * 3 / useTime;
+        return currentShot > previousShot;
+    }
+
+    public boolean tryShoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        shoot(level, player, hand, stack);
+        return true;
+    }
+
+    public void shoot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        SoundUtil.playClientSound(player, ModSounds.WAVE.get());
+        int randomAngle = (int) (ROTATE_RANGE.get() * (Math.random() * 2 - 1));
+        CompoundTag beamData = BEAM_DATA.copy();
+        beamData.putInt("rotate", randomAngle);
+        beamData.putInt("lifetime", Math.max(1, getUseTime() / 3));
+        SwordBeamBehaviors.getBehavior(SwordBeamBehaviors.DEFAULT).generate(player, beamData);
+    }
+
+    public static int getUseTime() {
+        return 20;
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return 72000;
+    }
+
+    @Override
+    public @NonNull UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.NONE;
     }
 }
 

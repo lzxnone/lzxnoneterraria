@@ -1,12 +1,15 @@
 package com.lzxnone.terraria.attachment;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -38,5 +41,13 @@ public class ModAttachments {
 
     public static final Supplier<AttachmentType<LavaImmunity>> LAVA_IMMUNITY =
         ATTACHMENT_TYPES.register("lava_immunity", () -> AttachmentType.builder(LavaImmunity::new).build());
+
+    //按攻击来源隔离的命中冷却：key = 攻击来源实体 UUID，value = 下次最早允许命中的服务器时间（刻）
+    public static final Supplier<AttachmentType<Map<UUID, Long>>> SOURCE_HIT_COOLDOWNS =
+        ATTACHMENT_TYPES.register("source_hit_cooldowns", () -> AttachmentType.<Map<UUID, Long>>builder((Supplier<Map<UUID, Long>>) HashMap::new).build());
+
+    //玩家当前活跃的刀光实体引用列表（双端各自维护，供渲染层判断刀光是否在场，行为名从实体 entityData 获取）
+    public static final Supplier<AttachmentType<List<Entity>>> ACTIVE_BEAMS =
+        ATTACHMENT_TYPES.register("active_beams", () -> AttachmentType.<List<Entity>>builder((Supplier<List<Entity>>) ArrayList::new).build());
 
 }

@@ -76,7 +76,7 @@ public class MeteorShot extends BulletAmmo {
                 CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
                 float damage = customData.contains("damage") ? customData.getFloat("damage") : 0;
                 float knockbackScale = customData.contains("knockbackScale") ? customData.getFloat("knockbackScale") : 1.0f;
-                int invulnerableTime = customData.contains("invulnerableTime") ? customData.getInt("invulnerableTime") : 20;
+                int invulnerableTime = customData.contains("invulnerableTime") ? customData.getInt("invulnerableTime") : 10;
 
                 ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
                 for(Entity target : targets) {

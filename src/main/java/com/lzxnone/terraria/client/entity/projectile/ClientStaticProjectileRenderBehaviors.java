@@ -12,6 +12,7 @@ import com.lzxnone.terraria.client.item.melee.ClientZenith;
 import com.lzxnone.terraria.client.item.ranged.ClientFlamethrower;
 import com.lzxnone.terraria.client.item.ranged.ClientSuperStarShooter;
 import com.lzxnone.terraria.client.item.summon.ClientPossession;
+import com.lzxnone.terraria.client.item.summon.ClientStardustCellStaff;
 import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
 
 import java.util.HashMap;
@@ -40,6 +41,7 @@ public class ClientStaticProjectileRenderBehaviors {
         BEHAVIORS.put(StaticProjectileBehaviors.ACCESSORY_FALLEN_STAR_PROJECTILE, ClientAccessoryFallenStar.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(StaticProjectileBehaviors.NEBULA_ARCANUM_ORBIT_PROJECTILE, ClientNebulaArcanum.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(StaticProjectileBehaviors.STELLAR_TUNE_PROJECTILE, ClientStellarTune.PROJECTILE_BEHAVIOR);
+        BEHAVIORS.put(StaticProjectileBehaviors.STARDUST_CELL_PROJECTILE, ClientStardustCellStaff.PROJECTILE_BEHAVIOR);
     }
 
     public static IStaticProjectileRenderBehavior getBehavior(String id) {

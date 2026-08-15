@@ -73,6 +73,9 @@ public class ClearSummonHandler {
         if(StaticSummonBehaviors.STARDUST_DRAGON_STAFF.equals(id)) {
             return Component.translatable("item.lzxnoneterraria.stardust_dragon_staff");
         }
+        if(StaticSummonBehaviors.STARDUST_CELL_STAFF.equals(id)) {
+            return Component.translatable("item.lzxnoneterraria.stardust_cell_staff");
+        }
         return Component.literal(id);
     }
 }

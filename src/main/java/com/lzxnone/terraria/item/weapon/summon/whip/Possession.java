@@ -86,7 +86,7 @@ public class Possession extends Whip {
 
     @Override
     protected int getInvulnerableTime() {
-        return 12;
+        return 10;
     }
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
@@ -154,7 +154,7 @@ public class Possession extends Whip {
         public void onHitEntity(StaticProjectile projectile, EntityHitResult result) {
             if(!projectile.level().isClientSide()) {
                 Entity target = result.getEntity();
-                DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), BEAM_DAMAGE.get(), 0, 5);
+                DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), BEAM_DAMAGE.get(), 0, 10);
             }
         }
     };

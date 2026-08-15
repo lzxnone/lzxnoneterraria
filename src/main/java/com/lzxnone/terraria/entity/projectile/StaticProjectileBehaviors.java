@@ -8,6 +8,7 @@ import com.lzxnone.terraria.item.weapon.melee.*;
 import com.lzxnone.terraria.item.weapon.ranged.Flamethrower;
 import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
 import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
+import com.lzxnone.terraria.item.weapon.summon.minion.StardustCellStaff;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
@@ -35,6 +36,7 @@ public class StaticProjectileBehaviors {
     public static final String ACCESSORY_FALLEN_STAR_PROJECTILE = "accessory_fallen_star_projectile";
     public static final String NEBULA_ARCANUM_ORBIT_PROJECTILE = "nebula_arcanum_orbit_projectile";
     public static final String STELLAR_TUNE_PROJECTILE = "stellar_tune_projectile";
+    public static final String STARDUST_CELL_PROJECTILE = "stardust_cell_projectile";
 
     static {
         BEHAVIORS.put(DEFAULT, new IStaticProjectileBehavior() {
@@ -68,6 +70,7 @@ public class StaticProjectileBehaviors {
         BEHAVIORS.put(ACCESSORY_FALLEN_STAR_PROJECTILE, FallenStarSummoner.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(NEBULA_ARCANUM_ORBIT_PROJECTILE, NebulaArcanum.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(STELLAR_TUNE_PROJECTILE, StellarTune.PROJECTILE_BEHAVIOR);
+        BEHAVIORS.put(STARDUST_CELL_PROJECTILE, StardustCellStaff.PROJECTILE_BEHAVIOR);
     }
 
     public static IStaticProjectileBehavior getBehavior(String id) {

@@ -82,7 +82,7 @@ public class SniperRifle extends Gun implements ScopeZoomModifier {
 
     @Override
     protected int getInvulnerableTime(ItemStack stack, Player player) {
-        return 20;
+        return 10;
     }
 
     @Override

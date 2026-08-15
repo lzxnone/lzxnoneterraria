@@ -38,6 +38,7 @@ import com.lzxnone.terraria.ui.config.struct.ConfigInt;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 
 import java.util.List;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 public class BladeOfGrass extends MeleeWeapon {
     public static final String ID = "blade_of_grass";
@@ -116,6 +117,20 @@ public class BladeOfGrass extends MeleeWeapon {
     }
 
     @Override
+    public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
+        float damage = PROJECTILE_DAMAGE.get();
+        //锋利附魔
+        int sharpnessLevel = getEnchantmentLevel(entity, weaponStack, Enchantments.SHARPNESS);
+        if(sharpnessLevel > 0) {
+            damage += 1.0F + Math.max(0, sharpnessLevel - 1) * 0.5F;
+        }
+        //药水
+        if(entity instanceof Player player) damage = DamageUtil.applyPlayerDamageEffects(player, damage);
+        //近战加成
+        return MeleeWeapon.applyMeleeDamageBonus(weaponStack, entity, damage);
+    }
+
+    @Override
     protected float getBaseMeleeDamage(ItemStack stack) {
         return BASE_MELEE_DAMAGE.get();
     }
@@ -150,7 +165,7 @@ public class BladeOfGrass extends MeleeWeapon {
                 CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
                 if(!customData.contains("hitCount") || customData.getInt("hitCount") >= PROJECTILE_MAX_HIT_COUNT.get()) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
-                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) PROJECTILE_DAMAGE.get(), 1.0f, -1)) {
+                if(DamageUtil.meleeAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), (float) PROJECTILE_DAMAGE.get(), 1.0f, 10)) {
                     int count = customData.getInt("hitCount");
                     count++;
                     if(target instanceof LivingEntity livingEntity && projectile.getRandom().nextInt(4) == 0) {
