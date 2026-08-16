@@ -5,6 +5,7 @@ import com.lzxnone.terraria.item.effect.FallenStarSummoner;
 import com.lzxnone.terraria.item.weapon.magic.NebulaArcanum;
 import com.lzxnone.terraria.item.weapon.magic.StellarTune;
 import com.lzxnone.terraria.item.weapon.melee.*;
+import com.lzxnone.terraria.item.weapon.melee.flail.Flail;
 import com.lzxnone.terraria.item.weapon.ranged.Flamethrower;
 import com.lzxnone.terraria.item.weapon.ranged.SuperStarShooter;
 import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
@@ -26,7 +27,7 @@ public class StaticProjectileBehaviors {
     public static final String ZENITH_PROJECTILE = "zenith_projectile";
     public static final String MURAMASA_PROJECTILE = "muramasa_projectile";
     public static final String LEAF_PROJECTILE = "leaf_projectile";
-    public static final String MACE_PROJECTILE = "mace_projectile";
+    public static final String FLAIL_PROJECTILE = "flail_projectile";
     public static final String DEVILS_DEVASTATION_PROJECTILE = "devils_devastation_projectile";
     public static final String DEVILS_DEVASTATION_PROJECTILE2 = "devils_devastation_projectile2";
     public static final String DEVILS_DEVASTATION_PROJECTILE3 = "devils_devastation_projectile3";
@@ -60,7 +61,7 @@ public class StaticProjectileBehaviors {
         BEHAVIORS.put(ZENITH_PROJECTILE, Zenith.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(MURAMASA_PROJECTILE, Muramasa.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(LEAF_PROJECTILE, BladeOfGrass.PROJECTILE_BEHAVIOR);
-        BEHAVIORS.put(MACE_PROJECTILE, Mace.PROJECTILE_BEHAVIOR);
+        BEHAVIORS.put(FLAIL_PROJECTILE, Flail.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(DEVILS_DEVASTATION_PROJECTILE, DevilsDevastation.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(DEVILS_DEVASTATION_PROJECTILE2, DevilsDevastation.PROJECTILE_BEHAVIOR2);
         BEHAVIORS.put(DEVILS_DEVASTATION_PROJECTILE3, DevilsDevastation.PROJECTILE_BEHAVIOR3);

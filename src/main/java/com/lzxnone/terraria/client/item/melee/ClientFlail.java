@@ -2,6 +2,7 @@ package com.lzxnone.terraria.client.item.melee;
 
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
+import com.lzxnone.terraria.item.weapon.melee.flail.Flail;
 import com.lzxnone.terraria.utils.*;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -10,16 +11,27 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.phys.*;
 import org.joml.Vector3f;
 import com.lzxnone.terraria.client.entity.projectile.IStaticProjectileRenderBehavior;
 import com.lzxnone.terraria.client.entity.summon.IStaticSummonRenderBehavior;
-import static com.lzxnone.terraria.item.weapon.melee.Mace.*;
 
-public class ClientMace {
+public class ClientFlail {
+    private static double getRightSign(boolean mainHand, Entity owner) {
+        if(!(owner instanceof Player player)) return 1.0;
+        boolean isRightHand = mainHand == (player.getMainArm() == HumanoidArm.RIGHT);
+        return isRightHand ? 1.0 : -1.0;
+    }
+
+    public static final float CHAIN_LENGTH = 0.25f;
+
     public static final IStaticProjectileRenderBehavior PROJECTILE_BEHAVIOR = new IStaticProjectileRenderBehavior() {
         @Override
         public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
@@ -27,6 +39,8 @@ public class ClientMace {
             if(projectile.getOwner() == null) return;
             ItemStack itemStack = projectile.getEntityData().get(StaticProjectile.ITEM);
             if(itemStack == ItemStack.EMPTY) return;
+            CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
+            ResourceLocation chainRes = ResourceLocation.parse(customData.contains("chainRes") ? customData.getString("chainRes") : "");
 
             Vector3f[] dirs = MathUtil.computeCoordinateSystem(projectile.getOwner());
             float[] xyRot = MathUtil.computeXYRot(dirs[0], dirs[1]);
@@ -69,10 +83,11 @@ public class ClientMace {
 
             if(projectile.getOwner() == null) return;
             Vec3 eyePos = projectile.getOwner().getEyePosition();
+            boolean projectileMainHand = customData.getBoolean("mainHand");
             Vec3 start = eyePos.add(new Vec3(
-                dirs[0].x * DIRECTION_OFFSET + dirs[1].x * UP_OFFSET + dirs[2].x * RIGHT_OFFSET,
-                dirs[0].y * DIRECTION_OFFSET + dirs[1].y * UP_OFFSET + dirs[2].y * RIGHT_OFFSET,
-                dirs[0].z * DIRECTION_OFFSET + dirs[1].z * UP_OFFSET + dirs[2].z * RIGHT_OFFSET
+                dirs[0].x * Flail.DIRECTION_OFFSET + dirs[1].x * Flail.UP_OFFSET + dirs[2].x * Flail.RIGHT_OFFSET * getRightSign(projectileMainHand, projectile.getOwner()),
+                dirs[0].y * Flail.DIRECTION_OFFSET + dirs[1].y * Flail.UP_OFFSET + dirs[2].y * Flail.RIGHT_OFFSET * getRightSign(projectileMainHand, projectile.getOwner()),
+                dirs[0].z * Flail.DIRECTION_OFFSET + dirs[1].z * Flail.UP_OFFSET + dirs[2].z * Flail.RIGHT_OFFSET * getRightSign(projectileMainHand, projectile.getOwner())
             ));
             Vec3 end = projectile.getPosition(partialTick);
             double dist = end.subtract(start).length();
@@ -81,7 +96,7 @@ public class ClientMace {
             Vec3 right = MathUtil.toVec3(dirs2[2]);
             Vec3 up = MathUtil.toVec3(dirs2[1]);
 
-            VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(RES));
+            VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(chainRes));
 
             int count = (int) (dist / CHAIN_LENGTH);
             for(int j = 0;j < 2;j++) {
@@ -134,6 +149,8 @@ public class ClientMace {
             if(!(entity instanceof StaticSummon summon)) return;
             ItemStack itemStack = summon.getEntityData().get(StaticSummon.ITEM);
             if(itemStack == ItemStack.EMPTY) return;
+            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+            ResourceLocation chainRes = ResourceLocation.parse(customData.contains("chainRes") ? customData.getString("chainRes") : "");
 
             poseStack.pushPose();
 
@@ -174,10 +191,11 @@ public class ClientMace {
             if(summon.getOwner() == null) return;
             Vector3f[] dirs = MathUtil.computeCoordinateSystem(summon.getOwner());
             Vec3 eyePos = summon.getOwner().getEyePosition();
+            boolean summonMainHand = summon.getEntityData().get(StaticSummon.CUSTOM_DATA).getBoolean("mainHand");
             Vec3 start = eyePos.add(new Vec3(
-                dirs[0].x * DIRECTION_OFFSET + dirs[1].x * UP_OFFSET + dirs[2].x * RIGHT_OFFSET,
-                dirs[0].y * DIRECTION_OFFSET + dirs[1].y * UP_OFFSET + dirs[2].y * RIGHT_OFFSET,
-                dirs[0].z * DIRECTION_OFFSET + dirs[1].z * UP_OFFSET + dirs[2].z * RIGHT_OFFSET
+                dirs[0].x * Flail.DIRECTION_OFFSET + dirs[1].x * Flail.UP_OFFSET + dirs[2].x * Flail.RIGHT_OFFSET * getRightSign(summonMainHand, summon.getOwner()),
+                dirs[0].y * Flail.DIRECTION_OFFSET + dirs[1].y * Flail.UP_OFFSET + dirs[2].y * Flail.RIGHT_OFFSET * getRightSign(summonMainHand, summon.getOwner()),
+                dirs[0].z * Flail.DIRECTION_OFFSET + dirs[1].z * Flail.UP_OFFSET + dirs[2].z * Flail.RIGHT_OFFSET * getRightSign(summonMainHand, summon.getOwner())
             ));
             Vec3 end = summon.getPosition(partialTick);
             double dist = end.subtract(start).length();
@@ -186,7 +204,7 @@ public class ClientMace {
             Vec3 right = MathUtil.toVec3(dirs2[2]);
             Vec3 up = MathUtil.toVec3(dirs2[1]);
 
-            VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(RES));
+            VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(chainRes));
 
             int count = (int) (dist / CHAIN_LENGTH);
             for(int j = 0;j < 2;j++) {

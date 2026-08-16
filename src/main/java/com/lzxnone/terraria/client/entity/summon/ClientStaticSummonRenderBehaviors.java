@@ -12,7 +12,7 @@ import com.lzxnone.terraria.client.item.magic.ClientNebulaBlaze;
 import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
 import com.lzxnone.terraria.client.item.melee.ClientFirstFractal;
 import com.lzxnone.terraria.client.item.melee.ClientLightsBane;
-import com.lzxnone.terraria.client.item.melee.ClientMace;
+import com.lzxnone.terraria.client.item.melee.ClientFlail;
 import com.lzxnone.terraria.client.item.melee.ClientMeowmere;
 import com.lzxnone.terraria.client.item.melee.ClientNightsEdge;
 import com.lzxnone.terraria.client.item.melee.ClientTerraBlade;
@@ -52,7 +52,7 @@ public class ClientStaticSummonRenderBehaviors {
         BEHAVIORS.put(StaticSummonBehaviors.VOLCANO_LIGHT, DEFAULT_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.TERRAGRIM_BEAM, ClientTerragrim.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.FIRST_FRACTAL_PROJECTILE, ClientFirstFractal.SUMMON_BEHAVIOR);
-        BEHAVIORS.put(StaticSummonBehaviors.MACE_PROJECTILE, ClientMace.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.FLAIL_PROJECTILE, ClientFlail.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.DEVILS_DEVASTATION_STUCK_PROJECTILE, DEFAULT_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.DEVILS_DEVASTATION_LIGHTNING, ClientDevilsDevastation.SUMMON_BEHAVIOR2);
         BEHAVIORS.put(StaticSummonBehaviors.DEVILS_DEVASTATION_MARK, ClientDevilsDevastation.SUMMON_BEHAVIOR3);

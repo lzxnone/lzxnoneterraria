@@ -8,6 +8,7 @@ import com.lzxnone.terraria.item.weapon.magic.BubbleGun;
 import com.lzxnone.terraria.item.weapon.magic.LunarFlare;
 import com.lzxnone.terraria.item.weapon.magic.NebulaBlaze;
 import com.lzxnone.terraria.item.weapon.magic.NebulaArcanum;
+import com.lzxnone.terraria.item.weapon.melee.flail.Flail;
 import com.lzxnone.terraria.item.weapon.ranged.ElfMelter;
 import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.*;
@@ -45,7 +46,7 @@ public class StaticSummonBehaviors {
     public static final String VOLCANO_LIGHT = "volcano_light";
     public static final String TERRAGRIM_BEAM = "terragrim_beam";
     public static final String FIRST_FRACTAL_PROJECTILE = "first_fractal_projectile";
-    public static final String MACE_PROJECTILE = "mace_projectile";
+    public static final String FLAIL_PROJECTILE = "flail_projectile";
     public static final String DEVILS_DEVASTATION_STUCK_PROJECTILE = "devils_devastation_stuck_projectile";
     public static final String DEVILS_DEVASTATION_LIGHTNING = "devils_devastation_lightning";
     public static final String DEVILS_DEVASTATION_MARK = "devils_devastation_mark";
@@ -108,7 +109,7 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(VOLCANO_LIGHT, Volcano.SUMMON_BEHAVIOR);
         BEHAVIORS.put(TERRAGRIM_BEAM, Terragrim.SUMMON_BEHAVIOR);
         BEHAVIORS.put(FIRST_FRACTAL_PROJECTILE, FirstFractal.SUMMON_BEHAVIOR);
-        BEHAVIORS.put(MACE_PROJECTILE, Mace.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(FLAIL_PROJECTILE, Flail.SUMMON_BEHAVIOR);
         BEHAVIORS.put(DEVILS_DEVASTATION_STUCK_PROJECTILE, DevilsDevastation.SUMMON_BEHAVIOR);
         BEHAVIORS.put(DEVILS_DEVASTATION_LIGHTNING, DevilsDevastation.SUMMON_BEHAVIOR2);
         BEHAVIORS.put(DEVILS_DEVASTATION_MARK, DevilsDevastation.SUMMON_BEHAVIOR3);
