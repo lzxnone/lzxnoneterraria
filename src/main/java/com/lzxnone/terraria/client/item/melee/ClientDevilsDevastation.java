@@ -452,13 +452,17 @@ public class ClientDevilsDevastation {
             .setNormal(0.0F, 1.0F, 0.0F);
     }
 
-    //采样空间（光线步进长方体）：x 厚度 ±0.25、y 长 0→32、z 宽 ±1
-    private static final float BLADE_MIN_X = -0.25f;
-    private static final float BLADE_MAX_X = 0.25f;
-    private static final float BLADE_MIN_Y = 0.0f;
-    private static final float BLADE_MAX_Y = 32.0f;
-    private static final float BLADE_MIN_Z = -1.0f;
-    private static final float BLADE_MAX_Z = 1.0f;
+    //三棱柱采样空间：沿 X 轴挤出，YZ 平面是从剑根线性收窄到剑尖的等腰三角形。
+    private static final float BLADE_HALF_THICKNESS = 0.05f;
+    private static final float BLADE_LENGTH = 32.0f;
+    private static final float BLADE_ROOT_HALF_WIDTH = 1.0f;
+    private static final float BLADE_MAX_OUTLINE_PROTRUSION = BLADE_ROOT_HALF_WIDTH * 2.0f * 0.15f;
+    private static final float BLADE_COLOR_TO_CORE_THICKNESS_RATIO = 1.0f / 3.0f;
+    private static final float BLADE_AURA_WIDTH = 0.022f;
+    private static final float BLADE_EXTINCTION = 4.0f;
+    private static final Vector3f BLADE_EDGE_COLOR_0 = new Vector3f(0.725f, 0.345f, 1.0f);
+    private static final Vector3f BLADE_EDGE_COLOR_1 = new Vector3f(0.847f, 0.247f, 0.745f);
+    private static final Vector3f BLADE_EDGE_COLOR_2 = new Vector3f(0.882f, 0.345f, 0.247f);
 
     public static void renderEnergyWave(MultiBufferSource buffer, PoseStack poseStack, Entity entity) {
         ShaderInstance shader = ShaderRegistry.getDevilsDevastationEnergy();
@@ -481,14 +485,47 @@ public class ClientDevilsDevastation {
             //注入 uniform
             Uniform modelMat = shader.getUniform("ModelMat");
             if (modelMat != null) modelMat.set(modelMatrix);
-            Uniform gameTime = shader.getUniform("EffectTime");
-            if (gameTime != null) gameTime.set((float) entity.tickCount);
-            Uniform colorA = shader.getUniform("ColorA");
-            if (colorA != null) colorA.set(0.729f, 0.396f, 0.345f, 1.0f);
-            Uniform colorB = shader.getUniform("ColorB");
-            if (colorB != null) colorB.set(0.8f, 0.176f, 0.78f, 1.0f);
+            Uniform cameraLocalUniform = shader.getUniform("CameraLocal");
+            if (cameraLocalUniform != null) {
+                Vector3f cameraLocal = new Matrix4f(RenderSystem.getModelViewMatrix())
+                    .mul(modelMatrix)
+                    .invert()
+                    .transformPosition(new Vector3f());
+                cameraLocalUniform.set(cameraLocal.x, cameraLocal.y, cameraLocal.z);
+            }
+            Uniform bladeDimensionsUniform = shader.getUniform("BladeDimensions");
+            if (bladeDimensionsUniform != null) {
+                bladeDimensionsUniform.set(BLADE_HALF_THICKNESS, BLADE_LENGTH, BLADE_ROOT_HALF_WIDTH);
+            }
+            Uniform volumeParametersUniform = shader.getUniform("VolumeParameters");
+            if (volumeParametersUniform != null) {
+                volumeParametersUniform.set(
+                    BLADE_MAX_OUTLINE_PROTRUSION,
+                    BLADE_COLOR_TO_CORE_THICKNESS_RATIO,
+                    BLADE_AURA_WIDTH,
+                    BLADE_EXTINCTION
+                );
+            }
+            Uniform flowTimeUniform = shader.getUniform("FlowTime");
+            if (flowTimeUniform != null) {
+                float flowTime = entity.tickCount
+                    + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+                flowTimeUniform.set(flowTime);
+            }
+            Uniform edgeColor0Uniform = shader.getUniform("EdgeColor0");
+            if (edgeColor0Uniform != null) {
+                edgeColor0Uniform.set(BLADE_EDGE_COLOR_0.x, BLADE_EDGE_COLOR_0.y, BLADE_EDGE_COLOR_0.z);
+            }
+            Uniform edgeColor1Uniform = shader.getUniform("EdgeColor1");
+            if (edgeColor1Uniform != null) {
+                edgeColor1Uniform.set(BLADE_EDGE_COLOR_1.x, BLADE_EDGE_COLOR_1.y, BLADE_EDGE_COLOR_1.z);
+            }
+            Uniform edgeColor2Uniform = shader.getUniform("EdgeColor2");
+            if (edgeColor2Uniform != null) {
+                edgeColor2Uniform.set(BLADE_EDGE_COLOR_2.x, BLADE_EDGE_COLOR_2.y, BLADE_EDGE_COLOR_2.z);
+            }
 
-            //GL 状态：加法混合 + 深度测试 + 背面剔除（代理盒只需朝向相机的面）
+            //GL 状态：加法混合 + 深度测试 + 背面剔除（代理三棱柱只需朝向相机的面）
             RenderSystem.setShader(() -> shader);
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(
@@ -499,19 +536,60 @@ public class ClientDevilsDevastation {
             RenderSystem.depthMask(true);
             RenderSystem.enableCull();
 
-            //加法混合下重复绘制 3 次 = 亮度叠加，补偿 LDR 无 bloom 时的亮度损失
-            for (int pass = 0; pass < 3; pass++) {
-                BufferBuilder bb = RenderSystem.renderThreadTesselator().begin(
-                    VertexFormat.Mode.QUADS,
-                    DefaultVertexFormat.NEW_ENTITY
-                );
-                addBox(
-                    bb,
-                    BLADE_MIN_X, BLADE_MIN_Y, BLADE_MIN_Z,
-                    BLADE_MAX_X, BLADE_MAX_Y, BLADE_MAX_Z
-                );
-                BufferUploader.drawWithShader(Objects.requireNonNull(bb.build()));
-            }
+            BufferBuilder bb = RenderSystem.renderThreadTesselator().begin(
+                VertexFormat.Mode.TRIANGLES,
+                DefaultVertexFormat.POSITION_COLOR
+            );
+
+            float auraPadding = BLADE_AURA_WIDTH * 3.0f;
+            float faceAmplitude = BLADE_HALF_THICKNESS * 0.5f;
+            float deformedRootHalfWidth = BLADE_ROOT_HALF_WIDTH + BLADE_MAX_OUTLINE_PROTRUSION;
+            float proxyHalfThickness = BLADE_HALF_THICKNESS + faceAmplitude + auraPadding;
+            float proxyRootHalfWidth = deformedRootHalfWidth + auraPadding;
+            float proxyLength = BLADE_LENGTH * proxyRootHalfWidth / deformedRootHalfWidth;
+
+            float x0 = -proxyHalfThickness;
+            float x1 = proxyHalfThickness;
+            float y0 = 0.0f;
+            float y1 = proxyLength;
+            float z0 = -proxyRootHalfWidth;
+            float z1 = proxyRootHalfWidth;
+
+            // -X 三角面
+            addEnergyVertex(bb, x0, y0, z0);
+            addEnergyVertex(bb, x0, y0, z1);
+            addEnergyVertex(bb, x0, y1, 0.0f);
+
+            // +X 三角面
+            addEnergyVertex(bb, x1, y0, z0);
+            addEnergyVertex(bb, x1, y1, 0.0f);
+            addEnergyVertex(bb, x1, y0, z1);
+
+            // 剑根矩形面（-Y），拆成两个三角形
+            addEnergyVertex(bb, x0, y0, z0);
+            addEnergyVertex(bb, x1, y0, z0);
+            addEnergyVertex(bb, x1, y0, z1);
+            addEnergyVertex(bb, x0, y0, z0);
+            addEnergyVertex(bb, x1, y0, z1);
+            addEnergyVertex(bb, x0, y0, z1);
+
+            // -Z 斜面，拆成两个三角形
+            addEnergyVertex(bb, x0, y0, z0);
+            addEnergyVertex(bb, x0, y1, 0.0f);
+            addEnergyVertex(bb, x1, y1, 0.0f);
+            addEnergyVertex(bb, x0, y0, z0);
+            addEnergyVertex(bb, x1, y1, 0.0f);
+            addEnergyVertex(bb, x1, y0, z0);
+
+            // +Z 斜面，拆成两个三角形
+            addEnergyVertex(bb, x0, y0, z1);
+            addEnergyVertex(bb, x1, y0, z1);
+            addEnergyVertex(bb, x1, y1, 0.0f);
+            addEnergyVertex(bb, x0, y0, z1);
+            addEnergyVertex(bb, x1, y1, 0.0f);
+            addEnergyVertex(bb, x0, y1, 0.0f);
+
+            BufferUploader.drawWithShader(Objects.requireNonNull(bb.build()));
         } finally {
             poseStack.popPose();
             RenderSystem.depthMask(true);
@@ -525,90 +603,11 @@ public class ClientDevilsDevastation {
         }
     }
 
-    private static void addBox(
+    private static void addEnergyVertex(
         BufferBuilder bb,
-        float minX, float minY, float minZ,
-        float maxX, float maxY, float maxZ
-    ) {
-    // +X
-    addQuad(bb,
-        maxX, minY, minZ,
-        maxX, maxY, minZ,
-        maxX, maxY, maxZ,
-        maxX, minY, maxZ,
-        1, 0, 0
-    );
-
-    // -X
-    addQuad(bb,
-        minX, minY, maxZ,
-        minX, maxY, maxZ,
-        minX, maxY, minZ,
-        minX, minY, minZ,
-        -1, 0, 0
-    );
-
-    // +Y
-    addQuad(bb,
-        minX, maxY, maxZ,
-        maxX, maxY, maxZ,
-        maxX, maxY, minZ,
-        minX, maxY, minZ,
-        0, 1, 0
-    );
-
-    // -Y
-    addQuad(bb,
-        minX, minY, minZ,
-        maxX, minY, minZ,
-        maxX, minY, maxZ,
-        minX, minY, maxZ,
-        0, -1, 0
-    );
-
-    // +Z
-    addQuad(bb,
-        minX, minY, maxZ,
-        maxX, minY, maxZ,
-        maxX, maxY, maxZ,
-        minX, maxY, maxZ,
-        0, 0, 1
-    );
-
-    // -Z
-    addQuad(bb,
-        maxX, minY, minZ,
-        minX, minY, minZ,
-        minX, maxY, minZ,
-        maxX, maxY, minZ,
-        0, 0, -1
-    );
-}
-
-    private static void addQuad(
-        BufferBuilder bb,
-        float x0, float y0, float z0,
-        float x1, float y1, float z1,
-        float x2, float y2, float z2,
-        float x3, float y3, float z3,
-        float nx, float ny, float nz
-    ) {
-        addVertex(bb, x0, y0, z0, nx, ny, nz);
-        addVertex(bb, x1, y1, z1, nx, ny, nz);
-        addVertex(bb, x2, y2, z2, nx, ny, nz);
-        addVertex(bb, x3, y3, z3, nx, ny, nz);
-    }
-
-    private static void addVertex(
-        BufferBuilder bb,
-        float x, float y, float z,
-        float nx, float ny, float nz
+        float x, float y, float z
     ) {
         bb.addVertex(x, y, z)
-            .setColor(255, 255, 255, 255)
-            .setUv(0, 0)
-            .setUv1(0, 0)
-            .setUv2(0, 0)
-            .setNormal(nx, ny, nz);
+            .setColor(255, 255, 255, 255);
     }
 }

@@ -78,7 +78,7 @@ public class ShaderRegistry {
                 new ShaderInstance(
                     event.getResourceProvider(),
                     ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "devils_devastation_energy"),
-                    DefaultVertexFormat.NEW_ENTITY
+                    DefaultVertexFormat.POSITION_COLOR
                 ),
                 shader -> devilsDevastationEnergy = shader
             );

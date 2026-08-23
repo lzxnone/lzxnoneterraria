@@ -8,11 +8,7 @@
   "fragment": "lzxnoneterraria:devils_devastation_energy",
   "attributes": [
     "Position",
-    "Color",
-    "UV0",
-    "UV1",
-    "UV2",
-    "Normal"
+    "Color"
   ],
   "samplers": [],
   "uniforms": [
@@ -50,22 +46,46 @@
       ]
     },
     {
-      "name": "EffectTime",
+      "name": "CameraLocal",
+      "type": "float",
+      "count": 3,
+      "values": [0.0, 0.0, 0.0]
+    },
+    {
+      "name": "BladeDimensions",
+      "type": "float",
+      "count": 3,
+      "values": [0.1, 32.0, 1.0]
+    },
+    {
+      "name": "VolumeParameters",
+      "type": "float",
+      "count": 4,
+      "values": [0.3, 0.33333334, 0.022, 4.0]
+    },
+    {
+      "name": "EdgeColor0",
+      "type": "float",
+      "count": 3,
+      "values": [0.725, 0.345, 1.0]
+    },
+    {
+      "name": "EdgeColor1",
+      "type": "float",
+      "count": 3,
+      "values": [0.847, 0.247, 0.745]
+    },
+    {
+      "name": "EdgeColor2",
+      "type": "float",
+      "count": 3,
+      "values": [0.882, 0.345, 0.247]
+    },
+    {
+      "name": "FlowTime",
       "type": "float",
       "count": 1,
       "values": [0.0]
-    },
-    {
-      "name": "ColorA",
-      "type": "float",
-      "count": 4,
-      "values": [0.729, 0.396, 0.345, 1.0]
-    },
-    {
-      "name": "ColorB",
-      "type": "float",
-      "count": 4,
-      "values": [0.8, 0.176, 0.78, 1.0]
     }
   ]
 }

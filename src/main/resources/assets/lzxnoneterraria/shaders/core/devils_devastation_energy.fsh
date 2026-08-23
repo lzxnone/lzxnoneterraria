@@ -1,258 +1,275 @@
 #version 150
 
 in vec3 vLocalPos;
-flat in vec3 vCameraLocal;
 in vec4 vColor;
 
 out vec4 fragColor;
 
-uniform float EffectTime;
-uniform vec4 ColorA;
-uniform vec4 ColorB;
+uniform vec3 CameraLocal;
+uniform vec3 BladeDimensions;
+// x=剑根最大轮廓外凸，y=单侧彩层厚度/核心完整厚度，z=外焰宽度，w=消光系数
+uniform vec4 VolumeParameters;
+uniform vec3 EdgeColor0;
+uniform vec3 EdgeColor1;
+uniform vec3 EdgeColor2;
+uniform float FlowTime;
 
-const vec3 BOX_MIN = vec3(-0.25, 0.0, -1.0);
-const vec3 BOX_MAX = vec3( 0.25, 32.0, 1.0);
+const int VOLUME_STEPS = 32;
+const float EDGE_SOFTNESS = 0.003;
+const float AURA_DENSITY = 0.40;
+const float CORE_DENSITY_BOOST = 18.0;
+const float CORE_BRIGHTNESS = 2.5;
+const float CORE_LENGTH_RATIO = 0.90;
+const float FACE_AMPLITUDE_RATIO = 0.5;
+const float PARALLEL_EPSILON = 0.00001;
 
-vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-vec4 permute(vec4 x) { return mod289(((x * 34.0) + 1.0) * x); }
-vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+// 使用半空间 n·p <= d 裁剪射线，逐平面收紧进入和离开距离。
+bool clipHalfSpace(
+    vec3 rayOrigin,
+    vec3 rayDirection,
+    vec3 normal,
+    float distance,
+    inout float tEnter,
+    inout float tExit
+) {
+    float denominator = dot(normal, rayDirection);
+    float numerator = distance - dot(normal, rayOrigin);
 
-float snoise(vec3 v) {
-    const vec2 C = vec2(1.0 / 6.0, 1.0 / 3.0);
-    const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
-
-    vec3 i = floor(v + dot(v, C.yyy));
-    vec3 x0 = v - i + dot(i, C.xxx);
-
-    vec3 g = step(x0.yzx, x0.xyz);
-    vec3 l = 1.0 - g;
-    vec3 i1 = min(g.xyz, l.zxy);
-    vec3 i2 = max(g.xyz, l.zxy);
-
-    vec3 x1 = x0 - i1 + C.xxx;
-    vec3 x2 = x0 - i2 + C.yyy;
-    vec3 x3 = x0 - D.yyy;
-
-    i = mod289(i);
-    vec4 p = permute(permute(permute(
-        i.z + vec4(0.0, i1.z, i2.z, 1.0))
-        + i.y + vec4(0.0, i1.y, i2.y, 1.0))
-        + i.x + vec4(0.0, i1.x, i2.x, 1.0));
-
-    float n_ = 0.142857142857;
-    vec3 ns = n_ * D.wyz - D.xzx;
-
-    vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
-
-    vec4 x_ = floor(j * ns.z);
-    vec4 y_ = floor(j - 7.0 * x_);
-
-    vec4 x = x_ * ns.x + ns.yyyy;
-    vec4 y = y_ * ns.x + ns.yyyy;
-    vec4 h = 1.0 - abs(x) - abs(y);
-
-    vec4 b0 = vec4(x.xy, y.xy);
-    vec4 b1 = vec4(x.zw, y.zw);
-
-    vec4 s0 = floor(b0) * 2.0 + 1.0;
-    vec4 s1 = floor(b1) * 2.0 + 1.0;
-    vec4 sh = -step(h, vec4(0.0));
-
-    vec4 a0 = b0.xzyw + s0.xzyw * sh.xxyy;
-    vec4 a1 = b1.xzyw + s1.xzyw * sh.zzww;
-
-    vec3 p0 = vec3(a0.xy, h.x);
-    vec3 p1 = vec3(a0.zw, h.y);
-    vec3 p2 = vec3(a1.xy, h.z);
-    vec3 p3 = vec3(a1.zw, h.w);
-
-    vec4 norm = taylorInvSqrt(vec4(dot(p0, p0), dot(p1, p1), dot(p2, p2), dot(p3, p3)));
-    p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
-
-    vec4 m = max(0.6 - vec4(dot(x0, x0), dot(x1, x1), dot(x2, x2), dot(x3, x3)), 0.0);
-    m = m * m;
-    return 42.0 * dot(m * m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
-}
-
-float fbm3(vec3 p) {
-    float value = 0.0;
-    float amplitude = 0.5;
-
-    // 每层旋转坐标，打破各八度格点对齐（消除 tile 拼接感）
-    mat3 rot = mat3(
-        0.866, -0.5, 0.0,
-        0.5, 0.866, 0.0,
-        0.0, 0.0, 1.0
-    );
-
-    for (int i = 0; i < 3; i++) {
-        value += snoise(p) * amplitude;
-        p = rot * p * 2.03 + vec3(17.1, 9.2, 13.7);
-        amplitude *= 0.5;
+    if (abs(denominator) < PARALLEL_EPSILON) {
+        return numerator >= 0.0;
     }
 
-    return value;
+    float t = numerator / denominator;
+    if (denominator < 0.0) {
+        tEnter = max(tEnter, t);
+    } else {
+        tExit = min(tExit, t);
+    }
+
+    return tEnter <= tExit;
 }
 
-float safeComponent(float x) {
-    if (abs(x) > 0.00001) return x;
-    return x < 0.0 ? -0.00001 : 0.00001;
-}
+vec2 intersectTriangularPrism(
+    vec3 rayOrigin,
+    vec3 rayDirection,
+    vec3 dimensions
+) {
+    float tEnter = -1.0e20;
+    float tExit = 1.0e20;
+    float halfThickness = dimensions.x;
+    float bladeLength = dimensions.y;
+    float rootHalfWidth = dimensions.z;
+    float bladeSlope = rootHalfWidth / bladeLength;
 
-vec2 intersectBox(vec3 ro, vec3 rd) {
-    vec3 safeRd = vec3(
-        safeComponent(rd.x),
-        safeComponent(rd.y),
-        safeComponent(rd.z)
-    );
-
-    vec3 inv = 1.0 / safeRd;
-    vec3 t0 = (BOX_MIN - ro) * inv;
-    vec3 t1 = (BOX_MAX - ro) * inv;
-
-    vec3 nearT = min(t0, t1);
-    vec3 farT = max(t0, t1);
-
-    float tEnter = max(max(nearT.x, nearT.y), nearT.z);
-    float tExit = min(min(farT.x, farT.y), farT.z);
+    if (!clipHalfSpace(rayOrigin, rayDirection, vec3( 1.0, 0.0,  0.0), halfThickness, tEnter, tExit)) return vec2(1.0, -1.0);
+    if (!clipHalfSpace(rayOrigin, rayDirection, vec3(-1.0, 0.0,  0.0), halfThickness, tEnter, tExit)) return vec2(1.0, -1.0);
+    if (!clipHalfSpace(rayOrigin, rayDirection, vec3( 0.0, -1.0, 0.0), 0.0, tEnter, tExit)) return vec2(1.0, -1.0);
+    if (!clipHalfSpace(rayOrigin, rayDirection, vec3(0.0, bladeSlope,  1.0), rootHalfWidth, tEnter, tExit)) return vec2(1.0, -1.0);
+    if (!clipHalfSpace(rayOrigin, rayDirection, vec3(0.0, bladeSlope, -1.0), rootHalfWidth, tEnter, tExit)) return vec2(1.0, -1.0);
 
     return vec2(tEnter, tExit);
 }
 
-float densityField(vec3 p, float time) {
-    // 转换成统一的归一化 Sword Space。
-    float nx = p.x / 0.25;
-    float ny = p.y / 32.0;
-    float nz = p.z;
-
-    // 顶部收窄：z 宽度随 ny 减小到接近 0（剑尖锥形）
-    float tip = smoothstep(1.0, 0.5, ny);
-    float zHalf = 0.06 + 0.94 * tip;
-    nz = p.z / zHalf;
-
-    // 横截面中心更亮，靠近 X/Z 边界逐渐减弱。
-    // 边界阈值随噪声波动 → 边缘不规则撕裂（能量溢出感）
-    float edgeNoise = fbm3(vec3(ny * 22.0, time * 4.0, 0.0)) * 0.5 + 0.5;
-    float edgeX = 1.0 - smoothstep(0.55 + edgeNoise * 0.35, 1.05 + edgeNoise * 0.35, abs(nx));
-    float edgeZ = 1.0 - smoothstep(0.55 + edgeNoise * 0.35, 1.05 + edgeNoise * 0.35, abs(nz));
-    float volumeMask = edgeX * edgeZ;
-
-    // 根部与剑尖稍微渐隐。
-    volumeMask *= smoothstep(0.0, 0.02, ny);
-    volumeMask *= 1.0 - smoothstep(0.96, 1.0, ny);
-
-    // 三维噪声沿 Y 轴流动（加快速度）。
-    vec3 flowPos = vec3(
-        nx * 3.5,
-        ny * 18.0 - time * 4.0,
-        nz * 3.5
-    );
-
-    // domain warping：单次 fbm 驱动三个轴向，减少噪声采样开销（原来是 3 次独立 fbm）
-    float warp = fbm3(flowPos + vec3(0.0, 0.0, time * 0.4)) - 0.5;
-    flowPos += vec3(warp, warp * 0.7, warp * 0.5) * 0.65;
-
-    // snoise 输出范围 -1~1，重映射到 0~1 再参与密度（与旧 value noise 语义一致）
-    float n1 = fbm3(flowPos) * 0.5 + 0.5;
-
-    float n2 = fbm3(vec3(
-        nx * 6.0 + 7.3,
-        ny * 11.0 - time * 2.6,
-        nz * 6.0 - 4.7
-    )) * 0.5 + 0.5;
-
-    // 明显的纵向能量束。
-    float stream1 = 0.5 + 0.5 * sin(
-        ny * 95.0 - time * 16.0 + n1 * 10.0 + nz * 5.0
-    );
-
-    float stream2 = 0.5 + 0.5 * sin(
-        ny * 143.0 - time * 22.0 - n2 * 13.0 + nx * 6.0
-    );
-
-    stream1 = pow(stream1, 7.0);
-    stream2 = pow(stream2, 10.0);
-
-    // 中央能量核。
-    float radial = length(vec2(nx, nz));
-    float core = 1.0 - smoothstep(0.05, 0.75, radial);
-
-    // 溢出细丝：边界附近的高频刺状丝，断续随机，随时间沿剑身流动
-    float filament = fbm3(vec3(nx * 8.0, ny * 36.0, nz * 8.0) + vec3(0.0, time * 5.0, 0.0)) * 0.5 + 0.5;
-    float edgeDist = min(1.0 - abs(nx), 1.0 - abs(nz));     // 距边界（内部）距离，0=边界
-    float leak = step(0.74, filament) * smoothstep(0.12, 0.0, edgeDist);
-
-    float density =
-        n1 * 0.30 +
-        stream1 * 0.85 +
-        stream2 * 0.55 +
-        core * 0.65;
-
-    // 细丝顶破表面（不乘 volumeMask，靠 slab 限制在盒内，边缘处 mask 已衰减由丝接管）
-    density = max(density, leak * 1.4);
-
-    density = smoothstep(0.30, 1.15, density);
-
-    // leak 必须绕过 volumeMask（边界处 mask≈0 会把它乘没），靠 slab 限制在盒内
-    return max(density * volumeMask, leak);
+// 无三角函数的确定性伪随机 Hash。
+float hash31(vec3 p) {
+    p = fract(p * 0.1031);
+    p += dot(p, p.yzx + 33.33);
+    return fract((p.x + p.y) * p.z);
 }
 
-vec3 densityColor(vec3 p, float density) {
-    float alongBlade = clamp(p.y / 32.0, 0.0, 1.0);
+// 对格点随机值作三线性平滑插值，得到空间连续的 Value Noise。
+float valueNoise(vec3 p) {
+    vec3 cell = floor(p);
+    vec3 local = fract(p);
+    vec3 weight = local * local * (3.0 - 2.0 * local);
 
-    vec3 base = mix(ColorA.rgb, ColorB.rgb, alongBlade);
+    float n000 = hash31(cell + vec3(0.0, 0.0, 0.0));
+    float n100 = hash31(cell + vec3(1.0, 0.0, 0.0));
+    float n010 = hash31(cell + vec3(0.0, 1.0, 0.0));
+    float n110 = hash31(cell + vec3(1.0, 1.0, 0.0));
+    float n001 = hash31(cell + vec3(0.0, 0.0, 1.0));
+    float n101 = hash31(cell + vec3(1.0, 0.0, 1.0));
+    float n011 = hash31(cell + vec3(0.0, 1.0, 1.0));
+    float n111 = hash31(cell + vec3(1.0, 1.0, 1.0));
 
-    float nx = p.x / 0.25;
-    float nz = p.z;
-    float core = 1.0 - smoothstep(0.0, 0.65, length(vec2(nx, nz)));
+    float z0 = mix(
+        mix(n000, n100, weight.x),
+        mix(n010, n110, weight.x),
+        weight.y
+    );
+    float z1 = mix(
+        mix(n001, n101, weight.x),
+        mix(n011, n111, weight.x),
+        weight.y
+    );
+    return mix(z0, z1, weight.z);
+}
 
-    // 核心更白热：平方增强 + 高权重，中间不再是淡色
-    vec3 hot = mix(base, vec3(1.0, 0.85, 1.0), pow(core, 1.5) * 0.85);
+float surfaceNoise(vec3 p) {
+    // 将正反表面作为 YZ 高度场采样，避免噪声沿射线深度变化后被体积积分平均掉。
+    vec3 noisePosition = vec3(
+        p.y / max(BladeDimensions.y, 0.0001) * 12.0,
+        p.z / max(BladeDimensions.z, 0.0001) * 2.6,
+        0.0
+    );
+    float flowPhase = FlowTime * 0.18;
 
-    // 整体提亮 + 核心区额外增益（加法混合下超 1 的亮度会喂给 bloom）
-    float brighten = 1.0 + core * 0.9;
-    return hot * (1.1 + density * 2.4) * brighten;
+    // 两层噪声主要沿 +Y（剑根到剑尖）流动，并带少量横向漂移。
+    // 细节层的位移约为粗糙层的 2.03 倍，使两层具有相近的实际流速。
+    float coarse = valueNoise(
+        noisePosition + vec3(-flowPhase * 1.35, flowPhase * 0.11, flowPhase * 0.18)
+    );
+    float detail = valueNoise(
+        noisePosition * 2.03
+        + vec3(17.1, 9.2, 13.7)
+        + vec3(-flowPhase * 2.74, flowPhase * 0.23, -flowPhase * 0.27)
+    );
+    float centered = (coarse * 0.72 + detail * 0.28) * 2.0 - 1.0;
+    return clamp(centered * 2.2, -1.0, 1.0);
+}
+
+float sharedOutlineDisplacement(vec3 p, float y01) {
+    // 剑根端点保持闭合；剑尖处由局部宽度自然把轮廓幅度收敛到 0。
+    float rootMask = smoothstep(0.0, 0.025, y01);
+    float localHalfWidth = BladeDimensions.z * max(1.0 - y01, 0.0);
+    float localWidthRatio = localHalfWidth / max(BladeDimensions.z, 0.0001);
+
+    // 左右侧分别采样边界上的流动噪声。最大外凸随当地剑宽同比缩放：
+    // 剑根为完整宽度的 1/3，之后一直保持相同的相对比例。
+    float sideSign = p.z < 0.0 ? -1.0 : 1.0;
+    vec3 outlineSamplePosition = vec3(0.0, p.y, sideSign * localHalfWidth);
+    float outlineNoise = surfaceNoise(outlineSamplePosition);
+    float localMaxOutward = VolumeParameters.x * localWidthRatio;
+    float localMaxInward = localHalfWidth * 0.20;
+    float outlineDisplacement = outlineNoise >= 0.0
+        ? pow(max(outlineNoise, 0.0), 0.70) * localMaxOutward
+        : outlineNoise * localMaxInward;
+    return outlineDisplacement * rootMask;
+}
+
+void evaluateBladeFields(vec3 p, out float outerField, out float coreField) {
+    float y01 = clamp(p.y / BladeDimensions.y, 0.0, 1.0);
+    float rootMask = smoothstep(0.0, 0.025, y01);
+    float baseOuterHalfWidth = BladeDimensions.z * max(1.0 - y01, 0.0);
+    float outlineDisplacement = sharedOutlineDisplacement(p, y01);
+
+    // 把噪声看成坐标扭曲，而不是只修改某一层的边界。
+    // 外层和核心使用同一 warpedX/warpedZ，因此位移大小与速度严格一致。
+    float faceDisplacement = surfaceNoise(p)
+        * BladeDimensions.x * FACE_AMPLITUDE_RATIO * rootMask;
+    float warpedX = abs(p.x) - faceDisplacement;
+    float warpedZ = abs(p.z) - outlineDisplacement;
+
+    float outerXDistance = warpedX - BladeDimensions.x;
+    float outerRootDistance = -p.y;
+    float outerSideDistance = warpedZ - baseOuterHalfWidth;
+    outerField = max(
+        outerXDistance,
+        max(outerRootDistance, outerSideDistance)
+    );
+
+    // 若单侧彩层 T = 核心完整厚度 C * ratio，则：
+    // 外层完整厚度 = C + 2T = C * (1 + 2ratio)。
+    float colorToCoreRatio = max(VolumeParameters.y, 0.0);
+    float coreScale = 1.0 / (1.0 + 2.0 * colorToCoreRatio);
+    float coreLength = BladeDimensions.y * CORE_LENGTH_RATIO;
+    float coreY01 = clamp(p.y / max(coreLength, 0.0001), 0.0, 1.0);
+    float baseCoreHalfWidth = BladeDimensions.z
+        * coreScale
+        * max(1.0 - coreY01, 0.0);
+
+    float coreXDistance = warpedX - BladeDimensions.x * coreScale;
+    float coreRootDistance = -p.y;
+    float coreTipDistance = p.y - coreLength;
+    float coreSideDistance = warpedZ - baseCoreHalfWidth;
+    coreField = max(
+        max(coreXDistance, coreRootDistance),
+        max(coreTipDistance, coreSideDistance)
+    );
+}
+
+vec3 sectionEdgeColor(float y01) {
+    if (y01 < 1.0 / 3.0) {
+        return EdgeColor0;
+    }
+    if (y01 < 2.0 / 3.0) {
+        return EdgeColor1;
+    }
+    return EdgeColor2;
 }
 
 void main() {
-    float time = EffectTime * 0.2;
+    float maxOutlineProtrusion = VolumeParameters.x;
+    float auraWidth = VolumeParameters.z;
+    float extinction = VolumeParameters.w;
 
-    vec3 ro = vCameraLocal;
-    vec3 rd = normalize(vLocalPos - ro);
+    // 轮廓变形按剑宽同比缩放，因此代理保持短三角形；只对外焰作平行扩张。
+    float auraPadding = auraWidth * 3.0;
+    float faceAmplitude = BladeDimensions.x * FACE_AMPLITUDE_RATIO;
+    float deformedRootHalfWidth = BladeDimensions.z + maxOutlineProtrusion;
+    float proxyRootHalfWidth = deformedRootHalfWidth + auraPadding;
+    vec3 proxyDimensions = vec3(
+        BladeDimensions.x + faceAmplitude + auraPadding,
+        BladeDimensions.y * proxyRootHalfWidth / deformedRootHalfWidth,
+        proxyRootHalfWidth
+    );
 
-    vec2 hit = intersectBox(ro, rd);
+    vec3 rayOrigin = CameraLocal;
+    vec3 rayDirection = normalize(vLocalPos - rayOrigin);
+    vec2 hit = intersectTriangularPrism(
+        rayOrigin,
+        rayDirection,
+        proxyDimensions
+    );
 
     float tStart = max(hit.x, 0.0);
     float tEnd = hit.y;
-
     if (tEnd <= tStart) {
         discard;
     }
 
-    const int STEPS = 20;
-
-    float stepSize = (tEnd - tStart) / float(STEPS);
+    float stepSize = (tEnd - tStart) / float(VOLUME_STEPS);
     float t = tStart + stepSize * 0.5;
-
     vec3 accumulatedColor = vec3(0.0);
     float accumulatedAlpha = 0.0;
 
-    for (int i = 0; i < STEPS; i++) {
-        vec3 p = ro + rd * t;
-        float density = densityField(p, time);
+    for (int i = 0; i < VOLUME_STEPS; i++) {
+        vec3 p = rayOrigin + rayDirection * t;
+        float outerField;
+        float coreField;
+        evaluateBladeFields(p, outerField, coreField);
 
-        if (density > 0.001) {
-            float opticalDepth = density * stepSize * 5.0;
-            float sampleAlpha = 1.0 - exp(-opticalDepth);
-            vec3 sampleColor = densityColor(p, density);
+        float outerDensity =
+            1.0 - smoothstep(-EDGE_SOFTNESS, EDGE_SOFTNESS, outerField);
+        float coreDensity =
+            1.0 - smoothstep(-EDGE_SOFTNESS, EDGE_SOFTNESS, coreField);
+        float colorDensity = max(outerDensity - coreDensity, 0.0);
+        float outsideBlend =
+            smoothstep(-EDGE_SOFTNESS, EDGE_SOFTNESS, outerField);
+        float auraDensity =
+            outsideBlend
+            * exp(-max(outerField, 0.0) / max(auraWidth, 0.0001));
+        float auraWeight = auraDensity * AURA_DENSITY;
+        float coreWeight = coreDensity * CORE_DENSITY_BOOST;
+        float sampleDensity = colorDensity + coreWeight + auraWeight;
 
+        if (sampleDensity > 0.0001) {
+            float y01 = clamp(p.y / BladeDimensions.y, 0.0, 1.0);
+            vec3 edgeColor = sectionEdgeColor(y01);
+            vec3 sampleColor = (
+                edgeColor * (colorDensity + auraWeight)
+                + vec3(CORE_BRIGHTNESS) * coreWeight
+            ) / sampleDensity;
+
+            float sampleAlpha =
+                1.0 - exp(-sampleDensity * stepSize * extinction);
             float remain = 1.0 - accumulatedAlpha;
 
-            accumulatedColor += remain * sampleColor * sampleAlpha;
+            accumulatedColor +=
+                remain * sampleColor * sampleAlpha;
             accumulatedAlpha += remain * sampleAlpha;
 
-            if (accumulatedAlpha > 0.98) {
+            if (accumulatedAlpha > 0.995) {
                 break;
             }
         }
@@ -260,14 +277,11 @@ void main() {
         t += stepSize;
     }
 
-    if (accumulatedAlpha < 0.005) {
+    if (accumulatedAlpha < 0.001) {
         discard;
     }
 
-    float pulse = 0.9 + 0.1 * sin(time * 8.0);
-    accumulatedColor *= pulse;
-
-    vec3 color = accumulatedColor / max(accumulatedAlpha, 0.0001);
-
+    vec3 color =
+        accumulatedColor / max(accumulatedAlpha, 0.0001);
     fragColor = vec4(color, accumulatedAlpha * vColor.a);
 }
