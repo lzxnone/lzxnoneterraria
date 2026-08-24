@@ -64,16 +64,27 @@ public class IronSparkParticle extends TextureSheetParticle {
         float cz = (float) (Mth.lerp(partialTick, this.zo, this.z) - camera.getPosition().z);
 
         float size = this.quadSize;
-        float halfLen = size * this.sparkLength * lifeRatio;
-        float halfWidth = size * this.sparkLength * (1 - lifeRatio) * 0.01f;
+        float grow = (float) Mth.smoothstep(Mth.clamp(lifeRatio / 0.15f, 0.0f, 1.0f));
+        float halfLen = size * this.sparkLength * grow;
+        float halfWidth = size * this.sparkLength * Mth.lerp(lifeRatio, 0.025f, 0.010f);
 
-        float u0 = this.getU0();
-        float u1 = this.getU1();
-        float v0 = this.getV0();
-        float v1 = this.getV1();
+        // 专用 shader 将 UV 当作 0..1 局部坐标，不再采样粒子图集。
+        float u0 = 0.0f;
+        float u1 = 1.0f;
+        float v0 = 0.0f;
+        float v1 = 1.0f;
 
         Vector3f dirVec = new Vector3f(this.dir);
-        Vector3f rightVec = new Vector3f(this.right);
+        Vector3f toCamera = new Vector3f(-cx, -cy, -cz);
+        Vector3f rightVec = new Vector3f();
+        if (toCamera.lengthSquared() > 0.000001f) {
+            toCamera.normalize();
+            toCamera.cross(dirVec, rightVec);
+        }
+        if (rightVec.lengthSquared() <= 0.000001f) {
+            rightVec.set(this.right);
+        }
+        rightVec.normalize();
 
         float[][] verts = {
             {cx + dirVec.x * halfLen - rightVec.x * halfWidth, cy + dirVec.y * halfLen - rightVec.y * halfWidth, cz + dirVec.z * halfLen - rightVec.z * halfWidth, u1, v1},
@@ -82,14 +93,12 @@ public class IronSparkParticle extends TextureSheetParticle {
             {cx - dirVec.x * halfLen - rightVec.x * halfWidth, cy - dirVec.y * halfLen - rightVec.y * halfWidth, cz - dirVec.z * halfLen - rightVec.z * halfWidth, u0, v1}
         };
 
-        for(int k = 0;k < 10;k++) {
-            for(int j = 0; j < 4; j++) {
-                float[] v = verts[j];
-                buffer.addVertex(v[0], v[1], v[2])
-                        .setUv(v[3], v[4])
-                        .setColor(this.rCol, this.gCol, this.bCol, this.alpha)
-                        .setLight(LightTexture.FULL_BRIGHT);
-            }
+        for(int j = 0; j < 4; j++) {
+            float[] v = verts[j];
+            buffer.addVertex(v[0], v[1], v[2])
+                    .setUv(v[3], v[4])
+                    .setColor(this.rCol, this.gCol, this.bCol, this.alpha)
+                    .setLight(LightTexture.FULL_BRIGHT);
         }
     }
 
@@ -100,7 +109,7 @@ public class IronSparkParticle extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return ModParticleRenderTypes.EMISSIVE_BLOOM_PARTICLE;
+        return ModParticleRenderTypes.IRON_SPARK_PARTICLE;
     }
 
     public static class Provider implements ParticleProvider<IronSparkParticleOptions> {

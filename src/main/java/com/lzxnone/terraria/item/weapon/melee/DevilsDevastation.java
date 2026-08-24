@@ -356,6 +356,7 @@ public class DevilsDevastation extends MeleeWeapon {
                     summon.getEntityData().set(StaticSummon.RZP, -135);
                     summon.getEntityData().set(StaticSummon.LIFETIME, STUCK_LIFETIME.get());
                     summon.getEntityData().set(StaticSummon.GLOW, true);
+                    summon.getEntityData().set(StaticSummon.OUTLINE, true);
 
                     CompoundTag customData = new CompoundTag();
                     Vec3 deltaPos = pos.subtract(target.position());
@@ -412,14 +413,14 @@ public class DevilsDevastation extends MeleeWeapon {
                         CircleParticleOptions circleParticleOptions;
                         if(projectile.getRandom().nextInt(2) == 0) {
                             ironSparkParticleOptions = new IronSparkParticleOptions(
-                                    1.0f, 40, 4.0f, new Vector3f(0.729f, 0.396f, 0.345f), dirs[0].mul(0.2f), dirs[2]
+                                    0.1f, 40, 4.0f, new Vector3f(0.729f, 0.396f, 0.345f), dirs[0].mul(0.2f), dirs[2]
                             );
                             circleParticleOptions = new CircleParticleOptions(
                                     0.1f, 40, new Vector3f(0.729f, 0.396f, 0.345f)
                             );
                         }else {
                             ironSparkParticleOptions = new IronSparkParticleOptions(
-                                    1.0f, 40, 4.0f, new Vector3f(0.8f, 0.176f, 0.78f), dirs[0].mul(0.2f), dirs[2]
+                                    0.1f, 40, 4.0f, new Vector3f(0.8f, 0.176f, 0.78f), dirs[0].mul(0.2f), dirs[2]
                             );
                             circleParticleOptions = new CircleParticleOptions(
                                     0.1f, 40, new Vector3f(0.8f, 0.176f, 0.78f)
@@ -496,11 +497,11 @@ public class DevilsDevastation extends MeleeWeapon {
                 IronSparkParticleOptions ironSparkParticleOptions;
                 if(projectile.getRandom().nextInt(2) == 0) {
                     ironSparkParticleOptions = new IronSparkParticleOptions(
-                            1.0f, 40, 4.0f, new Vector3f(0.729f, 0.396f, 0.345f), speed, right
+                            0.1f, 40, 4.0f, new Vector3f(0.729f, 0.396f, 0.345f), speed, right
                     );
                 }else {
                     ironSparkParticleOptions = new IronSparkParticleOptions(
-                            1.0f, 40, 4.0f, new Vector3f(0.8f, 0.176f, 0.78f), speed, right
+                            0.1f, 40, 4.0f, new Vector3f(0.8f, 0.176f, 0.78f), speed, right
                     );
                 }
                 ParticleUtil.addParticle(
@@ -587,11 +588,11 @@ public class DevilsDevastation extends MeleeWeapon {
                 IronSparkParticleOptions ironSparkParticleOptions;
                 if (projectile.getRandom().nextInt(2) == 0) {
                     ironSparkParticleOptions = new IronSparkParticleOptions(
-                            1.0f, 20, 16.0f, new Vector3f(0.729f, 0.396f, 0.345f), speed, MathUtil.computeCoordinateSystem(speed, 0)[2]
+                            0.1f, 20, 16.0f, new Vector3f(0.729f, 0.396f, 0.345f), speed, MathUtil.computeCoordinateSystem(speed, 0)[2]
                     );
                 } else {
                     ironSparkParticleOptions = new IronSparkParticleOptions(
-                            1.0f, 20, 16.0f, new Vector3f(0.8f, 0.176f, 0.78f), speed, MathUtil.computeCoordinateSystem(speed, 0)[2]
+                            0.1f, 20, 16.0f, new Vector3f(0.8f, 0.176f, 0.78f), speed, MathUtil.computeCoordinateSystem(speed, 0)[2]
                     );
                 }
                 ParticleUtil.addParticle(
@@ -1081,4 +1082,3 @@ public class DevilsDevastation extends MeleeWeapon {
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 }
-

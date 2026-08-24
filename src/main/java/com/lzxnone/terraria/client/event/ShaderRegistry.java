@@ -16,7 +16,10 @@ public class ShaderRegistry {
     private static ShaderInstance blur;
     private static ShaderInstance composite;
     private static ShaderInstance outline;
+    private static ShaderInstance outlineMask;
     private static ShaderInstance particleBloom;
+    private static ShaderInstance ironSparkParticle;
+    private static ShaderInstance circleParticle;
     private static ShaderInstance devilsDevastationEnergy;
 
     public static ShaderInstance getBlur() {
@@ -31,8 +34,20 @@ public class ShaderRegistry {
         return outline;
     }
 
+    public static ShaderInstance getOutlineMask() {
+        return outlineMask;
+    }
+
     public static ShaderInstance getParticleBloom() {
         return particleBloom;
+    }
+
+    public static ShaderInstance getIronSparkParticle() {
+        return ironSparkParticle;
+    }
+
+    public static ShaderInstance getCircleParticle() {
+        return circleParticle;
     }
 
     public static ShaderInstance getDevilsDevastationEnergy() {
@@ -69,10 +84,34 @@ public class ShaderRegistry {
             event.registerShader(
                 new ShaderInstance(
                     event.getResourceProvider(),
+                    ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "outline_mask"),
+                    DefaultVertexFormat.POSITION_TEX
+                ),
+                shader -> outlineMask = shader
+            );
+            event.registerShader(
+                new ShaderInstance(
+                    event.getResourceProvider(),
                     ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "particle_bloom"),
                     DefaultVertexFormat.PARTICLE
                 ),
                 shader -> particleBloom = shader
+            );
+            event.registerShader(
+                new ShaderInstance(
+                    event.getResourceProvider(),
+                    ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "iron_spark_particle"),
+                    DefaultVertexFormat.PARTICLE
+                ),
+                shader -> ironSparkParticle = shader
+            );
+            event.registerShader(
+                new ShaderInstance(
+                    event.getResourceProvider(),
+                    ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "circle_particle"),
+                    DefaultVertexFormat.PARTICLE
+                ),
+                shader -> circleParticle = shader
             );
             event.registerShader(
                 new ShaderInstance(

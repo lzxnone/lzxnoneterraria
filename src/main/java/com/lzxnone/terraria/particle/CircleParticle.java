@@ -48,7 +48,27 @@ public class CircleParticle extends TextureSheetParticle {
 
     @Override
     public void render(VertexConsumer buffer, Camera camera, float partialTick) {
-        for(int i = 0;i < 10;i++) super.render(buffer, camera, partialTick);
+        super.render(buffer, camera, partialTick);
+    }
+
+    @Override
+    protected float getU0() {
+        return this.opaque ? super.getU0() : 0.0f;
+    }
+
+    @Override
+    protected float getU1() {
+        return this.opaque ? super.getU1() : 1.0f;
+    }
+
+    @Override
+    protected float getV0() {
+        return this.opaque ? super.getV0() : 0.0f;
+    }
+
+    @Override
+    protected float getV1() {
+        return this.opaque ? super.getV1() : 1.0f;
     }
 
     @Override
@@ -58,7 +78,9 @@ public class CircleParticle extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return this.opaque ? ParticleRenderType.PARTICLE_SHEET_OPAQUE : ModParticleRenderTypes.EMISSIVE_BLOOM_PARTICLE;
+        return this.opaque
+            ? ParticleRenderType.PARTICLE_SHEET_OPAQUE
+            : ModParticleRenderTypes.CIRCLE_PARTICLE;
     }
 
     public static class Provider implements ParticleProvider<CircleParticleOptions> {
