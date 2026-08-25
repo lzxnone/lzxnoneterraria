@@ -1,9 +1,11 @@
 package com.lzxnone.terraria.client.renderer;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.client.config.RenderConfigs;
 import com.lzxnone.terraria.client.entity.projectile.ClientStaticProjectileRenderBehaviors;
 import com.lzxnone.terraria.client.entity.summon.ClientStaticSummonRenderBehaviors;
 import com.lzxnone.terraria.entity.IrisCompat;
+import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.client.event.ShaderRegistry;
@@ -49,7 +51,7 @@ public class OutlineRenderer {
     @SubscribeEvent
     public static void onRenderStage(RenderLevelStageEvent event) {
         if(event.getStage() != RenderLevelStageEvent.Stage.AFTER_LEVEL) return;
-        if(IrisCompat.isShaderPackInUse()) return;
+        if(!RenderConfigs.ENABLE_OUTLINE.get()) return;
         if(ShaderRegistry.getOutline() == null
                 || ShaderRegistry.getOutlineMask() == null) return;
         if(!hasAnyOutline()) return;
@@ -112,10 +114,6 @@ public class OutlineRenderer {
             Uniform texelSize = shader.getUniform("TexelSize");
             if(texelSize != null) {
                 texelSize.set(1.0f / outlineTarget.viewWidth, 1.0f / outlineTarget.viewHeight);
-            }
-            Uniform outlineColor = shader.getUniform("OutlineColor");
-            if(outlineColor != null) {
-                outlineColor.set(0.8f, 0.176f, 0.78f, 1.0f);
             }
             Uniform radius = shader.getUniform("Radius");
             if(radius != null) {
@@ -181,12 +179,13 @@ public class OutlineRenderer {
                     poseStack.pushPose();
                     try {
                         poseStack.translate(camX, camY, camZ);
+                        setMaskColor(entity);
                         renderEntityMask(entity, entityYaw, partialTick, poseStack, bufferSource);
+                        maskBuffers.endBatch();
                     }finally {
                         poseStack.popPose();
                     }
                 }
-                maskBuffers.endBatch();
             }finally {
                 RenderSystem.setProjectionMatrix(previousProjection, previousSorting);
                 modelViewStack.popMatrix();
@@ -209,6 +208,34 @@ public class OutlineRenderer {
             if(hasOutline(entity)) return true;
         }
         return false;
+    }
+
+    private static void setMaskColor(Entity entity) {
+        Uniform color = ShaderRegistry.getOutlineMask().getUniform("MaskColor");
+        if(color == null) return;
+
+        if(entity instanceof StaticProjectile projectile) {
+            color.set(
+                projectile.getEntityData().get(StaticProjectile.OUTLINE_COLOR_R),
+                projectile.getEntityData().get(StaticProjectile.OUTLINE_COLOR_G),
+                projectile.getEntityData().get(StaticProjectile.OUTLINE_COLOR_B),
+                projectile.getEntityData().get(StaticProjectile.OUTLINE_COLOR_A)
+            );
+        }else if(entity instanceof StaticSummon summon) {
+            color.set(
+                summon.getEntityData().get(StaticSummon.OUTLINE_COLOR_R),
+                summon.getEntityData().get(StaticSummon.OUTLINE_COLOR_G),
+                summon.getEntityData().get(StaticSummon.OUTLINE_COLOR_B),
+                summon.getEntityData().get(StaticSummon.OUTLINE_COLOR_A)
+            );
+        }else if(entity instanceof SwordBeam beam) {
+            color.set(
+                beam.getEntityData().get(SwordBeam.OUTLINE_COLOR_R),
+                beam.getEntityData().get(SwordBeam.OUTLINE_COLOR_G),
+                beam.getEntityData().get(SwordBeam.OUTLINE_COLOR_B),
+                beam.getEntityData().get(SwordBeam.OUTLINE_COLOR_A)
+            );
+        }
     }
 
     private static void renderEntityMask(Entity entity, float entityYaw, float partialTick,

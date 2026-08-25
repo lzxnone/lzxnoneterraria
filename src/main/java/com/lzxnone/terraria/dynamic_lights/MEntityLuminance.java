@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.dynamic_lights;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.client.config.RenderConfigs;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.beam.SwordBeamBehaviors;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
@@ -25,6 +26,7 @@ public class MEntityLuminance implements EntityLuminance {
 
 	@Override
 	public @Range(from = 0, to = 15) int getLuminance(@NonNull ItemLightSourceManager itemLightSourceManager, @NonNull Entity entity) {
+		if(!RenderConfigs.ENABLE_DYNAMIC_LIGHTS.get()) return 0;
 		if(entity instanceof StaticProjectile projectile) {
 			switch(projectile.getEntityData().get(StaticProjectile.BEHAVIOR)) {
 				case StaticProjectileBehaviors.ENCHANTED_SWORD_BEAM,

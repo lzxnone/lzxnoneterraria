@@ -20,6 +20,8 @@ public class ShaderRegistry {
     private static ShaderInstance particleBloom;
     private static ShaderInstance ironSparkParticle;
     private static ShaderInstance circleParticle;
+    private static ShaderInstance superellipseParticle;
+    private static ShaderInstance nightsEdgeHitParticle;
     private static ShaderInstance devilsDevastationEnergy;
 
     public static ShaderInstance getBlur() {
@@ -48,6 +50,14 @@ public class ShaderRegistry {
 
     public static ShaderInstance getCircleParticle() {
         return circleParticle;
+    }
+
+    public static ShaderInstance getSuperellipseParticle() {
+        return superellipseParticle;
+    }
+
+    public static ShaderInstance getNightsEdgeHitParticle() {
+        return nightsEdgeHitParticle;
     }
 
     public static ShaderInstance getDevilsDevastationEnergy() {
@@ -112,6 +122,22 @@ public class ShaderRegistry {
                     DefaultVertexFormat.PARTICLE
                 ),
                 shader -> circleParticle = shader
+            );
+            event.registerShader(
+                new ShaderInstance(
+                    event.getResourceProvider(),
+                    ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "superellipse_particle"),
+                    DefaultVertexFormat.PARTICLE
+                ),
+                shader -> superellipseParticle = shader
+            );
+            event.registerShader(
+                new ShaderInstance(
+                    event.getResourceProvider(),
+                    ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "nights_edge_hit_particle"),
+                    DefaultVertexFormat.PARTICLE
+                ),
+                shader -> nightsEdgeHitParticle = shader
             );
             event.registerShader(
                 new ShaderInstance(

@@ -10,6 +10,21 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderConfigs {
+    public static final ConfigBoolean ENABLE_DYNAMIC_LIGHTS = new ConfigBoolean(
+        "render.effects.dynamic_lights",
+        "render_effects_dynamic_lights",
+        true
+    );
+    public static final ConfigBoolean ENABLE_OUTLINE = new ConfigBoolean(
+        "render.effects.outline",
+        "render_effects_outline",
+        true
+    );
+    public static final ConfigBoolean ENABLE_BLOOM = new ConfigBoolean(
+        "render.effects.bloom",
+        "render_effects_bloom",
+        true
+    );
     public static final ConfigBoolean ENABLE_RENDER_HAND = new ConfigBoolean(
         "render.mixin.render_hand",
         "render_mixin_render_hand",
@@ -49,6 +64,9 @@ public class RenderConfigs {
         @Override
         public void onConfigLoad() {
             ConfigStruct.loadAll(
+                ENABLE_DYNAMIC_LIGHTS,
+                ENABLE_OUTLINE,
+                ENABLE_BLOOM,
                 ENABLE_RENDER_HAND,
                 ENABLE_RENDER_ITEM,
                 ENABLE_SETUP_ANIM,

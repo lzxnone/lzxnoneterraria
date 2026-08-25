@@ -9,6 +9,7 @@ import com.lzxnone.terraria.entity.projectile.StaticProjectileBehaviors;
 import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.MagicWeapon;
 import com.lzxnone.terraria.particle.ModParticles;
+import com.lzxnone.terraria.particle.StarlightParticleOptions;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
@@ -51,6 +52,16 @@ public class StellarTune extends MagicWeapon {
     public static final ConfigDouble TARGET_RANGE = new ConfigDouble("weapon.stellar_tune.target_range", "stellar_tune_target_range", 32.0D, 0.0D, 128.0D);
     public static final ConfigInt ARRIVAL_TIME = new ConfigInt("weapon.stellar_tune.arrival_time", "stellar_tune_arrival_time", 10, 1, 72000);
     public static final Vector3f OFFSET = new Vector3f(-0.3F, -0.1F, 1.5F);
+    public static final StarlightParticleOptions PARTICLE = new StarlightParticleOptions(
+        1.0f,
+        0.35f,
+        40,
+        new Vector3f[]{
+            new Vector3f(1.00f, 0.55f, 0.76f), // 粉红
+            new Vector3f(0.56f, 0.76f, 1.00f), // 粉蓝
+            new Vector3f(1.00f, 0.87f, 0.54f)  // 粉黄
+        }
+    );
 
     private static final double WAVE_AMPLITUDE = 2.0D;
     private static final double HITBOX_INFLATE = 1.0D;
@@ -96,6 +107,15 @@ public class StellarTune extends MagicWeapon {
         public void onDied(StaticProjectile projectile) {
             if(projectile.level() instanceof ServerLevel serverLevel) {
                 ParticleUtil.addParticles(serverLevel, ModParticles.STAR_PARTICLE.get(), projectile.position(), new Vec3(0.5D, 0.5D, 0.5D), 0.25D, 25);
+                int count = 4 + projectile.getRandom().nextInt(5);
+                ParticleUtil.addParticles(
+                    serverLevel,
+                    PARTICLE,
+                    projectile.position(),
+                    new Vec3(0.35D, 0.35D, 0.35D),
+                    0.16D,
+                    count
+                );
             }
             projectile.discard();
         }

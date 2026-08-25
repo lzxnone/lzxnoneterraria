@@ -33,12 +33,13 @@ public class IronSparkParticle extends TextureSheetParticle {
 
         this.lifetime = options.initLifetime + this.random.nextInt(options.initLifetime / 2);
 
-        this.dir = new Vector3f(options.dir).normalize();
+        Vector3f velocity = new Vector3f(options.dir);
+        this.dir = new Vector3f(velocity).normalize();
         this.right = new Vector3f(options.right).normalize();
 
-        this.xd = dir.x;
-        this.yd = dir.y;
-        this.zd = dir.z;
+        this.xd = velocity.x;
+        this.yd = velocity.y;
+        this.zd = velocity.z;
 
         this.pickSprite(spriteSet);
     }

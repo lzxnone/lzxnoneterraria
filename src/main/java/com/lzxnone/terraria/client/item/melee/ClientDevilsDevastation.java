@@ -169,13 +169,14 @@ public class ClientDevilsDevastation {
 
             Vector3f tipDir = dir.toVector3f().rotate(rotationUp);
             poseStack.translate(-tipDir.x * 2, -tipDir.y * 2, -tipDir.z * 2);
-            poseStack.translate(-up.x * 0.5, -up.y * 0.5, -up.z * 0.5);
+            poseStack.translate(-up.x * 0, -up.y * 0, -up.z * 0);
             poseStack.mulPose(rotationUp2);
             poseStack.mulPose(rotationDir);
             poseStack.mulPose(Axis.YP.rotationDegrees(-xyRot[1]));
             poseStack.mulPose(Axis.XP.rotationDegrees(xyRot[0]));
             poseStack.mulPose(Axis.XP.rotationDegrees(-90));
             poseStack.mulPose(Axis.ZP.rotationDegrees(-135));
+            poseStack.mulPose(Axis.YP.rotationDegrees(90));
             renderEnergyWave(bufferSource, poseStack, projectile);
 
             poseStack.popPose();
@@ -481,6 +482,9 @@ public class ClientDevilsDevastation {
 
             poseStack.translate(0.0, 1.4, 0.2);
             Matrix4f modelMatrix = new Matrix4f(poseStack.last().pose());
+            float partialTick = Minecraft.getInstance().getTimer()
+                .getGameTimeDeltaPartialTick(false);
+            float renderTime = entity.tickCount + partialTick;
 
             //注入 uniform
             Uniform modelMat = shader.getUniform("ModelMat");
@@ -508,9 +512,7 @@ public class ClientDevilsDevastation {
             }
             Uniform flowTimeUniform = shader.getUniform("FlowTime");
             if (flowTimeUniform != null) {
-                float flowTime = entity.tickCount
-                    + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
-                flowTimeUniform.set(flowTime);
+                flowTimeUniform.set(renderTime);
             }
             Uniform edgeColor0Uniform = shader.getUniform("EdgeColor0");
             if (edgeColor0Uniform != null) {

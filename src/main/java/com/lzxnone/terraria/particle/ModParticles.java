@@ -82,6 +82,17 @@ public class ModParticles {
                     return CircleParticleOptions.STREAM_CODEC;
                 }
             });
+    public static final Supplier<ParticleType<StarlightParticleOptions>> STARLIGHT_PARTICLE =
+            PARTICLE_TYPES.register("starlight_particle", () -> new ParticleType<>(false) {
+                @Override
+                public MapCodec<StarlightParticleOptions> codec() {
+                    return StarlightParticleOptions.CODEC;
+                }
+                @Override
+                public StreamCodec<? super RegistryFriendlyByteBuf, StarlightParticleOptions> streamCodec() {
+                    return StarlightParticleOptions.STREAM_CODEC;
+                }
+            });
     public static final Supplier<SimpleParticleType> STAR_PARTICLE =
             PARTICLE_TYPES.register("star_particle", () -> new SimpleParticleType(true));
     public static final Supplier<SimpleParticleType> EXPLODE_PARTICLE =

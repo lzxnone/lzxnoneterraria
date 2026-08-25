@@ -1,0 +1,29 @@
+{
+  "blend": { "func": "add", "srcrgb": "srcalpha", "dstrgb": "1" },
+  "vertex": "lzxnoneterraria:superellipse_particle",
+  "fragment": "lzxnoneterraria:superellipse_particle",
+  "attributes": ["Position", "UV0", "Color", "UV2"],
+  "samplers": [],
+  "uniforms": [
+    { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0] },
+    { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0] },
+    { "name": "ColorModulator", "type": "float", "count": 4, "values": [1.0, 1.0, 1.0, 1.0] },
+    { "name": "FogStart", "type": "float", "count": 1, "values": [0.0] },
+    { "name": "FogEnd", "type": "float", "count": 1, "values": [1.0] },
+    { "name": "FogShape", "type": "int", "count": 1, "values": [0] },
+    { "name": "ShapePower", "type": "float", "count": 1, "values": [1.0] },
+    { "name": "ShapeRadius", "type": "float", "count": 2, "values": [0.8, 0.8] },
+    { "name": "ShapeRotation", "type": "float", "count": 1, "values": [0.0] },
+    { "name": "CoreColor", "type": "float", "count": 3, "values": [1.0, 1.0, 1.0] },
+    { "name": "MiddleColor", "type": "float", "count": 3, "values": [1.0, 1.0, 1.0] },
+    { "name": "EdgeColor", "type": "float", "count": 3, "values": [1.0, 1.0, 1.0] },
+    { "name": "CoreWhiteMix", "type": "float", "count": 1, "values": [0.0] },
+    { "name": "FirstGradient", "type": "float", "count": 2, "values": [0.15, 0.68] },
+    { "name": "SecondGradient", "type": "float", "count": 2, "values": [0.66, 1.0] },
+    { "name": "BrightnessGradient", "type": "float", "count": 2, "values": [0.16, 1.0] },
+    { "name": "Brightness", "type": "float", "count": 2, "values": [1.5, 1.1] },
+    { "name": "AuraScale", "type": "float", "count": 1, "values": [1.14] },
+    { "name": "AuraBrightness", "type": "float", "count": 1, "values": [0.5] },
+    { "name": "AuraAlpha", "type": "float", "count": 1, "values": [0.35] }
+  ]
+}

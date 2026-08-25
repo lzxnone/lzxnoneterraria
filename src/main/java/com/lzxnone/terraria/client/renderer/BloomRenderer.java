@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.client.renderer;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.client.config.RenderConfigs;
 import com.lzxnone.terraria.entity.IrisCompat;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
@@ -51,7 +52,7 @@ public class BloomRenderer {
     public static void onRenderStage(RenderLevelStageEvent event) {
         if(event.getStage() != RenderLevelStageEvent.Stage.AFTER_LEVEL) return;
         //开启光影禁用
-        if(IrisCompat.isShaderPackInUse()) return;
+        if(!RenderConfigs.ENABLE_BLOOM.get() || IrisCompat.isShaderPackInUse()) return;
         if(ShaderRegistry.getBlur() == null || ShaderRegistry.getComposite() == null) return;
         if(!hasAnyGlow()) return;
 

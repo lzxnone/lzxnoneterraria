@@ -12,7 +12,6 @@
   ],
   "uniforms": [
     { "name": "TexelSize", "type": "float", "count": 2, "values": [ 0.001, 0.001 ] },
-    { "name": "OutlineColor", "type": "float", "count": 4, "values": [ 0.8, 0.176, 0.78, 1.0 ] },
     { "name": "Radius", "type": "float", "count": 1, "values": [ 2.0 ] },
     { "name": "DepthBias", "type": "float", "count": 1, "values": [ 0.00005 ] }
   ]

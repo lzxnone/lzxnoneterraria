@@ -357,6 +357,10 @@ public class DevilsDevastation extends MeleeWeapon {
                     summon.getEntityData().set(StaticSummon.LIFETIME, STUCK_LIFETIME.get());
                     summon.getEntityData().set(StaticSummon.GLOW, true);
                     summon.getEntityData().set(StaticSummon.OUTLINE, true);
+                    summon.getEntityData().set(StaticSummon.OUTLINE_COLOR_R, 0.8f);
+                    summon.getEntityData().set(StaticSummon.OUTLINE_COLOR_G, 0.176f);
+                    summon.getEntityData().set(StaticSummon.OUTLINE_COLOR_B, 0.78f);
+                    summon.getEntityData().set(StaticSummon.OUTLINE_COLOR_A, 1.0f);
 
                     CompoundTag customData = new CompoundTag();
                     Vec3 deltaPos = pos.subtract(target.position());
@@ -413,14 +417,14 @@ public class DevilsDevastation extends MeleeWeapon {
                         CircleParticleOptions circleParticleOptions;
                         if(projectile.getRandom().nextInt(2) == 0) {
                             ironSparkParticleOptions = new IronSparkParticleOptions(
-                                    0.1f, 40, 4.0f, new Vector3f(0.729f, 0.396f, 0.345f), dirs[0].mul(0.2f), dirs[2]
+                                    0.15f, 40, 10.0f, new Vector3f(0.729f, 0.396f, 0.345f), dirs[0].mul(0.6f), dirs[2]
                             );
                             circleParticleOptions = new CircleParticleOptions(
                                     0.1f, 40, new Vector3f(0.729f, 0.396f, 0.345f)
                             );
                         }else {
                             ironSparkParticleOptions = new IronSparkParticleOptions(
-                                    0.1f, 40, 4.0f, new Vector3f(0.8f, 0.176f, 0.78f), dirs[0].mul(0.2f), dirs[2]
+                                    0.15f, 40, 10.0f, new Vector3f(0.8f, 0.176f, 0.78f), dirs[0].mul(0.6f), dirs[2]
                             );
                             circleParticleOptions = new CircleParticleOptions(
                                     0.1f, 40, new Vector3f(0.8f, 0.176f, 0.78f)

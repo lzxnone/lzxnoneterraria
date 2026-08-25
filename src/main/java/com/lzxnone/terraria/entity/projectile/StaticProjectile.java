@@ -70,7 +70,15 @@ public class StaticProjectile extends Projectile {
     public static final EntityDataAccessor<Boolean> GLOW =
             SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> OUTLINE =
-            SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.BOOLEAN);
+        SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Float> OUTLINE_COLOR_R =
+        SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Float> OUTLINE_COLOR_G =
+        SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Float> OUTLINE_COLOR_B =
+        SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Float> OUTLINE_COLOR_A =
+        SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Integer> AGE =
             SynchedEntityData.defineId(StaticProjectile.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> LIFETIME =
@@ -133,6 +141,10 @@ public class StaticProjectile extends Projectile {
         builder.define(COLOR_A, 1.0f);
         builder.define(GLOW, false);
         builder.define(OUTLINE, false);
+        builder.define(OUTLINE_COLOR_R, 1.0f);
+        builder.define(OUTLINE_COLOR_G, 1.0f);
+        builder.define(OUTLINE_COLOR_B, 1.0f);
+        builder.define(OUTLINE_COLOR_A, 1.0f);
         builder.define(AGE, 0);
         builder.define(LIFETIME, 60);
         builder.define(EXPRESSION_X, "0");
@@ -235,6 +247,10 @@ public class StaticProjectile extends Projectile {
         tag.putFloat("colorA", this.entityData.get(COLOR_A));
         tag.putBoolean("glow", this.entityData.get(GLOW));
         tag.putBoolean("outline", this.entityData.get(OUTLINE));
+        tag.putFloat("outlineColorR", this.entityData.get(OUTLINE_COLOR_R));
+        tag.putFloat("outlineColorG", this.entityData.get(OUTLINE_COLOR_G));
+        tag.putFloat("outlineColorB", this.entityData.get(OUTLINE_COLOR_B));
+        tag.putFloat("outlineColorA", this.entityData.get(OUTLINE_COLOR_A));
         tag.putInt("age", this.entityData.get(AGE));
         tag.putInt("lifetime", this.entityData.get(LIFETIME));
         tag.putString("expressionX", this.entityData.get(EXPRESSION_X));
@@ -297,6 +313,10 @@ public class StaticProjectile extends Projectile {
         if(tag.contains("colorA")) this.entityData.set(COLOR_A, tag.getFloat("colorA"));
         if(tag.contains("glow")) this.entityData.set(GLOW, tag.getBoolean("glow"));
         if(tag.contains("outline")) this.entityData.set(OUTLINE, tag.getBoolean("outline"));
+        if(tag.contains("outlineColorR")) this.entityData.set(OUTLINE_COLOR_R, tag.getFloat("outlineColorR"));
+        if(tag.contains("outlineColorG")) this.entityData.set(OUTLINE_COLOR_G, tag.getFloat("outlineColorG"));
+        if(tag.contains("outlineColorB")) this.entityData.set(OUTLINE_COLOR_B, tag.getFloat("outlineColorB"));
+        if(tag.contains("outlineColorA")) this.entityData.set(OUTLINE_COLOR_A, tag.getFloat("outlineColorA"));
         if(tag.contains("age")) this.entityData.set(AGE, tag.getInt("age"));
         if(tag.contains("lifetime")) this.entityData.set(LIFETIME, tag.getInt("lifetime"));
         if(tag.contains("expressionX")) this.entityData.set(EXPRESSION_X, tag.getString("expressionX"));

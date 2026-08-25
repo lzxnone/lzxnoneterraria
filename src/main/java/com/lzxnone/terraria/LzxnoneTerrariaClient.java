@@ -65,6 +65,9 @@ public class LzxnoneTerrariaClient {
             event.registerSpriteSet(ModParticles.CIRCLE_PARTICLE.get(), CircleParticle.Provider::new);
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
+            event.registerSpecial(ModParticles.STARLIGHT_PARTICLE.get(), new StarlightParticle.Provider());
+        });
+        modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
             event.registerSpriteSet(ModParticles.STAR_PARTICLE.get(), StarParticle.Provider::new);
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
@@ -77,19 +80,19 @@ public class LzxnoneTerrariaClient {
             event.registerSpriteSet(ModParticles.INFLUX_WAVER_DROP_PARTICLE.get(), InfluxWaverDropParticle.Provider::new);
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
-            event.registerSpriteSet(ModParticles.TERRA_BEAM_HIT_PARTICLE.get(), TerraBeamHitParticle.Provider::new);
+            event.registerSpecial(ModParticles.TERRA_BEAM_HIT_PARTICLE.get(), new TerraBeamHitParticle.Provider());
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
-            event.registerSpriteSet(ModParticles.EXCALIBUR_HIT_PARTICLE.get(), ExcaliburHitParticle.Provider::new);
+            event.registerSpecial(ModParticles.EXCALIBUR_HIT_PARTICLE.get(), new ExcaliburHitParticle.Provider());
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
-            event.registerSpriteSet(ModParticles.TRUE_EXCALIBUR_HIT_PARTICLE.get(), TrueExcaliburHitParticle.Provider::new);
+            event.registerSpecial(ModParticles.TRUE_EXCALIBUR_HIT_PARTICLE.get(), new TrueExcaliburHitParticle.Provider());
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
-            event.registerSpriteSet(ModParticles.NIGHTS_EDGE_HIT_PARTICLE.get(), NightsEdgeHitParticle.Provider::new);
+            event.registerSpecial(ModParticles.NIGHTS_EDGE_HIT_PARTICLE.get(), new NightsEdgeHitParticle.Provider());
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
-            event.registerSpriteSet(ModParticles.TRUE_NIGHTS_EDGE_HIT_PARTICLE.get(), TrueNightsEdgeHitParticle.Provider::new);
+            event.registerSpecial(ModParticles.TRUE_NIGHTS_EDGE_HIT_PARTICLE.get(), new TrueNightsEdgeHitParticle.Provider());
         });
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
             event.registerSpriteSet(ModParticles.BLOOD_BUTCHERED_PARTICLE.get(), BloodButcheredParticle.Provider::new);

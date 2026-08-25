@@ -49,7 +49,15 @@ public class SwordBeam extends Entity {
     public static final EntityDataAccessor<Float> INFLATE =
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Boolean> OUTLINE =
-            SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.BOOLEAN);
+        SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Float> OUTLINE_COLOR_R =
+        SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Float> OUTLINE_COLOR_G =
+        SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Float> OUTLINE_COLOR_B =
+        SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Float> OUTLINE_COLOR_A =
+        SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Integer> AGE =
             SynchedEntityData.defineId(SwordBeam.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> LIFETIME =
@@ -250,6 +258,10 @@ public class SwordBeam extends Entity {
         builder.define(RIGHT_HAND, true);
         builder.define(INFLATE, 0.0f);
         builder.define(OUTLINE, false);
+        builder.define(OUTLINE_COLOR_R, 1.0f);
+        builder.define(OUTLINE_COLOR_G, 1.0f);
+        builder.define(OUTLINE_COLOR_B, 1.0f);
+        builder.define(OUTLINE_COLOR_A, 1.0f);
         builder.define(COLOR0, new Vector3f(1.0f, 1.0f, 1.0f));
         builder.define(COLOR1, new Vector3f(1.0f, 1.0f, 1.0f));
         builder.define(COLOR2, new Vector3f(1.0f, 1.0f, 1.0f));
@@ -269,6 +281,10 @@ public class SwordBeam extends Entity {
         tag.putBoolean("rightHand", this.entityData.get(RIGHT_HAND));
         tag.putFloat("inflate", this.entityData.get(INFLATE));
         tag.putBoolean("outline", this.entityData.get(OUTLINE));
+        tag.putFloat("outlineColorR", this.entityData.get(OUTLINE_COLOR_R));
+        tag.putFloat("outlineColorG", this.entityData.get(OUTLINE_COLOR_G));
+        tag.putFloat("outlineColorB", this.entityData.get(OUTLINE_COLOR_B));
+        tag.putFloat("outlineColorA", this.entityData.get(OUTLINE_COLOR_A));
         Vector3f c0 = this.entityData.get(COLOR0);
         tag.putFloat("color0R", c0.x);
         tag.putFloat("color0G", c0.y);
@@ -301,6 +317,10 @@ public class SwordBeam extends Entity {
         if(tag.contains("rightHand")) this.entityData.set(RIGHT_HAND, tag.getBoolean("rightHand"));
         if(tag.contains("inflate")) this.entityData.set(INFLATE, tag.getFloat("inflate"));
         if(tag.contains("outline")) this.entityData.set(OUTLINE, tag.getBoolean("outline"));
+        if(tag.contains("outlineColorR")) this.entityData.set(OUTLINE_COLOR_R, tag.getFloat("outlineColorR"));
+        if(tag.contains("outlineColorG")) this.entityData.set(OUTLINE_COLOR_G, tag.getFloat("outlineColorG"));
+        if(tag.contains("outlineColorB")) this.entityData.set(OUTLINE_COLOR_B, tag.getFloat("outlineColorB"));
+        if(tag.contains("outlineColorA")) this.entityData.set(OUTLINE_COLOR_A, tag.getFloat("outlineColorA"));
         if(tag.contains("color0R")) {
             this.entityData.set(COLOR0, new Vector3f(
                 tag.getFloat("color0R"), tag.getFloat("color0G"), tag.getFloat("color0B")
