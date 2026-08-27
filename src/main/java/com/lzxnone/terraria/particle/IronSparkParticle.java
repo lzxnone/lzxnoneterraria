@@ -16,7 +16,7 @@ public class IronSparkParticle extends TextureSheetParticle {
 
     protected IronSparkParticle(ClientLevel level, double x, double y, double z,
                                 double xSpeed, double ySpeed, double zSpeed,
-                                IronSparkParticleOptions options, SpriteSet spriteSet) {
+                                IronSparkParticleOptions options) {
         super(level, x, y, z, xSpeed, ySpeed, zSpeed);
         this.hasPhysics = false;
 
@@ -40,8 +40,6 @@ public class IronSparkParticle extends TextureSheetParticle {
         this.xd = velocity.x;
         this.yd = velocity.y;
         this.zd = velocity.z;
-
-        this.pickSprite(spriteSet);
     }
 
     @Override
@@ -114,17 +112,11 @@ public class IronSparkParticle extends TextureSheetParticle {
     }
 
     public static class Provider implements ParticleProvider<IronSparkParticleOptions> {
-        private final SpriteSet spriteSet;
-
-        public Provider(SpriteSet spriteSet) {
-            this.spriteSet = spriteSet;
-        }
-
         @Override
         public Particle createParticle(IronSparkParticleOptions type, ClientLevel level,
                                        double x, double y, double z,
                                        double xSpeed, double ySpeed, double zSpeed) {
-            return new IronSparkParticle(level, x, y, z, xSpeed, ySpeed, zSpeed, type, this.spriteSet);
+            return new IronSparkParticle(level, x, y, z, xSpeed, ySpeed, zSpeed, type);
         }
     }
 }
