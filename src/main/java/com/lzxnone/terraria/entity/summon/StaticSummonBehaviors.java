@@ -3,14 +3,9 @@ package com.lzxnone.terraria.entity.summon;
 import com.lzxnone.terraria.item.ammo.*;
 import com.lzxnone.terraria.item.normal.FallenStar;
 import com.lzxnone.terraria.item.normal.ManaStar;
-import com.lzxnone.terraria.item.weapon.magic.BetsyWrath;
-import com.lzxnone.terraria.item.weapon.magic.BubbleGun;
-import com.lzxnone.terraria.item.weapon.magic.LunarFlare;
-import com.lzxnone.terraria.item.weapon.magic.NebulaBlaze;
-import com.lzxnone.terraria.item.weapon.magic.NebulaArcanum;
+import com.lzxnone.terraria.item.weapon.magic.*;
 import com.lzxnone.terraria.item.weapon.melee.flail.Flail;
 import com.lzxnone.terraria.item.weapon.ranged.ElfMelter;
-import com.lzxnone.terraria.item.weapon.magic.LastPrism;
 import com.lzxnone.terraria.item.weapon.melee.*;
 import com.lzxnone.terraria.item.weapon.ranged.Flamethrower;
 import com.lzxnone.terraria.item.weapon.ranged.SnowballCannon;
@@ -66,6 +61,7 @@ public class StaticSummonBehaviors {
     public static final String STARDUST_CELL_STUCK_PROJECTILE = "stardust_cell_stuck_projectile";
     public static final String POSSESSION = "possession";
     public static final String POSSESSION_VISION = "possession_vision";
+    public static final String NIGHTGLOW_PROJECTILE = "nightglow_projectile";
 
     //通用子弹实体
     public static final String MUSKET_BALL = "musket_ball";
@@ -129,6 +125,7 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(STARDUST_CELL_STUCK_PROJECTILE, StardustCellStaff.SUMMON_BEHAVIOR2);
         BEHAVIORS.put(POSSESSION, Whip.SUMMON_BEHAVIOR);
         BEHAVIORS.put(POSSESSION_VISION, Possession.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(NIGHTGLOW_PROJECTILE, Nightglow.SUMMON_BEHAVIOR);
 
         BEHAVIORS.put(MUSKET_BALL, MusketBall.SUMMON_BEHAVIOR);
         BEHAVIORS.put(METEOR_SHOT, MeteorShot.SUMMON_BEHAVIOR);

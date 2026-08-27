@@ -79,8 +79,8 @@
   "snow_break": {
     "sounds": ["lzxnoneterraria:snow_break"]
   },
-  "summon_terraprisma": {
-    "sounds": ["lzxnoneterraria:summon_terraprisma"]
+  "summon2": {
+    "sounds": ["lzxnoneterraria:summon2"]
   },
   "summon": {
     "sounds": ["lzxnoneterraria:summon"]

@@ -2,15 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "category": "combat",
   "pattern": [
-    "ECE",
+    "DCD",
     "BAB",
-    "EDE"
+    "ECE"
   ],
   "key": {
     "A": { "item": "minecraft:flow_armor_trim_smithing_template" },
     "B": { "item": "minecraft:note_block" },
-    "C": { "item": "minecraft:conduit" },
-    "D": { "item": "minecraft:heavy_core" },
+    "C": { "item": "minecraft:pink_dye" },
+    "D": { "item": "minecraft:netherite_scrap" },
     "E": { "item": "minecraft:netherite_ingot" }
   },
   "result": {

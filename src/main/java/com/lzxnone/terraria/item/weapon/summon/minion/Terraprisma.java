@@ -505,7 +505,7 @@ public class Terraprisma extends MinionWeapon {
                 }
             }
         }
-        SoundUtil.playClientSound(player, ModSounds.SUMMON_TERRAPRISMA.get());
+        SoundUtil.playClientSound(player, ModSounds.SUMMON2.get());
         return InteractionResultHolder.consume(stack);
     }
 }

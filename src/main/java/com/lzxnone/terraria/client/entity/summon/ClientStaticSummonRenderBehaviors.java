@@ -1,14 +1,10 @@
 package com.lzxnone.terraria.client.entity.summon;
 
+import com.lzxnone.terraria.client.item.magic.*;
 import com.lzxnone.terraria.client.item.normal.ClientDropFallenStar;
 import com.lzxnone.terraria.client.item.normal.ClientManaStar;
 import com.lzxnone.terraria.client.item.ranged.ClientArrowAmmo;
 import com.lzxnone.terraria.client.item.ranged.ClientBulletAmmo;
-import com.lzxnone.terraria.client.item.magic.ClientBetsysWrath;
-import com.lzxnone.terraria.client.item.magic.ClientBubbleGun;
-import com.lzxnone.terraria.client.item.magic.ClientLastPrism;
-import com.lzxnone.terraria.client.item.magic.ClientNebulaArcanum;
-import com.lzxnone.terraria.client.item.magic.ClientNebulaBlaze;
 import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
 import com.lzxnone.terraria.client.item.melee.ClientFirstFractal;
 import com.lzxnone.terraria.client.item.melee.ClientLightsBane;
@@ -70,6 +66,7 @@ public class ClientStaticSummonRenderBehaviors {
         BEHAVIORS.put(StaticSummonBehaviors.STARDUST_DRAGON_STAFF, ClientStardustDragonStaff.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.STARDUST_CELL_STAFF, ClientStardustCellStaff.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.STARDUST_CELL_STUCK_PROJECTILE, ClientStardustCellStaff.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.NIGHTGLOW_PROJECTILE, ClientNightglow.SUMMON_BEHAVIOR);
 
         BEHAVIORS.put(StaticSummonBehaviors.MUSKET_BALL, ClientBulletAmmo.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.METEOR_SHOT, ClientBulletAmmo.SUMMON_BEHAVIOR);

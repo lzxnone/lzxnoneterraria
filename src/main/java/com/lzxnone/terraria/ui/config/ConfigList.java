@@ -101,6 +101,7 @@ import com.lzxnone.terraria.item.weapon.magic.LunarFlare;
 import com.lzxnone.terraria.item.weapon.magic.NebulaArcanum;
 import com.lzxnone.terraria.item.weapon.magic.NebulaBlaze;
 import com.lzxnone.terraria.item.weapon.magic.StellarTune;
+import com.lzxnone.terraria.item.weapon.magic.Nightglow;
 import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.item.weapon.melee.BladeOfGrass;
 import com.lzxnone.terraria.item.weapon.melee.BloodButcherer;
@@ -189,6 +190,7 @@ public class ConfigList {
             NebulaArcanum.CONFIG_LIST_ITEM,
             StellarTune.CONFIG_LIST_ITEM,
             BubbleGun.CONFIG_LIST_ITEM,
+            Nightglow.CONFIG_LIST_ITEM,
             Minishark.CONFIG_LIST_ITEM,
             FlintlockPistol.CONFIG_LIST_ITEM,
             Boomstick.CONFIG_LIST_ITEM,

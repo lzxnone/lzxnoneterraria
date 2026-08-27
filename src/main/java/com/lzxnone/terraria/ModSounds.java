@@ -107,10 +107,10 @@ public class ModSounds {
             SOUND_EVENTS.register("snow_break",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "snow_break")));
-    public static final Supplier<SoundEvent> SUMMON_TERRAPRISMA =
-            SOUND_EVENTS.register("summon_terraprisma",
+    public static final Supplier<SoundEvent> SUMMON2 =
+            SOUND_EVENTS.register("summon2",
                     () -> SoundEvent.createVariableRangeEvent(
-                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "summon_terraprisma")));
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "summon2")));
     public static final Supplier<SoundEvent> SUMMON =
             SOUND_EVENTS.register("summon",
                     () -> SoundEvent.createVariableRangeEvent(

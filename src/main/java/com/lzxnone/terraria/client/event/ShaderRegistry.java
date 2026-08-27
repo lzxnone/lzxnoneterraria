@@ -23,6 +23,7 @@ public class ShaderRegistry {
     private static ShaderInstance superellipseParticle;
     private static ShaderInstance nightsEdgeHitParticle;
     private static ShaderInstance devilsDevastationEnergy;
+    private static ShaderInstance nightglowSuperellipsoid;
 
     public static ShaderInstance getBlur() {
         return blur;
@@ -62,6 +63,10 @@ public class ShaderRegistry {
 
     public static ShaderInstance getDevilsDevastationEnergy() {
         return devilsDevastationEnergy;
+    }
+
+    public static ShaderInstance getNightglowSuperellipsoid() {
+        return nightglowSuperellipsoid;
     }
 
     @SubscribeEvent
@@ -146,6 +151,14 @@ public class ShaderRegistry {
                     DefaultVertexFormat.POSITION_COLOR
                 ),
                 shader -> devilsDevastationEnergy = shader
+            );
+            event.registerShader(
+                new ShaderInstance(
+                    event.getResourceProvider(),
+                    ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "nightglow_superellipsoid"),
+                    DefaultVertexFormat.POSITION_COLOR
+                ),
+                shader -> nightglowSuperellipsoid = shader
             );
         } catch (IOException e) {
             throw new RuntimeException("Shader load error", e);

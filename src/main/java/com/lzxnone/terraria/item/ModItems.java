@@ -62,6 +62,7 @@ public class ModItems {
     public static final DeferredItem<Item> NEBULA_ARCANUM = ITEMS.register("nebula_arcanum", NebulaArcanum::new);
     public static final DeferredItem<Item> STELLAR_TUNE = ITEMS.register("stellar_tune", StellarTune::new);
     public static final DeferredItem<Item> BUBBLE_GUN = ITEMS.register("bubble_gun", BubbleGun::new);
+    public static final DeferredItem<Item> NIGHTGLOW = ITEMS.register("nightglow", Nightglow::new);
 
     //远程武器
     public static final DeferredItem<Item> MUSKET = ITEMS.register("musket", Musket::new);
@@ -280,5 +281,5 @@ public class ModItems {
     public static final DeferredItem<Item> FIRST_FRACTAL_PROJECTILE14 = ITEMS.register("first_fractal_projectile14", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> MACE_PROJECTILE = ITEMS.register("mace_projectile", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> TERRAPRISMA_SUMMON = ITEMS.register("terraprisma_summon", () -> new Item(new Item.Properties()));
-
+    public static final DeferredItem<Item> NIGHTGLOW_PROJECTILE = ITEMS.register("nightglow_projectile", () -> new Item(new Item.Properties()));
 }
