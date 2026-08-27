@@ -3,6 +3,7 @@ package com.lzxnone.terraria.mixin;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.client.config.RenderConfigs;
 import com.lzxnone.terraria.client.item.magic.ClientNebulaBlaze;
+import com.lzxnone.terraria.client.item.magic.ClientNightglow;
 import com.lzxnone.terraria.client.item.melee.ClientDevilsDevastation;
 import com.lzxnone.terraria.entity.ModRenderTypes;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
@@ -13,6 +14,7 @@ import com.lzxnone.terraria.item.weapon.melee.Mace;
 import com.lzxnone.terraria.item.weapon.summon.whip.Whip;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -38,6 +40,10 @@ public class ItemInHandRenderMixin {
     private void renderPlayerArm(PoseStack poseStack, MultiBufferSource buffer, int packedLight,
                                  float equippedProgress, float swingProgress, HumanoidArm side) {}
 
+    @Shadow
+    public void renderItem(LivingEntity entity, ItemStack itemStack, ItemDisplayContext displayContext,
+                           boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int seed) {}
+
     @Inject(method = "renderArmWithItem", at = @At("HEAD"), cancellable = true)
     private void renderHand(AbstractClientPlayer player, float partialTicks, float pitch,
                                          InteractionHand hand, float swingProgress, ItemStack stack,
@@ -45,7 +51,16 @@ public class ItemInHandRenderMixin {
                                          MultiBufferSource buffer, int combinedLight, CallbackInfo ci) {
         if(!RenderConfigs.ENABLE_RENDER_HAND.get()) return;
         if(!player.isScoping()) {
-            if(stack.is(ModItems.ZENITH.get())
+            if(stack.is(ModItems.NIGHTGLOW.get())) {
+                boolean isMainHand = hand == InteractionHand.MAIN_HAND;
+                HumanoidArm humanoidarm = isMainHand ? player.getMainArm() : player.getMainArm().getOpposite();
+
+                poseStack.pushPose();
+                if(!player.isInvisible()) {
+                    this.renderPlayerArm(poseStack, buffer, combinedLight, equippedProgress, swingProgress, humanoidarm);
+                }
+                poseStack.popPose();
+            }else if(stack.is(ModItems.ZENITH.get())
                 || stack.is(ModItems.TRUE_COPPER_SHORTSWORD.get())
                 || stack.is(ModItems.FIRST_FRACTAL.get())
                 || stack.is(ModItems.TERRAGRIM.get())) {
@@ -175,6 +190,11 @@ public class ItemInHandRenderMixin {
             if (SwordBeam.hasActiveBeam(player, SwordBeamBehaviors.TRUE_NIGHTS_EDGE)) {
                 ci.cancel();
             }
+        }else if(itemStack.is(ModItems.NIGHTGLOW.get()) && entity instanceof Player player) {
+            poseStack.pushPose();
+            ClientNightglow.renderHandItem(player, itemStack, displayContext, leftHand, poseStack, buffer, seed);
+            poseStack.popPose();
+            ci.cancel();
         }
     }
 

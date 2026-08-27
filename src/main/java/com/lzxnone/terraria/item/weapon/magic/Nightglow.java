@@ -26,10 +26,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -37,6 +34,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -223,6 +221,7 @@ public class Nightglow extends MagicWeapon {
                     case Z -> mz = -mz;
                 }
                 summon.setDeltaMovement(new Vec3(mx, my, mz));
+                //SoundUtil.playServerSound(summon.level(), ModSounds.STAR_COLLIDE.get(), summon.position());
             }
 
             // 3. 实体碰撞伤害逻辑（全局生效）

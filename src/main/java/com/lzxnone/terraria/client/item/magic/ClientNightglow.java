@@ -10,6 +10,8 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -17,6 +19,10 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.GlStateBackup;
 import org.joml.Matrix4f;
@@ -285,5 +291,36 @@ public class ClientNightglow {
                 }
             }
         }
+    }
+
+    public static void renderHandItem(LivingEntity entity, ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource buffer, int seed) {
+        poseStack.pushPose();
+
+        float handSign = leftHand ? -1.0f : 1.0f;
+
+        if(displayContext.firstPerson()) {
+            // 第一人称手提姿态
+            poseStack.translate(handSign * 0.0D, -0.7D, -0.5D);
+            poseStack.mulPose(Axis.ZP.rotationDegrees(handSign * -30.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(handSign * 90.0F));
+        }else if(displayContext == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND || displayContext == ItemDisplayContext.THIRD_PERSON_LEFT_HAND) {
+            // 第三人称手提姿态（向下悬挂）
+            poseStack.translate(0.0D, -0.8D, 0.0D);
+        }
+
+        Minecraft.getInstance().getItemRenderer().renderStatic(
+            entity,
+            itemStack,
+            displayContext,
+            leftHand,
+            poseStack,
+            buffer,
+            entity.level(),
+            LightTexture.FULL_BRIGHT,
+            OverlayTexture.NO_OVERLAY,
+            seed
+        );
+
+        poseStack.popPose();
     }
 }

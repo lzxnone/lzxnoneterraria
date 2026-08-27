@@ -2,6 +2,7 @@ package com.lzxnone.terraria.mixin;
 
 import com.lzxnone.terraria.client.config.RenderConfigs;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
+import com.lzxnone.terraria.item.ModItems;
 import com.lzxnone.terraria.item.weapon.RangedWeapon;
 import com.lzxnone.terraria.item.weapon.ranged.bow.Bow;
 import net.minecraft.client.model.HumanoidModel;
@@ -56,6 +57,19 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> {
             arm.xRot += (float) Math.toRadians(-75);
             arm.zRot += (float) Math.toRadians(-beam.getEntityData().get(SwordBeam.ROTATE));
             arm.yRot += (float) Math.toRadians(angleDeg);
+        }
+
+        if(player.getMainHandItem().is(ModItems.NIGHTGLOW.get())) {
+            ModelPart arm = player.getMainArm() == HumanoidArm.RIGHT ? this.rightArm : this.leftArm;
+            arm.xRot = (float) Math.toRadians(-90.0F);
+            arm.yRot = 0.0F;
+            arm.zRot = 0.0F;
+        }
+        if(player.getOffhandItem().is(ModItems.NIGHTGLOW.get())) {
+            ModelPart arm = player.getMainArm() == HumanoidArm.RIGHT ? this.leftArm : this.rightArm;
+            arm.xRot = (float) Math.toRadians(-90.0F);
+            arm.yRot = 0.0F;
+            arm.zRot = 0.0F;
         }
 
         if(!player.isUsingItem()) return;
