@@ -2,16 +2,17 @@
   "type": "minecraft:crafting_shaped",
   "category": "combat",
   "pattern": [
-    "ECE",
-    "BAB",
-    "EDE"
+    "FDF",
+    "BAC",
+    "FEF"
   ],
   "key": {
-    "A": { "item": "minecraft:netherite_upgrade_smithing_template" },
-    "B": { "item": "minecraft:silence_armor_trim_smithing_template" },
-    "C": { "item": "minecraft:conduit" },
-    "D": { "item": "minecraft:heavy_core" },
-    "E": { "item": "minecraft:netherite_ingot" }
+    "A": { "item": "minecraft:coast_armor_trim_smithing_template" },
+    "B": { "item": "minecraft:eye_armor_trim_smithing_template" },
+    "C": { "item": "minecraft:ward_armor_trim_smithing_template" },
+    "D": { "item": "minecraft:conduit" },
+    "E": { "item": "minecraft:heavy_core" },
+    "F": { "item": "minecraft:netherite_ingot" }
   },
   "result": {
     "id": "lzxnoneterraria:possession",

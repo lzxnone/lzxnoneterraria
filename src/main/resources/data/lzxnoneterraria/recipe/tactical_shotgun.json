@@ -10,7 +10,7 @@
     "A": { "item": "lzxnoneterraria:shotgun" },
     "B": { "item": "minecraft:netherite_ingot" },
     "C": { "item": "minecraft:mace" },
-    "D": { "item": "minecraft:silence_armor_trim_smithing_template" }
+    "D": { "item": "minecraft:dune_armor_trim_smithing_template" }
   },
   "result": {
     "id": "lzxnoneterraria:tactical_shotgun",

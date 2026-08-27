@@ -12,7 +12,7 @@
     "C": { "item": "minecraft:nether_star"},
     "D": { "item": "minecraft:stick" },
     "E": { "item": "minecraft:conduit" },
-    "F": { "item": "minecraft:silence_armor_trim_smithing_template" }
+    "F": { "item": "minecraft:spire_armor_trim_smithing_template" }
   },
   "result": {
     "id": "lzxnoneterraria:star_wrath",
