@@ -4,14 +4,15 @@
   "pattern": [
     "ECE",
     "BAB",
-    "EDE"
+    "FDF"
   ],
   "key": {
     "A": { "item": "minecraft:flow_armor_trim_smithing_template" },
     "B": { "item": "minecraft:pufferfish" },
     "C": { "item": "minecraft:conduit" },
-    "D": { "item": "minecraft:heavy_core" },
-    "E": { "item": "minecraft:netherite_ingot" }
+    "D": { "item": "minecraft:sea_lantern" },
+    "E": { "item": "minecraft:netherite_ingot" },
+    "F": { "item": "minecraft:netherite_scrap" }
   },
   "result": {
     "id": "lzxnoneterraria:bubble_gun",

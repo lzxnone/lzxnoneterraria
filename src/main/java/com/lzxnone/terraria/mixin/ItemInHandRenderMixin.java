@@ -62,8 +62,7 @@ public class ItemInHandRenderMixin {
                 poseStack.popPose();
             }else if(stack.is(ModItems.ZENITH.get())
                 || stack.is(ModItems.TRUE_COPPER_SHORTSWORD.get())
-                || stack.is(ModItems.FIRST_FRACTAL.get())
-                || stack.is(ModItems.TERRAGRIM.get())) {
+                || stack.is(ModItems.FIRST_FRACTAL.get())) {
                 if(player.isUsingItem()) {
                     ItemStack usingStack = player.getUseItem();
                     if(usingStack.is(stack.getItem())) {

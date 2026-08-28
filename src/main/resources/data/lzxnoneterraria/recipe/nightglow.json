@@ -8,14 +8,14 @@
   ],
   "key": {
     "A": { "item": "minecraft:flow_armor_trim_smithing_template" },
-    "B": { "item": "minecraft:dragon_head" },
-    "C": { "item": "minecraft:nether_wart_block" },
+    "B": { "item": "minecraft:soul_lantern" },
+    "C": { "item": "minecraft:end_rod" },
     "D": { "item": "minecraft:heavy_core" },
     "E": { "item": "minecraft:netherite_ingot" },
     "F": { "item": "minecraft:netherite_scrap" }
   },
   "result": {
-    "id": "lzxnoneterraria:betsys_wrath",
+    "id": "lzxnoneterraria:nightglow",
     "count": 1
   }
 }
