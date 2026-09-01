@@ -49,6 +49,17 @@ public class ModParticles {
                     return DustParticleOptions.STREAM_CODEC;
                 }
             });
+    public static final Supplier<ParticleType<ArcParticleOptions>> ARC_PARTICLE =
+            PARTICLE_TYPES.register("arc_particle", () -> new ParticleType<>(false) {
+                @Override
+                public MapCodec<ArcParticleOptions> codec() {
+                    return ArcParticleOptions.CODEC;
+                }
+                @Override
+                public StreamCodec<? super RegistryFriendlyByteBuf, ArcParticleOptions> streamCodec() {
+                    return ArcParticleOptions.STREAM_CODEC;
+                }
+            });
     public static final Supplier<ParticleType<ZenithTrailParticleOptions>> ZENITH_TRAIL_PARTICLE =
             PARTICLE_TYPES.register("zenith_trail_particle", () -> new ParticleType<>(false) {
                 @Override

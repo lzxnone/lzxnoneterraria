@@ -205,6 +205,27 @@ public class Possession extends Whip {
                 target.getBoundingBox().getCenter(), new Vec3(0, 0, 0),
                 0.1, 5
             );
+
+            // 生成 POSSESSION_PRISMATIC_BOLT 视觉特效
+            StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), summon.level());
+            projectile.setOwner(summon.getOwner());
+            Vec3 pos = MathUtil.getRandomPosOnRadius(target.getBoundingBox().getCenter(), 1);
+            Vector3f dir = target.getBoundingBox().getCenter().subtract(pos).toVector3f();
+            Vector3f[] dirs = MathUtil.computeCoordinateSystem(dir, 0);
+            projectile.setPos(pos);
+            projectile.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.POSSESSION_PRISMATIC_BOLT);
+            projectile.getEntityData().set(StaticProjectile.RENDER_MODE, "custom");
+            projectile.getEntityData().set(StaticProjectile.STACK_SOURCE, summon.getEntityData().get(StaticSummon.STACK_SOURCE).copy());
+            projectile.getEntityData().set(StaticProjectile.ORIGIN, MathUtil.toVector3f(pos));
+            projectile.getEntityData().set(StaticProjectile.DIRECTION, dirs[0]);
+            projectile.getEntityData().set(StaticProjectile.UP, dirs[1]);
+            projectile.getEntityData().set(StaticProjectile.RIGHT, dirs[2]);
+            projectile.getEntityData().set(StaticProjectile.GLOW, true);
+            projectile.getEntityData().set(StaticProjectile.LIFETIME, 4);
+            projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, "0.25*t");
+
+            projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
+            summon.level().addFreshEntity(projectile);
         }
     }
 

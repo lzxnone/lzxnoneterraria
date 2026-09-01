@@ -164,8 +164,9 @@ public class PlayerMana {
     public void applyRecoverDelay() {
         if(getMaxMana() <= 0) return;
 
-        double emptyRatio = 1.0D - (double) mana / getMaxMana();
-        recoverDelay = Math.max(recoverDelay, (int) Math.ceil(0.7D * (emptyRatio * 240.0D + 45.0D) / 3.0D));
+        //double emptyRatio = 1.0D - (double) mana / getMaxMana();
+        //recoverDelay = Math.max(recoverDelay, (int) Math.ceil(0.7D * (emptyRatio * 240.0D + 45.0D) / 3.0D));
+        recoverDelay = 0;
         recoverProgress = 0.0D;
     }
 

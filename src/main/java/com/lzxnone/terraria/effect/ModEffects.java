@@ -42,4 +42,6 @@ public class ModEffects {
             MOB_EFFECTS.register("ice_barrier", IceBarrierEffect::new);
     public static final DeferredHolder<MobEffect, PanicEffect> PANIC =
             MOB_EFFECTS.register("panic", PanicEffect::new);
+    public static final DeferredHolder<MobEffect, ZappedRedEffect> ZAPPED_RED =
+            MOB_EFFECTS.register("zapped_red", ZappedRedEffect::new);
 }

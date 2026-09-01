@@ -209,6 +209,28 @@ public final class ModParticleRenderTypes {
         }
     };
 
+    public static final ParticleRenderType ARC_PARTICLE = new ParticleRenderType() {
+        @Override
+        public BufferBuilder begin(Tesselator tesselator, TextureManager textureManager) {
+            RenderSystem.disableCull();
+            RenderSystem.enableBlend();
+            RenderSystem.depthMask(true);
+            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
+            RenderSystem.setShader(net.minecraft.client.renderer.GameRenderer::getPositionColorShader);
+            return tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        }
+
+        @Override
+        public String toString() {
+            return "lzxnoneterraria:arc_particle";
+        }
+
+        @Override
+        public boolean isTranslucent() {
+            return false;
+        }
+    };
+
     public static final ParticleRenderType EMISSIVE_BLOOM_PARTICLE = new ParticleRenderType() {
         @Override
         public BufferBuilder begin(Tesselator tesselator, TextureManager textureManager) {

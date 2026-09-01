@@ -36,6 +36,7 @@ public class ClientStaticProjectileRenderBehaviors {
         BEHAVIORS.put(StaticProjectileBehaviors.DEVILS_DEVASTATION_PROJECTILE3, ClientDevilsDevastation.PROJECTILE_BEHAVIOR3);
         BEHAVIORS.put(StaticProjectileBehaviors.CRYSTAL_FRAGMENT, DEFAULT_BEHAVIOR);
         BEHAVIORS.put(StaticProjectileBehaviors.SUPER_STAR_PRISMATIC_BOLT, ClientSuperStarShooter.PROJECTILE_BEHAVIOR);
+        BEHAVIORS.put(StaticProjectileBehaviors.POSSESSION_PRISMATIC_BOLT, ClientPossession.BOLT_PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(StaticProjectileBehaviors.POSSESSION_PROJECTILE, ClientPossession.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(StaticProjectileBehaviors.ACCESSORY_FALLEN_STAR_PROJECTILE, ClientAccessoryFallenStar.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(StaticProjectileBehaviors.NEBULA_ARCANUM_ORBIT_PROJECTILE, ClientNebulaArcanum.PROJECTILE_BEHAVIOR);

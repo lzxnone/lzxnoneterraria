@@ -94,7 +94,7 @@ public class SuperStarShooter extends RangedWeapon {
                     StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), summon.level());
                     projectile.setOwner(summon.getOwner());
                     Vec3 pos = MathUtil.getRandomPosOnRadius(summon.position(), 4);
-                    Vector3f dir = summon.position().subtract(pos).toVector3f();
+                    Vector3f dir = target.getBoundingBox().getCenter().subtract(pos).toVector3f();
                     Vector3f[] dirs = MathUtil.computeCoordinateSystem(dir, 0);
                     projectile.setPos(pos);
                     projectile.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.SUPER_STAR_PRISMATIC_BOLT);
@@ -126,11 +126,36 @@ public class SuperStarShooter extends RangedWeapon {
     };
 
     public static final IStaticProjectileBehavior PROJECTILE_BEHAVIOR = new IStaticProjectileBehavior() {
+        @Override
+        public void onMoving(StaticProjectile projectile) {
+            if(projectile.level().isClientSide()) return;
+
+            Vec3 movement = projectile.getDeltaMovement();
+            Vec3 start = projectile.position().subtract(movement);
+            Vec3 end = projectile.position();
+
+            // 显式扫掠碰撞检测（加宽判定体积，适配高速棱彩弹）
+            AABB hitBox = new AABB(start, end).inflate(1.2D);
+            java.util.List<Entity> targets = projectile.level().getEntitiesOfClass(
+                Entity.class,
+                hitBox,
+                FilterUtil.createTargetFilter(projectile, projectile.getOwner())
+            );
+
+            for(Entity target : targets) {
+                AABB targetBox = target.getBoundingBox().inflate(0.5D);
+                if(targetBox.clip(start, end).isPresent() || targetBox.contains(start) || targetBox.contains(end)) {
+                    ItemStack sourceStack = projectile.getEntityData().get(StaticProjectile.STACK_SOURCE);
+                    DamageUtil.rangedAttack(projectile, target, sourceStack, BOLT_DAMAGE.get(), 0.3f, 10);
+                }
+            }
+        }
+
+        @Override
         public void onHitEntity(StaticProjectile projectile, EntityHitResult result) {
             if(!projectile.level().isClientSide()) {
                 Entity target = result.getEntity();
-                if(DamageUtil.rangedAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), BOLT_DAMAGE.get(), 0.3f, 10)) {
-                }
+                DamageUtil.rangedAttack(projectile, target, projectile.getEntityData().get(StaticProjectile.STACK_SOURCE), BOLT_DAMAGE.get(), 0.3f, 10);
             }
         }
     };

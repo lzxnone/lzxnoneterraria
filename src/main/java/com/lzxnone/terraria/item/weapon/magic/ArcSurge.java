@@ -2,12 +2,14 @@ package com.lzxnone.terraria.item.weapon.magic;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
+import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.weapon.MagicWeapon;
 import com.lzxnone.terraria.particle.DustParticleOptions;
+import net.minecraft.world.effect.MobEffectInstance;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
@@ -55,6 +57,7 @@ public class ArcSurge extends MagicWeapon {
     public static final ConfigInt MAX_EXTRA_ARCS = new ConfigInt("weapon.arc_surge.max_extra_arcs", "arc_surge_max_extra_arcs", 2, 0, 100);
     public static final ConfigDouble SEARCH_RANGE = new ConfigDouble("weapon.arc_surge.search_range", "arc_surge_search_range", 32.0D, 0.0D, 256.0D);
     public static final ConfigDouble MAX_ANGLE = new ConfigDouble("weapon.arc_surge.max_angle", "arc_surge_max_angle", 60.0D, 0.0D, 180.0D);
+    public static final ConfigInt ZAPPED_RED_DURATION = new ConfigInt("weapon.arc_surge.zapped_duration", "arc_surge_zapped_duration", 100, 0, 72000);
 
     // 分形闪电形状与生命周期参数
     public static final int LIGHTNING_DEPTH = 5;             // 分形细分递归深度
@@ -76,7 +79,7 @@ public class ArcSurge extends MagicWeapon {
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigStruct.loadAll(DAMAGE, MANA_CONSUME, MAX_EXTRA_ARCS, SEARCH_RANGE, MAX_ANGLE);
+            ConfigStruct.loadAll(DAMAGE, MANA_CONSUME, MAX_EXTRA_ARCS, SEARCH_RANGE, MAX_ANGLE, ZAPPED_RED_DURATION);
         }
     };
 
@@ -136,6 +139,12 @@ public class ArcSurge extends MagicWeapon {
                                     0.2F,
                                     10
                                 );
+                                if(target instanceof LivingEntity livingTarget) {
+                                    int duration = ZAPPED_RED_DURATION.get();
+                                    if(duration > 0) {
+                                        livingTarget.addEffect(new MobEffectInstance(ModEffects.ZAPPED_RED, duration, 0));
+                                    }
+                                }
                             }
                         }
                     }
@@ -157,7 +166,7 @@ public class ArcSurge extends MagicWeapon {
     };
 
     public ArcSurge() {
-        super(Tiers.DIAMOND, new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
+        super(Tiers.NETHERITE, new Item.Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC));
     }
 
     @Override
