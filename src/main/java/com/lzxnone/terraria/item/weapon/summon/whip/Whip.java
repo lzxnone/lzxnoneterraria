@@ -42,7 +42,17 @@ public abstract class Whip extends SummonWeapon {
 
     protected abstract double getRange();
 
-    protected abstract String getRes(StaticSummon summon);
+    protected abstract String getTailRes(StaticSummon summon);
+
+    protected abstract String getBodyRes(StaticSummon summon);
+
+    protected abstract String getHeadRes(StaticSummon summon);
+
+    protected abstract float getTailRatio();
+
+    protected abstract float getHeadRatio();
+
+    protected abstract float getBodyUnitRatio();
 
     protected abstract float getDamage();
 
@@ -208,7 +218,12 @@ public abstract class Whip extends SummonWeapon {
         customData.putDouble("height", getHeight());
         customData.putDouble("bend", getBend());
         customData.putBoolean("reverse", summon.getRandom().nextInt(2) == 0);
-        customData.putString("res", getRes(summon));
+        customData.putString("tailRes", getTailRes(summon));
+        customData.putString("bodyRes", getBodyRes(summon));
+        customData.putString("headRes", getHeadRes(summon));
+        customData.putFloat("tailRatio", getTailRatio());
+        customData.putFloat("headRatio", getHeadRatio());
+        customData.putFloat("bodyUnitRatio", getBodyUnitRatio());
         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
 
         summon.setNoGravity(true);

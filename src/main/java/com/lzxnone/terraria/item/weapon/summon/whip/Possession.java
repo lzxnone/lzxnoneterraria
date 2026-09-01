@@ -60,8 +60,33 @@ public class Possession extends Whip {
     }
 
     @Override
-    protected String getRes(StaticSummon summon) {
-        return "lzxnoneterraria:textures/vfx/possession_projectile" + summon.getRandom().nextInt(3) + ".png";
+    protected String getTailRes(StaticSummon summon) {
+        return "lzxnoneterraria:textures/vfx/possession_projectile_tail.png";
+    }
+
+    @Override
+    protected String getBodyRes(StaticSummon summon) {
+        return "lzxnoneterraria:textures/vfx/possession_projectile_body.png";
+    }
+
+    @Override
+    protected String getHeadRes(StaticSummon summon) {
+        return "lzxnoneterraria:textures/vfx/possession_projectile_head" + summon.getRandom().nextInt(3) + ".png";
+    }
+
+    @Override
+    protected float getTailRatio() {
+        return 0.05F;
+    }
+
+    @Override
+    protected float getHeadRatio() {
+        return 0.075F;
+    }
+
+    @Override
+    protected float getBodyUnitRatio() {
+        return 0.15F;
     }
 
     @Override

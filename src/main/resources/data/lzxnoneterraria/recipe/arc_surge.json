@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "FDF",
+    "BAC",
+    "FEF"
+  ],
+  "key": {
+    "A": { "item": "minecraft:flow_armor_trim_smithing_template" },
+    "B": { "item": "minecraft:waxed_oxidized_lightning_rod" },
+    "C": { "item": "minecraft:weathered_lightning_rod" },
+    "D": { "item": "minecraft:conduit" },
+    "E": { "item": "minecraft:heavy_core" },
+    "F": { "item": "minecraft:netherite_ingot" }
+  },
+  "result": {
+    "id": "lzxnoneterraria:arc_surge",
+    "count": 1
+  }
+}

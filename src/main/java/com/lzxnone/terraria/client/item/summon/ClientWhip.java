@@ -43,11 +43,69 @@ public class ClientWhip {
             double bend = customData.contains("bend") ? customData.getDouble("bend") : range * 0.25D;
             boolean reverse = customData.contains("reverse") && customData.getBoolean("reverse");
 
-            if(!customData.contains("res") || customData.getString("res").isEmpty()) return;
-            ResourceLocation res = ResourceLocation.parse(customData.getString("res"));
             List<Vec3> points = computePoints(hand, dir, up, progress, range, height, bend, reverse, SEGMENTS);
-            renderRibbon(points, origin, right, res, poseStack, bufferSource);
-            renderRibbon(points, origin, up, res, poseStack, bufferSource);//
+            if(points.size() < 2) return;
+
+            // 计算归一化累积弧长序列
+            int n = points.size();
+            double[] cumulativeDist = new double[n];
+            double totalLength = 0.0D;
+            for(int i = 1; i < n; i++) {
+                totalLength += points.get(i).distanceTo(points.get(i - 1));
+                cumulativeDist[i] = totalLength;
+            }
+            if(totalLength < 1.0E-5D) return;
+
+            double[] normalizedDist = new double[n];
+            for(int i = 0; i < n; i++) {
+                normalizedDist[i] = cumulativeDist[i] / totalLength;
+            }
+
+            if(!customData.contains("tailRes") || !customData.contains("bodyRes") || !customData.contains("headRes")) return;
+
+            String tailResStr = customData.getString("tailRes");
+            String bodyResStr = customData.getString("bodyRes");
+            String headResStr = customData.getString("headRes");
+            if(tailResStr.isEmpty() || bodyResStr.isEmpty() || headResStr.isEmpty()) return;
+
+            float tailRatio = customData.getFloat("tailRatio");
+            float headRatio = customData.getFloat("headRatio");
+            float bodyUnitRatio = customData.getFloat("bodyUnitRatio");
+
+            tailRatio = Mth.clamp(tailRatio, 0.0F, 0.9F);
+            headRatio = Mth.clamp(headRatio, 0.0F, 0.9F - tailRatio);
+            bodyUnitRatio = Math.max(0.001F, bodyUnitRatio);
+
+            float bodyStart = tailRatio;
+            float bodyEnd = 1.0F - headRatio;
+
+            ResourceLocation tailRes = ResourceLocation.parse(tailResStr);
+            ResourceLocation bodyRes = ResourceLocation.parse(bodyResStr);
+            ResourceLocation headRes = ResourceLocation.parse(headResStr);
+
+            // 1. 渲染尾部 (Tail - 不拉伸，单张贴图完整映射)
+            if(tailRatio > 1.0E-4F) {
+                List<Vec3> tailPoints = extractSubPath(points, normalizedDist, 0.0F, tailRatio);
+                renderRibbonCross(tailPoints, origin, right, up, tailRes, 0.0F, 1.0F, poseStack, bufferSource);
+            }
+
+            // 2. 渲染身体 (Body - Tiling 平铺渲染，按 bodyUnitRatio 单元循环平铺)
+            if(bodyEnd > bodyStart + 1.0E-4F) {
+                float cur = bodyStart;
+                while(cur < bodyEnd - 1.0E-5F) {
+                    float next = Math.min(bodyEnd, cur + bodyUnitRatio);
+                    float uMax = (next - cur) / bodyUnitRatio;
+                    List<Vec3> bodyTilePoints = extractSubPath(points, normalizedDist, cur, next);
+                    renderRibbonCross(bodyTilePoints, origin, right, up, bodyRes, 0.0F, uMax, poseStack, bufferSource);
+                    cur = next;
+                }
+            }
+
+            // 3. 渲染头部 (Head - 不拉伸，单张贴图完整映射)
+            if(headRatio > 1.0E-4F) {
+                List<Vec3> headPoints = extractSubPath(points, normalizedDist, bodyEnd, 1.0F);
+                renderRibbonCross(headPoints, origin, right, up, headRes, 0.0F, 1.0F, poseStack, bufferSource);
+            }
         }
 
         private static List<Vec3> computePoints(Vec3 hand, Vec3 dir, Vec3 up, float progress, double range, double height, double bend, boolean reverse, int segments) {
@@ -81,18 +139,60 @@ public class ClientWhip {
             return hand.add(parallel.subtract(perpendicular));
         }
 
-        private static void renderRibbon(List<Vec3> points, Vec3 origin, Vec3 widthDir, ResourceLocation res, PoseStack poseStack, MultiBufferSource bufferSource) {
+        private static List<Vec3> extractSubPath(List<Vec3> points, double[] s, float startS, float endS) {
+            List<Vec3> result = new ArrayList<>();
+            if(points.size() < 2 || startS >= endS) return result;
+
+            int n = points.size();
+            for(int i = 0; i < n - 1; i++) {
+                double s0 = s[i];
+                double s1 = s[i + 1];
+
+                if(s1 < startS - 1.0E-6) continue;
+                if(s0 > endS + 1.0E-6) break;
+
+                Vec3 p0 = points.get(i);
+                Vec3 p1 = points.get(i + 1);
+
+                // 若起点落在 (s0, s1] 之间，插值得到起点
+                if(s0 < startS && startS <= s1) {
+                    double t = (startS - s0) / (s1 - s0);
+                    Vec3 startP = p0.lerp(p1, t);
+                    result.add(startP);
+                } else if(s0 >= startS && result.isEmpty()) {
+                    result.add(p0);
+                }
+
+                // 若终点落在 [s0, s1) 之间，插值得到终点并结束
+                if(s0 <= endS && endS < s1) {
+                    double t = (endS - s0) / (s1 - s0);
+                    Vec3 endP = p0.lerp(p1, t);
+                    result.add(endP);
+                    break;
+                } else if(s1 <= endS) {
+                    result.add(p1);
+                }
+            }
+            return result;
+        }
+
+        private static void renderRibbonCross(List<Vec3> points, Vec3 origin, Vec3 right, Vec3 up, ResourceLocation res, float uMin, float uMax, PoseStack poseStack, MultiBufferSource bufferSource) {
+            renderRibbon(points, origin, right, res, uMin, uMax, poseStack, bufferSource);
+            renderRibbon(points, origin, up, res, uMin, uMax, poseStack, bufferSource);
+        }
+
+        private static void renderRibbon(List<Vec3> points, Vec3 origin, Vec3 widthDir, ResourceLocation res, float uMin, float uMax, PoseStack poseStack, MultiBufferSource bufferSource) {
             if(points.size() < 2) return;
             VertexConsumer consumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(res));
             Vec3 halfWidth = widthDir.normalize().scale(WIDTH * 0.5F);
-            double totalLength = 0.0D;
+            double subLength = 0.0D;
             double[] distances = new double[points.size()];
 
             for(int i = 1; i < points.size(); i++) {
-                totalLength += points.get(i).distanceTo(points.get(i - 1));
-                distances[i] = totalLength;
+                subLength += points.get(i).distanceTo(points.get(i - 1));
+                distances[i] = subLength;
             }
-            if(totalLength < 1.0E-5D) return;
+            if(subLength < 1.0E-5D) return;
 
             for(int i = 0; i < points.size() - 1; i++) {
                 Vec3 p0 = points.get(i);
@@ -104,8 +204,8 @@ public class ClientWhip {
                 Vec3 b = p0.subtract(halfWidth).subtract(origin);
                 Vec3 c = p1.subtract(halfWidth).subtract(origin);
                 Vec3 d = p1.add(halfWidth).subtract(origin);
-                float u0 = (float)(distances[i] / totalLength);
-                float u1 = (float)(distances[i + 1] / totalLength);
+                float u0 = uMin + (float)(distances[i] / subLength) * (uMax - uMin);
+                float u1 = uMin + (float)(distances[i + 1] / subLength) * (uMax - uMin);
 
                 addVertex(consumer, poseStack, a, u0, 0.0F);
                 addVertex(consumer, poseStack, b, u0, 1.0F);

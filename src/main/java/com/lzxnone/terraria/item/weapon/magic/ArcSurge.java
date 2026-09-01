@@ -48,8 +48,8 @@ import java.util.function.Predicate;
 
 public class ArcSurge extends MagicWeapon {
     // 基础属性配置
-    public static final ConfigFloat DAMAGE = new ConfigFloat("weapon.arc_surge.damage", "arc_surge_damage", 18.0F, 0.0F, 8388600.0F);
-    public static final ConfigDouble MANA_CONSUME = new ConfigDouble("weapon.arc_surge.mana_consume", "arc_surge_mana_consume", 12.0D, 0.0D, 10000.0D);
+    public static final ConfigFloat DAMAGE = new ConfigFloat("weapon.arc_surge.damage", "arc_surge_damage", 20.0F, 0.0F, 8388600.0F);
+    public static final ConfigDouble MANA_CONSUME = new ConfigDouble("weapon.arc_surge.mana_consume", "arc_surge_mana_consume", 18.0D, 0.0D, 10000.0D);
 
     // 索敌与电弧生成配置参数
     public static final ConfigInt MAX_EXTRA_ARCS = new ConfigInt("weapon.arc_surge.max_extra_arcs", "arc_surge_max_extra_arcs", 2, 0, 100);
@@ -109,7 +109,7 @@ public class ArcSurge extends MagicWeapon {
                     Vec3 p1 = branch.get(i + 1);
 
                     // 每条线段的中点都有 0.2 的概率生成一个红色的 dust 粒子
-                    if(summon.getRandom().nextFloat() < 0.2F) {
+                    if(summon.getRandom().nextFloat() < 0.02F) {
                         Vec3 mid = p0.add(p1).scale(0.5D);
                         ParticleUtil.addParticles(
                             serverLevel,
