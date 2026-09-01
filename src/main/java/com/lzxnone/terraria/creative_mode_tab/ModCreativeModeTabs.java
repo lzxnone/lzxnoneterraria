@@ -60,6 +60,7 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.STELLAR_TUNE.get());
                 output.accept(ModItems.BUBBLE_GUN.get());
                 output.accept(ModItems.NIGHTGLOW.get());
+                output.accept(ModItems.ARC_SURGE.get());
                 output.accept(ModItems.MANA_CRYSTAL.get());
                 output.accept(ModItems.LESSER_MANA_POTION.get());
                 output.accept(ModItems.MANA_POTION.get());

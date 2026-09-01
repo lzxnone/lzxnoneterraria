@@ -62,7 +62,8 @@ public class ItemInHandRenderMixin {
                 poseStack.popPose();
             }else if(stack.is(ModItems.ZENITH.get())
                 || stack.is(ModItems.TRUE_COPPER_SHORTSWORD.get())
-                || stack.is(ModItems.FIRST_FRACTAL.get())) {
+                || stack.is(ModItems.FIRST_FRACTAL.get())
+                || stack.is(ModItems.ARC_SURGE.get())) {
                 if(player.isUsingItem()) {
                     ItemStack usingStack = player.getUseItem();
                     if(usingStack.is(stack.getItem())) {
@@ -133,7 +134,8 @@ public class ItemInHandRenderMixin {
         }else if((itemStack.is(ModItems.ZENITH.get())
             || itemStack.is(ModItems.TRUE_COPPER_SHORTSWORD.get())
             || itemStack.is(ModItems.FIRST_FRACTAL.get())
-            || itemStack.is(ModItems.TERRAGRIM.get())) && entity instanceof Player player) {
+            || itemStack.is(ModItems.TERRAGRIM.get())
+            || itemStack.is(ModItems.ARC_SURGE.get())) && entity instanceof Player player) {
             if(player.isUsingItem()) {
                 ItemStack usingStack = player.getUseItem();
                 if(usingStack.is(itemStack.getItem())) {

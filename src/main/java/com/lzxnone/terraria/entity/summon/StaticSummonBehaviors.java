@@ -62,6 +62,7 @@ public class StaticSummonBehaviors {
     public static final String POSSESSION = "possession";
     public static final String POSSESSION_VISION = "possession_vision";
     public static final String NIGHTGLOW_PROJECTILE = "nightglow_projectile";
+    public static final String ARC_SURGE_LIGHTNING = "arc_surge_lightning";
 
     //通用子弹实体
     public static final String MUSKET_BALL = "musket_ball";
@@ -126,6 +127,7 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(POSSESSION, Whip.SUMMON_BEHAVIOR);
         BEHAVIORS.put(POSSESSION_VISION, Possession.SUMMON_BEHAVIOR);
         BEHAVIORS.put(NIGHTGLOW_PROJECTILE, Nightglow.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(ARC_SURGE_LIGHTNING, ArcSurge.SUMMON_BEHAVIOR);
 
         BEHAVIORS.put(MUSKET_BALL, MusketBall.SUMMON_BEHAVIOR);
         BEHAVIORS.put(METEOR_SHOT, MeteorShot.SUMMON_BEHAVIOR);

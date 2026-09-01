@@ -1,6 +1,5 @@
 package com.lzxnone.terraria.dynamic_lights;
 
-import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.client.config.RenderConfigs;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.beam.SwordBeamBehaviors;
@@ -73,7 +72,8 @@ public class MEntityLuminance implements EntityLuminance {
 					 StaticSummonBehaviors.MANA_STAR,
 					 StaticSummonBehaviors.BETSY_WRATH,
 					 StaticSummonBehaviors.NEBULA_BLAZE,
-					 StaticSummonBehaviors.NEBULA_ARCANUM_PROJECTILE -> {
+					 StaticSummonBehaviors.NEBULA_ARCANUM_PROJECTILE,
+					 StaticSummonBehaviors.ARC_SURGE_LIGHTNING -> {
 					return 15;
 				}
 				case StaticSummonBehaviors.CHLOROPHYTE_BULLET,

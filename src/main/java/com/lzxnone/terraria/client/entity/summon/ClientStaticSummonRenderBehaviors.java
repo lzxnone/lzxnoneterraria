@@ -67,6 +67,7 @@ public class ClientStaticSummonRenderBehaviors {
         BEHAVIORS.put(StaticSummonBehaviors.STARDUST_CELL_STAFF, ClientStardustCellStaff.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.STARDUST_CELL_STUCK_PROJECTILE, ClientStardustCellStaff.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.NIGHTGLOW_PROJECTILE, ClientNightglow.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.ARC_SURGE_LIGHTNING, ClientArcSurge.SUMMON_BEHAVIOR);
 
         BEHAVIORS.put(StaticSummonBehaviors.MUSKET_BALL, ClientBulletAmmo.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.METEOR_SHOT, ClientBulletAmmo.SUMMON_BEHAVIOR);

@@ -63,6 +63,7 @@ public class ModItems {
     public static final DeferredItem<Item> STELLAR_TUNE = ITEMS.register("stellar_tune", StellarTune::new);
     public static final DeferredItem<Item> BUBBLE_GUN = ITEMS.register("bubble_gun", BubbleGun::new);
     public static final DeferredItem<Item> NIGHTGLOW = ITEMS.register("nightglow", Nightglow::new);
+    public static final DeferredItem<Item> ARC_SURGE = ITEMS.register("arc_surge", ArcSurge::new);
 
     //远程武器
     public static final DeferredItem<Item> MUSKET = ITEMS.register("musket", Musket::new);
