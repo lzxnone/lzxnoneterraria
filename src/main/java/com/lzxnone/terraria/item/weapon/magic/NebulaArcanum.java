@@ -434,7 +434,7 @@ public class NebulaArcanum extends MagicWeapon {
 
     @Override
     public int getUseTime(ItemStack weaponStack, LivingEntity entity) {
-        return 30;
+        return computeUseTime(30, weaponStack, entity);
     }
 
     @Override

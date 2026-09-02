@@ -159,23 +159,12 @@ public class AccessoryUtil {
         return multiplier[0];
     }
 
-    //魔力恢复延迟倍率：取所有饰品中的最小值（减半优先）
-    public static double getManaRecoverDelayMultiplier(LivingEntity entity) {
-        double[] multiplier = {1.0D};
-        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
-            if(accessory instanceof ManaRegenerationModifier modifier) {
-                multiplier[0] = Math.min(multiplier[0], modifier.getManaRecoverDelayMultiplier(stack, entity));
-            }
-        });
-        return multiplier[0];
-    }
-
-    //额外魔力恢复速率：累加所有饰品
-    public static double getManaRegenBonus(LivingEntity entity, int currentMana, int maxMana) {
+    //魔力再生奖励：累加所有饰品
+    public static double getManaRegenBonus(LivingEntity entity) {
         double[] bonus = {0.0D};
         AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
             if(accessory instanceof ManaRegenerationModifier modifier) {
-                bonus[0] += modifier.getManaRegenBonus(stack, entity, currentMana, maxMana);
+                bonus[0] += modifier.getManaRegenBonus(stack, entity);
             }
         });
         return bonus[0];

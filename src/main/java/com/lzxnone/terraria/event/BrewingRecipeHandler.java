@@ -31,5 +31,10 @@ public class BrewingRecipeHandler {
             Ingredient.of(Items.BROWN_MUSHROOM, Items.RED_MUSHROOM),
             new ItemStack(ModItems.MANA_POTION.get())
         );
+        event.getBuilder().addRecipe(
+            Ingredient.of(ModItems.MANA_POTION.get()),
+            Ingredient.of(Items.GLOWSTONE_DUST),
+            new ItemStack(ModItems.MANA_REGENERATION_POTION.get())
+        );
     }
 }

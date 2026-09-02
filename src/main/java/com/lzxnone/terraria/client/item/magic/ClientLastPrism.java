@@ -86,12 +86,12 @@ public class ClientLastPrism {
             BeamData beamData = computeBeamData(tri, getBeamIndex(beam), partialTick);
             if (beamData == null) return;
 
-            VertexConsumer consumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(RES));
+            VertexConsumer consumer = bufferSource.getBuffer(ModRenderTypes.entityAdditiveEmissive(RES));
             Matrix4f matrix = poseStack.last().pose();
             List<Vec3> points = List.of(beamData.start(), beamData.end());
 
             renderTube(consumer, matrix, beam.position(),
-                points, beamData.radius() * 0.8f, 1.0f, 1.0f, 1.0f, 1.0f, false);
+                points, beamData.radius() * 0.8f, 0.5f, 1.0f, 1.0f, 1.0f, false);
             renderTube(consumer, matrix, beam.position(),
                 points, beamData.radius(), beam.getEntityData().get(StaticSummon.COLOR_A),
                 beam.getEntityData().get(StaticSummon.COLOR_R),

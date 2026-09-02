@@ -180,13 +180,8 @@ public class EntityEventHandler {
         AccessoryUtil.removeTargetArmorModifiers(event.getEntity());
         IchorEffect.removeArmorReduction(event.getEntity());
         BetsysCurseEffect.removeArmorReduction(event.getEntity());
-        //暴击
+        //击中敌人概率掉落绿宝石（敌对生物、末影龙或凋灵）
         if(attacker instanceof LivingEntity livingEntity && attacker != target) {
-            double critChance = AccessoryUtil.getCritChance(livingEntity);
-            if(critChance > 0.0D && attacker.getRandom().nextDouble() < critChance) {
-                event.setNewDamage(event.getNewDamage() * 1.5F);
-            }
-            //击中敌人概率掉落绿宝石（敌对生物、末影龙或凋灵）
             double emeraldDropChance = AccessoryUtil.getEmeraldDropChance(livingEntity);
             if(emeraldDropChance > 0.0D
                 && (target instanceof Enemy || target instanceof EnderDragon || target instanceof WitherBoss)

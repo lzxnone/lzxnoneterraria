@@ -132,7 +132,7 @@ public class BubbleGun extends MagicWeapon {
 
     @Override
     public int getUseTime(ItemStack weaponStack, LivingEntity entity) {
-        return 6;
+        return computeUseTime(6, weaponStack, entity);
     }
 
     @Override

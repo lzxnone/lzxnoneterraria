@@ -55,7 +55,7 @@ public class LastPrism extends MagicWeapon {
     public static final ConfigFloat DAMAGE = new ConfigFloat(
         "weapon.last_prism.damage",
         "last_prism_damage",
-        3.0f,
+        3f,
         0.0f,
         8388600.0f
     );
@@ -214,6 +214,11 @@ public class LastPrism extends MagicWeapon {
                 this.onDied(beam);
                 return;
             }
+            ItemStack weaponStack = tri.getEntityData().get(StaticSummon.STACK_SOURCE);
+            if(weaponStack.isEmpty() || !(weaponStack.getItem() instanceof LastPrism lastPrism)) {
+                this.onDied(beam);
+                return;
+            }
 
             beam.setPos(tri.position());
             BeamData beamData = computeBeamData(tri, getBeamIndex(beam), 0.0f);
@@ -241,8 +246,7 @@ public class LastPrism extends MagicWeapon {
                 AABB entityBox = hitEntity.getBoundingBox().inflate(beamData.radius());
                 Optional<Vec3> clipResult = entityBox.clip(beamData.start(), beamData.end());
                 if(entityBox.contains(beamData.start()) || clipResult.isPresent()) {
-                    if(DamageUtil.magicAttack(beam, hitEntity, beam.getEntityData().get(StaticSummon.STACK_SOURCE), DAMAGE.get() * beamData.ratio(), 0.1f, 2)) {
-                    }
+                    DamageUtil.magicAttack(beam, hitEntity, beam.getEntityData().get(StaticSummon.STACK_SOURCE), DAMAGE.get() * beamData.ratio(), 0.1f, lastPrism.testConsumeMana(player, lastPrism.getFinalManaConsumeRate(weaponStack, player)) ? 2 : 5);
                 }
             }
         }
@@ -357,7 +361,7 @@ public class LastPrism extends MagicWeapon {
                 beam.getEntityData().set(StaticSummon.COLOR_R, color.x);
                 beam.getEntityData().set(StaticSummon.COLOR_G, color.y);
                 beam.getEntityData().set(StaticSummon.COLOR_B, color.z);
-                beam.getEntityData().set(StaticSummon.COLOR_A, 1.0f);
+                beam.getEntityData().set(StaticSummon.COLOR_A, 0.25f);
 
                 CompoundTag customData = new CompoundTag();
                 customData.putInt("idx", i);
@@ -379,14 +383,16 @@ public class LastPrism extends MagicWeapon {
         if(entity.tickCount % 10 == 0) {
             player.playNotifySound(ModSounds.BEAM2.get(), SoundSource.PLAYERS, 4.0F, 1.0F);
         }
-        if(!tryConsumeMana(player, getFinalManaConsumeRate(stack, player))) {
+        /*if(!tryConsumeMana(player, getFinalManaConsumeRate(stack, player))) {
             player.stopUsingItem();
-        }
+        }*/
+        tryConsumeMana(player, getFinalManaConsumeRate(stack, player));
     }
 
     private boolean canStartUsingPrism(Player player) {
-        if(player.hasInfiniteMaterials()) return true;
+        /*if(player.hasInfiniteMaterials()) return true;
         if(player.getData(ModAttachments.PLAYER_MANA).getMana() > 0) return true;
-        return tryAutoUseManaPotionToReachTarget(player, 1.0D);
+        return tryAutoUseManaPotionToReachTarget(player, 1.0D);*/
+        return true;
     }
 }

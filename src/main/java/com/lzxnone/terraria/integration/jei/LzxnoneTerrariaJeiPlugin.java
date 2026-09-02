@@ -32,6 +32,12 @@ public class LzxnoneTerrariaJeiPlugin implements IModPlugin {
                 List.of(new ItemStack(ModItems.LESSER_MANA_POTION.get())),
                 new ItemStack(ModItems.MANA_POTION.get()),
                 ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "brewing/mana_potion")
+            ),
+            factory.createBrewingRecipe(
+                List.of(new ItemStack(Items.GLOWSTONE_DUST)),
+                List.of(new ItemStack(ModItems.MANA_POTION.get())),
+                new ItemStack(ModItems.MANA_REGENERATION_POTION.get()),
+                ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "brewing/mana_regeneration_potion")
             )
         );
         registration.addRecipes(RecipeTypes.BREWING, recipes);

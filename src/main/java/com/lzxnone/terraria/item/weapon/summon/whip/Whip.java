@@ -1,6 +1,8 @@
 package com.lzxnone.terraria.item.weapon.summon.whip;
 
 import com.lzxnone.terraria.ModSounds;
+import com.lzxnone.terraria.attachment.ModAttachments;
+import com.lzxnone.terraria.attachment.TargetMarks;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
@@ -34,7 +36,7 @@ import java.util.List;
 public abstract class Whip extends SummonWeapon {
     public static final Vector3f OFFSET = new Vector3f(-1.0F, 1.0F, 0.0F);
     private static final int SEGMENTS = 24;
-    private static final double HITBOX_INFLATE = 1.0D;
+    private static final double HITBOX_INFLATE = 0.5D;
 
     protected Whip(Tier tier, Item.Properties properties) {
         super(tier, properties);
@@ -55,6 +57,42 @@ public abstract class Whip extends SummonWeapon {
     protected abstract float getBodyUnitRatio();
 
     protected abstract float getDamage();
+
+    protected abstract float getDamageFalloff();
+
+    protected abstract float getTagDamage();
+
+    protected abstract int getTagCrit();
+
+    public static float applyMarkDamageBonus(Entity target, float damage) {
+        if(target == null) return damage;
+        TargetMarks marks = target.getData(ModAttachments.TARGET_MARKS);
+        if(marks == null || marks.getMarks().isEmpty()) return damage;
+
+        long gameTime = target.level().getGameTime();
+        float bonus = 0.0F;
+        for(TargetMarks.Mark mark : marks.getMarks().values()) {
+            if(mark != null && (mark.getDuration() <= 0 || gameTime - mark.getStartTime() < mark.getDuration())) {
+                bonus += mark.getTagDamage();
+            }
+        }
+        return damage + bonus;
+    }
+
+    public static int applyMarkCritBonus(Entity target, int baseCrit) {
+        if(target == null) return baseCrit;
+        TargetMarks marks = target.getData(ModAttachments.TARGET_MARKS);
+        if(marks == null || marks.getMarks().isEmpty()) return baseCrit;
+
+        long gameTime = target.level().getGameTime();
+        int bonus = 0;
+        for(TargetMarks.Mark mark : marks.getMarks().values()) {
+            if(mark != null && (mark.getDuration() <= 0 || gameTime - mark.getStartTime() < mark.getDuration())) {
+                bonus += mark.getTagCrit();
+            }
+        }
+        return baseCrit + bonus;
+    }
 
     @Override
     public float getTooltipDamage(ItemStack weaponStack, LivingEntity entity) {
@@ -261,11 +299,22 @@ public abstract class Whip extends SummonWeapon {
         double radius = range + height + bend + HITBOX_INFLATE;
         AABB searchBox = AABB.ofSize(hand, radius * 2.0D, radius * 2.0D, radius * 2.0D);
 
+        int hitCount = customData.contains("hitCount") ? customData.getInt("hitCount") : 0;
+        boolean hitOccurred = false;
+
         for(Entity target : SearchUtil.searchEntities(summon, summon.getOwner(), searchBox)) {
             if(!intersectsWhip(points, target)) continue;
-            if(DamageUtil.summonAttack(summon, target, sourceStack, whip.getDamage(), whip.getKnockbackScale(), whip.getInvulnerableTime())) {
+            float currentDamage = (float) (whip.getDamage() * Math.pow(whip.getDamageFalloff(), hitCount));
+            if(DamageUtil.summonAttack(summon, target, sourceStack, currentDamage, whip.getKnockbackScale(), whip.getInvulnerableTime())) {
                 whip.onHitTarget(summon, target);
+                hitCount++;
+                hitOccurred = true;
             }
+        }
+
+        if(hitOccurred) {
+            customData.putInt("hitCount", hitCount);
+            summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
         }
     }
 

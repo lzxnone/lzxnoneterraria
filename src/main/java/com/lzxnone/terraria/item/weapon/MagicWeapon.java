@@ -82,15 +82,36 @@ public class MagicWeapon extends Weapon {
     }
 
     public int getUseTime(ItemStack weaponStack, LivingEntity entity) {
-        return 1;
+        return computeUseTime(1, weaponStack, entity);
+    }
+
+    public int computeUseTime(int useTime, ItemStack weaponStack, LivingEntity entity) {
+        if(entity instanceof Player player) {
+            double manaConsume = getFinalManaConsumeRate(weaponStack, player);
+            if(!testConsumeMana(player, manaConsume)) {
+                return (int) Math.ceil(useTime / 0.4D);
+            }
+        }
+        return useTime;
     }
 
     public boolean tryShoot(Level level, Player player, InteractionHand hand, ItemStack weaponStack) {
         double manaConsume = getFinalManaConsumeRate(weaponStack, player);
-        if(!tryConsumeMana(player, manaConsume)) return false;
+        tryConsumeMana(player, manaConsume);
+        //if(!tryConsumeMana(player, manaConsume)) return false;
 
         shoot(level, player, hand, weaponStack);
         return true;
+    }
+
+    //测试魔力是否充足（类比 tryConsumeMana）
+    public boolean testConsumeMana(Player player, double amount) {
+        if(amount <= 0.0D || player.hasInfiniteMaterials()) return true;
+        if(PlayerMana.testMana(player, amount)) return true;
+
+        PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
+        double targetMana = Math.max(1.0D, Math.floor(mana.getConsumeProgress() + amount));
+        return canAutoUseManaPotionToReachTarget(player, targetMana);
     }
 
     //尝试消耗魔力
@@ -107,6 +128,7 @@ public class MagicWeapon extends Weapon {
         if(!tryAutoUseManaPotionToReachTarget(player, targetMana)) return false;
         return PlayerMana.consumeMana(serverPlayer, amount);
     }
+
 
     //使用魔法武器时
     protected void shoot(Level level, Player player, InteractionHand hand, ItemStack stack) {}
@@ -170,7 +192,7 @@ public class MagicWeapon extends Weapon {
         return (float) Math.max(0.0D, finalDamage);
     }
 
-    protected static boolean tryAutoUseManaPotionToReachTarget(Player player, double targetMana) {
+    protected static boolean canAutoUseManaPotionToReachTarget(Player player, double targetMana) {
         PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
         if(targetMana <= 0.0D || mana.getMana() >= targetMana) return true;
         if(mana.getMaxMana() < targetMana) return false;
@@ -183,22 +205,25 @@ public class MagicWeapon extends Weapon {
         });
         if(!result[0]) return false;
 
-        if(!(player instanceof ServerPlayer serverPlayer)) {
-            int simulatedMana = mana.getMana();
-            for(int i = 0; i < player.getInventory().getContainerSize() && simulatedMana < targetMana; i++) {
-                ItemStack stack = player.getInventory().getItem(i);
-                if(!(stack.getItem() instanceof AbstractManaPotion potion)) continue;
-                int recoverAmount = potion.getRecoverAmount();
-                if(recoverAmount <= 0) continue;
-                for(int j = 0; j < stack.getCount() && simulatedMana < targetMana; j++) {
-                    simulatedMana = Math.min(mana.getMaxMana(), simulatedMana + recoverAmount);
-                }
+        int simulatedMana = mana.getMana();
+        for(int i = 0; i < player.getInventory().getContainerSize() && simulatedMana < targetMana; i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if(!(stack.getItem() instanceof AbstractManaPotion potion)) continue;
+            int recoverAmount = potion.getRecoverAmount();
+            if(recoverAmount <= 0) continue;
+            for(int j = 0; j < stack.getCount() && simulatedMana < targetMana; j++) {
+                simulatedMana = Math.min(mana.getMaxMana(), simulatedMana + recoverAmount);
             }
-            return simulatedMana >= targetMana;
         }
+        return simulatedMana >= targetMana;
+    }
+
+    protected static boolean tryAutoUseManaPotionToReachTarget(Player player, double targetMana) {
+        if(!canAutoUseManaPotionToReachTarget(player, targetMana)) return false;
+        if(!(player instanceof ServerPlayer serverPlayer)) return true;
 
         while(serverPlayer.getData(ModAttachments.PLAYER_MANA).getMana() < targetMana) {
-            mana = serverPlayer.getData(ModAttachments.PLAYER_MANA);
+            PlayerMana mana = serverPlayer.getData(ModAttachments.PLAYER_MANA);
             int bestSlot = -1;
             int bestRecoverAmount = 0;
             int smallestSufficientRecoverAmount = Integer.MAX_VALUE;

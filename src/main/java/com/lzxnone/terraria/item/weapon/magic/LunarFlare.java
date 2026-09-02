@@ -188,7 +188,7 @@ public class LunarFlare extends MagicWeapon {
 
     @Override
     public int getUseTime(ItemStack weaponStack, LivingEntity entity) {
-        return 10;
+        return computeUseTime(10, weaponStack, entity);
     }
 
     @Override

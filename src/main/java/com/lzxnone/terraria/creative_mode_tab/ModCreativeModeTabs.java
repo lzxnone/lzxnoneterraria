@@ -66,6 +66,7 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.MANA_POTION.get());
                 output.accept(ModItems.GREATER_MANA_POTION.get());
                 output.accept(ModItems.SUPER_MANA_POTION.get());
+                output.accept(ModItems.MANA_REGENERATION_POTION.get());
             }).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> ACCESSORY_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_accessory_0", () -> CreativeModeTab.builder()

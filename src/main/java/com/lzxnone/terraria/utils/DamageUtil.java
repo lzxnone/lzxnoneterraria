@@ -10,6 +10,7 @@ import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.weapon.*;
 import com.lzxnone.terraria.item.weapon.summon.minion.MinionWeapon;
+import com.lzxnone.terraria.item.weapon.summon.whip.Whip;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -120,12 +121,30 @@ public class DamageUtil {
         }else if(category == DamageCategory.SENTRY && !itemSource.isEmpty()) {
             finalDamage = SummonWeapon.applySummonDamageBonus(itemSource, player, finalDamage);
         }
+
+        //仆从/哨兵 标记伤害（来自鞭子标记的点伤加成）
+        if(category == DamageCategory.MINION || category == DamageCategory.SENTRY) {
+            finalDamage = Whip.applyMarkDamageBonus(target, finalDamage);
+        }
+
         finalDamage = Math.max(0.0F, finalDamage);
 
-        //近战暴击（月光护身符等饰品的近战暴击率，触发后伤害提升 1.5 倍）
+        //近战暴击（近战专属暴击 + 全职业通用饰品暴击）
         if(category == DamageCategory.MELEE) {
-            double meleeCritChance = AccessoryUtil.getMeleeCritChance(player);
-            if(meleeCritChance > 0.0D && player.getRandom().nextDouble() < meleeCritChance) {
+            double critChance = AccessoryUtil.getMeleeCritChance(player) + AccessoryUtil.getCritChance(player);
+            if(critChance > 0.0D && player.getRandom().nextDouble() < critChance) {
+                finalDamage *= 1.5F;
+            }
+        }else if(category == DamageCategory.RANGED || category == DamageCategory.MAGIC || category == DamageCategory.SUMMON || category == DamageCategory.NORMAL) {
+            //远程、魔法、召唤鞭打、普通攻击：享受通用饰品暴击
+            double critChance = AccessoryUtil.getCritChance(player);
+            if(critChance > 0.0D && player.getRandom().nextDouble() < critChance) {
+                finalDamage *= 1.5F;
+            }
+        }else if(category == DamageCategory.MINION || category == DamageCategory.SENTRY) {
+            //仆从/哨兵 标记暴击（严格仅来自鞭子标记的暴击率加成，不享受玩家自身饰品暴击）
+            int tagCrit = Whip.applyMarkCritBonus(target, 0);
+            if(tagCrit > 0 && player.getRandom().nextInt(100) < tagCrit) {
                 finalDamage *= 1.5F;
             }
         }

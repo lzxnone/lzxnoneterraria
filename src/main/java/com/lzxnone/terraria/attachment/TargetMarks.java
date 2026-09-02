@@ -79,7 +79,9 @@ public class TargetMarks {
             Codec.INT.optionalFieldOf("duration", 0).forGetter(Mark::getDuration),
             Codec.INT.optionalFieldOf("stacks", 0).forGetter(Mark::getStacks),
             UUID_CODEC.optionalFieldOf("owner", EMPTY_OWNER).forGetter(Mark::getOwner),
-            ItemStack.OPTIONAL_CODEC.optionalFieldOf("stack", ItemStack.EMPTY).forGetter(Mark::getStack)
+            ItemStack.OPTIONAL_CODEC.optionalFieldOf("stack", ItemStack.EMPTY).forGetter(Mark::getStack),
+            Codec.FLOAT.optionalFieldOf("tag_damage", 0.0F).forGetter(Mark::getTagDamage),
+            Codec.INT.optionalFieldOf("tag_crit", 0).forGetter(Mark::getTagCrit)
         ).apply(instance, Mark::new));
 
         private long startTime;
@@ -87,21 +89,29 @@ public class TargetMarks {
         private int stacks;
         private UUID owner;
         private ItemStack stack;
+        private float tagDamage;
+        private int tagCrit;
 
         public Mark() {
-            this(0L, 0, 0, EMPTY_OWNER, ItemStack.EMPTY);
+            this(0L, 0, 0, EMPTY_OWNER, ItemStack.EMPTY, 0.0F, 0);
         }
 
         public Mark(long startTime, int duration, int stacks) {
-            this(startTime, duration, stacks, EMPTY_OWNER, ItemStack.EMPTY);
+            this(startTime, duration, stacks, EMPTY_OWNER, ItemStack.EMPTY, 0.0F, 0);
         }
 
         public Mark(long startTime, int duration, int stacks, UUID owner, ItemStack stack) {
+            this(startTime, duration, stacks, owner, stack, 0.0F, 0);
+        }
+
+        public Mark(long startTime, int duration, int stacks, UUID owner, ItemStack stack, float tagDamage, int tagCrit) {
             this.startTime = startTime;
             this.duration = duration;
             this.stacks = stacks;
             this.owner = owner == null ? EMPTY_OWNER : owner;
             this.stack = stack == null ? ItemStack.EMPTY : stack.copy();
+            this.tagDamage = tagDamage;
+            this.tagCrit = tagCrit;
         }
 
         public long getStartTime() {
@@ -144,8 +154,24 @@ public class TargetMarks {
             this.stack = stack == null ? ItemStack.EMPTY : stack.copy();
         }
 
+        public float getTagDamage() {
+            return tagDamage;
+        }
+
+        public void setTagDamage(float tagDamage) {
+            this.tagDamage = tagDamage;
+        }
+
+        public int getTagCrit() {
+            return tagCrit;
+        }
+
+        public void setTagCrit(int tagCrit) {
+            this.tagCrit = tagCrit;
+        }
+
         public Mark copy() {
-            return new Mark(startTime, duration, stacks, owner, stack);
+            return new Mark(startTime, duration, stacks, owner, stack, tagDamage, tagCrit);
         }
     }
 }

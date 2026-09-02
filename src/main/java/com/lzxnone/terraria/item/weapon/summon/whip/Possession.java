@@ -49,6 +49,9 @@ public class Possession extends Whip {
     private static final ConfigFloat BEAM_DAMAGE = new ConfigFloat("weapon.possession.beam_damage", "possession_beam_damage", 10.0F, 0.0F, 8388600.0F);
     private static final ConfigInt PROPHETIC_MARK_DURATION = new ConfigInt("weapon.possession.prophetic_mark_duration", "possession_prophetic_mark_duration", 80, 1, 72000);
     public static final ConfigInt MAX_PROPHETIC_MARK_STACKS = new ConfigInt("weapon.possession.max_prophetic_mark_stacks", "possession_max_prophetic_mark_stacks", 3, 0, 1024);
+    private static final ConfigFloat TAG_DAMAGE = new ConfigFloat("weapon.possession.tag_damage", "possession_tag_damage", 25.0F, 0.0F, 8388600.0F);
+    private static final ConfigInt TAG_CRIT = new ConfigInt("weapon.possession.tag_crit", "possession_tag_crit", 10, 0, 100);
+    private static final ConfigFloat DAMAGE_FALLOFF = new ConfigFloat("weapon.possession.damage_falloff", "possession_damage_falloff", 0.95F, 0.0F, 1.0F);
 
     public Possession() {
         super(Tiers.NETHERITE, new Item.Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC));
@@ -95,6 +98,21 @@ public class Possession extends Whip {
     }
 
     @Override
+    protected float getDamageFalloff() {
+        return DAMAGE_FALLOFF.get();
+    }
+
+    @Override
+    protected float getTagDamage() {
+        return TAG_DAMAGE.get();
+    }
+
+    @Override
+    protected int getTagCrit() {
+        return TAG_CRIT.get();
+    }
+
+    @Override
     protected int getLifetime() {
         return 10;
     }
@@ -124,7 +142,10 @@ public class Possession extends Whip {
                 BEAM_SPEED,
                 BEAM_DAMAGE,
                 PROPHETIC_MARK_DURATION,
-                MAX_PROPHETIC_MARK_STACKS
+                MAX_PROPHETIC_MARK_STACKS,
+                TAG_DAMAGE,
+                TAG_CRIT,
+                DAMAGE_FALLOFF
             );
         }
     };
@@ -195,7 +216,9 @@ public class Possession extends Whip {
                     PROPHETIC_MARK_DURATION.get(),
                     0,
                     summon.getOwner() == null ? null : summon.getOwner().getUUID(),
-                    summon.getEntityData().get(StaticSummon.STACK_SOURCE)
+                    summon.getEntityData().get(StaticSummon.STACK_SOURCE),
+                    getTagDamage(),
+                    getTagCrit()
                 )
             );
             target.setData(ModAttachments.TARGET_MARKS, marks);

@@ -235,7 +235,7 @@ public class BetsyWrath extends MagicWeapon {
 
     @Override
     public int getUseTime(ItemStack weaponStack, LivingEntity entity) {
-        return 20;
+        return computeUseTime(20, weaponStack, entity);
     }
 
     @Override

@@ -28,26 +28,13 @@ public class ManaRegenerationBand extends AccessoryItem implements ManaRegenerat
         0,
         400
     );
-    public static final ConfigDouble RECOVER_DELAY_MULTIPLIER = new ConfigDouble(
-        "accessory.mana_regeneration_band.recover_delay_multiplier",
-        "mana_regen_delay_multiplier",
-        0.5D,
-        0.1D,
-        1.0D
-    );
-    public static final ConfigDouble REGEN_BONUS_SCALE = new ConfigDouble(
-        "accessory.mana_regeneration_band.regen_bonus_scale",
-        "mana_regen_bonus_scale",
-        0.575D,
+    //魔力再生奖励
+    public static final ConfigDouble MANA_REGEN_BONUS = new ConfigDouble(
+        "accessory.mana_regeneration_band.mana_regen_bonus",
+        "mana_regen_bonus",
+        60.0D,
         0.0D,
-        400.0D
-    );
-    public static final ConfigDouble REGEN_BONUS_BASE = new ConfigDouble(
-        "accessory.mana_regeneration_band.regen_bonus_base",
-        "mana_regen_bonus_base",
-        0.14375D,
-        0.0D,
-        400.0D
+        1000.0D
     );
 
     public ManaRegenerationBand() {
@@ -60,20 +47,14 @@ public class ManaRegenerationBand extends AccessoryItem implements ManaRegenerat
     }
 
     @Override
-    public double getManaRecoverDelayMultiplier(ItemStack stack, LivingEntity entity) {
-        return RECOVER_DELAY_MULTIPLIER.get();
-    }
-
-    @Override
-    public double getManaRegenBonus(ItemStack stack, LivingEntity entity, int currentMana, int maxMana) {
-        double ratio = maxMana > 0 ? (double) currentMana / maxMana : 0.0D;
-        return REGEN_BONUS_SCALE.get() * ratio + REGEN_BONUS_BASE.get();
+    public double getManaRegenBonus(ItemStack stack, LivingEntity entity) {
+        return MANA_REGEN_BONUS.get();
     }
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigStruct.loadAll(MAX_MANA_BONUS, RECOVER_DELAY_MULTIPLIER, REGEN_BONUS_SCALE, REGEN_BONUS_BASE);
+            ConfigStruct.loadAll(MAX_MANA_BONUS, MANA_REGEN_BONUS);
         }
     };
 
@@ -93,15 +74,10 @@ public class ManaRegenerationBand extends AccessoryItem implements ManaRegenerat
                 EffectTooltipUtil.formatNumber(MAX_MANA_BONUS.get())
             ).withStyle(ChatFormatting.GRAY));
         }
-        if(RECOVER_DELAY_MULTIPLIER.get() < 1.0D) {
+        if(MANA_REGEN_BONUS.get() > 0.0D) {
             tooltipComponents.add(Component.translatable(
-                "tooltip.lzxnoneterraria.mana_regen_delay",
-                EffectTooltipUtil.formatPercent(RECOVER_DELAY_MULTIPLIER.get())
-            ).withStyle(ChatFormatting.GRAY));
-        }
-        if(REGEN_BONUS_SCALE.get() > 0.0D || REGEN_BONUS_BASE.get() > 0.0D) {
-            tooltipComponents.add(Component.translatable(
-                "tooltip.lzxnoneterraria.mana_regen_boost"
+                "tooltip.lzxnoneterraria.mana_regen_bonus",
+                EffectTooltipUtil.formatNumber(MANA_REGEN_BONUS.get())
             ).withStyle(ChatFormatting.GRAY));
         }
     }

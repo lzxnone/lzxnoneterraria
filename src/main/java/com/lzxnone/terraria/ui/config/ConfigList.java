@@ -14,6 +14,7 @@ import com.lzxnone.terraria.effect.IceBarrierEffect;
 import com.lzxnone.terraria.effect.PanicEffect;
 import com.lzxnone.terraria.effect.ZappedRedEffect;
 import com.lzxnone.terraria.effect.SummonEffect;
+import com.lzxnone.terraria.effect.ManaRegenerationEffect;
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
 import com.lzxnone.terraria.client.config.RenderConfigs;
 import com.lzxnone.terraria.item.ammo.*;
@@ -235,7 +236,8 @@ public class ConfigList {
             PaladinsShieldEffect.CONFIG_LIST_ITEM,
             IceBarrierEffect.CONFIG_LIST_ITEM,
             PanicEffect.CONFIG_LIST_ITEM,
-            ZappedRedEffect.CONFIG_LIST_ITEM
+            ZappedRedEffect.CONFIG_LIST_ITEM,
+            ManaRegenerationEffect.CONFIG_LIST_ITEM
         });
         ITEMS.put(AMMO, new ConfigListItem[]{
             MusketBall.CONFIG_LIST_ITEM,

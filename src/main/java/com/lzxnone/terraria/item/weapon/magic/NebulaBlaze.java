@@ -131,7 +131,7 @@ public class NebulaBlaze extends MagicWeapon {
 
     @Override
     public int getUseTime(ItemStack weaponStack, LivingEntity entity) {
-        return 12;
+        return computeUseTime(12, weaponStack, entity);
     }
 
     @Override

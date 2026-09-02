@@ -224,6 +224,7 @@ public class ModItems {
 
     //药水
     public static final DeferredItem<Item> SUMMONING_POTION = ITEMS.register("summoning_potion", SummoningPotion::new);
+    public static final DeferredItem<Item> MANA_REGENERATION_POTION = ITEMS.register("mana_regeneration_potion", ManaRegenerationPotion::new);
     public static final DeferredItem<Item> LESSER_MANA_POTION = ITEMS.register("lesser_mana_potion", LesserManaPotion::new);
     public static final DeferredItem<Item> MANA_POTION = ITEMS.register("mana_potion", ManaPotion::new);
     public static final DeferredItem<Item> GREATER_MANA_POTION = ITEMS.register("greater_mana_potion", GreaterManaPotion::new);

@@ -44,4 +44,6 @@ public class ModEffects {
             MOB_EFFECTS.register("panic", PanicEffect::new);
     public static final DeferredHolder<MobEffect, ZappedRedEffect> ZAPPED_RED =
             MOB_EFFECTS.register("zapped_red", ZappedRedEffect::new);
+    public static final DeferredHolder<MobEffect, ManaRegenerationEffect> MANA_REGENERATION =
+            MOB_EFFECTS.register("mana_regeneration", ManaRegenerationEffect::new);
 }

@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 
 public class PlayerMana {
     public static final int DEFAULT_BASE_MAX_MANA = 20;
@@ -81,6 +82,14 @@ public class PlayerMana {
         return recoverDelay;
     }
 
+    public static boolean recoverMana(ServerPlayer player, double manaRegenBonus, double standingBonus, double regenCoeff, double itemUseCoeff) {
+        PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
+        int maxMana = mana.getMaxMana();
+        double regenSpeed = ((double) maxMana / 3.0D + 1.0D + manaRegenBonus) * standingBonus * regenCoeff * itemUseCoeff;
+        double amount = regenSpeed * 3.0D / 40.0D;
+        return recoverMana(player, amount);
+    }
+
     public static boolean recoverMana(ServerPlayer player, double amount) {
         PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
         int oldMana = mana.getMana();
@@ -94,12 +103,18 @@ public class PlayerMana {
         return true;
     }
 
+    public static boolean testMana(Player player, double amount) {
+        if(amount <= 0.0D || player.hasInfiniteMaterials()) return true;
+        PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
+        return mana.testMana(amount);
+    }
+
     public static boolean consumeMana(ServerPlayer player, double amount) {
         PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
         int oldMana = mana.getMana();
         if(!mana.consumeMana(amount)) return false;
 
-        mana.applyRecoverDelay();
+        //mana.applyRecoverDelay();
         player.setData(ModAttachments.PLAYER_MANA, mana);
         if(mana.getMana() != oldMana) {
             PlayerManaSyncEventHandler.sync(player);
@@ -145,6 +160,13 @@ public class PlayerMana {
         return mana != oldMana;
     }
 
+    //测试魔力是否充足
+    public boolean testMana(double amount) {
+        if(amount <= 0.0D) return true;
+        if(mana <= 0) return false;
+        return mana >= (int) Math.floor(consumeProgress + amount);
+    }
+
     //通过累加计数器消耗魔力
     private boolean consumeMana(double amount) {
         if(amount <= 0.0D) return true;
@@ -164,9 +186,8 @@ public class PlayerMana {
     public void applyRecoverDelay() {
         if(getMaxMana() <= 0) return;
 
-        //double emptyRatio = 1.0D - (double) mana / getMaxMana();
-        //recoverDelay = Math.max(recoverDelay, (int) Math.ceil(0.7D * (emptyRatio * 240.0D + 45.0D) / 3.0D));
-        recoverDelay = 0;
+        double emptyRatio = 1.0D - (double) mana / getMaxMana();
+        recoverDelay = Math.max(recoverDelay, (int) Math.ceil(0.7D * (emptyRatio * 240.0D + 45.0D) / 3.0D));
         recoverProgress = 0.0D;
     }
 

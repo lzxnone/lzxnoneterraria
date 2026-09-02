@@ -106,7 +106,7 @@ public class Nightglow extends MagicWeapon {
 
     @Override
     public int getUseTime(ItemStack weaponStack, LivingEntity entity) {
-        return 34;
+        return computeUseTime(34, weaponStack, entity);
     }
 
     public static final IStaticSummonBehavior SUMMON_BEHAVIOR = new IStaticSummonBehavior() {

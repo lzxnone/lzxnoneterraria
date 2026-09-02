@@ -54,12 +54,12 @@ public class ClientArcSurge {
             Matrix4f matrix = poseStack.last().pose();
 
             for(List<Vec3> branch : branches) {
+                // 内白芯（Inner White Core - 纯白高亮高能核心，线性收缩至末端半径为 0）
+                renderTube(buffer, matrix, entWorldPos, branch, radius * 0.5F, alpha, 1.0F, 1.0F, 1.0F, true);
+
                 // 外红层（Outer Red Layer - 主泛光与外圈微光，线性收缩至末端半径为 0）
                 renderTube(buffer, matrix, entWorldPos, branch, radius * 1.0F, alpha * 0.7F, 1.0F, 0.15F, 0.15F, true);
                 renderTube(buffer, matrix, entWorldPos, branch, radius * 1.3F, alpha * 0.3F, 0.85F, 0.05F, 0.1F, true);
-
-                // 内白芯（Inner White Core - 纯白高亮高能核心，线性收缩至末端半径为 0）
-                renderTube(buffer, matrix, entWorldPos, branch, radius * 0.45F, alpha * 1.0F, 1.0F, 1.0F, 1.0F, true);
             }
         }
     };
