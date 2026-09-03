@@ -39,13 +39,8 @@ public class StarVeil extends AccessoryItem implements FallenStarSummoner, Invul
     }
 
     @Override
-    public boolean summonThreeFallenStar(ItemStack stack, LivingEntity entity) {
-        return true;
-    }
-
-    @Override
-    public double getFallenStarDamage(ItemStack stack, LivingEntity entity) {
-        return FALLEN_STAR_DAMAGE.get();
+    public String getStar(ItemStack stack, LivingEntity entity) {
+        return FallenStarSummoner.STAR_VEIL;
     }
 
     @Override

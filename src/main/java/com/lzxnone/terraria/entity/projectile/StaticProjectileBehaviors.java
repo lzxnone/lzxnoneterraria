@@ -4,6 +4,7 @@ import com.lzxnone.terraria.item.ammo.CrystalBullet;
 import com.lzxnone.terraria.item.effect.FallenStarSummoner;
 import com.lzxnone.terraria.item.weapon.magic.NebulaArcanum;
 import com.lzxnone.terraria.item.weapon.magic.StellarTune;
+import com.lzxnone.terraria.item.weapon.magic.gem_staff.GemStaff;
 import com.lzxnone.terraria.item.weapon.melee.*;
 import com.lzxnone.terraria.item.weapon.melee.flail.Flail;
 import com.lzxnone.terraria.item.weapon.ranged.Flamethrower;
@@ -39,6 +40,7 @@ public class StaticProjectileBehaviors {
     public static final String NEBULA_ARCANUM_ORBIT_PROJECTILE = "nebula_arcanum_orbit_projectile";
     public static final String STELLAR_TUNE_PROJECTILE = "stellar_tune_projectile";
     public static final String STARDUST_CELL_PROJECTILE = "stardust_cell_projectile";
+    public static final String GEM_STAFF_PROJECTILE = "gem_staff_projectile";
 
     static {
         BEHAVIORS.put(DEFAULT, new IStaticProjectileBehavior() {
@@ -74,6 +76,7 @@ public class StaticProjectileBehaviors {
         BEHAVIORS.put(NEBULA_ARCANUM_ORBIT_PROJECTILE, NebulaArcanum.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(STELLAR_TUNE_PROJECTILE, StellarTune.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(STARDUST_CELL_PROJECTILE, StardustCellStaff.PROJECTILE_BEHAVIOR);
+        BEHAVIORS.put(GEM_STAFF_PROJECTILE, GemStaff.PROJECTILE_BEHAVIOR);
     }
 
     public static IStaticProjectileBehavior getBehavior(String id) {

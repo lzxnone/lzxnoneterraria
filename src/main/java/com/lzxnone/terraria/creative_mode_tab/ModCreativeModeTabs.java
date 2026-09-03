@@ -61,6 +61,21 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.BUBBLE_GUN.get());
                 output.accept(ModItems.NIGHTGLOW.get());
                 output.accept(ModItems.ARC_SURGE.get());
+                output.accept(ModItems.AMETHYST_STAFF.get());
+                output.accept(ModItems.TOPAZ_STAFF.get());
+                output.accept(ModItems.SAPPHIRE_STAFF.get());
+                output.accept(ModItems.EMERALD_STAFF.get());
+                output.accept(ModItems.RUBY_STAFF.get());
+                output.accept(ModItems.AMBER_STAFF.get());
+                output.accept(ModItems.DIAMOND_STAFF.get());
+                output.accept(ModItems.ROBE.get());
+                output.accept(ModItems.AMETHYST_ROBE.get());
+                output.accept(ModItems.TOPAZ_ROBE.get());
+                output.accept(ModItems.SAPPHIRE_ROBE.get());
+                output.accept(ModItems.EMERALD_ROBE.get());
+                output.accept(ModItems.RUBY_ROBE.get());
+                output.accept(ModItems.AMBER_ROBE.get());
+                output.accept(ModItems.DIAMOND_ROBE.get());
                 output.accept(ModItems.MANA_CRYSTAL.get());
                 output.accept(ModItems.LESSER_MANA_POTION.get());
                 output.accept(ModItems.MANA_POTION.get());
@@ -85,6 +100,7 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.COBALT_SHIELD.get());
                 output.accept(ModItems.OBSIDIAN_SHIELD.get());
                 output.accept(ModItems.ANKH_SHIELD.get());
+                output.accept(ModItems.RESTORATION_SHIELD.get());
                 output.accept(ModItems.AVENGER_EMBLEM.get());
                 output.accept(ModItems.CROSS_NECKLACE.get());
                 output.accept(ModItems.STAR_CLOAK.get());
@@ -113,6 +129,7 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.STINGER_NECKLACE.get());
                 output.accept(ModItems.BEE_CLOAK.get());
                 output.accept(ModItems.BLACK_BELT.get());
+                output.accept(ModItems.MYSTIC_ARTS_SASH.get());
                 output.accept(ModItems.TITAN_GLOVE.get());
                 output.accept(ModItems.FERAL_CLAWS.get());
                 output.accept(ModItems.POWER_GLOVE.get());
@@ -168,17 +185,6 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.RIFLE_SCOPE.get());
                 output.accept(ModItems.SNIPER_SCOPE.get());
                 output.accept(ModItems.RECON_SCOPE.get());
-            }).build());
-
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> BLOCK_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_block_0", () -> CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.lzxnoneterraria.block"))
-            .icon(() -> ModItems.VISION.get().getDefaultInstance())
-            .displayItems((parameters, output) -> {
-                output.accept(ModItems.VISION.get());
-                output.accept(ModItems.STARDUST_DRAGON_HEAD.get());
-                output.accept(ModItems.STARDUST_DRAGON_BODY_A.get());
-                output.accept(ModItems.STARDUST_DRAGON_BODY_B.get());
-                output.accept(ModItems.STARDUST_DRAGON_TAIL.get());
             }).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> RANGED_TAB = CREATIVE_MODE_TABS.register("lzxnoneterraria_ranged_0", () -> CreativeModeTab.builder()

@@ -1,0 +1,6 @@
+{
+  "parent": "lzxnoneterraria:item/sword2",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/amber_staff"
+  }
+}

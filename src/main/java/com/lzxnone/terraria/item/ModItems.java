@@ -9,6 +9,7 @@ import com.lzxnone.terraria.item.normal.FallenStar;
 import com.lzxnone.terraria.item.potion.*;
 import com.lzxnone.terraria.item.weapon.ranged.ElfMelter;
 import com.lzxnone.terraria.item.weapon.magic.*;
+import com.lzxnone.terraria.item.weapon.magic.gem_staff.*;
 import com.lzxnone.terraria.item.weapon.melee.*;
 import com.lzxnone.terraria.item.weapon.ranged.Flamethrower;
 import com.lzxnone.terraria.item.weapon.ranged.SnowballCannon;
@@ -64,6 +65,13 @@ public class ModItems {
     public static final DeferredItem<Item> BUBBLE_GUN = ITEMS.register("bubble_gun", BubbleGun::new);
     public static final DeferredItem<Item> NIGHTGLOW = ITEMS.register("nightglow", Nightglow::new);
     public static final DeferredItem<Item> ARC_SURGE = ITEMS.register("arc_surge", ArcSurge::new);
+    public static final DeferredItem<Item> AMETHYST_STAFF = ITEMS.register("amethyst_staff", AmethystStaff::new);
+    public static final DeferredItem<Item> TOPAZ_STAFF = ITEMS.register("topaz_staff", TopazStaff::new);
+    public static final DeferredItem<Item> SAPPHIRE_STAFF = ITEMS.register("sapphire_staff", SapphireStaff::new);
+    public static final DeferredItem<Item> EMERALD_STAFF = ITEMS.register("emerald_staff", EmeraldStaff::new);
+    public static final DeferredItem<Item> RUBY_STAFF = ITEMS.register("ruby_staff", RubyStaff::new);
+    public static final DeferredItem<Item> AMBER_STAFF = ITEMS.register("amber_staff", AmberStaff::new);
+    public static final DeferredItem<Item> DIAMOND_STAFF = ITEMS.register("diamond_staff", DiamondStaff::new);
 
     //远程武器
     public static final DeferredItem<Item> MUSKET = ITEMS.register("musket", Musket::new);
@@ -135,6 +143,7 @@ public class ModItems {
     public static final DeferredItem<Item> COBALT_SHIELD = ITEMS.register("cobalt_shield", CobaltShield::new);
     public static final DeferredItem<Item> OBSIDIAN_SHIELD = ITEMS.register("obsidian_shield", ObsidianShield::new);
     public static final DeferredItem<Item> ANKH_SHIELD = ITEMS.register("ankh_shield", AnkhShield::new);
+    public static final DeferredItem<Item> RESTORATION_SHIELD = ITEMS.register("restoration_shield", RestorationShield::new);
     public static final DeferredItem<Item> AVENGER_EMBLEM = ITEMS.register("avenger_emblem", AvengerEmblem::new);
     public static final DeferredItem<Item> CROSS_NECKLACE = ITEMS.register("cross_necklace", CrossNecklace::new);
     public static final DeferredItem<Item> STAR_CLOAK = ITEMS.register("star_cloak", StarCloak::new);
@@ -163,6 +172,7 @@ public class ModItems {
     public static final DeferredItem<Item> STINGER_NECKLACE = ITEMS.register("stinger_necklace", StingerNecklace::new);
     public static final DeferredItem<Item> BEE_CLOAK = ITEMS.register("bee_cloak", BeeCloak::new);
     public static final DeferredItem<Item> BLACK_BELT = ITEMS.register("black_belt", BlackBelt::new);
+    public static final DeferredItem<Item> MYSTIC_ARTS_SASH = ITEMS.register("mystic_arts_sash", MysticArtsSash::new);
     public static final DeferredItem<Item> TITAN_GLOVE = ITEMS.register("titan_glove", TitanGlove::new);
     public static final DeferredItem<Item> FERAL_CLAWS = ITEMS.register("feral_claws", FeralClaws::new);
     public static final DeferredItem<Item> POWER_GLOVE = ITEMS.register("power_glove", PowerGlove::new);
@@ -219,6 +229,16 @@ public class ModItems {
     public static final DeferredItem<Item> SNIPER_SCOPE = ITEMS.register("sniper_scope", SniperScope::new);
     public static final DeferredItem<Item> RECON_SCOPE = ITEMS.register("recon_scope", ReconScope::new);
 
+    //盔甲
+    public static final DeferredItem<Item> ROBE = ITEMS.register("robe", com.lzxnone.terraria.item.armor.Robe::new);
+    public static final DeferredItem<Item> AMETHYST_ROBE = ITEMS.register("amethyst_robe", com.lzxnone.terraria.item.armor.AmethystRobe::new);
+    public static final DeferredItem<Item> TOPAZ_ROBE = ITEMS.register("topaz_robe", com.lzxnone.terraria.item.armor.TopazRobe::new);
+    public static final DeferredItem<Item> SAPPHIRE_ROBE = ITEMS.register("sapphire_robe", com.lzxnone.terraria.item.armor.SapphireRobe::new);
+    public static final DeferredItem<Item> EMERALD_ROBE = ITEMS.register("emerald_robe", com.lzxnone.terraria.item.armor.EmeraldRobe::new);
+    public static final DeferredItem<Item> RUBY_ROBE = ITEMS.register("ruby_robe", com.lzxnone.terraria.item.armor.RubyRobe::new);
+    public static final DeferredItem<Item> AMBER_ROBE = ITEMS.register("amber_robe", com.lzxnone.terraria.item.armor.AmberRobe::new);
+    public static final DeferredItem<Item> DIAMOND_ROBE = ITEMS.register("diamond_robe", com.lzxnone.terraria.item.armor.DiamondRobe::new);
+
     //食物
     public static final DeferredItem<Item> MANA_CRYSTAL = ITEMS.register("mana_crystal", ManaCrystal::new);
 
@@ -254,7 +274,9 @@ public class ModItems {
     public static final DeferredItem<Item> GOLDEN_BULLET_PROJECTILE = ITEMS.register("golden_bullet_projectile", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> LUMINITE_BULLET_PROJECTILE = ITEMS.register("luminite_bullet_projectile", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> WHITE_STAR = ITEMS.register("white_star", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> WHITE_STAR2 = ITEMS.register("white_star2", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> MANA_STAR = ITEMS.register("mana_star", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> MANA_STAR2 = ITEMS.register("mana_star2", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> BUBBLE_GUN_PROJECTILE = ITEMS.register("bubble_gun_projectile", () -> new Item(new Item.Properties()));
     public static final DeferredItem<Item> VORTEX_ROCKET = ITEMS.register("vortex_rocket", () -> new Item(new Item.Properties()));
 

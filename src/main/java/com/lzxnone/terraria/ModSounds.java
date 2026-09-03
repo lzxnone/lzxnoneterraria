@@ -19,6 +19,10 @@ public class ModSounds {
             SOUND_EVENTS.register("beam2",
                     () -> SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "beam2")));
+    public static final Supplier<SoundEvent> BEAM3 =
+            SOUND_EVENTS.register("beam3",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(LzxnoneTerraria.MODID, "beam3")));
     public static final Supplier<SoundEvent> BETSYS_FIREBALL_SHOOT =
             SOUND_EVENTS.register("betsys_fireball_shoot",
                     () -> SoundEvent.createVariableRangeEvent(

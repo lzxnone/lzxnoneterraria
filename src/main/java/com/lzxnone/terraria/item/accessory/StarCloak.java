@@ -30,13 +30,8 @@ public class StarCloak extends AccessoryItem implements FallenStarSummoner {
     }
 
     @Override
-    public boolean summonThreeFallenStar(ItemStack stack, LivingEntity entity) {
-        return true;
-    }
-
-    @Override
-    public double getFallenStarDamage(ItemStack stack, LivingEntity entity) {
-        return FALLEN_STAR_DAMAGE.get();
+    public String getStar(ItemStack stack, LivingEntity entity) {
+        return FallenStarSummoner.STAR_CLOAK;
     }
 
     public static final IConfigData CONFIG_DATA = new IConfigData() {

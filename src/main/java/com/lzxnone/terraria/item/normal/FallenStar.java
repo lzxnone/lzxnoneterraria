@@ -84,7 +84,7 @@ public class FallenStar extends Item {
             ServerPlayer player = players.getFirst();
 
             double attractRange = Math.max(AccessoryUtil.getStarPickupRange(player), MIN_ATTRACT_RADIUS);
-            Vec3 dir = player.position().subtract(summon.position());
+            Vec3 dir = player.getBoundingBox().getCenter().subtract(summon.position());
             double dist = dir.length();
             if(dist <= attractRange) {
                 summon.setDeltaMovement(dir.scale(ATTRACT_SPEED));

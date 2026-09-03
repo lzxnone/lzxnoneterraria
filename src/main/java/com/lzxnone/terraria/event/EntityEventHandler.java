@@ -217,8 +217,11 @@ public class EntityEventHandler {
         Possession.markEvent(event);
 
         if(event.getEntity() instanceof Player player) {
+            //无敌时间
             AccessoryUtil.applyInvulnerableTimeModifier(player);
-            AccessoryUtil.applyFallenStarSummoner(player);
+            //生成坠星
+            AccessoryUtil.applyFallenStarSummonerOnHurt(player);
+            //生成蜜蜂
             AccessoryUtil.applyBeeSummoner(player);
             //受到伤害后触发恐慌加速
             if(AccessoryUtil.canApplyPanic(player) && PanicNecklace.DURATION.get() > 0) {
@@ -271,6 +274,7 @@ public class EntityEventHandler {
                 summon.getEntityData().set(StaticSummon.GLOW, true);
                 CompoundTag customData = new CompoundTag();
                 customData.putInt("mana", 100);
+                customData.putDouble("min_attract_range", 4.0D);
                 summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
                 livingEntity.level().addFreshEntity(summon);
             }

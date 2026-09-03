@@ -5,7 +5,10 @@ import com.lzxnone.terraria.attachment.PlayerMana;
 import com.lzxnone.terraria.enchantment.ModEnchantments;
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
 import com.lzxnone.terraria.effect.ManaSicknessEffect;
+import com.lzxnone.terraria.effect.ModEffects;
+import com.lzxnone.terraria.effect.ManaSurgeEffect;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
+import com.lzxnone.terraria.item.armor.ArmorUtil;
 import com.lzxnone.terraria.item.effect.AutoManaPotionUser;
 import com.lzxnone.terraria.item.effect.MagicDamageModifier;
 import com.lzxnone.terraria.item.effect.ManaCostModifier;
@@ -125,7 +128,10 @@ public class MagicWeapon extends Weapon {
         //自动喝药
         PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
         double targetMana = Math.max(1.0D, Math.floor(mana.getConsumeProgress() + amount));
-        if(!tryAutoUseManaPotionToReachTarget(player, targetMana)) return false;
+        if(!tryAutoUseManaPotionToReachTarget(player, targetMana)) {
+            PlayerMana.clearMana(serverPlayer);
+            return false;
+        }
         return PlayerMana.consumeMana(serverPlayer, amount);
     }
 
@@ -137,7 +143,11 @@ public class MagicWeapon extends Weapon {
     protected double getManaConsumeRate(ItemStack stack, LivingEntity entity) { return 0.0D; }
 
     protected double getManaTooltipValue(ItemStack stack) {
-        return getManaConsumeRate(stack, null);
+        Player player = null;
+        if(net.neoforged.fml.loading.FMLEnvironment.dist.isClient()) {
+            player = net.minecraft.client.Minecraft.getInstance().player;
+        }
+        return getFinalManaConsumeRate(stack, player);
     }
 
     @Override
@@ -154,23 +164,31 @@ public class MagicWeapon extends Weapon {
     }
 
     //获取最终魔力消耗
-    protected double getFinalManaConsumeRate(ItemStack stack, LivingEntity entity) {
-        double rate = getManaConsumeRate(stack, entity);
-        //魔力泄漏
-        int leakLevel = getEnchantmentLevel(entity, stack, ModEnchantments.MANA_LEAK);
-        rate *= Math.pow(ModEnchantmentConfigs.getManaLeakConsumeMultiplier(), leakLevel);
-        //魔力效率
-        int efficiencyLevel = getEnchantmentLevel(entity, stack, ModEnchantments.MANA_EFFICIENCY);
-        rate *= Math.pow(ModEnchantmentConfigs.getManaEfficiencyConsumeMultiplier(), efficiencyLevel);
-        //饰品
-        double[] multiplier = {1.0D};
-        AccessoryUtil.forEachAccessory(entity, (accessory, itemStack) -> {
-            if(accessory instanceof ManaCostModifier modifier) {
-                multiplier[0] *= modifier.getManaCostMultiplier(itemStack, entity);
-            }
-        });
-        rate *= multiplier[0];
+    public double getFinalManaConsumeRate(ItemStack stack, LivingEntity entity, double baseRate) {
+        double rate = baseRate;
+        if(entity != null) {
+            //魔力泄漏
+            int leakLevel = getEnchantmentLevel(entity, stack, ModEnchantments.MANA_LEAK);
+            rate *= Math.pow(ModEnchantmentConfigs.getManaLeakConsumeMultiplier(), leakLevel);
+            //魔力效率
+            int efficiencyLevel = getEnchantmentLevel(entity, stack, ModEnchantments.MANA_EFFICIENCY);
+            rate *= Math.pow(ModEnchantmentConfigs.getManaEfficiencyConsumeMultiplier(), efficiencyLevel);
+            //饰品
+            double[] multiplier = {1.0D};
+            AccessoryUtil.forEachAccessory(entity, (accessory, itemStack) -> {
+                if(accessory instanceof ManaCostModifier modifier) {
+                    multiplier[0] *= modifier.getManaCostMultiplier(itemStack, entity);
+                }
+            });
+            rate *= multiplier[0];
+            //防具
+            rate *= ArmorUtil.getManaCostMultiplier(entity);
+        }
         return Math.max(0.0D, rate);
+    }
+
+    public double getFinalManaConsumeRate(ItemStack stack, LivingEntity entity) {
+        return getFinalManaConsumeRate(stack, entity, getManaConsumeRate(stack, entity));
     }
 
     //获取最终造成的伤害
@@ -181,6 +199,10 @@ public class MagicWeapon extends Weapon {
         finalDamage *= Math.pow(ModEnchantmentConfigs.getArcaneAmplificationDamageMultiplier(), amplificationLevel);
         //耐魔性
         finalDamage *= ManaSicknessEffect.getMagicDamageMultiplier(entity);
+        //魔力涌动
+        if(entity != null && entity.hasEffect(ModEffects.MANA_SURGE)) {
+            finalDamage *= ManaSurgeEffect.getMagicDamageMultiplier(entity);
+        }
         //饰品
         double[] multiplier = {1.0D};
         AccessoryUtil.forEachAccessory(entity, (accessory, accessoryStack) -> {

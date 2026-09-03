@@ -1,17 +1,20 @@
 package com.lzxnone.terraria.item.normal;
 
 import com.lzxnone.terraria.attachment.PlayerMana;
+import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
 public class ManaStar extends Item {
+    public static final int MANA_SURGE_DURATION_TICKS = 40;
 
     public ManaStar() {
         super(new Item.Properties());
@@ -22,7 +25,6 @@ public class ManaStar extends Item {
         private static final double AIR_FRICTION = 0.98D;
         private static final double GROUND_FRICTION = 0.6D;
         private static final double MAX_FALL_SPEED = -1.5D;
-        private static final double MIN_ATTRACT_RADIUS = 4.0D;
         private static final double PICKUP_RADIUS = 0.5D;
         private static final double MAX_PICKUP_RADIUS = 16.0D;
         private static final double ATTRACT_SPEED = 0.25D;
@@ -62,16 +64,17 @@ public class ManaStar extends Item {
 
             ServerPlayer player = players.getFirst();
 
-            double attractRange = Math.max(AccessoryUtil.getStarPickupRange(player), MIN_ATTRACT_RADIUS);
-            Vec3 dir = player.position().subtract(summon.position());
+            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+            double attractRange = Math.max(AccessoryUtil.getStarPickupRange(player), customData.contains("min_attract_range") ? customData.getDouble("min_attract_range") : 4.0D);
+            Vec3 dir = player.getBoundingBox().getCenter().subtract(summon.position());
             double dist = dir.length();
             if(dist <= attractRange) {
                 summon.setDeltaMovement(dir.scale(ATTRACT_SPEED));
             }
             if(dist <= PICKUP_RADIUS) {
-                CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
                 int amount = customData.contains("mana") ? customData.getInt("mana") : 0;
                 PlayerMana.recoverMana(player, amount);
+                player.addEffect(new MobEffectInstance(ModEffects.MANA_SURGE, MANA_SURGE_DURATION_TICKS, 0));
                 onDied(summon);
                 return true;
             }

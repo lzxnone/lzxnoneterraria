@@ -6,6 +6,7 @@ import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.attachment.PlayerMana;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.item.accessory.AccessoryUtil;
+import com.lzxnone.terraria.item.armor.ArmorUtil;
 import com.lzxnone.terraria.item.weapon.MagicWeapon;
 import com.lzxnone.terraria.network.payload.ManaSyncPayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -44,10 +45,10 @@ public class PlayerManaSyncEventHandler {
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if(!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        //刷新饰品最大魔力加成
+        //刷新饰品与防具最大魔力加成
         if(player.tickCount % 20 == 0) {
             PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
-            int bonus = AccessoryUtil.getMaxManaBonus(player);
+            int bonus = AccessoryUtil.getMaxManaBonus(player) + ArmorUtil.getMaxManaBonus(player);
             if(mana.getBonusMaxMana() != bonus) {
                 PlayerMana.setBonusMaxMana(player, bonus);
             }

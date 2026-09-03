@@ -18,6 +18,7 @@ import net.minecraft.world.phys.*;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 import java.util.LinkedList;
 
@@ -164,6 +165,21 @@ public class StaticProjectile extends Projectile {
         }else if (key.equals(StaticProjectile.EXPRESSION_X) && exprX != null) {
             this.exprX = new ExpressionBuilder(this.entityData.get(StaticProjectile.EXPRESSION_X)).variables("t").build();
         }
+    }
+
+    public void setExpressionX(String expr) {
+        this.entityData.set(EXPRESSION_X, expr);
+        this.exprX = new ExpressionBuilder(expr).variables("t").build();
+    }
+
+    public void setExpressionY(String expr) {
+        this.entityData.set(EXPRESSION_Y, expr);
+        this.exprY = new ExpressionBuilder(expr).variables("t").build();
+    }
+
+    public void setExpressionZ(String expr) {
+        this.entityData.set(EXPRESSION_Z, expr);
+        this.exprZ = new ExpressionBuilder(expr).variables("t").build();
     }
 
     @Override
@@ -338,5 +354,10 @@ public class StaticProjectile extends Projectile {
     protected void onHitBlock(BlockHitResult result) {
         super.onHitBlock(result);
         StaticProjectileBehaviors.getBehavior(this.entityData.get(BEHAVIOR)).onHitBlock(this, result);
+    }
+
+    @Override
+    public @NonNull AABB getBoundingBoxForCulling() {
+        return StaticProjectileBehaviors.getBehavior(this.entityData.get(BEHAVIOR)).getBoundingBoxForCulling(this);
     }
 }

@@ -86,7 +86,7 @@ public class PlayerMana {
         PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
         int maxMana = mana.getMaxMana();
         double regenSpeed = ((double) maxMana / 3.0D + 1.0D + manaRegenBonus) * standingBonus * regenCoeff * itemUseCoeff;
-        double amount = regenSpeed * 3.0D / 40.0D;
+        double amount = regenSpeed / 40.0D;
         return recoverMana(player, amount);
     }
 
@@ -117,6 +117,17 @@ public class PlayerMana {
         //mana.applyRecoverDelay();
         player.setData(ModAttachments.PLAYER_MANA, mana);
         if(mana.getMana() != oldMana) {
+            PlayerManaSyncEventHandler.sync(player);
+        }
+        return true;
+    }
+
+    public static boolean clearMana(ServerPlayer player) {
+        PlayerMana mana = player.getData(ModAttachments.PLAYER_MANA);
+        int oldMana = mana.getMana();
+        mana.clearMana();
+        player.setData(ModAttachments.PLAYER_MANA, mana);
+        if(oldMana != 0) {
             PlayerManaSyncEventHandler.sync(player);
         }
         return true;
@@ -165,6 +176,11 @@ public class PlayerMana {
         if(amount <= 0.0D) return true;
         if(mana <= 0) return false;
         return mana >= (int) Math.floor(consumeProgress + amount);
+    }
+
+    public void clearMana() {
+        this.mana = 0;
+        this.consumeProgress = 0.0D;
     }
 
     //通过累加计数器消耗魔力

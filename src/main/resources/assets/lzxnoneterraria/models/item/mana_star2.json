@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "lzxnoneterraria:item/mana_star2"
+  }
+}

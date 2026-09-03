@@ -2,6 +2,7 @@ package com.lzxnone.terraria.item.accessory;
 
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.item.effect.EffectTooltipUtil;
+import com.lzxnone.terraria.item.effect.LifeRegenerationModifier;
 import com.lzxnone.terraria.item.effect.ManaRegenerationModifier;
 import com.lzxnone.terraria.item.effect.MaxManaModifier;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
@@ -19,12 +20,12 @@ import net.minecraft.world.item.TooltipFlag;
 
 import java.util.List;
 
-public class ManaRegenerationBand extends AccessoryItem implements ManaRegenerationModifier, MaxManaModifier {
+public class ManaRegenerationBand extends AccessoryItem implements ManaRegenerationModifier, MaxManaModifier, LifeRegenerationModifier {
     //最大魔力加成
     public static final ConfigInt MAX_MANA_BONUS = new ConfigInt(
         "accessory.mana_regeneration_band.max_mana_bonus",
         "max_mana_bonus",
-        20,
+        40,
         0,
         400
     );
@@ -33,6 +34,14 @@ public class ManaRegenerationBand extends AccessoryItem implements ManaRegenerat
         "accessory.mana_regeneration_band.mana_regen_bonus",
         "mana_regen_bonus",
         60.0D,
+        0.0D,
+        1000.0D
+    );
+    //每秒生命回复量
+    public static final ConfigDouble HEALTH_PER_SECOND = new ConfigDouble(
+        "accessory.mana_regeneration_band.health_per_second",
+        "health_per_second",
+        0.2D,
         0.0D,
         1000.0D
     );
@@ -51,10 +60,15 @@ public class ManaRegenerationBand extends AccessoryItem implements ManaRegenerat
         return MANA_REGEN_BONUS.get();
     }
 
+    @Override
+    public float getHealthPerSecond(ItemStack stack, LivingEntity entity) {
+        return HEALTH_PER_SECOND.get().floatValue();
+    }
+
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigStruct.loadAll(MAX_MANA_BONUS, MANA_REGEN_BONUS);
+            ConfigStruct.loadAll(MAX_MANA_BONUS, MANA_REGEN_BONUS, HEALTH_PER_SECOND);
         }
     };
 
@@ -68,6 +82,12 @@ public class ManaRegenerationBand extends AccessoryItem implements ManaRegenerat
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        if(HEALTH_PER_SECOND.get() > 0.0D) {
+            tooltipComponents.add(Component.translatable(
+                "tooltip.lzxnoneterraria.life_regen",
+                EffectTooltipUtil.formatNumber(HEALTH_PER_SECOND.get())
+            ).withStyle(ChatFormatting.GRAY));
+        }
         if(MAX_MANA_BONUS.get() > 0) {
             tooltipComponents.add(Component.translatable(
                 "tooltip.lzxnoneterraria.max_mana_bonus",

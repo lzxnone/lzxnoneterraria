@@ -15,6 +15,7 @@ import com.lzxnone.terraria.effect.PanicEffect;
 import com.lzxnone.terraria.effect.ZappedRedEffect;
 import com.lzxnone.terraria.effect.SummonEffect;
 import com.lzxnone.terraria.effect.ManaRegenerationEffect;
+import com.lzxnone.terraria.effect.ManaSurgeEffect;
 import com.lzxnone.terraria.enchantment.ModEnchantmentConfigs;
 import com.lzxnone.terraria.client.config.RenderConfigs;
 import com.lzxnone.terraria.item.ammo.*;
@@ -27,6 +28,8 @@ import com.lzxnone.terraria.item.accessory.AvengerEmblem;
 import com.lzxnone.terraria.item.accessory.CobaltShield;
 import com.lzxnone.terraria.item.accessory.ObsidianShield;
 import com.lzxnone.terraria.item.accessory.AnkhShield;
+import com.lzxnone.terraria.item.accessory.RestorationShield;
+import com.lzxnone.terraria.item.accessory.MysticArtsSash;
 import com.lzxnone.terraria.item.accessory.StarCloak;
 import com.lzxnone.terraria.item.accessory.CrossNecklace;
 import com.lzxnone.terraria.item.accessory.StarVeil;
@@ -96,15 +99,8 @@ import com.lzxnone.terraria.item.accessory.PutridScent;
 import com.lzxnone.terraria.item.accessory.Shackle;
 import com.lzxnone.terraria.item.accessory.SniperScope;
 import com.lzxnone.terraria.item.accessory.ReconScope;
-import com.lzxnone.terraria.item.weapon.magic.BetsyWrath;
-import com.lzxnone.terraria.item.weapon.magic.BubbleGun;
-import com.lzxnone.terraria.item.weapon.magic.LastPrism;
-import com.lzxnone.terraria.item.weapon.magic.LunarFlare;
-import com.lzxnone.terraria.item.weapon.magic.NebulaArcanum;
-import com.lzxnone.terraria.item.weapon.magic.NebulaBlaze;
-import com.lzxnone.terraria.item.weapon.magic.StellarTune;
-import com.lzxnone.terraria.item.weapon.magic.Nightglow;
-import com.lzxnone.terraria.item.weapon.magic.ArcSurge;
+import com.lzxnone.terraria.item.weapon.magic.*;
+import com.lzxnone.terraria.item.weapon.magic.gem_staff.*;
 import com.lzxnone.terraria.item.weapon.melee.BeeKeeper;
 import com.lzxnone.terraria.item.weapon.melee.BladeOfGrass;
 import com.lzxnone.terraria.item.weapon.melee.BloodButcherer;
@@ -195,6 +191,13 @@ public class ConfigList {
             BubbleGun.CONFIG_LIST_ITEM,
             Nightglow.CONFIG_LIST_ITEM,
             ArcSurge.CONFIG_LIST_ITEM,
+            AmethystStaff.CONFIG_LIST_ITEM,
+            TopazStaff.CONFIG_LIST_ITEM,
+            SapphireStaff.CONFIG_LIST_ITEM,
+            EmeraldStaff.CONFIG_LIST_ITEM,
+            RubyStaff.CONFIG_LIST_ITEM,
+            AmberStaff.CONFIG_LIST_ITEM,
+            DiamondStaff.CONFIG_LIST_ITEM,
             Minishark.CONFIG_LIST_ITEM,
             FlintlockPistol.CONFIG_LIST_ITEM,
             Boomstick.CONFIG_LIST_ITEM,
@@ -237,7 +240,8 @@ public class ConfigList {
             IceBarrierEffect.CONFIG_LIST_ITEM,
             PanicEffect.CONFIG_LIST_ITEM,
             ZappedRedEffect.CONFIG_LIST_ITEM,
-            ManaRegenerationEffect.CONFIG_LIST_ITEM
+            ManaRegenerationEffect.CONFIG_LIST_ITEM,
+            ManaSurgeEffect.CONFIG_LIST_ITEM
         });
         ITEMS.put(AMMO, new ConfigListItem[]{
             MusketBall.CONFIG_LIST_ITEM,
@@ -265,6 +269,7 @@ public class ConfigList {
             CobaltShield.CONFIG_LIST_ITEM,
             ObsidianShield.CONFIG_LIST_ITEM,
             AnkhShield.CONFIG_LIST_ITEM,
+            RestorationShield.CONFIG_LIST_ITEM,
             StarCloak.CONFIG_LIST_ITEM,
             CrossNecklace.CONFIG_LIST_ITEM,
             StarVeil.CONFIG_LIST_ITEM,
@@ -283,6 +288,7 @@ public class ConfigList {
             StingerNecklace.CONFIG_LIST_ITEM,
             BeeCloak.CONFIG_LIST_ITEM,
             BlackBelt.CONFIG_LIST_ITEM,
+            MysticArtsSash.CONFIG_LIST_ITEM,
             TitanGlove.CONFIG_LIST_ITEM,
             FeralClaws.CONFIG_LIST_ITEM,
             PowerGlove.CONFIG_LIST_ITEM,

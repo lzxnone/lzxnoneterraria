@@ -1,5 +1,7 @@
 package com.lzxnone.terraria.item.weapon.magic;
 
+import com.lzxnone.terraria.effect.ManaSurgeEffect;
+
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.entity.ModEntities;

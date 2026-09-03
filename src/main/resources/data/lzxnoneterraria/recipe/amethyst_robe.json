@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "AAA",
+    "ARA",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "R": {
+      "item": "lzxnoneterraria:robe"
+    }
+  },
+  "result": {
+    "id": "lzxnoneterraria:amethyst_robe",
+    "count": 1
+  }
+}

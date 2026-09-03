@@ -1,5 +1,6 @@
 package com.lzxnone.terraria.entity.projectile;
 
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
@@ -11,5 +12,8 @@ public interface IStaticProjectileBehavior {
         if(!projectile.level().isClientSide()) {
             projectile.discard();
         }
+    }
+    default AABB getBoundingBoxForCulling(StaticProjectile projectile) {
+        return projectile.getBoundingBox();
     }
 }

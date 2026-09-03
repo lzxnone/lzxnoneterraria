@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "RRR",
+    "RCR",
+    "RRR"
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:redstone_block"
+    },
+    "C": {
+      "item": "lzxnoneterraria:robe"
+    }
+  },
+  "result": {
+    "id": "lzxnoneterraria:ruby_robe",
+    "count": 1
+  }
+}

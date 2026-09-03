@@ -50,4 +50,6 @@ public class ModAttachments {
     public static final Supplier<AttachmentType<List<Entity>>> ACTIVE_BEAMS =
         ATTACHMENT_TYPES.register("active_beams", () -> AttachmentType.<List<Entity>>builder((Supplier<List<Entity>>) ArrayList::new).build());
 
+    public static final Supplier<AttachmentType<Long>> LAST_ACCESSORY_FALLEN_STAR_TIME =
+        ATTACHMENT_TYPES.register("last_accessory_fallen_star_time", () -> AttachmentType.builder(() -> 0L).serialize(Codec.LONG).copyOnDeath().build());
 }

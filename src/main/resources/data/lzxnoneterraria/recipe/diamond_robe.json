@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "BDB",
+    "DRD",
+    "BDB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:diamond_block"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "R": {
+      "item": "lzxnoneterraria:robe"
+    }
+  },
+  "result": {
+    "id": "lzxnoneterraria:diamond_robe",
+    "count": 1
+  }
+}

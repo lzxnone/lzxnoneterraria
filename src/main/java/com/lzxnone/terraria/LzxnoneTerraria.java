@@ -7,6 +7,7 @@ import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.summon.BeeSummon;
 import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.item.armor.ModArmorMaterials;
 import com.lzxnone.terraria.particle.ModParticles;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ public class LzxnoneTerraria {
         //注册
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
+        ModArmorMaterials.ARMOR_MATERIALS.register(modEventBus);
         ModEffects.MOB_EFFECTS.register(modEventBus);
         ModEntities.ENTITY_TYPES.register(modEventBus);
         ModParticles.PARTICLE_TYPES.register(modEventBus);

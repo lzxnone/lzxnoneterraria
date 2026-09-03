@@ -7,7 +7,6 @@ import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.ModItems;
-import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.particle.ModParticles;
 import com.lzxnone.terraria.utils.*;
 import net.minecraft.nbt.CompoundTag;
@@ -21,13 +20,12 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public interface FallenStarSummoner {
-    boolean summonThreeFallenStar(ItemStack stack, LivingEntity entity);
-    double getFallenStarDamage(ItemStack stack, LivingEntity entity);
+    String STAR_CLOAK = "star_cloak";
+    String STAR_VEIL = "star_veil";
+    String BEE_CLOAK = "bee_cloak";
+    String MANA_CLOAK = "mana_cloak";
 
-    //星星落地时是否变为回复魔力的拾取物（魔力斗篷等）
-    default boolean summonManaStarOnLanding(ItemStack stack, LivingEntity entity) {
-        return false;
-    }
+    String getStar(ItemStack stack, LivingEntity entity);
 
     IStaticProjectileBehavior PROJECTILE_BEHAVIOR = new IStaticProjectileBehavior() {
         @Override
@@ -46,14 +44,9 @@ public interface FallenStarSummoner {
                 if(owner == null) return;
                 if(!FilterUtil.createTargetFilter(owner).test(target) || !(owner instanceof Player player)) return;
                 ItemStack stack = projectile.getEntityData().get(StaticProjectile.STACK_SOURCE);
-                double[] fallenStarDamage = {0.0D};
-                AccessoryUtil.forEachAccessory(player, (accessory, accessoryStack) -> {
-                    if(accessory instanceof FallenStarSummoner summoner) {
-                        fallenStarDamage[0] = Math.max(summoner.getFallenStarDamage(accessoryStack, player), fallenStarDamage[0]);
-                    }
-                });
-                if(DamageUtil.meleeAttack(projectile, target, stack, (float) fallenStarDamage[0], 1.0f, 10)) {
-                }
+                CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
+                double damage = customData.contains("damage") ? customData.getDouble("damage") : 0;
+                DamageUtil.meleeAttack(projectile, target, stack, (float) damage, 1.0f, 10);
             }
         }
         @Override
@@ -86,11 +79,12 @@ public interface FallenStarSummoner {
                     summon.setPos(projectile.position());
                     summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.MANA_STAR);
                     summon.getEntityData().set(StaticSummon.RENDER_MODE, "item");
-                    summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.MANA_STAR.get()));
+                    summon.getEntityData().set(StaticSummon.ITEM, new ItemStack(ModItems.MANA_STAR2.get()));
                     summon.getEntityData().set(StaticSummon.LIFETIME, 100);
                     summon.getEntityData().set(StaticSummon.GLOW, true);
                     CompoundTag summonCustomData = new CompoundTag();
                     summonCustomData.putInt("mana", 50);
+                    summonCustomData.putDouble("min_attract_range", 12.0D);
                     summon.getEntityData().set(StaticSummon.CUSTOM_DATA, summonCustomData);
                     projectile.level().addFreshEntity(summon);
                 }

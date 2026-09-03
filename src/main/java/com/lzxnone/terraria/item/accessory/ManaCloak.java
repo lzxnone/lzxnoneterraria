@@ -8,6 +8,7 @@ import com.lzxnone.terraria.item.effect.ManaCostModifier;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
+import com.lzxnone.terraria.ui.config.struct.ConfigInt;
 import com.lzxnone.terraria.ui.config.struct.ConfigStruct;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -34,24 +35,21 @@ public class ManaCloak extends AccessoryItem implements FallenStarSummoner, Mana
         0.0D,
         1.0D
     );
+    public static final ConfigInt ATTACK_COOLDOWN = new ConfigInt(
+        "accessory.mana_cloak.attack_cooldown",
+        "attack_cooldown",
+        20,
+        0,
+        1200
+    );
 
     public ManaCloak() {
         super(new Item.Properties().stacksTo(1));
     }
 
     @Override
-    public boolean summonThreeFallenStar(ItemStack stack, LivingEntity entity) {
-        return true;
-    }
-
-    @Override
-    public double getFallenStarDamage(ItemStack stack, LivingEntity entity) {
-        return FALLEN_STAR_DAMAGE.get();
-    }
-
-    @Override
-    public boolean summonManaStarOnLanding(ItemStack stack, LivingEntity entity) {
-        return true;
+    public String getStar(ItemStack stack, LivingEntity entity) {
+        return FallenStarSummoner.MANA_CLOAK;
     }
 
     @Override
@@ -67,7 +65,7 @@ public class ManaCloak extends AccessoryItem implements FallenStarSummoner, Mana
     public static final IConfigData CONFIG_DATA = new IConfigData() {
         @Override
         public void onConfigLoad() {
-            ConfigStruct.loadAll(FALLEN_STAR_DAMAGE, MANA_COST_MULTIPLIER);
+            ConfigStruct.loadAll(FALLEN_STAR_DAMAGE, MANA_COST_MULTIPLIER, ATTACK_COOLDOWN);
         }
     };
 
@@ -82,7 +80,7 @@ public class ManaCloak extends AccessoryItem implements FallenStarSummoner, Mana
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         tooltipComponents.add(Component.translatable(
-            "tooltip.lzxnoneterraria.fallen_star_summon"
+            "tooltip.lzxnoneterraria.mana_cloak_fallen_star_summon"
         ).withStyle(ChatFormatting.GRAY));
         if(MANA_COST_MULTIPLIER.get() != 1.0D) {
             tooltipComponents.add(Component.translatable(

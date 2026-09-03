@@ -23,6 +23,9 @@
   "beam2": {
     "sounds": ["lzxnoneterraria:beam2"]
   },
+  "beam3": {
+    "sounds": ["lzxnoneterraria:beam3"]
+  },
   "betsys_fireball_shoot": {
     "sounds": [
       "lzxnoneterraria:betsys_fireball_shoot",

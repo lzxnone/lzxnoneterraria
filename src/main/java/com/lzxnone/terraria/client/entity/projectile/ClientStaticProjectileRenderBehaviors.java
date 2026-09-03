@@ -1,6 +1,7 @@
 package com.lzxnone.terraria.client.entity.projectile;
 
 import com.lzxnone.terraria.client.item.accessory.ClientAccessoryFallenStar;
+import com.lzxnone.terraria.client.item.magic.ClientGemStaff;
 import com.lzxnone.terraria.client.item.magic.ClientStellarTune;
 import com.lzxnone.terraria.client.item.magic.ClientNebulaArcanum;
 import com.lzxnone.terraria.client.item.melee.ClientBladeOfGrass;
@@ -42,6 +43,7 @@ public class ClientStaticProjectileRenderBehaviors {
         BEHAVIORS.put(StaticProjectileBehaviors.NEBULA_ARCANUM_ORBIT_PROJECTILE, ClientNebulaArcanum.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(StaticProjectileBehaviors.STELLAR_TUNE_PROJECTILE, ClientStellarTune.PROJECTILE_BEHAVIOR);
         BEHAVIORS.put(StaticProjectileBehaviors.STARDUST_CELL_PROJECTILE, ClientStardustCellStaff.PROJECTILE_BEHAVIOR);
+        BEHAVIORS.put(StaticProjectileBehaviors.GEM_STAFF_PROJECTILE, ClientGemStaff.PROJECTILE_BEHAVIOR);
     }
 
     public static IStaticProjectileRenderBehavior getBehavior(String id) {

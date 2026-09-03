@@ -3,6 +3,8 @@ package com.lzxnone.terraria.utils;
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.damage.ModDamageTypes;
+import com.lzxnone.terraria.effect.ModEffects;
+import com.lzxnone.terraria.effect.ManaSurgeEffect;
 import com.lzxnone.terraria.entity.beam.SwordBeam;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
 import com.lzxnone.terraria.entity.summon.BeeSummon;
@@ -183,6 +185,10 @@ public class DamageUtil {
             if(category == DamageCategory.MELEE) {
                 //近战着火
                 if(AccessoryUtil.canApplyIgnite(player)) target.igniteForTicks(AccessoryUtil.getIgniteTicks(player));
+            }
+            if(category == DamageCategory.MAGIC) {
+                //召唤落星
+                AccessoryUtil.applyFallenStarSummonerOnAttack(player, target);
             }
             if(target instanceof LivingEntity livingTarget) {
                 Vec3 hurtKnockback = livingTarget.getDeltaMovement().subtract(beforeHurtMovement);

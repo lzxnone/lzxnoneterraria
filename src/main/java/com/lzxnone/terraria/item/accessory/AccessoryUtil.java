@@ -3,6 +3,7 @@ package com.lzxnone.terraria.item.accessory;
 import com.google.common.collect.Multimap;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.LzxnoneTerraria;
+import com.lzxnone.terraria.attachment.ModAttachments;
 import com.lzxnone.terraria.effect.ModEffects;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.projectile.StaticProjectile;
@@ -17,12 +18,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -490,55 +491,106 @@ public class AccessoryUtil {
         entity.invulnerableTime = (int) finalTime;
     }
 
-    public static void applyFallenStarSummoner(LivingEntity entity) {
-        boolean[] result = {false};
-        boolean[] summonManaStar = {false};
+    public static String getFallenStar(LivingEntity entity) {
+        String[] result = {"", FallenStarSummoner.STAR_CLOAK, FallenStarSummoner.STAR_VEIL, FallenStarSummoner.BEE_CLOAK, FallenStarSummoner.MANA_CLOAK};
+        int[] idx = {0};
         AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
-            if(result[0]) return;
-            if(accessory instanceof FallenStarSummoner summoner) {
-                result[0] = summoner.summonThreeFallenStar(stack, entity);
-                if(summoner.summonManaStarOnLanding(stack, entity)) summonManaStar[0] = true;
+            if(accessory instanceof ManaCloak) {
+                idx[0] = Math.max(idx[0], 4);
+            }else if(accessory instanceof BeeCloak) {
+                idx[0] = Math.max(idx[0], 3);
+            }else if(accessory instanceof StarVeil) {
+                idx[0] = Math.max(idx[0], 2);
+            }else if(accessory instanceof StarCloak) {
+                idx[0] = Math.max(idx[0], 1);
             }
         });
-        if(result[0]) {
-            SoundUtil.playServerSound(entity.level(), ModSounds.STAR_FALL.get(), entity.position());
+        return result[idx[0]];
+    }
+
+    public static StaticProjectile createFallenStar(LivingEntity summoner, Entity target, String type, Double damage) {
+        Vec3 targetPos = target.position();
+        Vec3 spawnPos = new Vec3(
+            targetPos.x + 5.0 * (Math.random() * 2 - 1),
+            targetPos.y + 12,
+            targetPos.z + 5.0 * (Math.random() * 2 - 1)
+        );
+        Vector3f[] dirs = MathUtil.computeCoordinateSystem(new Vec3(targetPos.x - spawnPos.x, targetPos.y - spawnPos.y, targetPos.z - spawnPos.z).toVector3f(), 0);
+
+        StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), target.level());
+        projectile.setOwner(summoner);
+        projectile.setPos(spawnPos);
+        projectile.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.ACCESSORY_FALLEN_STAR_PROJECTILE);
+        projectile.getEntityData().set(StaticProjectile.RENDER_MODE, "custom");
+        projectile.getEntityData().set(StaticProjectile.ORIGIN, MathUtil.toVector3f(spawnPos));
+        projectile.getEntityData().set(StaticProjectile.ITEM, new ItemStack(ModItems.WHITE_STAR2.get()));
+        projectile.getEntityData().set(StaticProjectile.LIFETIME, 300);
+        projectile.getEntityData().set(StaticProjectile.DIRECTION, dirs[0]);
+        projectile.getEntityData().set(StaticProjectile.UP, dirs[1]);
+        projectile.getEntityData().set(StaticProjectile.RIGHT, dirs[2]);
+        projectile.getEntityData().set(StaticProjectile.GLOW, true);
+        projectile.getEntityData().set(StaticProjectile.RXP, 90);
+        projectile.getEntityData().set(StaticProjectile.RYPS, 18);
+        projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", 2.0));
+
+        CompoundTag customData = new CompoundTag();
+        customData.putInt("targetLifetime", (int) Math.floor(targetPos.distanceTo(spawnPos) / 2.0));
+        customData.putString("type", type);
+        customData.putDouble("damage", damage);
+        projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
+
+        projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
+        return projectile;
+    }
+
+    public static void applyFallenStarSummonerOnHurt(LivingEntity entity) {
+        String star = getFallenStar(entity);
+        if(star.equals(FallenStarSummoner.STAR_CLOAK)) {
             for(int i = 0;i < 3;i++) {
-                Vec3 targetPos = entity.position();
-
-                Vec3 spawnPos = new Vec3(
-                        targetPos.x + 5.0 * (Math.random() * 2 - 1),
-                        targetPos.y + 12,
-                        targetPos.z + 5.0 * (Math.random() * 2 - 1)
-                );
-
-                Vector3f[] dirs = MathUtil.computeCoordinateSystem(new Vec3(targetPos.x - spawnPos.x, targetPos.y - spawnPos.y, targetPos.z - spawnPos.z).toVector3f(), 0);
-
-                StaticProjectile projectile = new StaticProjectile(ModEntities.STATIC_PROJECTILE.get(), entity.level());
-                projectile.setOwner(entity);
-                projectile.setPos(spawnPos);
-                projectile.getEntityData().set(StaticProjectile.BEHAVIOR, StaticProjectileBehaviors.ACCESSORY_FALLEN_STAR_PROJECTILE);
-                projectile.getEntityData().set(StaticProjectile.RENDER_MODE, "custom");
-                projectile.getEntityData().set(StaticProjectile.ORIGIN, MathUtil.toVector3f(spawnPos));
-                projectile.getEntityData().set(StaticProjectile.ITEM, new ItemStack(ModItems.WHITE_STAR.get()));
-                projectile.getEntityData().set(StaticProjectile.LIFETIME, 300);
-                projectile.getEntityData().set(StaticProjectile.DIRECTION, dirs[0]);
-                projectile.getEntityData().set(StaticProjectile.UP, dirs[1]);
-                projectile.getEntityData().set(StaticProjectile.RIGHT, dirs[2]);
-                projectile.getEntityData().set(StaticProjectile.GLOW, true);
-                projectile.getEntityData().set(StaticProjectile.RXP, 90);
-                projectile.getEntityData().set(StaticProjectile.EXPRESSION_Z, String.format("%.3f*t", 2.0));
-
-                CompoundTag customData = new CompoundTag();
-                customData.putInt("targetLifetime", (int) Math.floor(targetPos.distanceTo(spawnPos) / 2.0));
-                if(summonManaStar[0] && i == 0) customData.putBoolean("summonManaStar", true);
-                projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
-
-                projectile.setDeltaMovement(MathUtil.toVec3(dirs[0]));
+                StaticProjectile projectile = createFallenStar(entity, entity, FallenStarSummoner.STAR_CLOAK, StarCloak.FALLEN_STAR_DAMAGE.get());
                 entity.level().addFreshEntity(projectile);
+                SoundUtil.playServerSound(entity.level(), ModSounds.STAR_FALL.get(), projectile.position());
+            }
+        }else if(star.equals(FallenStarSummoner.STAR_VEIL)) {
+            for(int i = 0;i < 3;i++) {
+                StaticProjectile projectile = createFallenStar(entity, entity, FallenStarSummoner.STAR_VEIL, StarVeil.FALLEN_STAR_DAMAGE.get());
+                entity.level().addFreshEntity(projectile);
+                SoundUtil.playServerSound(entity.level(), ModSounds.STAR_FALL.get(), projectile.position());
+            }
+        }else if(star.equals(FallenStarSummoner.BEE_CLOAK)) {
+            for(int i = 0;i < 3;i++) {
+                StaticProjectile projectile = createFallenStar(entity, entity, FallenStarSummoner.BEE_CLOAK, BeeCloak.FALLEN_STAR_DAMAGE.get());
+                entity.level().addFreshEntity(projectile);
+                SoundUtil.playServerSound(entity.level(), ModSounds.STAR_FALL.get(), projectile.position());
+            }
+        }else if(star.equals(FallenStarSummoner.MANA_CLOAK)) {
+            for(int i = 0;i < 3;i++) {
+                StaticProjectile projectile = createFallenStar(entity, entity, FallenStarSummoner.MANA_CLOAK, ManaCloak.FALLEN_STAR_DAMAGE.get());
+                entity.level().addFreshEntity(projectile);
+                SoundUtil.playServerSound(entity.level(), ModSounds.STAR_FALL.get(), projectile.position());
             }
         }
     }
 
+    public static void applyFallenStarSummonerOnAttack(LivingEntity entity, Entity target) {
+        if(entity.level().isClientSide()) return;
+        LzxnoneTerraria.LOGGER.info("11");
+        String star = getFallenStar(entity);
+        if(star.equals(FallenStarSummoner.MANA_CLOAK)) {
+            long gameTime = entity.level().getGameTime();
+            long lastTime = entity.getData(ModAttachments.LAST_ACCESSORY_FALLEN_STAR_TIME);
+            int cooldown = ManaCloak.ATTACK_COOLDOWN.get();
+            if(gameTime - lastTime < cooldown) return;
+
+            StaticProjectile projectile = createFallenStar(entity, target, FallenStarSummoner.MANA_CLOAK, ManaCloak.FALLEN_STAR_DAMAGE.get());
+            CompoundTag customData = projectile.getEntityData().get(StaticProjectile.CUSTOM_DATA);
+            customData.putBoolean("summonManaStar", true);
+            projectile.getEntityData().set(StaticProjectile.CUSTOM_DATA, customData);
+            entity.level().addFreshEntity(projectile);
+            entity.setData(ModAttachments.LAST_ACCESSORY_FALLEN_STAR_TIME, gameTime);
+            SoundUtil.playServerSound(entity.level(), ModSounds.STAR_FALL.get(), projectile.position());
+        }
+    }
 
     public static void applyBeeSummoner(LivingEntity entity) {
         int[] maxCount = {0};

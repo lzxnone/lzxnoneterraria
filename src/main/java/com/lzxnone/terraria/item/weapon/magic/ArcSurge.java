@@ -1,5 +1,7 @@
 package com.lzxnone.terraria.item.weapon.magic;
 
+import com.lzxnone.terraria.effect.ManaSurgeEffect;
+
 import com.lzxnone.terraria.LzxnoneTerraria;
 import com.lzxnone.terraria.ModSounds;
 import com.lzxnone.terraria.effect.ModEffects;
@@ -70,7 +72,7 @@ public class ArcSurge extends MagicWeapon {
     public static final double COLLISION_INFLATE = 0.35D;    // 碰撞检测膨胀大小
 
     public static final DustParticleOptions DUST_PARTICLE = new DustParticleOptions(
-        0.075f, 0.2f, 25, true, new Vector3f[]{
+        0.04f, 0.2f, 25, true, new Vector3f[]{
             new Vector3f(1.0F, 0.15F, 0.15F),
             new Vector3f(0.9F, 0.05F, 0.1F)
         }

@@ -73,6 +73,7 @@ public class Weapon extends Item {
     }
 
     public static int getEnchantmentLevel(LivingEntity entity, ItemStack stack, ResourceKey<Enchantment> enchantment) {
+        if(entity == null) return 0;
         return entity.registryAccess()
             .lookupOrThrow(Registries.ENCHANTMENT)
             .get(enchantment)

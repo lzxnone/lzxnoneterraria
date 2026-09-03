@@ -4,6 +4,7 @@ import com.lzxnone.terraria.item.ammo.*;
 import com.lzxnone.terraria.item.normal.FallenStar;
 import com.lzxnone.terraria.item.normal.ManaStar;
 import com.lzxnone.terraria.item.weapon.magic.*;
+import com.lzxnone.terraria.item.weapon.magic.gem_staff.GemStaff;
 import com.lzxnone.terraria.item.weapon.melee.flail.Flail;
 import com.lzxnone.terraria.item.weapon.ranged.ElfMelter;
 import com.lzxnone.terraria.item.weapon.melee.*;
@@ -63,6 +64,7 @@ public class StaticSummonBehaviors {
     public static final String POSSESSION_VISION = "possession_vision";
     public static final String NIGHTGLOW_PROJECTILE = "nightglow_projectile";
     public static final String ARC_SURGE_LIGHTNING = "arc_surge_lightning";
+    public static final String GEM_STAFF_PROJECTILE = "gem_staff_projectile";
 
     //通用子弹实体
     public static final String MUSKET_BALL = "musket_ball";
@@ -128,6 +130,7 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(POSSESSION_VISION, Possession.SUMMON_BEHAVIOR);
         BEHAVIORS.put(NIGHTGLOW_PROJECTILE, Nightglow.SUMMON_BEHAVIOR);
         BEHAVIORS.put(ARC_SURGE_LIGHTNING, ArcSurge.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(GEM_STAFF_PROJECTILE, GemStaff.SUMMON_BEHAVIOR);
 
         BEHAVIORS.put(MUSKET_BALL, MusketBall.SUMMON_BEHAVIOR);
         BEHAVIORS.put(METEOR_SHOT, MeteorShot.SUMMON_BEHAVIOR);

@@ -1,5 +1,6 @@
 package com.lzxnone.terraria;
 
+import com.lzxnone.terraria.client.ClientArmorRegistration;
 import com.lzxnone.terraria.ui.config.ConfigScreen;
 import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.client.entity.beam.SwordBeamRenderer;
@@ -50,6 +51,9 @@ public class LzxnoneTerrariaClient {
         modEventBus.addListener(EntityRenderersEvent.RegisterRenderers.class, event -> {
             event.registerEntityRenderer(ModEntities.BEE_SUMMON.get(), BeeRenderer::new);
         });
+
+        //护甲渲染与模型注册
+        ClientArmorRegistration.register(modEventBus);
 
         //粒子渲染
         modEventBus.addListener(RegisterParticleProvidersEvent.class, event -> {
