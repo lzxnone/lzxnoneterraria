@@ -68,6 +68,7 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.RUBY_STAFF.get());
                 output.accept(ModItems.AMBER_STAFF.get());
                 output.accept(ModItems.DIAMOND_STAFF.get());
+                output.accept(ModItems.BEJEWELED_STAFF.get());
                 output.accept(ModItems.ROBE.get());
                 output.accept(ModItems.AMETHYST_ROBE.get());
                 output.accept(ModItems.TOPAZ_ROBE.get());

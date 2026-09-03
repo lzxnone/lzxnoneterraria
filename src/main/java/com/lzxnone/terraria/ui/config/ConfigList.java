@@ -198,6 +198,7 @@ public class ConfigList {
             RubyStaff.CONFIG_LIST_ITEM,
             AmberStaff.CONFIG_LIST_ITEM,
             DiamondStaff.CONFIG_LIST_ITEM,
+            BejeweledStaff.CONFIG_LIST_ITEM,
             Minishark.CONFIG_LIST_ITEM,
             FlintlockPistol.CONFIG_LIST_ITEM,
             Boomstick.CONFIG_LIST_ITEM,

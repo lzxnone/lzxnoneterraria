@@ -72,6 +72,7 @@ public class ModItems {
     public static final DeferredItem<Item> RUBY_STAFF = ITEMS.register("ruby_staff", RubyStaff::new);
     public static final DeferredItem<Item> AMBER_STAFF = ITEMS.register("amber_staff", AmberStaff::new);
     public static final DeferredItem<Item> DIAMOND_STAFF = ITEMS.register("diamond_staff", DiamondStaff::new);
+    public static final DeferredItem<Item> BEJEWELED_STAFF = ITEMS.register("bejeweled_staff", BejeweledStaff::new);
 
     //远程武器
     public static final DeferredItem<Item> MUSKET = ITEMS.register("musket", Musket::new);

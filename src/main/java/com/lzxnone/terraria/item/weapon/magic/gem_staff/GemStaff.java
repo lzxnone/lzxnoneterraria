@@ -74,7 +74,6 @@ public abstract class GemStaff extends MagicWeapon {
             boolean amethyst = (skill & SKILL_AMETHYST) != 0;
             boolean emerald = (skill & SKILL_EMERALD) != 0;
             boolean amber = (skill & SKILL_AMBER) != 0;
-            boolean sapphire = (skill & SKILL_SAPPHIRE) != 0;
 
             Vec3 currentDir = summon.getLookAngle().normalize();
             Vec3 nextDir = currentDir;
@@ -540,7 +539,7 @@ public abstract class GemStaff extends MagicWeapon {
                 CompoundTag projData = new CompoundTag();
                 projData.putInt("skill", skill);
                 projData.putUUID("playerUUID", player.getUUID());
-                projData.putFloat("damage", ruby ? getDamage(weaponStack, player) / 2 : getDamage(weaponStack, player));
+                projData.putFloat("damage", (ruby || sapphire) ? getDamage(weaponStack, player) / 2 : getDamage(weaponStack, player));
                 projData.putFloat("knockback", getKnockback(weaponStack, player));
                 projData.putFloat("colorR", color.x);
                 projData.putFloat("colorG", color.y);
