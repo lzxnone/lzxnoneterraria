@@ -136,12 +136,8 @@ public class LastPrism extends MagicWeapon {
     }
 
     @Override
-    protected double getManaTooltipValue(ItemStack stack) {
-        Player player = null;
-        if(net.neoforged.fml.loading.FMLEnvironment.dist.isClient()) {
-            player = net.minecraft.client.Minecraft.getInstance().player;
-        }
-        return getFinalManaConsumeRate(stack, player, MANA_CONSUME_RATE.get());
+    public double getManaTooltipValue(ItemStack stack, LivingEntity entity) {
+        return getFinalManaConsumeRate(stack, entity, MANA_CONSUME_RATE.get());
     }
 
     public static final ConfigListItem CONFIG_LIST_ITEM = new ConfigListItem(

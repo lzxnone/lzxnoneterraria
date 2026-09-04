@@ -91,6 +91,16 @@ public class ItemTooltipHandler {
                         ).withStyle(ChatFormatting.RED)
                     );
                 }
+
+                double mana = magicWeapon.getManaTooltipValue(stack, player);
+                if(mana > 0.0D) {
+                    event.getToolTip().add(
+                        Component.translatable(
+                            "tooltip.lzxnoneterraria.magic_weapon_mana",
+                            mana == Math.rint(mana) ? String.valueOf((int) mana) : String.format("%.2f", mana)
+                        ).withStyle(ChatFormatting.BLUE)
+                    );
+                }
             }
         }
     }

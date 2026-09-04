@@ -142,25 +142,8 @@ public class MagicWeapon extends Weapon {
     //提供基础魔力消耗
     protected double getManaConsumeRate(ItemStack stack, LivingEntity entity) { return 0.0D; }
 
-    protected double getManaTooltipValue(ItemStack stack) {
-        Player player = null;
-        if(net.neoforged.fml.loading.FMLEnvironment.dist.isClient()) {
-            player = net.minecraft.client.Minecraft.getInstance().player;
-        }
-        return getFinalManaConsumeRate(stack, player);
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context,
-                                List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        double mana = getManaTooltipValue(stack);
-        if(mana > 0.0D) {
-            tooltipComponents.add(Component.translatable(
-                "tooltip.lzxnoneterraria.magic_weapon_mana",
-                mana == Math.rint(mana) ? String.valueOf((int) mana) : String.format("%.2f", mana)
-            ).withStyle(ChatFormatting.BLUE));
-        }
+    public double getManaTooltipValue(ItemStack stack, LivingEntity entity) {
+        return getFinalManaConsumeRate(stack, entity);
     }
 
     //获取最终魔力消耗
