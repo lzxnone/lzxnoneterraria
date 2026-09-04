@@ -1,0 +1,39 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "ABC",
+    "DEF",
+    "IGI"
+  ],
+  "key": {
+    "A": {
+      "item": "lzxnoneterraria:amethyst_staff"
+    },
+    "B": {
+      "item": "lzxnoneterraria:topaz_staff"
+    },
+    "C": {
+      "item": "lzxnoneterraria:sapphire_staff"
+    },
+    "D": {
+      "item": "lzxnoneterraria:emerald_staff"
+    },
+    "E": {
+      "item": "lzxnoneterraria:ruby_staff"
+    },
+    "F": {
+      "item": "lzxnoneterraria:amber_staff"
+    },
+    "G": {
+      "item": "lzxnoneterraria:diamond_staff"
+    },
+    "I": {
+      "item": "minecraft:netherite_scrap"
+    }
+  },
+  "result": {
+    "id": "lzxnoneterraria:bejeweled_staff",
+    "count": 1
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "  A",
+    " B ",
+    "C  "
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:lapis_block"
+    },
+    "B": {
+      "item": "minecraft:lapis_lazuli"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    }
+  },
+  "result": {
+    "id": "lzxnoneterraria:sapphire_staff",
+    "count": 1
+  }
+}
