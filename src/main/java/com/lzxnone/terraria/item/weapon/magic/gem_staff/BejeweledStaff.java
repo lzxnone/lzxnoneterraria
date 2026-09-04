@@ -151,7 +151,7 @@ public class BejeweledStaff extends MagicWeapon {
             CompoundTag projData = new CompoundTag();
             projData.putInt("skill", skill);
             projData.putUUID("playerUUID", player.getUUID());
-            projData.putFloat("damage", DAMAGE.get());
+            projData.putFloat("damage", DAMAGE.get() / 3.0F);
             projData.putFloat("knockback", 0.5F);
             projData.putFloat("colorR", color.x);
             projData.putFloat("colorG", color.y);

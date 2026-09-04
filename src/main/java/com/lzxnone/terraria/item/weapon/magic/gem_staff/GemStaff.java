@@ -56,9 +56,9 @@ public abstract class GemStaff extends MagicWeapon {
     public static final double BURST_OFFSET = -1.2D;
 
     public static final int LIFETIME = 50;
-    public static final double TURN_RATE = 0.35D;
-    public static final double CLOSE_TARGET_RANGE = 5.0D;
-    public static final double CLOSE_TURN_RATE = 0.75D;
+    public static final double INITIAL_TURN_ANGLE = Math.toRadians(5.0D);
+    public static final double DASHED_TURN_ANGLE = Math.toRadians(30.0D);
+    public static final int DASH_TICKS = 1;
     public static final double DEFAULT_HITBOX_INFLATE = 0.35D;
 
     /**
@@ -75,28 +75,53 @@ public abstract class GemStaff extends MagicWeapon {
             boolean emerald = (skill & SKILL_EMERALD) != 0;
             boolean amber = (skill & SKILL_AMBER) != 0;
 
-            Vec3 currentDir = summon.getLookAngle().normalize();
+            //Vec3 currentDir = summon.getLookAngle().lengthSqr() > 1.0E-6D ? summon.getLookAngle().normalize() :
+            //    (summon.getDeltaMovement().lengthSqr() > 1.0E-6D ? summon.getDeltaMovement().normalize() : new Vec3(0, 0, 1));
+            Vec3 currentDir = summon.getDeltaMovement().normalize();
             Vec3 nextDir = currentDir;
-
-            // 紫晶追踪
-            if(amethyst) {
-                double targetRange = AmethystStaff.TARGET_RANGE.get();
-                Entity target = findTarget(summon, targetRange);
-                if(target != null) {
-                    Vec3 targetCenter = target.getBoundingBox().getCenter();
-                    Vec3 targetDir = targetCenter.subtract(summon.position()).normalize();
-                    double turnRate = targetCenter.distanceTo(summon.position()) <= CLOSE_TARGET_RANGE ? CLOSE_TURN_RATE : TURN_RATE;
-                    if (hasLineOfSight(summon.level(), summon, summon.position(), targetCenter)) {
-                        nextDir = steer(currentDir, targetDir, turnRate);
-                    }
-                }
-            }
 
             double speed = summon.getDeltaMovement().length();
             if(emerald) {
                 speed *= EmeraldStaff.DRAG.get();
                 if(customData.contains("stop")) speed = 0;
             }
+
+            // 紫晶追踪（参考夜光逻辑：在快要到达时锁定直线冲刺一段距离，穿过实体形成平滑自然轨迹）
+            if(amethyst) {
+                int dashTime = customData.getInt("dashTime");
+                if(dashTime > 0) {
+                    // 处于直线冲刺状态：保持当前直线方向不进行转向，直到穿过实体
+                    nextDir = currentDir;
+                    customData.putInt("dashTime", dashTime - 1);
+                    summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+                } else {
+                    double targetRange = AmethystStaff.TARGET_RANGE.get();
+                    Entity target = findTarget(summon, targetRange);
+                    if(target != null) {
+                        Vec3 targetCenter = target.getBoundingBox().getCenter();
+                        Vec3 toTarget = targetCenter.subtract(summon.position());
+                        double dist = toTarget.length();
+
+                        boolean hasDashed = customData.getBoolean("hasDashed");
+                        double turnAngle = hasDashed ? DASHED_TURN_ANGLE : INITIAL_TURN_ANGLE;
+
+                        if(dist < speed) {
+                            // 距离小于阈值（快要到达时）：按角速度平滑对准并设置 dashTime 保持直线冲刺穿透实体
+                            nextDir = MathUtil.rotateTowards(currentDir, toTarget, turnAngle);
+                            customData.putInt("dashTime", DASH_TICKS);
+                            customData.putBoolean("hasDashed", true);
+                            summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
+                        } else {
+                            // 距离较远时：使用 MathUtil.rotateTowards 沿球面按固定角速度平滑追击，避免反向拉扯
+                            Vec3 targetDir = toTarget.normalize();
+                            if (hasLineOfSight(summon.level(), summon, summon.position(), targetCenter)) {
+                                nextDir = MathUtil.rotateTowards(currentDir, targetDir, turnAngle);
+                            }
+                        }
+                    }
+                }
+            }
+
             Vec3 motion = nextDir.normalize().scale(speed);
             summon.setDeltaMovement(motion);
 
@@ -126,6 +151,7 @@ public abstract class GemStaff extends MagicWeapon {
 
                         int hitCount = customData.getInt("hitCount") + 1;
                         customData.putInt("hitCount", hitCount);
+                        customData.putInt("dashTime", 0);
                         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
                         if(hitCount >= AmberStaff.MAX_HIT_COUNT.get()) {
                             onDied(summon);
@@ -138,10 +164,10 @@ public abstract class GemStaff extends MagicWeapon {
                         }
                         int hitCount = customData.getInt("hitCount") + 1;
                         customData.putInt("hitCount", hitCount);
-                        summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
 
                         //翡翠停止
                         customData.putBoolean("stop", true);
+                        customData.putInt("dashTime", 0);
                         summon.getEntityData().set(StaticSummon.CUSTOM_DATA, customData);
                         summon.setPos(blockHitResult.getLocation().add(Vec3.atLowerCornerOf(blockHitResult.getDirection().getNormal()).scale(0.05D)));
                         updateRotation(summon, nextDir);
@@ -585,11 +611,6 @@ public abstract class GemStaff extends MagicWeapon {
         )).getType() == HitResult.Type.MISS;
     }
 
-    private static Vec3 steer(Vec3 currentDir, Vec3 desiredDir, double turnRate) {
-        Vec3 steered = currentDir.scale(1.0D - turnRate).add(desiredDir.normalize().scale(turnRate));
-        if (steered.lengthSqr() < 1.0E-7D) return desiredDir.normalize();
-        return steered.normalize();
-    }
 
     private static void updateRotation(StaticSummon summon, Vec3 motion) {
         float[] xyRot = MathUtil.computeXYRot(motion.toVector3f());

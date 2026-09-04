@@ -167,4 +167,39 @@ public class MathUtil {
     public static Vec3 toVec3(Vector3f vector3f) {
         return new Vec3(vector3f.x, vector3f.y, vector3f.z);
     }
+
+    /**
+     * 将当前方向沿着球面朝着目标方向平滑旋转，单刻最大旋转角为 maxAngleRadians（弧度）
+     * 解决了两向量相反（180度）时 lerp 产生共线拉扯的对跖奇点问题，能划出优美真实的圆弧
+     */
+    public static Vec3 rotateTowards(Vec3 current, Vec3 target, double maxAngleRadians) {
+        if(current.lengthSqr() < 1.0E-7D) return target.normalize();
+        if(target.lengthSqr() < 1.0E-7D) return current.normalize();
+
+        Vec3 from = current.normalize();
+        Vec3 to = target.normalize();
+        double dot = Mth.clamp(from.dot(to), -1.0D, 1.0D);
+        double angle = Math.acos(dot);
+
+        // 夹角小于单刻最大角，直接返回目标方向
+        if(angle <= maxAngleRadians) {
+            return to;
+        }
+
+        // 旋转轴 = from x to
+        Vec3 axis = from.cross(to);
+        // 处理 180 度反向奇点：叉积接近 0 时，选取与 from 垂直的参考轴
+        if(axis.lengthSqr() < 1.0E-6D) {
+            axis = Math.abs(from.y) < 0.9D ? from.cross(new Vec3(0, 1, 0)) : from.cross(new Vec3(1, 0, 0));
+        }
+        axis = axis.normalize();
+
+        // 罗德里格旋转公式：沿 axis 旋转 maxAngleRadians 弧度
+        Vec3 ortho = axis.cross(from);
+        return from.scale(Math.cos(maxAngleRadians)).add(ortho.scale(Math.sin(maxAngleRadians))).normalize();
+    }
+
+    public static Vec3 rotateTowardsDegrees(Vec3 current, Vec3 target, double maxAngleDegrees) {
+        return rotateTowards(current, target, Math.toRadians(maxAngleDegrees));
+    }
 }
