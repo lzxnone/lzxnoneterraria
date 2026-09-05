@@ -56,7 +56,7 @@ public abstract class GemStaff extends MagicWeapon {
     public static final double BURST_OFFSET = -1.2D;
 
     public static final int LIFETIME = 50;
-    public static final double INITIAL_TURN_ANGLE = Math.toRadians(5.0D);
+    public static final double INITIAL_TURN_ANGLE = Math.toRadians(10);
     public static final double DASHED_TURN_ANGLE = Math.toRadians(30.0D);
     public static final int DASH_TICKS = 1;
     public static final double DEFAULT_HITBOX_INFLATE = 0.35D;
