@@ -2,13 +2,10 @@
 
 <div align="center">
 
-![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-brightgreen.svg?style=flat-square&logo=minecraft)
-![NeoForge](https://img.shields.io/badge/NeoForge-21.1.200+-orange.svg?style=flat-square)
+![Platform](https://img.shields.io/badge/Platform-Minecraft%20NeoForge-brightgreen.svg?style=flat-square&logo=minecraft)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)
-![Version](https://img.shields.io/badge/Version-1.9.1-blue.svg?style=flat-square)
-![Java](https://img.shields.io/badge/Java-21-red.svg?style=flat-square&logo=openjdk)
 
-**将《泰拉瑞亚》（Terraria）宏大的战斗体验、职业体系与标志性武器装备深度还原至 Minecraft 1.21.1 NeoForge。**
+**将《泰拉瑞亚》（Terraria）宏大的战斗体验、职业体系与标志性武器装备深度还原至 Minecraft。**
 
 [功能特性](#-功能特性) • [职业与武器](#-职业与武器) • [饰品体系](#-饰品体系-curios) • [快捷键](#-快捷键) • [安装与前置](#-安装与前置要求) • [构建指南](#-源码构建) • [开源协议](#-开源协议与鸣谢)
 
@@ -18,7 +15,7 @@
 
 ## 📖 模组简介 (Introduction)
 
-**Lzxnone Terraria** 是一款面向 Minecraft 1.21.1 NeoForge 的大型内容与战斗模组。模组忠实再现了《泰拉瑞亚》四大经典职业（近战、远程、魔法、召唤）以及《灾厄》（Calamity）模组的特色内容。
+**Lzxnone Terraria** 是一款面向 Minecraft NeoForge 的大型内容与战斗模组。模组忠实再现了《泰拉瑞亚》四大经典职业（近战、远程、魔法、召唤）以及《灾厄》（Calamity）模组的特色内容。
 
 模组不仅移植了武器的模型与伤害数值，更重构了**专属魔力系统 (Mana)**、**独立仆从召唤槽位**、**狙击变焦刻度**、**多段连续骨骼与着色器动画**、以及**完整的 Curios 饰品合成进化树**。配合原生 GLSL Core Shaders 与动态光源支持，为玩家带来爽快非凡的战斗体验。
 
@@ -114,11 +111,9 @@
 ## 📦 安装与前置要求 (Installation & Requirements)
 
 ### 必须依赖 (Dependencies)
-- **Minecraft**：`1.21.1`
-- **Mod Loader**：[NeoForge](https://neoforged.net/) (`21.1.200` 或更高版本)
-- **Java**：`Java 21`
-- [Curios API (NeoForge)](https://www.curseforge.com/minecraft/mc-mods/curios-continuation) (`>= 9.5.1`)
-- [LDLib2 (LowDragLib2)](https://github.com/Low-Drag-MC/LDLib2) (`>= 2.2.29`)
+- **Minecraft** 与对应版本的 **NeoForge**
+- [Curios API (NeoForge)](https://www.curseforge.com/minecraft/mc-mods/curios-continuation)
+- [LDLib2 (LowDragLib2)](https://github.com/Low-Drag-MC/LDLib2)
 
 ### 推荐可选兼容 (Recommended Optional)
 - [LambDynamicLights (NeoForge)](https://github.com/LambdAurora/LambDynamicLights)：开启武器光束与弹幕的实时动态发光。
@@ -156,5 +151,5 @@ cd lzxnoneterraria
 ---
 
 <div align="center">
-Made with ❤️ by <b>LZX</b>
+Made with ❤️ by <b>lzxnone</b>
 </div>

@@ -42,11 +42,11 @@ displayName="${mod_name}" #mandatory
 #credits="" #optional
 
 # The authors of the mod, displayed in the mod UI (optional)
-authors="LZX"
+authors="lzxnone"
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Lzxnone Terraria 将《泰拉瑞亚》标志性的武器、魔法魔力系统、仆从召唤、丰富饰品与战斗机制完美还原至 Minecraft 1.21.1 NeoForge。
+为我的世界增加了一些泰拉瑞亚的武器
 '''
 
 # The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
