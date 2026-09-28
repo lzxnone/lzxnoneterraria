@@ -81,28 +81,45 @@ public class FallenStar extends Item {
             );
             if(players.isEmpty()) return false;
 
-            ServerPlayer player = players.getFirst();
+            // 1. 标准包围盒碰撞检测捡起
+            for (ServerPlayer player : players) {
+                if (player.getBoundingBox().intersects(summon.getBoundingBox())) {
+                    ItemStack stack = new ItemStack(ModItems.FALLEN_STAR.get());
+                    if (player.getInventory().add(stack)) {
+                        player.take(summon, 1);
+                        player.containerMenu.broadcastChanges();
+                        player.playNotifySound(
+                            SoundEvents.ITEM_PICKUP,
+                            SoundSource.PLAYERS,
+                            0.2F,
+                            ((player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F
+                        );
+                        onDied(summon);
+                        return true;
+                    }
+                }
+            }
 
-            double attractRange = Math.max(AccessoryUtil.getStarPickupRange(player), MIN_ATTRACT_RADIUS);
-            Vec3 dir = player.getBoundingBox().getCenter().subtract(summon.position());
-            double dist = dir.length();
-            if(dist <= attractRange) {
-                summon.setDeltaMovement(dir.scale(ATTRACT_SPEED));
+            // 2. 吸引逻辑（保持原有吸引范围，寻找最近的可吸引玩家）
+            ServerPlayer closestPlayer = null;
+            double closestDistSq = Double.MAX_VALUE;
+            for (ServerPlayer player : players) {
+                double distSq = summon.distanceToSqr(player);
+                if (distSq < closestDistSq) {
+                    closestDistSq = distSq;
+                    closestPlayer = player;
+                }
             }
-            if(dist <= PICKUP_RADIUS) {
-                ItemStack stack = new ItemStack(ModItems.FALLEN_STAR.get());
-                if(!player.getInventory().add(stack)) return false;
-                player.take(summon, 1);
-                player.containerMenu.broadcastChanges();
-                player.playNotifySound(
-                    SoundEvents.ITEM_PICKUP,
-                    SoundSource.PLAYERS,
-                    0.2F,
-                    ((player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F
-                );
-                onDied(summon);
-                return true;
+
+            if (closestPlayer != null) {
+                double attractRange = Math.max(AccessoryUtil.getStarPickupRange(closestPlayer), MIN_ATTRACT_RADIUS);
+                Vec3 dir = closestPlayer.getBoundingBox().getCenter().subtract(summon.position());
+                double dist = dir.length();
+                if (dist <= attractRange) {
+                    summon.setDeltaMovement(dir.scale(ATTRACT_SPEED));
+                }
             }
+
             return false;
         }
     };

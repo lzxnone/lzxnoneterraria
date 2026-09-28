@@ -54,7 +54,7 @@ public class ManaStar extends Item {
             summon.getEntityData().set(StaticSummon.AGE, age + 1);
         }
 
-         private boolean tryPickup(StaticSummon summon) {
+        private boolean tryPickup(StaticSummon summon) {
             List<ServerPlayer> players = summon.level().getEntitiesOfClass(
                 ServerPlayer.class,
                 summon.getBoundingBox().inflate(MAX_PICKUP_RADIUS),
@@ -62,22 +62,39 @@ public class ManaStar extends Item {
             );
             if(players.isEmpty()) return false;
 
-            ServerPlayer player = players.getFirst();
-
             CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-            double attractRange = Math.max(AccessoryUtil.getStarPickupRange(player), customData.contains("min_attract_range") ? customData.getDouble("min_attract_range") : 4.0D);
-            Vec3 dir = player.getBoundingBox().getCenter().subtract(summon.position());
-            double dist = dir.length();
-            if(dist <= attractRange) {
-                summon.setDeltaMovement(dir.scale(ATTRACT_SPEED));
+
+            // 1. 标准包围盒碰撞检测捡起
+            for (ServerPlayer player : players) {
+                if (player.getBoundingBox().intersects(summon.getBoundingBox())) {
+                    int amount = customData.contains("mana") ? customData.getInt("mana") : 0;
+                    PlayerMana.recoverMana(player, amount);
+                    player.addEffect(new MobEffectInstance(ModEffects.MANA_SURGE, MANA_SURGE_DURATION_TICKS, 0));
+                    onDied(summon);
+                    return true;
+                }
             }
-            if(dist <= PICKUP_RADIUS) {
-                int amount = customData.contains("mana") ? customData.getInt("mana") : 0;
-                PlayerMana.recoverMana(player, amount);
-                player.addEffect(new MobEffectInstance(ModEffects.MANA_SURGE, MANA_SURGE_DURATION_TICKS, 0));
-                onDied(summon);
-                return true;
+
+            // 2. 吸引逻辑（保持原有基础吸引范围不变，寻找最近的可吸引玩家）
+            ServerPlayer closestPlayer = null;
+            double closestDistSq = Double.MAX_VALUE;
+            for (ServerPlayer player : players) {
+                double distSq = summon.distanceToSqr(player);
+                if (distSq < closestDistSq) {
+                    closestDistSq = distSq;
+                    closestPlayer = player;
+                }
             }
+
+            if (closestPlayer != null) {
+                double attractRange = Math.max(AccessoryUtil.getStarPickupRange(closestPlayer), customData.contains("min_attract_range") ? customData.getDouble("min_attract_range") : 4.0D);
+                Vec3 dir = closestPlayer.getBoundingBox().getCenter().subtract(summon.position());
+                double dist = dir.length();
+                if (dist <= attractRange) {
+                    summon.setDeltaMovement(dir.scale(ATTRACT_SPEED));
+                }
+            }
+
             return false;
         }
     };

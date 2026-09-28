@@ -36,7 +36,7 @@ public class RobeModel extends HumanoidArmorModel<LivingEntity> {
                 .texOffs(46, 0).addBox(-2.5F, 0.0F, -2.5F, 5.0F, 5.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(76, 0).addBox(-3.8F, 0.5F, -2.8F, 2.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(76, 0).mirror().addBox(1.8F, 0.5F, -2.8F, 2.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)).mirror(false)
-                .texOffs(60, 0).addBox(-1.0F, 4.0F, -3.2F, 2.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(60, 0).addBox(-1.0F, 2.0F, -3.2F, 2.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(68, 0).addBox(-1.0F, 6.0F, -2.5F, 2.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)),
             PartPose.ZERO
         );
@@ -69,7 +69,7 @@ public class RobeModel extends HumanoidArmorModel<LivingEntity> {
                 .texOffs(64, 36).addBox(-3.0F, 6.0F, -3.0F, 5.0F, 6.0F, 6.0F, new CubeDeformation(0.0F))
                 .texOffs(10, 52).addBox(-2.4F, 0.0F, -2.9F, 2.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(30, 52).addBox(-3.3F, 6.0F, -1.5F, 1.0F, 6.0F, 3.0F, new CubeDeformation(0.0F)),
-            PartPose.offset(-1.9F, 12.0F, 0.0F)
+            PartPose.offset(-2.0F, 12.0F, 0.0F)
         );
 
         // 左腿 (长袍内衬 + 左半侧裙摆，随左腿前后摆动)
@@ -79,7 +79,7 @@ public class RobeModel extends HumanoidArmorModel<LivingEntity> {
                 .texOffs(64, 36).mirror().addBox(-2.0F, 6.0F, -3.0F, 5.0F, 6.0F, 6.0F, new CubeDeformation(0.0F)).mirror(false)
                 .texOffs(10, 52).mirror().addBox(0.4F, 0.0F, -2.9F, 2.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)).mirror(false)
                 .texOffs(30, 52).mirror().addBox(2.3F, 6.0F, -1.5F, 1.0F, 6.0F, 3.0F, new CubeDeformation(0.0F)).mirror(false),
-            PartPose.offset(1.9F, 12.0F, 0.0F)
+            PartPose.offset(2.0F, 12.0F, 0.0F)
         );
 
         return LayerDefinition.create(meshdefinition, 128, 128);
