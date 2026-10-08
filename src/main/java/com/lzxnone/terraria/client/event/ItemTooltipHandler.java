@@ -6,6 +6,7 @@ import com.lzxnone.terraria.item.weapon.MeleeWeapon;
 import com.lzxnone.terraria.item.weapon.RangedWeapon;
 import com.lzxnone.terraria.item.weapon.SummonWeapon;
 import com.lzxnone.terraria.item.weapon.summon.minion.MinionWeapon;
+import com.lzxnone.terraria.item.weapon.summon.whip.Whip;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -33,6 +34,7 @@ public class ItemTooltipHandler {
         addMeleeWeaponTooltip(event);
         addRangedWeaponTooltip(event);
         addSummonWeaponTooltip(event);
+        addWhipTooltip(event);
         addMagicWeaponTooltip(event);
     }
 
@@ -116,9 +118,17 @@ public class ItemTooltipHandler {
                         Component.translatable(
                             "tooltip.lzxnoneterraria.melee_weapon_damage",
                             damage == Math.rint(damage) ? String.valueOf((int) damage) : String.format("%.2f", damage)
-                        ).withStyle(ChatFormatting.RED)
+                         ).withStyle(ChatFormatting.RED)
                     );
                 }
+            }
+
+            if(stack.getItem() instanceof com.lzxnone.terraria.item.weapon.melee.DevilsDevastation) {
+                Component keyMsg = com.lzxnone.terraria.ModKeyBindings.KILL_MODE.getTranslatedKeyMessage();
+                event.getToolTip().add(
+                    Component.translatable("tooltip.lzxnoneterraria.devils_devastation.kill_mode_key", keyMsg)
+                        .withStyle(style -> style.withColor(0xFF5555))
+                );
             }
         }
     }
@@ -155,6 +165,31 @@ public class ItemTooltipHandler {
                         ).withStyle(ChatFormatting.RED)
                     );
                 }
+            }
+        }
+    }
+
+    private static void addWhipTooltip(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        if(stack.getItem() instanceof Whip whip) {
+            float tagDamage = whip.getTagDamage();
+            if(tagDamage > 0.0F) {
+                event.getToolTip().add(
+                    Component.translatable(
+                        "tooltip.lzxnoneterraria.whip_tag_damage",
+                        tagDamage == Math.rint(tagDamage) ? String.valueOf((int) tagDamage) : String.format("%.2f", tagDamage)
+                    ).withStyle(ChatFormatting.RED)
+                );
+            }
+
+            int tagCrit = whip.getTagCrit();
+            if(tagCrit > 0) {
+                event.getToolTip().add(
+                    Component.translatable(
+                        "tooltip.lzxnoneterraria.whip_tag_crit",
+                        tagCrit
+                    ).withStyle(ChatFormatting.RED)
+                );
             }
         }
     }

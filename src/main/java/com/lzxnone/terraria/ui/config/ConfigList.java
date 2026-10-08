@@ -136,6 +136,7 @@ import com.lzxnone.terraria.item.weapon.ranged.gun.*;
 import com.lzxnone.terraria.item.weapon.summon.minion.StardustDragonStaff;
 import com.lzxnone.terraria.item.weapon.summon.minion.StardustCellStaff;
 import com.lzxnone.terraria.item.weapon.summon.minion.Terraprisma;
+import com.lzxnone.terraria.item.weapon.summon.whip.Kaleidoscope;
 import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
 
 import java.util.HashMap;
@@ -182,6 +183,7 @@ public class ConfigList {
             StardustDragonStaff.CONFIG_LIST_ITEM,
             StardustCellStaff.CONFIG_LIST_ITEM,
             Possession.CONFIG_LIST_ITEM,
+            Kaleidoscope.CONFIG_LIST_ITEM,
             LastPrism.CONFIG_LIST_ITEM,
             BetsyWrath.CONFIG_LIST_ITEM,
             LunarFlare.CONFIG_LIST_ITEM,

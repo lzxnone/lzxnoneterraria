@@ -47,7 +47,7 @@ public class BetsysCurseEffect extends MobEffect {
 
         AttributeInstance armor = entity.getAttribute(Attributes.ARMOR);
         if(armor != null) {
-            armor.addTransientModifier(new AttributeModifier(
+            armor.addOrUpdateTransientModifier(new AttributeModifier(
                 ARMOR_REDUCTION_ID,
                 -reduction,
                 AttributeModifier.Operation.ADD_VALUE

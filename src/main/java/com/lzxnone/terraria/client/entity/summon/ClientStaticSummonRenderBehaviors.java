@@ -21,6 +21,7 @@ import com.lzxnone.terraria.client.item.ranged.ClientSuperStarShooter;
 import com.lzxnone.terraria.client.item.summon.ClientStardustDragonStaff;
 import com.lzxnone.terraria.client.item.summon.ClientStardustCellStaff;
 import com.lzxnone.terraria.client.item.summon.ClientTerraprisma;
+import com.lzxnone.terraria.client.item.summon.ClientKaleidoscope;
 import com.lzxnone.terraria.client.item.summon.ClientWhip;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 
@@ -61,7 +62,8 @@ public class ClientStaticSummonRenderBehaviors {
         BEHAVIORS.put(StaticSummonBehaviors.NEBULA_ARCANUM_PROJECTILE, ClientNebulaArcanum.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.NEBULA_ARCANUM_SMALL_PROJECTILE, ClientNebulaArcanum.SUMMON_BEHAVIOR2);
         BEHAVIORS.put(StaticSummonBehaviors.TERRAPRISMA, ClientTerraprisma.SUMMON_BEHAVIOR);
-        BEHAVIORS.put(StaticSummonBehaviors.POSSESSION, ClientWhip.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.WHIP, ClientWhip.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(StaticSummonBehaviors.KALEIDOSCOPE, ClientKaleidoscope.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.POSSESSION_VISION, DEFAULT_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.STARDUST_DRAGON_STAFF, ClientStardustDragonStaff.SUMMON_BEHAVIOR);
         BEHAVIORS.put(StaticSummonBehaviors.STARDUST_CELL_STAFF, ClientStardustCellStaff.SUMMON_BEHAVIOR);

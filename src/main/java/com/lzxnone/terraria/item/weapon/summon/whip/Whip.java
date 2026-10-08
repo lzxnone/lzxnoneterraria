@@ -7,6 +7,7 @@ import com.lzxnone.terraria.entity.ModEntities;
 import com.lzxnone.terraria.entity.summon.IStaticSummonBehavior;
 import com.lzxnone.terraria.entity.summon.StaticSummon;
 import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
+import com.lzxnone.terraria.item.accessory.AccessoryUtil;
 import com.lzxnone.terraria.item.weapon.SummonWeapon;
 import com.lzxnone.terraria.utils.DamageUtil;
 import com.lzxnone.terraria.utils.MathUtil;
@@ -60,9 +61,9 @@ public abstract class Whip extends SummonWeapon {
 
     protected abstract float getDamageFalloff();
 
-    protected abstract float getTagDamage();
+    public abstract float getTagDamage();
 
-    protected abstract int getTagCrit();
+    public abstract int getTagCrit();
 
     public static float applyMarkDamageBonus(Entity target, float damage) {
         if(target == null) return damage;
@@ -92,6 +93,14 @@ public abstract class Whip extends SummonWeapon {
             }
         }
         return baseCrit + bonus;
+    }
+
+    public static void applyMark(Entity target, LivingEntity applier, String markId, TargetMarks.Mark newMark) {
+        if(target == null || target.level().isClientSide() || newMark == null || markId == null) return;
+        int maxSlots = AccessoryUtil.getMaxWhipMarks(applier);
+        TargetMarks marks = target.getData(ModAttachments.TARGET_MARKS).copy();
+        marks.addMark(markId, newMark, maxSlots, target.level().getGameTime());
+        target.setData(ModAttachments.TARGET_MARKS, marks);
     }
 
     @Override
@@ -124,6 +133,10 @@ public abstract class Whip extends SummonWeapon {
 
     protected int getRotateAngle() {
         return 0;
+    }
+
+    protected String getBehavior() {
+        return StaticSummonBehaviors.WHIP;
     }
 
     protected void onTick(StaticSummon summon) {}
@@ -233,7 +246,7 @@ public abstract class Whip extends SummonWeapon {
             player.getY() + dirs[0].y * offset.z + dirs[1].y * offset.y + dirs[2].y * offset.x,
             player.getZ() + dirs[0].z * offset.z + dirs[1].z * offset.y + dirs[2].z * offset.x
         ));
-        summon.getEntityData().set(StaticSummon.BEHAVIOR, StaticSummonBehaviors.POSSESSION);
+        summon.getEntityData().set(StaticSummon.BEHAVIOR, getBehavior());
         summon.getEntityData().set(StaticSummon.RENDER_MODE, "custom");
         summon.getEntityData().set(StaticSummon.LIFETIME, getLifetime());
 
@@ -321,6 +334,29 @@ public abstract class Whip extends SummonWeapon {
     private static Whip getWhip(StaticSummon summon) {
         ItemStack sourceStack = summon.getEntityData().get(StaticSummon.STACK_SOURCE);
         return sourceStack.getItem() instanceof Whip whip ? whip : null;
+    }
+
+    public static Vec3 getTipPosition(StaticSummon summon) {
+        Whip whip = getWhip(summon);
+        if(whip == null) return summon.position();
+
+        CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+        int lifetime = Math.max(1, summon.getEntityData().get(StaticSummon.LIFETIME));
+        float progress = Mth.clamp(summon.getEntityData().get(StaticSummon.AGE) / (float)lifetime, 0.0F, 1.0F);
+
+        Vec3 hand = summon.position();
+        Vec3 dir = readVec3(customData, "dir", new Vec3(0.0D, 0.0D, 1.0D)).normalize();
+        Vec3 up = readVec3(customData, "up", new Vec3(0.0D, 1.0D, 0.0D)).normalize();
+        if(dir.lengthSqr() < 1.0E-6D) dir = new Vec3(0.0D, 0.0D, 1.0D);
+        if(up.lengthSqr() < 1.0E-6D) up = new Vec3(0.0D, 1.0D, 0.0D);
+
+        double range = customData.contains("range") ? customData.getDouble("range") : whip.getRange();
+        double height = customData.contains("height") ? customData.getDouble("height") : whip.getHeight();
+        double bend = customData.contains("bend") ? customData.getDouble("bend") : whip.getBend();
+        boolean reverse = customData.contains("reverse") && customData.getBoolean("reverse");
+
+        List<Vec3> points = computePoints(hand, dir, up, progress, range, height, bend, reverse, SEGMENTS);
+        return points.isEmpty() ? hand : points.get(points.size() - 1);
     }
 
     private static boolean intersectsWhip(List<Vec3> points, Entity target) {

@@ -49,7 +49,7 @@ public class Possession extends Whip {
     private static final ConfigFloat BEAM_DAMAGE = new ConfigFloat("weapon.possession.beam_damage", "possession_beam_damage", 10.0F, 0.0F, 8388600.0F);
     private static final ConfigInt PROPHETIC_MARK_DURATION = new ConfigInt("weapon.possession.prophetic_mark_duration", "possession_prophetic_mark_duration", 80, 1, 72000);
     public static final ConfigInt MAX_PROPHETIC_MARK_STACKS = new ConfigInt("weapon.possession.max_prophetic_mark_stacks", "possession_max_prophetic_mark_stacks", 3, 0, 1024);
-    private static final ConfigFloat TAG_DAMAGE = new ConfigFloat("weapon.possession.tag_damage", "possession_tag_damage", 25.0F, 0.0F, 8388600.0F);
+    private static final ConfigFloat TAG_DAMAGE = new ConfigFloat("weapon.possession.tag_damage", "possession_tag_damage", 2.5F, 0.0F, 8388600.0F);
     private static final ConfigInt TAG_CRIT = new ConfigInt("weapon.possession.tag_crit", "possession_tag_crit", 10, 0, 100);
     private static final ConfigFloat DAMAGE_FALLOFF = new ConfigFloat("weapon.possession.damage_falloff", "possession_damage_falloff", 0.95F, 0.0F, 1.0F);
 
@@ -103,12 +103,12 @@ public class Possession extends Whip {
     }
 
     @Override
-    protected float getTagDamage() {
+    public float getTagDamage() {
         return TAG_DAMAGE.get();
     }
 
     @Override
-    protected int getTagCrit() {
+    public int getTagCrit() {
         return TAG_CRIT.get();
     }
 
@@ -208,20 +208,21 @@ public class Possession extends Whip {
     @Override
     protected void onHitTarget(StaticSummon summon, Entity target) {
         if(summon.level() instanceof ServerLevel serverLevel) {
-            TargetMarks marks = target.getData(ModAttachments.TARGET_MARKS).copy();
-            marks.getMarks().put(
-                TargetMarks.PROPHETIC,
+            LivingEntity owner = summon.getOwner() instanceof LivingEntity living ? living : null;
+            applyMark(
+                target,
+                owner,
+                TargetMarks.POSSESSION,
                 new TargetMarks.Mark(
                     serverLevel.getGameTime(),
                     PROPHETIC_MARK_DURATION.get(),
                     0,
-                    summon.getOwner() == null ? null : summon.getOwner().getUUID(),
+                    owner == null ? null : owner.getUUID(),
                     summon.getEntityData().get(StaticSummon.STACK_SOURCE),
                     getTagDamage(),
                     getTagCrit()
                 )
             );
-            target.setData(ModAttachments.TARGET_MARKS, marks);
 
             ParticleUtil.addParticles(
                 serverLevel, PARTICLE,
@@ -257,12 +258,12 @@ public class Possession extends Whip {
         if(!(target.level() instanceof ServerLevel serverLevel)) return;
 
         TargetMarks marks = target.getData(ModAttachments.TARGET_MARKS);
-        TargetMarks.Mark mark = marks.getMarks().get(TargetMarks.PROPHETIC);
+        TargetMarks.Mark mark = marks.getMarks().get(TargetMarks.POSSESSION);
         if(mark == null) return;
 
         if(serverLevel.getGameTime() - mark.getStartTime() >= mark.getDuration()) {
             TargetMarks copiedMarks = marks.copy();
-            copiedMarks.getMarks().remove(TargetMarks.PROPHETIC);
+            copiedMarks.getMarks().remove(TargetMarks.POSSESSION);
             target.setData(ModAttachments.TARGET_MARKS, copiedMarks);
             return;
         }
@@ -283,7 +284,7 @@ public class Possession extends Whip {
         TargetMarks copiedMarks = marks.copy();
         TargetMarks.Mark copiedMark = mark.copy();
         copiedMark.setStacks(copiedMark.getStacks() + 1);
-        copiedMarks.getMarks().put(TargetMarks.PROPHETIC, copiedMark);
+        copiedMarks.getMarks().put(TargetMarks.POSSESSION, copiedMark);
         target.setData(ModAttachments.TARGET_MARKS, copiedMarks);
     }
 

@@ -9,12 +9,17 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class TargetMarks {
-    public static final String PROPHETIC = "prophetic";
+    public static final String POSSESSION = "possession";
+    public static final String KALEIDOSCOPE = "kaleidoscope";
     private static final Codec<UUID> UUID_CODEC = Codec.STRING.xmap(UUID::fromString, UUID::toString);
     private static final UUID EMPTY_OWNER = new UUID(0L, 0L);
     private static final Codec<CompoundTag> COMPOUND_TAG_CODEC = Codec.PASSTHROUGH.xmap(
@@ -71,6 +76,47 @@ public class TargetMarks {
 
     public TargetMarks copy() {
         return new TargetMarks(marks, customData);
+    }
+
+    public void addMark(String id, Mark mark, int maxSlots, long gameTime) {
+        if(id == null || mark == null) return;
+
+        // 1. 同一标记直接刷新
+        if(marks.containsKey(id)) {
+            marks.put(id, mark);
+            return;
+        }
+
+        // 2. 清理已过期的标记
+        if(gameTime > 0) {
+            marks.entrySet().removeIf(entry -> {
+                Mark m = entry.getValue();
+                return m != null && m.getDuration() > 0 && gameTime - m.getStartTime() >= m.getDuration();
+            });
+        }
+
+        // 3. 统计该施加者的有效标记
+        UUID owner = mark.getOwner();
+        List<Map.Entry<String, Mark>> ownerMarks = new ArrayList<>();
+        for(Map.Entry<String, Mark> entry : marks.entrySet()) {
+            Mark m = entry.getValue();
+            if(m != null && (owner == null || owner.equals(m.getOwner()))) {
+                ownerMarks.add(entry);
+            }
+        }
+
+        // 4. 若超出最大槽位上限，按 startTime 剔除最老的标记（FIFO）
+        while(ownerMarks.size() >= maxSlots && !ownerMarks.isEmpty()) {
+            Map.Entry<String, Mark> oldest = Collections.min(
+                ownerMarks,
+                Comparator.comparingLong(e -> e.getValue().getStartTime())
+            );
+            marks.remove(oldest.getKey());
+            ownerMarks.remove(oldest);
+        }
+
+        // 5. 存入新标记
+        marks.put(id, mark);
     }
 
     public static class Mark {

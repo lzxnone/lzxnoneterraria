@@ -12,6 +12,7 @@
     "GuiMixin",
     "HumanoidModelMixin",
     "ItemInHandRenderMixin",
+    "ItemRendererMixin",
     "UseSpeedMixin"
   ],
   "injectors": {

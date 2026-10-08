@@ -20,6 +20,7 @@ import com.lzxnone.terraria.item.weapon.ranged.gun.*;
 import com.lzxnone.terraria.item.weapon.summon.minion.StardustDragonStaff;
 import com.lzxnone.terraria.item.weapon.summon.minion.StardustCellStaff;
 import com.lzxnone.terraria.item.weapon.summon.minion.Terraprisma;
+import com.lzxnone.terraria.item.weapon.summon.whip.Kaleidoscope;
 import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -107,6 +108,7 @@ public class ModItems {
     public static final DeferredItem<Item> STARDUST_DRAGON_STAFF = ITEMS.register("stardust_dragon_staff", StardustDragonStaff::new);
     public static final DeferredItem<Item> STARDUST_CELL_STAFF = ITEMS.register("stardust_cell_staff", StardustCellStaff::new);
     public static final DeferredItem<Item> POSSESSION = ITEMS.register("possession", Possession::new);
+    public static final DeferredItem<Item> KALEIDOSCOPE = ITEMS.register("kaleidoscope", Kaleidoscope::new);
 
     //近战武器 灾厄
     public static final DeferredItem<Item> DEVILS_DEVASTATION = ITEMS.register("devils_devastation", DevilsDevastation::new);

@@ -246,6 +246,7 @@ public class ModCreativeModeTabs {
                 output.accept(ModItems.STARDUST_DRAGON_STAFF.get());
                 output.accept(ModItems.STARDUST_CELL_STAFF.get());
                 output.accept(ModItems.POSSESSION.get());
+                output.accept(ModItems.KALEIDOSCOPE.get());
                 output.accept(ModItems.SUMMONING_POTION.get());
             }).build());
 }

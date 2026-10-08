@@ -24,12 +24,18 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import com.lzxnone.terraria.effect.ModEffects;
+import com.lzxnone.terraria.item.ModItems;
+import com.lzxnone.terraria.particle.IronSparkParticleOptions;
+import org.joml.Vector4f;
 import net.minecraft.world.item.*;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import net.minecraft.client.Camera;
+import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.GlStateBackup;
 
 import java.util.*;
@@ -603,6 +609,118 @@ public class ClientDevilsDevastation {
             }
             RenderSystem.restoreGlState(backup);
         }
+    }
+
+    public static void renderEnergyParticles(PoseStack poseStack, ItemDisplayContext displayContext, Player player) {
+        if (player.getEffect(ModEffects.KILL_MODE) == null || player.getCooldowns().isOnCooldown(ModItems.DEVILS_DEVASTATION.get())) {
+            return;
+        }
+
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null) return;
+
+        poseStack.pushPose();
+        poseStack.translate(0.0, 1.4, 0.2);
+
+        Matrix4f energyMatrix = poseStack.last().pose();
+
+        Camera camera = mc.gameRenderer.getMainCamera();
+        Vec3 cameraWorldPos = camera.getPosition();
+        Quaternionf cameraRotation = camera.rotation();
+        boolean isFirstPerson = displayContext.firstPerson();
+
+        net.minecraft.util.RandomSource random = player.getRandom();
+
+        int sampleCount = 2;
+        for (int i = 0; i < sampleCount; i++) {
+            // 1. 采样能量体剑身内的位置点
+            float localY = 0.5f + random.nextFloat() * 23.5f;
+            float halfWidth = (1.0f - localY / 32.0f) * 0.8f;
+            float localZ = (random.nextFloat() * 2.0f - 1.0f) * halfWidth;
+            float localX = (random.nextFloat() * 2.0f - 1.0f) * 0.04f;
+
+            // 局部坐标转为渲染空间坐标
+            Vector4f localPos = new Vector4f(localX, localY, localZ, 1.0f);
+            localPos.mul(energyMatrix);
+
+            // 2. 解算粒子的绝对世界发射位置
+            Vec3 actualWorldPos;
+            if (isFirstPerson) {
+                Vector3f viewOffset = new Vector3f(localPos.x(), localPos.y(), localPos.z());
+                cameraRotation.transform(viewOffset);
+
+                actualWorldPos = new Vec3(
+                    cameraWorldPos.x + viewOffset.x(),
+                    cameraWorldPos.y + viewOffset.y(),
+                    cameraWorldPos.z + viewOffset.z()
+                );
+            } else {
+                actualWorldPos = new Vec3(
+                    cameraWorldPos.x + localPos.x(),
+                    cameraWorldPos.y + localPos.y(),
+                    cameraWorldPos.z + localPos.z()
+                );
+            }
+
+            // 3. 计算粒子朝向：
+            // 剑身中轴为局部 +Y 轴 (0, 1, 0)
+            // 沿剑身延申为主方向 (Y=1.0)，在 X/Z 方向施加偏移倾角，使朝向与中轴呈约 12° ~ 24° 夹角
+            float tilt = 0.22f + random.nextFloat() * 0.20f;
+            float phi = random.nextFloat() * (float) (2 * Math.PI);
+            float localDirX = (float) Math.cos(phi) * tilt * 0.35f;
+            float localDirY = 1.0f;
+            float localDirZ = (float) Math.sin(phi) * tilt;
+
+            Vector3f localDir = new Vector3f(localDirX, localDirY, localDirZ).normalize();
+
+            // 计算局部的侧向正交基向量 (right)，用于铁火花平面的广告牌计算
+            Vector3f localRight = new Vector3f(-localDirZ, 0.0f, localDirX);
+            if (localRight.lengthSquared() < 0.001f) localRight.set(1.0f, 0.0f, 0.0f);
+            localRight.normalize();
+
+            // 4. 将方向向量和基向量变换到视角空间
+            Vector3f viewDir = energyMatrix.transformDirection(localDir, new Vector3f()).normalize();
+            Vector3f viewRight = energyMatrix.transformDirection(localRight, new Vector3f()).normalize();
+
+            // 5. 视角空间向量转换为世界空间向量
+            Vector3f worldDir;
+            Vector3f worldRight;
+            if (isFirstPerson) {
+                worldDir = cameraRotation.transform(viewDir, new Vector3f());
+                worldRight = cameraRotation.transform(viewRight, new Vector3f());
+            } else {
+                worldDir = new Vector3f(viewDir);
+                worldRight = new Vector3f(viewRight);
+            }
+
+            // 速度大小控制火花的移动速度与拉伸方向
+            float speed = 0.18f + random.nextFloat() * 0.12f;
+            worldDir.mul(speed);
+
+            Vector3f[] energyColors = new Vector3f[]{
+                new Vector3f(0.725f, 0.345f, 1.0f),
+                new Vector3f(0.847f, 0.247f, 0.745f),
+                new Vector3f(0.882f, 0.345f, 0.247f)
+            };
+
+            // 6. 生成铁火花粒子
+            Vector3f color = energyColors[random.nextInt(energyColors.length)];
+            IronSparkParticleOptions sparkOptions = new IronSparkParticleOptions(
+                0.2f,                   // initSize (火花粗细)
+                16 + random.nextInt(8),  // initLifetime (生命周期)
+                3.5f,                    // sparkLength (拉伸长度倍率)
+                color,                   // 颜色
+                worldDir,                // 飞行初速度及延伸朝向
+                worldRight               // 侧向基向量
+            );
+            mc.level.addParticle(
+                sparkOptions,
+                actualWorldPos.x, actualWorldPos.y, actualWorldPos.z,
+                0.0, 0.0, 0.0
+            );
+        }
+
+        poseStack.popPose();
     }
 
     private static void addEnergyVertex(

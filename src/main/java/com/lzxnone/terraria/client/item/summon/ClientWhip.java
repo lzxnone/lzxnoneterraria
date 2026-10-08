@@ -13,100 +13,111 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientWhip {
+public class ClientWhip implements IStaticSummonRenderBehavior {
     private static final int SEGMENTS = 24;
     private static final float WIDTH = 1.0F;
 
-    public static final IStaticSummonRenderBehavior SUMMON_BEHAVIOR = new IStaticSummonRenderBehavior() {
-        @Override
-        public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-            if(!(entity instanceof StaticSummon summon) || summon.getOwner() == null) return;
-            CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
-            int lifetime = Math.max(1, summon.getEntityData().get(StaticSummon.LIFETIME));
-            float progress = Mth.clamp((summon.getEntityData().get(StaticSummon.AGE) + partialTick) / lifetime, 0.0F, 1.0F);
+    public static final IStaticSummonRenderBehavior SUMMON_BEHAVIOR = new ClientWhip();
 
-            Vec3 origin = entity.getPosition(partialTick);
-            Vec3 hand = origin;
-            Vec3 dir = readVec3(customData, "dir", new Vec3(0.0D, 0.0D, 1.0D)).normalize();
-            Vec3 up = readVec3(customData, "up", new Vec3(0.0D, 1.0D, 0.0D)).normalize();
-            Vec3 right = readVec3(customData, "right", new Vec3(1.0D, 0.0D, 0.0D)).normalize();
-            if(dir.lengthSqr() < 1.0E-6D) dir = new Vec3(0.0D, 0.0D, 1.0D);
-            if(up.lengthSqr() < 1.0E-6D) up = new Vec3(0.0D, 1.0D, 0.0D);
-            if(right.lengthSqr() < 1.0E-6D) right = new Vec3(1.0D, 0.0D, 0.0D);
+    protected Vector4f getVertexColor(StaticSummon summon, float progressAlongWhip, float partialTick) {
+        return new Vector4f(
+            summon.getEntityData().get(StaticSummon.COLOR_R),
+            summon.getEntityData().get(StaticSummon.COLOR_G),
+            summon.getEntityData().get(StaticSummon.COLOR_B),
+            summon.getEntityData().get(StaticSummon.COLOR_A)
+        );
+    }
 
-            double range = customData.contains("range") ? customData.getDouble("range") : 8.0D;
-            double height = customData.contains("height") ? customData.getDouble("height") : range * 0.25D;
-            double bend = customData.contains("bend") ? customData.getDouble("bend") : range * 0.25D;
-            boolean reverse = customData.contains("reverse") && customData.getBoolean("reverse");
+    @Override
+    public void render(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+        if(!(entity instanceof StaticSummon summon) || summon.getOwner() == null) return;
+        CompoundTag customData = summon.getEntityData().get(StaticSummon.CUSTOM_DATA);
+        int lifetime = Math.max(1, summon.getEntityData().get(StaticSummon.LIFETIME));
+        float progress = Mth.clamp((summon.getEntityData().get(StaticSummon.AGE) + partialTick) / lifetime, 0.0F, 1.0F);
 
-            List<Vec3> points = computePoints(hand, dir, up, progress, range, height, bend, reverse, SEGMENTS);
-            if(points.size() < 2) return;
+        Vec3 origin = entity.getPosition(partialTick);
+        Vec3 hand = origin;
+        Vec3 dir = readVec3(customData, "dir", new Vec3(0.0D, 0.0D, 1.0D)).normalize();
+        Vec3 up = readVec3(customData, "up", new Vec3(0.0D, 1.0D, 0.0D)).normalize();
+        Vec3 right = readVec3(customData, "right", new Vec3(1.0D, 0.0D, 0.0D)).normalize();
+        if(dir.lengthSqr() < 1.0E-6D) dir = new Vec3(0.0D, 0.0D, 1.0D);
+        if(up.lengthSqr() < 1.0E-6D) up = new Vec3(0.0D, 1.0D, 0.0D);
+        if(right.lengthSqr() < 1.0E-6D) right = new Vec3(1.0D, 0.0D, 0.0D);
 
-            // 计算归一化累积弧长序列
-            int n = points.size();
-            double[] cumulativeDist = new double[n];
-            double totalLength = 0.0D;
-            for(int i = 1; i < n; i++) {
-                totalLength += points.get(i).distanceTo(points.get(i - 1));
-                cumulativeDist[i] = totalLength;
-            }
-            if(totalLength < 1.0E-5D) return;
+        double range = customData.contains("range") ? customData.getDouble("range") : 8.0D;
+        double height = customData.contains("height") ? customData.getDouble("height") : range * 0.25D;
+        double bend = customData.contains("bend") ? customData.getDouble("bend") : range * 0.25D;
+        boolean reverse = customData.contains("reverse") && customData.getBoolean("reverse");
 
-            double[] normalizedDist = new double[n];
-            for(int i = 0; i < n; i++) {
-                normalizedDist[i] = cumulativeDist[i] / totalLength;
-            }
+        List<Vec3> points = computePoints(hand, dir, up, progress, range, height, bend, reverse, SEGMENTS);
+        if(points.size() < 2) return;
 
-            if(!customData.contains("tailRes") || !customData.contains("bodyRes") || !customData.contains("headRes")) return;
+        // 计算归一化累积弧长序列
+        int n = points.size();
+        double[] cumulativeDist = new double[n];
+        double totalLength = 0.0D;
+        for(int i = 1; i < n; i++) {
+            totalLength += points.get(i).distanceTo(points.get(i - 1));
+            cumulativeDist[i] = totalLength;
+        }
+        if(totalLength < 1.0E-5D) return;
 
-            String tailResStr = customData.getString("tailRes");
-            String bodyResStr = customData.getString("bodyRes");
-            String headResStr = customData.getString("headRes");
-            if(tailResStr.isEmpty() || bodyResStr.isEmpty() || headResStr.isEmpty()) return;
+        double[] normalizedDist = new double[n];
+        for(int i = 0; i < n; i++) {
+            normalizedDist[i] = cumulativeDist[i] / totalLength;
+        }
 
-            float tailRatio = customData.getFloat("tailRatio");
-            float headRatio = customData.getFloat("headRatio");
-            float bodyUnitRatio = customData.getFloat("bodyUnitRatio");
+        if(!customData.contains("tailRes") || !customData.contains("bodyRes") || !customData.contains("headRes")) return;
 
-            tailRatio = Mth.clamp(tailRatio, 0.0F, 0.9F);
-            headRatio = Mth.clamp(headRatio, 0.0F, 0.9F - tailRatio);
-            bodyUnitRatio = Math.max(0.001F, bodyUnitRatio);
+        String tailResStr = customData.getString("tailRes");
+        String bodyResStr = customData.getString("bodyRes");
+        String headResStr = customData.getString("headRes");
+        if(tailResStr.isEmpty() || bodyResStr.isEmpty() || headResStr.isEmpty()) return;
 
-            float bodyStart = tailRatio;
-            float bodyEnd = 1.0F - headRatio;
+        float tailRatio = customData.getFloat("tailRatio");
+        float headRatio = customData.getFloat("headRatio");
+        float bodyUnitRatio = customData.getFloat("bodyUnitRatio");
 
-            ResourceLocation tailRes = ResourceLocation.parse(tailResStr);
-            ResourceLocation bodyRes = ResourceLocation.parse(bodyResStr);
-            ResourceLocation headRes = ResourceLocation.parse(headResStr);
+        tailRatio = Mth.clamp(tailRatio, 0.0F, 0.9F);
+        headRatio = Mth.clamp(headRatio, 0.0F, 0.9F - tailRatio);
+        bodyUnitRatio = Math.max(0.001F, bodyUnitRatio);
 
-            // 1. 渲染尾部 (Tail - 不拉伸，单张贴图完整映射)
-            if(tailRatio > 1.0E-4F) {
-                List<Vec3> tailPoints = extractSubPath(points, normalizedDist, 0.0F, tailRatio);
-                renderRibbonCross(tailPoints, origin, right, up, tailRes, 0.0F, 1.0F, poseStack, bufferSource);
-            }
+        float bodyStart = tailRatio;
+        float bodyEnd = 1.0F - headRatio;
 
-            // 2. 渲染身体 (Body - Tiling 平铺渲染，按 bodyUnitRatio 单元循环平铺)
-            if(bodyEnd > bodyStart + 1.0E-4F) {
-                float cur = bodyStart;
-                while(cur < bodyEnd - 1.0E-5F) {
-                    float next = Math.min(bodyEnd, cur + bodyUnitRatio);
-                    float uMax = (next - cur) / bodyUnitRatio;
-                    List<Vec3> bodyTilePoints = extractSubPath(points, normalizedDist, cur, next);
-                    renderRibbonCross(bodyTilePoints, origin, right, up, bodyRes, 0.0F, uMax, poseStack, bufferSource);
-                    cur = next;
-                }
-            }
+        ResourceLocation tailRes = ResourceLocation.parse(tailResStr);
+        ResourceLocation bodyRes = ResourceLocation.parse(bodyResStr);
+        ResourceLocation headRes = ResourceLocation.parse(headResStr);
 
-            // 3. 渲染头部 (Head - 不拉伸，单张贴图完整映射)
-            if(headRatio > 1.0E-4F) {
-                List<Vec3> headPoints = extractSubPath(points, normalizedDist, bodyEnd, 1.0F);
-                renderRibbonCross(headPoints, origin, right, up, headRes, 0.0F, 1.0F, poseStack, bufferSource);
+        // 1. 渲染尾部 (Tail - 不拉伸，单张贴图完整映射)
+        if(tailRatio > 1.0E-4F) {
+            List<Vec3> tailPoints = extractSubPath(points, normalizedDist, 0.0F, tailRatio);
+            renderRibbonCross(summon, tailPoints, 0.0F, tailRatio, origin, right, up, tailRes, 0.0F, 1.0F, poseStack, bufferSource, partialTick);
+        }
+
+        // 2. 渲染身体 (Body - Tiling 平铺渲染，按 bodyUnitRatio 单元循环平铺)
+        if(bodyEnd > bodyStart + 1.0E-4F) {
+            float cur = bodyStart;
+            while(cur < bodyEnd - 1.0E-5F) {
+                float next = Math.min(bodyEnd, cur + bodyUnitRatio);
+                float uMax = (next - cur) / bodyUnitRatio;
+                List<Vec3> bodyTilePoints = extractSubPath(points, normalizedDist, cur, next);
+                renderRibbonCross(summon, bodyTilePoints, cur, next, origin, right, up, bodyRes, 0.0F, uMax, poseStack, bufferSource, partialTick);
+                cur = next;
             }
         }
+
+        // 3. 渲染头部 (Head - 不拉伸，单张贴图完整映射)
+        if(headRatio > 1.0E-4F) {
+            List<Vec3> headPoints = extractSubPath(points, normalizedDist, bodyEnd, 1.0F);
+            renderRibbonCross(summon, headPoints, bodyEnd, 1.0F, origin, right, up, headRes, 0.0F, 1.0F, poseStack, bufferSource, partialTick);
+        }
+    }
 
         private static List<Vec3> computePoints(Vec3 hand, Vec3 dir, Vec3 up, float progress, double range, double height, double bend, boolean reverse, int segments) {
             float phase = 1.0F - Math.abs(progress * 2.0F - 1.0F);
@@ -176,63 +187,70 @@ public class ClientWhip {
             return result;
         }
 
-        private static void renderRibbonCross(List<Vec3> points, Vec3 origin, Vec3 right, Vec3 up, ResourceLocation res, float uMin, float uMax, PoseStack poseStack, MultiBufferSource bufferSource) {
-            renderRibbon(points, origin, right, res, uMin, uMax, poseStack, bufferSource);
-            renderRibbon(points, origin, up, res, uMin, uMax, poseStack, bufferSource);
+    private void renderRibbonCross(StaticSummon summon, List<Vec3> points, float segStartProgress, float segEndProgress, Vec3 origin, Vec3 right, Vec3 up, ResourceLocation res, float uMin, float uMax, PoseStack poseStack, MultiBufferSource bufferSource, float partialTick) {
+        renderRibbon(summon, points, segStartProgress, segEndProgress, origin, right, res, uMin, uMax, poseStack, bufferSource, partialTick);
+        renderRibbon(summon, points, segStartProgress, segEndProgress, origin, up, res, uMin, uMax, poseStack, bufferSource, partialTick);
+    }
+
+    private void renderRibbon(StaticSummon summon, List<Vec3> points, float segStartProgress, float segEndProgress, Vec3 origin, Vec3 widthDir, ResourceLocation res, float uMin, float uMax, PoseStack poseStack, MultiBufferSource bufferSource, float partialTick) {
+        if(points.size() < 2) return;
+        VertexConsumer consumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(res));
+        Vec3 halfWidth = widthDir.normalize().scale(WIDTH * 0.5F);
+        double subLength = 0.0D;
+        double[] distances = new double[points.size()];
+
+        for(int i = 1; i < points.size(); i++) {
+            subLength += points.get(i).distanceTo(points.get(i - 1));
+            distances[i] = subLength;
         }
+        if(subLength < 1.0E-5D) return;
 
-        private static void renderRibbon(List<Vec3> points, Vec3 origin, Vec3 widthDir, ResourceLocation res, float uMin, float uMax, PoseStack poseStack, MultiBufferSource bufferSource) {
-            if(points.size() < 2) return;
-            VertexConsumer consumer = bufferSource.getBuffer(ModRenderTypes.entityTranslucentEmissive(res));
-            Vec3 halfWidth = widthDir.normalize().scale(WIDTH * 0.5F);
-            double subLength = 0.0D;
-            double[] distances = new double[points.size()];
+        for(int i = 0; i < points.size() - 1; i++) {
+            Vec3 p0 = points.get(i);
+            Vec3 p1 = points.get(i + 1);
+            Vec3 tangent = p1.subtract(p0);
+            if(tangent.lengthSqr() < 1.0E-6D) continue;
 
-            for(int i = 1; i < points.size(); i++) {
-                subLength += points.get(i).distanceTo(points.get(i - 1));
-                distances[i] = subLength;
-            }
-            if(subLength < 1.0E-5D) return;
+            Vec3 a = p0.add(halfWidth).subtract(origin);
+            Vec3 b = p0.subtract(halfWidth).subtract(origin);
+            Vec3 c = p1.subtract(halfWidth).subtract(origin);
+            Vec3 d = p1.add(halfWidth).subtract(origin);
+            float u0 = uMin + (float)(distances[i] / subLength) * (uMax - uMin);
+            float u1 = uMin + (float)(distances[i + 1] / subLength) * (uMax - uMin);
 
-            for(int i = 0; i < points.size() - 1; i++) {
-                Vec3 p0 = points.get(i);
-                Vec3 p1 = points.get(i + 1);
-                Vec3 tangent = p1.subtract(p0);
-                if(tangent.lengthSqr() < 1.0E-6D) continue;
+            float localProgress0 = (float)(distances[i] / subLength);
+            float localProgress1 = (float)(distances[i + 1] / subLength);
+            float globalProgress0 = Mth.lerp(localProgress0, segStartProgress, segEndProgress);
+            float globalProgress1 = Mth.lerp(localProgress1, segStartProgress, segEndProgress);
 
-                Vec3 a = p0.add(halfWidth).subtract(origin);
-                Vec3 b = p0.subtract(halfWidth).subtract(origin);
-                Vec3 c = p1.subtract(halfWidth).subtract(origin);
-                Vec3 d = p1.add(halfWidth).subtract(origin);
-                float u0 = uMin + (float)(distances[i] / subLength) * (uMax - uMin);
-                float u1 = uMin + (float)(distances[i + 1] / subLength) * (uMax - uMin);
+            Vector4f color0 = getVertexColor(summon, globalProgress0, partialTick);
+            Vector4f color1 = getVertexColor(summon, globalProgress1, partialTick);
 
-                addVertex(consumer, poseStack, a, u0, 0.0F);
-                addVertex(consumer, poseStack, b, u0, 1.0F);
-                addVertex(consumer, poseStack, c, u1, 1.0F);
-                addVertex(consumer, poseStack, d, u1, 0.0F);
-            }
+            addVertex(consumer, poseStack, a, u0, 0.0F, color0);
+            addVertex(consumer, poseStack, b, u0, 1.0F, color0);
+            addVertex(consumer, poseStack, c, u1, 1.0F, color1);
+            addVertex(consumer, poseStack, d, u1, 0.0F, color1);
         }
+    }
 
-        private static void addVertex(VertexConsumer consumer, PoseStack poseStack, Vec3 pos, float u, float v) {
-            consumer.addVertex(poseStack.last().pose(), (float)pos.x, (float)pos.y, (float)pos.z)
-                .setColor(1.0F, 1.0F, 1.0F, 1.0F)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(LightTexture.FULL_BRIGHT)
-                .setNormal(0.0F, 1.0F, 0.0F);
-        }
+    private static void addVertex(VertexConsumer consumer, PoseStack poseStack, Vec3 pos, float u, float v, Vector4f color) {
+        consumer.addVertex(poseStack.last().pose(), (float)pos.x, (float)pos.y, (float)pos.z)
+            .setColor(color.x(), color.y(), color.z(), color.w())
+            .setUv(u, v)
+            .setOverlay(OverlayTexture.NO_OVERLAY)
+            .setLight(LightTexture.FULL_BRIGHT)
+            .setNormal(0.0F, 1.0F, 0.0F);
+    }
 
-        private static Vec3 readVec3(CompoundTag tag, String prefix, Vec3 fallback) {
-            String x = prefix + "X";
-            String y = prefix + "Y";
-            String z = prefix + "Z";
-            if(!tag.contains(x) || !tag.contains(y) || !tag.contains(z)) return fallback;
-            return new Vec3(tag.getDouble(x), tag.getDouble(y), tag.getDouble(z));
-        }
+    private static Vec3 readVec3(CompoundTag tag, String prefix, Vec3 fallback) {
+        String x = prefix + "X";
+        String y = prefix + "Y";
+        String z = prefix + "Z";
+        if(!tag.contains(x) || !tag.contains(y) || !tag.contains(z)) return fallback;
+        return new Vec3(tag.getDouble(x), tag.getDouble(y), tag.getDouble(z));
+    }
 
-        private static float easeInOut(float value) {
-            return value < 0.5F ? 2.0F * value * value : 1.0F - (float)Math.pow(-2.0F * value + 2.0F, 2.0D) / 2.0F;
-        }
-    };
+    private static float easeInOut(float value) {
+        return value < 0.5F ? 2.0F * value * value : 1.0F - (float)Math.pow(-2.0F * value + 2.0F, 2.0D) / 2.0F;
+    }
 }

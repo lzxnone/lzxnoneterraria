@@ -60,7 +60,8 @@ public class StaticSummonBehaviors {
     public static final String STARDUST_DRAGON_STAFF = "stardust_dragon_staff";
     public static final String STARDUST_CELL_STAFF = "stardust_cell_staff";
     public static final String STARDUST_CELL_STUCK_PROJECTILE = "stardust_cell_stuck_projectile";
-    public static final String POSSESSION = "possession";
+    public static final String WHIP = "whip";
+    public static final String KALEIDOSCOPE = "kaleidoscope";
     public static final String POSSESSION_VISION = "possession_vision";
     public static final String NIGHTGLOW_PROJECTILE = "nightglow_projectile";
     public static final String ARC_SURGE_LIGHTNING = "arc_surge_lightning";
@@ -126,7 +127,8 @@ public class StaticSummonBehaviors {
         BEHAVIORS.put(STARDUST_DRAGON_STAFF, StardustDragonStaff.SUMMON_BEHAVIOR);
         BEHAVIORS.put(STARDUST_CELL_STAFF, StardustCellStaff.SUMMON_BEHAVIOR);
         BEHAVIORS.put(STARDUST_CELL_STUCK_PROJECTILE, StardustCellStaff.SUMMON_BEHAVIOR2);
-        BEHAVIORS.put(POSSESSION, Whip.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(WHIP, Whip.SUMMON_BEHAVIOR);
+        BEHAVIORS.put(KALEIDOSCOPE, Whip.SUMMON_BEHAVIOR);
         BEHAVIORS.put(POSSESSION_VISION, Possession.SUMMON_BEHAVIOR);
         BEHAVIORS.put(NIGHTGLOW_PROJECTILE, Nightglow.SUMMON_BEHAVIOR);
         BEHAVIORS.put(ARC_SURGE_LIGHTNING, ArcSurge.SUMMON_BEHAVIOR);

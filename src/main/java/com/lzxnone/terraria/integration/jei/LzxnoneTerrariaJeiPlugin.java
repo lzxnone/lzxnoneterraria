@@ -60,7 +60,7 @@ public class LzxnoneTerrariaJeiPlugin implements IModPlugin {
         );
         registration.addItemStackInfo(
             new ItemStack(ModItems.ARMOR_POLISH.get()),
-            Component.translatable("jei.lzxnoneterraria.info.armor_polish")
+             Component.translatable("jei.lzxnoneterraria.info.armor_polish")
         );
         registration.addItemStackInfo(
             new ItemStack(ModItems.MEGAPHONE.get()),

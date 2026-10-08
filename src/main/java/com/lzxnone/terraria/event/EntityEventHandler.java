@@ -21,6 +21,7 @@ import com.lzxnone.terraria.item.weapon.RangedWeapon;
 import com.lzxnone.terraria.item.weapon.Weapon;
 import com.lzxnone.terraria.item.weapon.melee.DevilsDevastation;
 import com.lzxnone.terraria.item.weapon.summon.minion.StardustCellStaff;
+import com.lzxnone.terraria.item.weapon.summon.whip.Kaleidoscope;
 import com.lzxnone.terraria.item.weapon.summon.whip.Possession;
 import com.lzxnone.terraria.utils.ParticleUtil;
 import net.minecraft.nbt.CompoundTag;
@@ -215,6 +216,8 @@ public class EntityEventHandler {
     public static void onLivingDamagePost(LivingDamageEvent.Post event) {
         //支配之鞭 预兆标记
         Possession.markEvent(event);
+        //万花筒 标记攻击粒子
+        Kaleidoscope.markEvent(event);
 
         if(event.getEntity() instanceof Player player) {
             //无敌时间

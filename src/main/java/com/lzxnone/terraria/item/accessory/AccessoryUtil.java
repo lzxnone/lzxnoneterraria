@@ -59,9 +59,7 @@ public class AccessoryUtil {
                 if(instance == null) return;
                 AttributeModifier existing = instance.getModifier(attributeModifier.id());
                 if(current.containsEntry(attribute, attributeModifier)) {
-                    if(existing == null) {
-                        instance.addTransientModifier(attributeModifier);
-                    }else if(existing.amount() != attributeModifier.amount() || existing.operation() != attributeModifier.operation()) {
+                    if(existing == null || existing.amount() != attributeModifier.amount() || existing.operation() != attributeModifier.operation()) {
                         instance.addOrUpdateTransientModifier(attributeModifier);
                     }
                 }else if(existing != null) {
@@ -371,6 +369,8 @@ public class AccessoryUtil {
 
     //为目标挂载护甲/护甲韧性减小修饰符（返回是否实际挂载了）
     public static boolean applyTargetArmorModifiers(LivingEntity attacker, LivingEntity target) {
+        removeTargetArmorModifiers(target);
+
         double[] armorReduction = {0.0D};
         double[] toughnessReduction = {0.0D};
         AccessoryUtil.forEachAccessory(attacker, (accessory, stack) -> {
@@ -384,14 +384,14 @@ public class AccessoryUtil {
         if(armorReduction[0] > 0.0D) {
             AttributeInstance armor = target.getAttribute(Attributes.ARMOR);
             if(armor != null) {
-                armor.addTransientModifier(new AttributeModifier(TARGET_ARMOR_PIERCE_ID, -armorReduction[0], AttributeModifier.Operation.ADD_VALUE));
+                armor.addOrUpdateTransientModifier(new AttributeModifier(TARGET_ARMOR_PIERCE_ID, -armorReduction[0], AttributeModifier.Operation.ADD_VALUE));
                 applied = true;
             }
         }
         if(toughnessReduction[0] > 0.0D) {
             AttributeInstance toughness = target.getAttribute(Attributes.ARMOR_TOUGHNESS);
             if(toughness != null) {
-                toughness.addTransientModifier(new AttributeModifier(TARGET_ARMOR_TOUGHNESS_PIERCE_ID, -toughnessReduction[0], AttributeModifier.Operation.ADD_VALUE));
+                toughness.addOrUpdateTransientModifier(new AttributeModifier(TARGET_ARMOR_TOUGHNESS_PIERCE_ID, -toughnessReduction[0], AttributeModifier.Operation.ADD_VALUE));
                 applied = true;
             }
         }
@@ -612,5 +612,27 @@ public class AccessoryUtil {
                 entity.level().addFreshEntity(bee);
             }
         }
+    }
+
+    //鞭子标记槽位加成：累加所有饰品的槽位加成
+    public static int getWhipSlotBonus(LivingEntity entity) {
+        if(entity == null) return 0;
+        int[] bonus = {0};
+        AccessoryUtil.forEachAccessory(entity, (accessory, stack) -> {
+            if(accessory instanceof WhipSlotModifier modifier) {
+                bonus[0] += modifier.getWhipSlotBonus(stack, entity);
+            }
+        });
+        return bonus[0];
+    }
+
+    //施加者最大鞭子标记数：基础 1 个槽位 + 饰品槽位加成
+    public static int getMaxWhipMarks(LivingEntity entity) {
+        return Math.max(1, 1 + getWhipSlotBonus(entity));
+    }
+
+    //最大鞭子标记槽位（别名）
+    public static int getMaxWhipSlots(LivingEntity entity) {
+        return getMaxWhipMarks(entity);
     }
 }

@@ -9,6 +9,7 @@ import com.lzxnone.terraria.entity.summon.StaticSummonBehaviors;
 import com.lzxnone.terraria.item.IItemWaveBehavior;
 import com.lzxnone.terraria.particle.DustParticleOptions;
 import com.lzxnone.terraria.particle.ModParticles;
+import net.minecraft.core.particles.ParticleTypes;
 import com.lzxnone.terraria.ui.config.ConfigListItem;
 import com.lzxnone.terraria.ui.config.IConfigData;
 import com.lzxnone.terraria.ui.config.struct.ConfigDouble;
@@ -215,7 +216,12 @@ public class Volcano extends MeleeWeapon {
                             ParticleUtil.addParticles(
                                 (ServerLevel) target.level(), ModParticles.EXPLODE_PARTICLE.get(),
                                 new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2.0, target.getZ()), new Vec3(0, 0, 0),
-                                0.2, (int) (30 + Math.random() * 30)
+                                0.2, (int) (2 + Math.random() * 2)
+                            );
+                            ParticleUtil.addParticles(
+                                (ServerLevel) target.level(), ParticleTypes.LAVA,
+                                new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2.0, target.getZ()), new Vec3(0.4, 0.4, 0.4),
+                                0.2, (int) (12 + Math.random() * 8)
                             );
                             ParticleUtil.addParticles(
                                 (ServerLevel) target.level(), PARTICLE,
